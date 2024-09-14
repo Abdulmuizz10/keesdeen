@@ -18,8 +18,8 @@ const NewArrivals = () => {
     brand: string;
     category: string;
     price: number;
-    size: string[];
-    color: string[];
+    size: string;
+    color: string;
     rating: number;
     reviews: number;
     isAvailable: boolean;
@@ -229,8 +229,8 @@ interface Product {
   brand: string;
   category: string;
   price: number;
-  size: string[];
-  color: string[];
+  size: string;
+  color: string;
   rating: number;
   reviews: number;
   isAvailable: boolean;

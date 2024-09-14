@@ -31,25 +31,22 @@ const ShopAll = () => {
   const { products } = useShop();
   const [showFilter, setShowFilter] = useState(true);
   const [filterProducts, setFilterProducts] = useState<ClothingProduct[]>([]);
-  const [category, setCategory] = useState([]);
-  const [sizeCategory, setSizebCategory] = useState<string[]>([]);
-  const [colorCategory, setColorCategory] = useState<string[]>([]);
+  // const [category, setCategory] = useState([]);
+  // const [sizeCategory, setSizebCategory] = useState<string[]>([]);
+  // const [colorCategory, setColorCategory] = useState<string[]>([]);
 
-  const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // if (category.includes(e.target.value)) {
-    //   setCategory((prev) => prev.filter((item) => item !== e.target.value));
-    // } else {
-    //   setCategory((prev) => [...prev, e.target.value]);
-    // }
-  };
+  // const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (category.includes(e.target.value)) {
+  //     setCategory((prev) => prev.filter((item) => item !== e.target.value));
+  //   } else {
+  //     setCategory((prev) => [...prev, e.target.value]);
+  //   }
+  // };
 
   useEffect(() => {
     setFilterProducts(products);
   }, []);
 
-  useEffect(() => {
-    console.log(category);
-  }, [category]);
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
       <div className="container">
@@ -113,7 +110,7 @@ const ShopAll = () => {
                         className="w-3"
                         value={wear}
                         key={index}
-                        onChange={toggleCategory}
+                        // onChange={toggleCategory}
                       />
                       {wear}
                     </p>
