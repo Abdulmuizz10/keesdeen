@@ -1,5 +1,5 @@
 import {
-  Button,
+  // Button,
   Input,
   Select,
   SelectContent,
@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
-import { BiBath, BiBed, BiBookmark, BiMap, BiSearch } from "react-icons/bi";
+import { BiSearch } from "react-icons/bi";
 
 type ImageProps = {
   src: string;
@@ -82,62 +82,63 @@ export const GridList5 = (props: GridList5Props) => {
           </Select>
         </div>
       </div>
-      {/* <div className="grid w-full auto-cols-fr grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid w-full auto-cols-fr grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {properties.map((property, index) => (
-          <div key={index} className="border border-border-primary">
-            <div className="w-full overflow-hidden">
-              <img
-                src={property.image.src}
-                alt={property.image.alt}
-                className="aspect-[3/2] size-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col p-6">
-              <div className="mb-2 flex items-center justify-between gap-4">
-                <h2 className="text-md font-bold leading-[1.4] md:text-xl">
-                  {property.title}
-                </h2>
-                <div className="p-2">
-                  <Button
-                    className="cursor-pointer"
-                    size="icon"
-                    variant="tertiary"
-                    asChild
-                  >
-                    <BiBookmark className="size-6" />
-                  </Button>
-                </div>
-              </div>
-              <p className="mb-3 md:mb-4">{property.description}</p>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2">
-                  <BiMap className="size-6" />
-                  <span className="text-sm">{property.location}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BiBed className="size-6" />
-                  <span className="text-sm">{property.numberOfBeds}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BiBath className="size-6" />
-                  <span className="text-sm">{property.numberOfBaths}</span>
-                </div>
-              </div>
-              <div className="mt-5 flex items-center justify-between gap-4 md:mt-6">
-                <div>
-                  <span className="text-xl font-bold md:text-2xl">
-                    {property.price}
-                  </span>
-                  <span className={`before:content-['_']`}>
-                    {property.priceDuration}
-                  </span>
-                </div>
-                <Button {...property.button}>{property.button.title}</Button>
-              </div>
-            </div>
-          </div>
+          // <div key={index} className="border border-border-primary">
+          //   <div className="w-full overflow-hidden">
+          //     <img
+          //       src={property.image.src}
+          //       alt={property.image.alt}
+          //       className="aspect-[3/2] size-full object-cover"
+          //     />
+          //   </div>
+          //   <div className="flex flex-col p-6">
+          //     <div className="mb-2 flex items-center justify-between gap-4">
+          //       <h2 className="text-md font-bold leading-[1.4] md:text-xl">
+          //         {property.title}
+          //       </h2>
+          //       <div className="p-2">
+          //         <Button
+          //           className="cursor-pointer"
+          //           size="icon"
+          //           variant="tertiary"
+          //           asChild
+          //         >
+          //           <BiBookmark className="size-6" />
+          //         </Button>
+          //       </div>
+          //     </div>
+          //     <p className="mb-3 md:mb-4">{property.description}</p>
+          //     <div className="flex flex-wrap gap-4">
+          //       <div className="flex items-center gap-2">
+          //         <BiMap className="size-6" />
+          //         <span className="text-sm">{property.location}</span>
+          //       </div>
+          //       <div className="flex items-center gap-2">
+          //         <BiBed className="size-6" />
+          //         <span className="text-sm">{property.numberOfBeds}</span>
+          //       </div>
+          //       <div className="flex items-center gap-2">
+          //         <BiBath className="size-6" />
+          //         <span className="text-sm">{property.numberOfBaths}</span>
+          //       </div>
+          //     </div>
+          //     <div className="mt-5 flex items-center justify-between gap-4 md:mt-6">
+          //       <div>
+          //         <span className="text-xl font-bold md:text-2xl">
+          //           {property.price}
+          //         </span>
+          //         <span className={`before:content-['_']`}>
+          //           {property.priceDuration}
+          //         </span>
+          //       </div>
+          //       <Button {...property.button}>{property.button.title}</Button>
+          //     </div>
+          //   </div>
+          // </div>
+          <></>
         ))}
-      </div> */}
+      </div>
     </section>
   );
 };

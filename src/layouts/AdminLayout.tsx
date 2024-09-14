@@ -10,12 +10,12 @@ import {
   SheetPortal,
 } from "@relume_io/relume-ui";
 import {
-  BiArchive,
-  BiBarChartAlt2,
+  // BiArchive,
+  // BiBarChartAlt2,
   BiBell,
-  BiCog,
-  BiFile,
-  BiHelpCircle,
+  // BiCog,
+  // BiFile,
+  // BiHelpCircle,
   BiHome,
   BiLayer,
   BiPieChartAlt2,

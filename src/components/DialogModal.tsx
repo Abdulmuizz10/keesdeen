@@ -4,11 +4,11 @@ import {
   DialogPortal,
   DialogOverlay,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  Button,
+  // DialogHeader,
+  // DialogTitle,
+  // DialogDescription,
+  // DialogFooter,
+  // Button,
 } from "@relume_io/relume-ui";
 import { CiSearch } from "react-icons/ci";
 import { GridList5 } from "./ModalProducts";

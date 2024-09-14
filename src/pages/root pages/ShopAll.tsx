@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 
-const ShopAll = () => {
+const ShopAll: React.FC = () => {
   // Define the type for a clothing product
   interface ClothingProduct {
     id: number;
