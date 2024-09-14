@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * {
+  color: ;
+} */
+
+.bricolage-grotesque {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+::-webkit-scrollbar {
+  /* width: 10px; */
+  display: none;
+}
+
+/* ::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 10px;
+} */
