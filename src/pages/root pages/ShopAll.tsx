@@ -3,12 +3,14 @@ import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import { Link } from "react-router-dom";
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
+import { formatAmount } from "../../lib/utils";
 
 const ShopAll: React.FC = () => {
   // Define the type for a clothing product
@@ -30,22 +32,101 @@ const ShopAll: React.FC = () => {
 
   const { products } = useShop();
   const [showFilter, setShowFilter] = useState(true);
-  const [filterProducts, setFilterProducts] = useState<ClothingProduct[]>([]);
-  // const [category, setCategory] = useState([]);
-  // const [sizeCategory, setSizebCategory] = useState<string[]>([]);
-  // const [colorCategory, setColorCategory] = useState<string[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
+    []
+  );
+  const [category, setCategory] = useState<string[]>([]);
+  const [sizeCategory, setSizeCategory] = useState<string[]>([]);
+  const [colorCategory, setColorCategory] = useState<string[]>([]);
+  const [sortType, setSortType] = useState<string>("Relevance");
 
-  // const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (category.includes(e.target.value)) {
-  //     setCategory((prev) => prev.filter((item) => item !== e.target.value));
-  //   } else {
-  //     setCategory((prev) => [...prev, e.target.value]);
-  //   }
-  // };
+  const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (category.includes(e.target.value)) {
+      setCategory((prev) => prev.filter((item) => item !== e.target.value));
+    } else {
+      setCategory((prev) => [...prev, e.target.value]);
+    }
+  };
+
+  const toggleSizeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (sizeCategory.includes(e.target.value)) {
+      setSizeCategory((prev) => prev.filter((item) => item !== e.target.value));
+    } else {
+      setSizeCategory((prev) => [...prev, e.target.value]);
+    }
+  };
+
+  const toggleColorCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (colorCategory.includes(e.target.value)) {
+      setColorCategory((prev) =>
+        prev.filter((item) => item !== e.target.value)
+      );
+    } else {
+      setColorCategory((prev) => [...prev, e.target.value]);
+    }
+  };
+
+  const applyFilter = () => {
+    let productsCopy = products.slice();
+
+    if (category.length > 0) {
+      productsCopy = productsCopy.filter((item) =>
+        category.includes(item.category)
+      );
+    }
+
+    if (sizeCategory.length > 0) {
+      productsCopy = productsCopy.filter((item) =>
+        sizeCategory.includes(item.size)
+      );
+    }
+
+    if (colorCategory.length > 0) {
+      productsCopy = productsCopy.filter((item) =>
+        colorCategory.includes(item.color)
+      );
+    }
+
+    console.log(productsCopy);
+
+    setFilteredProducts(productsCopy);
+  };
+
+  const clearFilters = () => {
+    // toggleCategory();
+    // toggleSizeCategory();
+    // toggleColorCategory();
+    setCategory([]);
+    setSizeCategory([]);
+    setColorCategory([]);
+  };
+
+  const sortProducts = () => {
+    let spCopy = filteredProducts.slice();
+
+    switch (sortType) {
+      case "Low - High":
+        setFilteredProducts(spCopy.sort((a, b) => a.price - b.price));
+        break;
+      case "High - Low":
+        setFilteredProducts(spCopy.sort((a, b) => b.price - a.price));
+        break;
+      default: {
+        applyFilter();
+        break;
+      }
+    }
+  };
 
   useEffect(() => {
-    setFilterProducts(products);
-  }, []);
+    applyFilter();
+  }, [category, sizeCategory, colorCategory]);
+
+  useEffect(() => {
+    sortProducts();
+  }, [sortType]);
+
+  console.log(sortType);
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
@@ -59,6 +140,7 @@ const ShopAll: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-primary">
+          {/* Left Side */}
           <div className="min-w-60">
             <div className="flex items-center gap-2">
               <p
@@ -110,7 +192,7 @@ const ShopAll: React.FC = () => {
                         className="w-3"
                         value={wear}
                         key={index}
-                        // onChange={toggleCategory}
+                        onChange={toggleCategory}
                       />
                       {wear}
                     </p>
@@ -145,6 +227,7 @@ const ShopAll: React.FC = () => {
                       className="w-3"
                       value={size}
                       key={index}
+                      onChange={toggleSizeCategory}
                     />
                     {size}
                   </p>
@@ -161,40 +244,48 @@ const ShopAll: React.FC = () => {
               <p className="text-base md:text-md pb-1">Size</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
-                  "BLACK",
-                  "BLUE",
-                  "BROWN",
-                  "CREAM",
-                  "GREEN",
-                  "GREY",
-                  "PINK",
-                  "PURPLE",
-                  "RED",
-                  "WHITE",
-                ].map((colour, index) => (
+                  "Black",
+                  "Blue",
+                  "Brown",
+                  "Cream",
+                  "Green",
+                  "Grey",
+                  "Pink",
+                  "Purple",
+                  "Red",
+                  "White",
+                ].map((color, index) => (
                   <p className="flex gap-2 items-center">
                     <input
                       type="checkbox"
                       className="w-3"
-                      value={colour}
+                      value={color}
                       key={index}
+                      onChange={toggleColorCategory}
                     />
                     <div
-                      style={{ background: colour }}
+                      style={{ background: color }}
                       className={`h-3 w-3 rounded-full ${
-                        colour === "WHITE" || "CREAM"
+                        color === "WHITE" || "CREAM"
                           ? "border border-border-primary"
                           : ""
                       }`}
                     ></div>
-                    {colour}
+                    {color}
                   </p>
                 ))}
               </div>
             </div>
+            <Button
+              className="my-2 w-full"
+              variant="secondary"
+              onClick={clearFilters}
+            >
+              Clear filter
+            </Button>
           </div>
           {/* Right Side */}
-          <div className="flex-1 flex flex-col gap-5">
+          <div className="flex-1 flex flex-col gap-5 w-full">
             <div className="flex justify-between text-base items-center">
               <h3 className="text-base md:text-md">All Collections</h3>
               {/* {Product Sort} */}
@@ -204,17 +295,21 @@ const ShopAll: React.FC = () => {
                 <option value="high - low">Sort by: High to Low</option>
               </select> */}
 
+              <p className="info-text max-md:hidden">
+                Showing 1 . {filteredProducts.length} of 31 Products
+              </p>
+
               <div className="md:max-w-xxs max-w-[200px] w-full">
-                <Select>
+                <Select onValueChange={setSortType}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select one..." />
+                    <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="relevant">Sort by: Relevance</SelectItem>
-                    <SelectItem value="low - high">
+                    <SelectItem value="Low - High">
                       Sort by: Low to High
                     </SelectItem>
-                    <SelectItem value="high - low">
+                    <SelectItem value="High - Low">
                       Sort by: High to Low
                     </SelectItem>
                   </SelectContent>
@@ -223,7 +318,7 @@ const ShopAll: React.FC = () => {
             </div>
             {/* {Map Products} */}
             <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-6">
-              {filterProducts.map((product, index) => (
+              {filteredProducts.map((product, index) => (
                 <ClothingProductItem product={product} key={index} />
               ))}
             </div>
@@ -265,7 +360,7 @@ const ClothingProductItem = ({ product }: { product: Product }) => {
           className="transition ease-in-out hover:scale-110 w-full h-full"
         />
         <p className="pt-3 pb-1 text-sm">{product.name}</p>
-        <p className=" font-medium text-sm">{product.price}</p>
+        <p className=" font-medium text-sm">{formatAmount(product.price)}</p>
       </div>
     </Link>
   );
