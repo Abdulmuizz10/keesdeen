@@ -318,9 +318,13 @@ const ShopAll: React.FC = () => {
             </div>
             {/* {Map Products} */}
             <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-6">
-              {filteredProducts.map((product, index) => (
-                <ClothingProductItem product={product} key={index} />
-              ))}
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product, index) => (
+                  <ClothingProductItem product={product} key={index} />
+                ))
+              ) : (
+                <ProductUnavailable />
+              )}
             </div>
           </div>
         </div>
@@ -363,6 +367,12 @@ const ClothingProductItem = ({ product }: { product: Product }) => {
         <p className=" font-medium text-sm">{formatAmount(product.price)}</p>
       </div>
     </Link>
+  );
+};
+
+const ProductUnavailable = () => {
+  return (
+    <p className="text-center text-xl w-full">Product is not available...</p>
   );
 };
 
