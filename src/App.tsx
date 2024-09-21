@@ -3,7 +3,7 @@ import { useContext, useEffect } from "react";
 // Libraries
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Layouts

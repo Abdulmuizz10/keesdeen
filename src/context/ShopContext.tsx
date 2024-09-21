@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Images } from "../assets";
 import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
 
 // Define the type for a clothing product
 interface ClothingProduct {

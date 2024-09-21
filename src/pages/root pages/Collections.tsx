@@ -30,7 +30,7 @@ const Collections: React.FC = () => {
     imageUrl: string[];
     description: string;
   }
-  const { name }: { name: any } = useParams();
+  // const { name }: { name: any } = useParams();
   const { products } = useShop();
   const [showFilter, setShowFilter] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(

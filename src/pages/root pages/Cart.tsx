@@ -6,22 +6,22 @@ import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
 import { useHistory } from "react-router-dom";
 
-interface productData {
-  id: number;
-  name: string;
-  brand: string;
-  category: string;
-  price: number;
-  size: string;
-  color: string;
-  rating: number;
-  reviews: number;
-  isAvailable: boolean;
-  material: string;
-  gender: string;
-  imageUrl: string[];
-  description: string;
-}
+// interface productData {
+//   id: number;
+//   name: string;
+//   brand: string;
+//   category: string;
+//   price: number;
+//   size: string;
+//   color: string;
+//   rating: number;
+//   reviews: number;
+//   isAvailable: boolean;
+//   material: string;
+//   gender: string;
+//   imageUrl: string[];
+//   description: string;
+// }
 
 const Cart: React.FC = () => {
   const { products, cartItems, updateQuantity } = useShop();
@@ -45,7 +45,7 @@ const Cart: React.FC = () => {
 
   console.log(cartData);
 
-  const history = useHistory();
+  // const history = useHistory();
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">

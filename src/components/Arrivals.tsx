@@ -21,14 +21,14 @@ type ImageProps = {
 type Props = {
   heading: string;
   description: string;
-  images: ImageProps[];
+  // images: ImageProps[];
 };
 
 export type Gallery21Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const Gallery21 = (props: Gallery21Props) => {
-  const { heading, description, images } = {
+  const { heading, description } = {
     ...Gallery21Defaults,
     ...props,
   } as Props;
@@ -111,22 +111,22 @@ export const Gallery21 = (props: Gallery21Props) => {
 export const Gallery21Defaults: Gallery21Props = {
   heading: "Image Gallery",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  images: [
-    {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 1",
-    },
-    {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 2",
-    },
-    {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 3",
-    },
-    {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 4",
-    },
-  ],
+  // images: [
+  //   {
+  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+  //     alt: "Relume placeholder image 1",
+  //   },
+  //   {
+  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+  //     alt: "Relume placeholder image 2",
+  //   },
+  //   {
+  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+  //     alt: "Relume placeholder image 3",
+  //   },
+  //   {
+  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+  //     alt: "Relume placeholder image 4",
+  //   },
+  // ],
 };

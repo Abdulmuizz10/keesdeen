@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
 import ProductItem from "./ProductItem";
 
