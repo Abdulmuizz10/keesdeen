@@ -13,10 +13,10 @@ import clsx from "clsx";
 import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
 
-type ImageProps = {
-  src: string;
-  alt?: string;
-};
+// type ImageProps = {
+//   src: string;
+//   alt?: string;
+// };
 
 type Props = {
   heading: string;

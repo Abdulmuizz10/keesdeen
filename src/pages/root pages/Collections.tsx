@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Collections: React.FC = () => {
   // Define the type for a clothing product

@@ -4,7 +4,7 @@ import { formatAmount } from "../../lib/utils";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 
 // interface productData {
 //   id: number;
