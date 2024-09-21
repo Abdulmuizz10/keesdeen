@@ -75,7 +75,8 @@ export const Header76 = (props: Header76Props) => {
 };
 
 export const Header76Defaults: Header76Props = {
-  heading: "Medium length hero heading goes here",
+  // heading: "Medium length hero heading goes here",
+  heading: "Be boundless",
   description:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat.",
   buttons: [{ title: "Button" }, { title: "Button", variant: "secondary" }],
