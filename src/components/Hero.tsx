@@ -1,5 +1,6 @@
 import { Button } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
+import { Images } from "../assets";
 
 type ImageProps = {
   src: string;
@@ -80,27 +81,27 @@ export const Header76Defaults: Header76Props = {
   buttons: [{ title: "Button" }, { title: "Button", variant: "secondary" }],
   images: [
     {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      src: Images.img_1,
       alt: "Relume placeholder image 1",
     },
     {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      src: Images.img_2_1,
       alt: "Relume placeholder image 2",
     },
     {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      src: Images.img_26,
       alt: "Relume placeholder image 3",
     },
     {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      src: Images.img_15,
       alt: "Relume placeholder image 4",
     },
     {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      src: Images.img_17,
       alt: "Relume placeholder image 5",
     },
     {
-      src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      src: Images.img_20,
       alt: "Relume placeholder image 6",
     },
   ],

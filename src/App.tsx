@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 
 // Libraries
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Layouts
 import RootLayouts from "./layouts/RootLayout";
@@ -16,6 +18,9 @@ import { Footer5 } from "./components/Footer";
 // Root Pages
 import Home from "./pages/root pages/Home";
 import ShopAll from "./pages/root pages/ShopAll";
+import ProductDetails from "./pages/root pages/ProductDetails";
+import Collections from "./pages/root pages/Collections";
+import Cart from "./pages/root pages/Cart";
 
 // Auth Pages
 import { Login7 } from "./pages/auth pages/Login";
@@ -26,6 +31,7 @@ import Chart from "./pages/admin pages/Testimonials";
 import NewArrivals from "./pages/root pages/NewArrivals";
 
 // Context
+import { AuthContext } from "./context/AuthContext/AuthContext";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -38,37 +44,57 @@ const App: React.FC = () => {
     requestAnimationFrame(raf);
   });
 
-  const admin = true;
+  const { user } = useContext(AuthContext);
 
   return (
     <div className="overflow-x-hidden">
+      <ToastContainer />
       <Router>
-        <Route exact path={["/", "/shop_all", "/new_in"]}>
+        <Route
+          exact
+          path={[
+            "/",
+            "/shop_all",
+            "/new_in",
+            "/product_details/:id",
+            "/collections/:name",
+            "/cart",
+          ]}
+        >
           <RootLayouts>
             <Navbar7 />
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/shop_all" component={ShopAll} />
               <Route exact path="/new_in" component={NewArrivals} />
+              <Route
+                exact
+                path="/product_details/:id"
+                component={ProductDetails}
+              />
+              <Route exact path="/collections/:name" component={Collections} />
+              <Route exact path="/cart" component={Cart} />
             </Switch>
             <Footer5 />
           </RootLayouts>
         </Route>
-        {admin && (
-          <Route exact path={["/admin", "/chart"]}>
+        {user?.isAdmin && (
+          <Route exact path={["/admin", "/price", "/buy"]}>
             <AdminLayout>
               <Switch>
-                <Route exact path="/chart" component={Chart} />
+                <Route exact path="/admin" component={Chart} />
+                <Route exact path="/price" component={Chart} />
+                <Route exact path="/buy" component={Chart} />
               </Switch>
             </AdminLayout>
           </Route>
         )}
 
-        <Route exact path={["/login", "/signUp"]}>
+        <Route exact path={["/register/login", "/register/signUp"]}>
           <AuthLayout>
             <Switch>
-              <Route exact path="/login" component={Login7} />
-              <Route exact path="/signUp" component={Signup7} />
+              <Route exact path="/register/login" component={Login7} />
+              <Route exact path="/register/signUp" component={Signup7} />
             </Switch>
           </AuthLayout>
         </Route>

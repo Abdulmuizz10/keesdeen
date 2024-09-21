@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { Images } from "../assets";
+import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
 
 // Define the type for a clothing product
 interface ClothingProduct {
@@ -14,12 +17,18 @@ interface ClothingProduct {
   isAvailable: boolean;
   material: string;
   gender: string;
-  imageUrl: string;
+  imageUrl: string[];
+  description: string;
 }
 
 // Define the context type
 interface ShopContextType {
   products: ClothingProduct[];
+  cartItems: any;
+  addToCart: any;
+  getCartCount: any;
+  updateQuantity: any;
+  getCartAmount: any;
 }
 
 // Create the ShopContext with an empty default value
@@ -35,18 +44,20 @@ const initialProducts: ClothingProduct[] = [
     brand: "Burberry",
     category: "Top wear",
     price: 199.99,
-    size: "One Size",
+    size: "M",
     color: "Cream",
     rating: 4.9,
     reviews: 190,
     isAvailable: true,
     material: "Wool",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_2_1, Images.img_2_2, Images.img_2_3, Images.img_2_4],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 2,
-    name: "Slim Fit Jeans",
+    name: "Classic White T-Shirt",
     brand: "Levi's",
     category: "Bottom wear",
     price: 49.99,
@@ -57,7 +68,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Denim",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_1, Images.img_1, Images.img_1, Images.img_1],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 3,
@@ -72,7 +85,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Mesh",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_4, Images.img_4, Images.img_4, Images.img_4],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 4,
@@ -87,7 +102,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Polyester",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_5, Images.img_5, Images.img_5, Images.img_5],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 5,
@@ -102,7 +119,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_6, Images.img_6, Images.img_6, Images.img_6],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 6,
@@ -117,7 +136,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Rayon",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_7, Images.img_7, Images.img_7, Images.img_7],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 7,
@@ -132,7 +153,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Denim",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_8, Images.img_8, Images.img_8, Images.img_8],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 8,
@@ -147,7 +170,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_10, Images.img_10, Images.img_10, Images.img_10],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 9,
@@ -162,7 +187,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Spandex",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_11, Images.img_11, Images.img_11, Images.img_11],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 10,
@@ -177,7 +204,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Nylon",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_12, Images.img_12, Images.img_12, Images.img_12],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 11,
@@ -192,7 +221,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Leather",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_13, Images.img_13, Images.img_13, Images.img_13],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 12,
@@ -200,14 +231,16 @@ const initialProducts: ClothingProduct[] = [
     brand: "New Era",
     category: "Top wear",
     price: 19.99,
-    size: "One Size",
+    size: "L",
     color: "Black",
     rating: 4.4,
     reviews: 200,
     isAvailable: true,
     material: "Cotton",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_14, Images.img_14, Images.img_14, Images.img_14],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 13,
@@ -222,7 +255,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Fleece",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_15, Images.img_15, Images.img_15, Images.img_15],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 14,
@@ -237,7 +272,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_16, Images.img_16, Images.img_16, Images.img_16],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 15,
@@ -252,7 +289,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Polyester",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_17, Images.img_17, Images.img_17, Images.img_17],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 16,
@@ -260,14 +299,16 @@ const initialProducts: ClothingProduct[] = [
     brand: "Burberry",
     category: "Inner wear",
     price: 199.99,
-    size: "One Size",
+    size: "S",
     color: "Cream",
     rating: 4.9,
     reviews: 190,
     isAvailable: true,
     material: "Wool",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_18, Images.img_18, Images.img_18, Images.img_18],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 17,
@@ -282,7 +323,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Wool",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_19, Images.img_19, Images.img_19, Images.img_19],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 18,
@@ -297,7 +340,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Polyester",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_20, Images.img_20, Images.img_20, Images.img_20],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 19,
@@ -312,7 +357,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_21, Images.img_21, Images.img_21, Images.img_21],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 20,
@@ -327,7 +374,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_22, Images.img_22, Images.img_22, Images.img_22],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 21,
@@ -342,7 +391,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_23, Images.img_23, Images.img_23, Images.img_23],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 22,
@@ -357,7 +408,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Polyester",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_24, Images.img_24, Images.img_24, Images.img_24],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 23,
@@ -372,7 +425,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Silk",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_11, Images.img_11, Images.img_11, Images.img_11],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 24,
@@ -387,7 +442,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_12, Images.img_12, Images.img_12, Images.img_12],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 25,
@@ -402,8 +459,11 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Cotton",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_13, Images.img_13, Images.img_13, Images.img_13],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
+
   {
     id: 26,
     name: "Sports Bra",
@@ -417,7 +477,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Spandex",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_16, Images.img_16, Images.img_16, Images.img_16],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 27,
@@ -432,7 +494,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Leather",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_19, Images.img_19, Images.img_19, Images.img_19],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 28,
@@ -447,7 +511,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Corduroy",
     gender: "Men",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_15, Images.img_15, Images.img_15, Images.img_15],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 29,
@@ -462,7 +528,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Leather",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_10, Images.img_10, Images.img_10, Images.img_10],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 30,
@@ -477,7 +545,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Denim",
     gender: "Women",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_7, Images.img_7, Images.img_7, Images.img_7],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
   {
     id: 31,
@@ -492,7 +562,9 @@ const initialProducts: ClothingProduct[] = [
     isAvailable: true,
     material: "Wool",
     gender: "Unisex",
-    imageUrl: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    imageUrl: [Images.img_5, Images.img_5, Images.img_5, Images.img_5],
+    description:
+      "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas vel enim aliquid exercitationem repellendus amet ex explicabo, facere voluptatem saepe ",
   },
 ];
 
@@ -501,9 +573,92 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [products] = useState<ClothingProduct[]>(initialProducts);
+  const [cartItems, setCartItems] = useState<any>();
+
+  const addToCart = async (itemId: number, size: string) => {
+    if (!size) {
+      toast.error("Select Product Size");
+      return;
+    }
+
+    // Clone the cartItems to avoid mutating state directly
+    let cartData = structuredClone(cartItems || {});
+
+    // Check if the cart has this itemId already
+    if (!cartData[itemId]) {
+      // Initialize the item object if it doesn't exist
+      cartData[itemId] = {};
+    }
+
+    // Check if the size exists for this item
+    if (cartData[itemId][size]) {
+      // If the size exists, increment the quantity
+      cartData[itemId][size] += 1;
+    } else {
+      // If the size doesn't exist, initialize it with 1
+      cartData[itemId][size] = 1;
+    }
+
+    // Update the state with the new cart data
+    setCartItems(cartData);
+  };
+
+  const getCartCount = () => {
+    let totalCount = 0;
+    for (const items in cartItems) {
+      for (const item in cartItems[items]) {
+        try {
+          if (cartItems[items][item] > 0) {
+            totalCount += cartItems[items][item];
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    return totalCount;
+  };
+
+  const updateQuantity = async (
+    itemId: number,
+    size: string,
+    quantity: number
+  ) => {
+    let cartData = structuredClone(cartItems || {});
+    cartData[itemId][size] = quantity;
+    setCartItems(cartData);
+  };
+
+  const getCartAmount = () => {
+    let totalAmount = 0;
+    for (const items in cartItems) {
+      let itemInfo = products.find((product) => product.id === Number(items));
+      for (const item in cartItems[items]) {
+        try {
+          if (cartItems[items][item] > 0 && itemInfo) {
+            totalAmount += itemInfo.price * cartItems[items][item];
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    return totalAmount;
+  };
 
   return (
-    <ShopContext.Provider value={{ products }}>{children}</ShopContext.Provider>
+    <ShopContext.Provider
+      value={{
+        products,
+        cartItems,
+        addToCart,
+        getCartCount,
+        updateQuantity,
+        getCartAmount,
+      }}
+    >
+      {children}
+    </ShopContext.Provider>
   );
 };
 

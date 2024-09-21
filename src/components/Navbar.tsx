@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button, useMediaQuery } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
 import DialogModal from "./DialogModal";
 import { Link } from "react-router-dom";
-import { mainLogo } from "../assets";
+import { mainLogo, smallLogo } from "../assets";
 import { IoBagOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
+import { AuthContext } from "../context/AuthContext/AuthContext";
+import { useShop } from "../context/ShopContext";
 
 type ImageProps = {
   url?: string;
@@ -41,6 +43,7 @@ type NavLink = {
 
 type Props = {
   logo: ImageProps;
+  mobileLogo: ImageProps;
   navLinks: NavLink[];
   buttons: ButtonProps[];
 };
@@ -49,7 +52,7 @@ export type Navbar7Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const Navbar7 = (props: Navbar7Props) => {
-  const { logo, navLinks, buttons } = {
+  const { logo, mobileLogo, navLinks, buttons } = {
     ...Navbar7Defaults,
     ...props,
   } as Props;
@@ -57,13 +60,23 @@ export const Navbar7 = (props: Navbar7Props) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 991px)");
 
-  const user = false;
+  const { user } = useContext(AuthContext);
+  const { getCartCount } = useShop();
 
   return (
     <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18">
       <div className="mx-auto flex size-full max-w-full items-center justify-between">
         <a href={logo.url}>
-          <img src={logo.src} alt={logo.alt} className="w-full h-[25px]" />
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            className="w-full h-[25px] hidden sm:flex"
+          />
+          <img
+            src={mobileLogo.src}
+            alt={mobileLogo.alt}
+            className="w-full h-[25px] flex sm:hidden"
+          />
         </a>
         <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-primary px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 lg:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
           <div className="flex flex-col items-center lg:flex-row">
@@ -78,7 +91,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                 ) : (
                   <Link
                     to={navLink.url}
-                    className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base"
+                    className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins"
                   >
                     {navLink.title}
                   </Link>
@@ -89,14 +102,27 @@ export const Navbar7 = (props: Navbar7Props) => {
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex gap-2">
               <DialogModal />
-              <IoBagOutline className="text-2xl" />
-              {user && (
-                <Link
-                  to="/admin"
-                  className="relative block w-auto  text-md lg:inline-block lg:px-1 lg:text-xl border-b border-text-primary"
-                >
-                  Admin
-                </Link>
+              <Link className="relative" to="/cart">
+                <IoBagOutline className="text-2xl" />
+                {/* <div className="h-4 w-4 p-2 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full text-sm">
+                  {getCartCount()}
+                </div> */}
+                <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
+                  {getCartCount()}
+                </div>
+              </Link>
+              {user?.isAdmin ? (
+                <div className="flex flex-col items-center">
+                  <Link
+                    to="/admin"
+                    className="relative block w-auto  text-md lg:inline-block lg:px-1 lg:text-xl"
+                  >
+                    Admin
+                  </Link>
+                  <hr className="h-[2px] w-1/2 bg-background-alternative" />
+                </div>
+              ) : (
+                <></>
               )}
             </div>
             {user ? (
@@ -106,7 +132,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             ) : (
               <>
                 {buttons.map((button, index) => (
-                  <Link to="/login">
+                  <Link to="/register/login">
                     <Button
                       key={index}
                       variant={button.variant}
@@ -122,7 +148,15 @@ export const Navbar7 = (props: Navbar7Props) => {
         </div>
         <div className="flex lg:hidden gap-2">
           <DialogModal />
-          <IoBagOutline className="text-2xl" />
+          <Link className="relative" to="/cart">
+            <IoBagOutline className="text-2xl" />
+            {/* <div className="h-4 w-4 p-1 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full flex items-center justify-center text-sm">
+              {getCartCount()}
+            </div> */}
+            <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
+              {getCartCount()}
+            </div>
+          </Link>
         </div>
         <button
           className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center lg:hidden"
@@ -182,7 +216,11 @@ export const Navbar7 = (props: Navbar7Props) => {
                       // <a href={navLink.url} className="block py-3 text-md">
                       //   {navLink.title}
                       // </a>
-                      <Link to={navLink.url} className="block py-3 text-md">
+                      <Link
+                        to={navLink.url}
+                        className="block py-3 text-md"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                      >
                         {navLink.title}
                       </Link>
                     )}
@@ -196,7 +234,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                   ) : (
                     <>
                       {buttons.map((button, index) => (
-                        <Link to="/login">
+                        <Link to="/register/login">
                           <Button
                             key={index}
                             variant={button.variant}
@@ -210,13 +248,15 @@ export const Navbar7 = (props: Navbar7Props) => {
                     </>
                   )}
 
-                  {user && (
+                  {user?.isAdmin ? (
                     <Link
                       to="/admin"
                       className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base"
                     >
                       Admin
                     </Link>
+                  ) : (
+                    <></>
                   )}
                 </div>
               </div>
@@ -238,6 +278,7 @@ const SubMenu = ({
   isMobile: boolean;
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
     <div
@@ -295,6 +336,7 @@ const SubMenu = ({
                           key={index}
                           href={subMenuLink.url}
                           className="grid w-full auto-cols-fr grid-cols-[max-content_1fr] items-start gap-x-3 py-2"
+                          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         >
                           <div className="flex size-6 flex-col items-center justify-center">
                             <img
@@ -351,11 +393,15 @@ export const Navbar7Defaults: Navbar7Props = {
     src: mainLogo,
     alt: "Logo image",
   },
+  mobileLogo: {
+    url: "/",
+    src: smallLogo,
+    alt: "Logo image",
+  },
   navLinks: [
+    { title: "Home", url: "/" },
     { title: "Shop All", url: "/shop_all" },
     { title: "New In", url: "/new_in" },
-    { title: "Collections", url: "#" },
-    { title: "Collab", url: "/collab" },
     {
       title: "Categories",
       url: "/categories",

@@ -215,7 +215,7 @@ export const Footer5Defaults: Footer5Props = {
     { url: "#", icon: <BiLogoLinkedinSquare className="size-6" /> },
     { url: "#", icon: <BiLogoYoutube className="size-6" /> },
   ],
-  footerText: "© 2024 KeesDeen. All rights reserved.",
+  footerText: "© 2024 Keesdeen. All rights reserved.",
   footerLinks: [
     { title: "Privacy Policy", url: "#" },
     { title: "Terms of Service", url: "#" },

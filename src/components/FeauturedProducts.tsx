@@ -5,6 +5,7 @@ import type { ButtonProps } from "@relume_io/relume-ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { RxChevronRight } from "react-icons/rx";
+import { Images } from "../assets";
 
 type ImageProps = {
   src: string;
@@ -153,10 +154,15 @@ export const Layout422Defaults: Layout422Props = {
       heading: "Medium length section heading goes here",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      // image: {
+      //   src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      //   alt: "Relume placeholder image 1",
+      // },
       image: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+        src: Images.img_13,
         alt: "Relume placeholder image 1",
       },
+
       button: {
         variant: "link",
         size: "link",
@@ -169,8 +175,12 @@ export const Layout422Defaults: Layout422Props = {
       heading: "Medium length section heading goes here",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.",
+      // image: {
+      //   src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+      //   alt: "Relume placeholder image 1",
+      // },
       image: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+        src: Images.img_10,
         alt: "Relume placeholder image 2",
       },
       button: {

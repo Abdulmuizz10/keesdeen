@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { mainLogo } from "../../assets";
+import { AuthContext } from "../../context/AuthContext/AuthContext";
+import { SignUp } from "../../context/AuthContext/AuthApiCalls";
 
 type ImageProps = {
   url?: string;
@@ -45,13 +47,16 @@ export const Signup7: React.FC = (props: Signup7Props) => {
     ...props,
   } as Props;
 
-  const [name, setName] = useState("");
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { dispatch } = useContext(AuthContext);
+  const history = useHistory();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log({ name, email, password });
+    SignUp({ username: userName, email, password }, dispatch);
+    history.push("/");
   };
 
   return (
@@ -78,8 +83,8 @@ export const Signup7: React.FC = (props: Signup7Props) => {
                 <Input
                   type="text"
                   id="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                   required
                 />
               </div>
@@ -173,7 +178,7 @@ export const Signup7Defaults: Signup7Props = {
   logInText: "Already have an account?",
   logInLink: {
     text: "Log in",
-    url: "/login",
+    url: "/register/login",
   },
-  footerText: "© 2024 KeesDeen",
+  footerText: "© 2024 Keesdeen",
 };

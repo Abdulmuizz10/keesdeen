@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
-import { Link } from "react-router-dom";
 import {
   Button,
   Select,
@@ -10,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
-import { formatAmount } from "../../lib/utils";
+import ProductItem from "../../components/ProductItem";
 
 const ShopAll: React.FC = () => {
   // Define the type for a clothing product
@@ -27,7 +26,8 @@ const ShopAll: React.FC = () => {
     isAvailable: boolean;
     material: string;
     gender: string;
-    imageUrl: string;
+    imageUrl: string[];
+    description: string;
   }
 
   const { products } = useShop();
@@ -87,8 +87,6 @@ const ShopAll: React.FC = () => {
       );
     }
 
-    console.log(productsCopy);
-
     setFilteredProducts(productsCopy);
   };
 
@@ -125,8 +123,6 @@ const ShopAll: React.FC = () => {
   useEffect(() => {
     sortProducts();
   }, [sortType]);
-
-  console.log(sortType);
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
@@ -241,7 +237,7 @@ const ShopAll: React.FC = () => {
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Size</p>
+              <p className="text-base md:text-md pb-1">Colour</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "Black",
@@ -295,7 +291,7 @@ const ShopAll: React.FC = () => {
                 <option value="high - low">Sort by: High to Low</option>
               </select> */}
 
-              <p className="info-text max-md:hidden">
+              <p className="info-text hidden xl:flex">
                 Showing 1 . {filteredProducts.length} of 31 Products
               </p>
 
@@ -317,10 +313,10 @@ const ShopAll: React.FC = () => {
               </div>
             </div>
             {/* {Map Products} */}
-            <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-6">
+            <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product, index) => (
-                  <ClothingProductItem product={product} key={index} />
+                  <ProductItem product={product} key={index} />
                 ))
               ) : (
                 <ProductUnavailable />
@@ -333,47 +329,9 @@ const ShopAll: React.FC = () => {
   );
 };
 
-// Assuming you have the ClothingProduct type already defined
-
-interface Product {
-  id: number;
-  name: string;
-  brand: string;
-  category: string;
-  price: number;
-  size: string;
-  color: string;
-  rating: number;
-  reviews: number;
-  isAvailable: boolean;
-  material: string;
-  gender: string;
-  imageUrl: string;
-}
-
-const ClothingProductItem = ({ product }: { product: Product }) => {
-  return (
-    <Link
-      className="text-text-secondary cursor-pointer"
-      to={`/product/${product.id}`}
-    >
-      <div className="overflow-hidden">
-        <img
-          src={product.imageUrl}
-          alt="product image"
-          className="transition ease-in-out hover:scale-110 w-full h-full"
-        />
-        <p className="pt-3 pb-1 text-sm">{product.name}</p>
-        <p className=" font-medium text-sm">{formatAmount(product.price)}</p>
-      </div>
-    </Link>
-  );
-};
-
 const ProductUnavailable = () => {
   return (
     <p className="text-center text-xl w-full">Product is not available...</p>
   );
 };
-
 export default ShopAll;
