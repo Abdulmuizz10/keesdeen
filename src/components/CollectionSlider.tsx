@@ -15,7 +15,7 @@ export const Gallery5 = (props: Gallery5Props) => {
     ...props,
   } as Props;
   const { products } = useShop();
-  const collections = products.slice(21, 27);
+  const collections = products.slice(21, 29);
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28">
       <div className="container">
@@ -25,7 +25,7 @@ export const Gallery5 = (props: Gallery5Props) => {
           </h2>
           <p className="md:text-md">{description}</p>
         </div>
-        <div className="grid grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
           {collections.map((product, index) => (
             // <Link key={index} to={`/product_details/${product.id}`}>
             //   <img

@@ -78,9 +78,9 @@ const Cart: React.FC = () => {
                       <p className="text-xs sm:text-lg font-medium text-text-primary bricolage-grotesque">
                         {productData.name}
                       </p>
-                      <div className="flex items-center gap-5 mt-">
+                      <div className="flex items-center gap-2 sm:gap-5 mt-1">
                         <p>{formatAmount(productData.price)}</p>
-                        <p className="-2 h-[42px] w-[42px] bg-gray-300 flex items-center justify-center cursor-pointer text-text-primary rounded-sm">
+                        <p className="-2 h-[30px] w-[30px] md:h-[42px] md:w-[42px] bg-gray-300 flex items-center justify-center cursor-pointer text-text-primary rounded-sm">
                           {item.size}
                         </p>
                       </div>
@@ -102,7 +102,7 @@ const Cart: React.FC = () => {
                     }
                   />
                   <RiDeleteBin5Line
-                    className="text-text-primary h-[40px] w-[25px] cursor-pointer"
+                    className="text-text-primary h-[45px] w-[25px] cursor-pointer"
                     onClick={() => updateQuantity(item.id, item.size, 0)}
                   />
                 </div>
@@ -111,7 +111,7 @@ const Cart: React.FC = () => {
         </div>
 
         <div className="flex justify-end my-20">
-          <div className="w-full sm:w-[450px] border p-5 rounded-md shadow-xlarge">
+          <div className="w-full sm:w-[450px] border border-border-primary p-5 rounded-md shadow-xlarge">
             <CartTotal />
             <div className="w-full text-end mt-5">
               <Button
