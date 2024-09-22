@@ -27,7 +27,7 @@ const RelatedProducts = ({ category }: any) => {
     if (products.length > 0) {
       let productsCopy = products.slice();
       productsCopy = productsCopy.filter((item) => category === item.category);
-      setRelated(productsCopy.slice(1, 5));
+      setRelated(productsCopy.slice(1));
     }
   }, [products]);
 

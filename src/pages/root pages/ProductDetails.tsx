@@ -6,6 +6,7 @@ import { FaStarHalfAlt } from "react-icons/fa";
 import { formatAmount } from "../../lib/utils";
 import { Button } from "@relume_io/relume-ui";
 import RelatedProducts from "../../components/RelatedProducts";
+import Reviews from "../../components/Reviews";
 
 interface Product {
   id: number;
@@ -115,7 +116,7 @@ const ProductDetails: React.FC = () => {
               </div>
             </div>
             <Button
-              className=" active:bg-gray-700"
+              className=" active:bg-gray-700 rounded-sm"
               onClick={() => addToCart(productData?.id, size)}
             >
               ADD TO CART
@@ -131,22 +132,7 @@ const ProductDetails: React.FC = () => {
         </div>
         {/* Description and Review Section */}
         <div className="mt-20">
-          <div className="flex">
-            <b className="border px-5 py-3 text-sm">Description</b>
-            <p className="border px-5 py-3 text-sm">Reviews (122)</p>
-          </div>
-          <div className="flex flex-col gap-4 border p-6 text-base text-text-secondary">
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod
-              doloribus eius nesciunt accusantium fuga. Placeat, a ut qui ipsum
-              dolore ratione, iste, cupiditate sed eaque repellendus est saepe
-              voluptatum ullam?
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod
-              doloribus eius nesciunt accusantium fuga. Placeat, a ut qui ipsum.
-            </p>
-          </div>
+          <Reviews />
         </div>
 
         {/* Related products */}

@@ -56,7 +56,7 @@ const Cart: React.FC = () => {
           </h2>
         </div>
 
-        <div className="border-t border-border-primary">
+        <div className="border-t ">
           {cartData &&
             cartData.map((item: any, index: number) => {
               const productData = products.find(
@@ -66,11 +66,11 @@ const Cart: React.FC = () => {
               return productData ? (
                 <div
                   key={index}
-                  className="py-4 border-b border-border-primary text-text-secondary grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
+                  className="py-4 border-b  text-text-secondary grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4 "
                 >
                   <div className="flex items-start gap-6">
                     <img
-                      className="w-16 sm:w-20"
+                      className="w-16 sm:w-20 rounded-sm"
                       src={productData.imageUrl[0]}
                       alt="cart image"
                     />
@@ -80,14 +80,14 @@ const Cart: React.FC = () => {
                       </p>
                       <div className="flex items-center gap-5 mt-">
                         <p>{formatAmount(productData.price)}</p>
-                        <p className="-2 h-[40px] w-[40px] bg-gray-300 flex items-center justify-center cursor-pointer text-text-primary">
+                        <p className="-2 h-[42px] w-[42px] bg-gray-300 flex items-center justify-center cursor-pointer text-text-primary rounded-sm">
                           {item.size}
                         </p>
                       </div>
                     </div>
                   </div>
                   <input
-                    className="border border-border-primary max-w-[40px] sm:max-w-[80px] px-1 sm:px-2 sm:py-1 py-[2px] text-text-primary rounded-sm"
+                    className="border border-border-primary max-w-[40px] sm:max-w-[80px] px-1 sm:px-2 sm:py-1 py-[2px] text-text-primary rounded-md"
                     type="number"
                     min={1}
                     defaultValue={item.quantity}
@@ -111,11 +111,11 @@ const Cart: React.FC = () => {
         </div>
 
         <div className="flex justify-end my-20">
-          <div className="w-full sm:w-[450px]">
+          <div className="w-full sm:w-[450px] border p-5 rounded-md shadow-xlarge">
             <CartTotal />
             <div className="w-full text-end mt-5">
               <Button
-                className="w-full"
+                className="w-full rounded-md"
                 // onClick={() => history.push("/place_order")}
               >
                 PROCEED TO CHECKOUT

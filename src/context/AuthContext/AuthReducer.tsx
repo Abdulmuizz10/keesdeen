@@ -1,16 +1,4 @@
-import { User } from "../../lib/types";
-
-interface AuthState {
-  user: any | null;
-  isFetching: boolean;
-  error: boolean;
-}
-
-type AuthAction =
-  | { type: "ACCESS_START" }
-  | { type: "ACCESS_SUCCESS"; payload: User }
-  | { type: "ACCESS_FAILURE" }
-  | { type: "LOGOUT" };
+import { AuthAction, AuthState } from "../../lib/types";
 
 const AuthReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {

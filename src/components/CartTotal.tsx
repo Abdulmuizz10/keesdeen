@@ -6,9 +6,9 @@ const CartTotal: React.FC = () => {
   const { getCartAmount } = useShop();
   const delivery_fee = 100;
   return (
-    <div className="w-full">
+    <div className="w-full ">
       <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-        Cart ToTal:
+        Cart Total:
       </h2>
 
       <div className="flex flex-col gap-2 mt-2 text-sm">

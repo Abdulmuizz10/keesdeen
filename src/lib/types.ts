@@ -1,8 +1,8 @@
-export type AuthAction =
-  | { type: "ACCESS_START" }
-  | { type: "ACCESS_SUCCESS"; payload: User }
-  | { type: "ACCESS_FAILURE" }
-  | { type: "LOGOUT" };
+export interface AuthState {
+  user: any | null;
+  isFetching: boolean;
+  error: boolean;
+}
 
 export interface User {
   id: string;
@@ -11,3 +11,9 @@ export interface User {
   isAdmin: string;
   token: string;
 }
+
+export type AuthAction =
+  | { type: "ACCESS_START" }
+  | { type: "ACCESS_SUCCESS"; payload: User }
+  | { type: "ACCESS_FAILURE" }
+  | { type: "LOGOUT" };

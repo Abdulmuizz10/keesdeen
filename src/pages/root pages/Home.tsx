@@ -21,6 +21,7 @@ const Home: React.FC = () => {
       <Gallery21 />
       <Cta3 />
       <Testimonial21 />
+
       {/* <Faq11 /> */}
     </>
   );

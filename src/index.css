@@ -9,6 +9,11 @@
   color: ;
 } */
 
+.scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}
+
 .bricolage-grotesque {
   font-family: "Bricolage Grotesque", sans-serif;
   font-optical-sizing: auto;
