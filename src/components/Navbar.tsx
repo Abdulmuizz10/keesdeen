@@ -232,7 +232,10 @@ export const Navbar7 = (props: Navbar7Props) => {
                 ))}
                 <div className="mt-6 flex flex-col items-stretch gap-4">
                   {user ? (
-                    <Link to={"/profile"}>
+                    <Link
+                      to={"/profile"}
+                      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
                       <CiUser className="text-3xl" />
                     </Link>
                   ) : (

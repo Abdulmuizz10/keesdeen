@@ -12,7 +12,8 @@ interface Response {
 // Type definition for the login function
 export const Login = async (
   user: any,
-  dispatch: Dispatch<any>
+  dispatch: Dispatch<any>,
+  history: any
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
@@ -21,6 +22,7 @@ export const Login = async (
       user
     );
     dispatch(AccessSuccess(res.data));
+    history.push("/");
   } catch (err) {
     dispatch(AccessFailure());
   }
@@ -28,7 +30,8 @@ export const Login = async (
 
 export const SignUp = async (
   user: any,
-  dispatch: Dispatch<any>
+  dispatch: Dispatch<any>,
+  history: any
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
@@ -37,6 +40,7 @@ export const SignUp = async (
       user
     );
     dispatch(AccessSuccess(res.data));
+    history.push("/");
   } catch (err) {
     dispatch(AccessFailure());
   }

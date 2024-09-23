@@ -62,8 +62,7 @@ export const Login7: React.FC = (props: Login7Props) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log({ email, password });
-    Login({ email, password }, dispatch);
-    history.push("/");
+    Login({ email, password }, dispatch, history);
   };
 
   return (

@@ -55,7 +55,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    SignUp({ username: userName, email, password }, dispatch);
+    SignUp({ username: userName, email, password }, dispatch, history);
     history.push("/");
   };
 

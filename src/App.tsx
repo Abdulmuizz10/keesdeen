@@ -13,7 +13,7 @@ import AuthLayout from "./layouts/AuthLayout";
 
 // Components
 import { Navbar7 } from "./components/Navbar";
-import { Footer5 } from "./components/Footer";
+import { Footer1 } from "./components/Footer";
 
 // Root Pages
 import Home from "./pages/root pages/Home";
@@ -32,6 +32,8 @@ import NewArrivals from "./pages/root pages/NewArrivals";
 
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
+import Profile from "./pages/root pages/Profile";
+import Checkout from "./pages/root pages/CheckOut";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -46,6 +48,10 @@ const App: React.FC = () => {
 
   const { user } = useContext(AuthContext);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="overflow-x-hidden">
       <ToastContainer />
@@ -59,6 +65,8 @@ const App: React.FC = () => {
             "/product_details/:id",
             "/collections/:name",
             "/cart",
+            "/profile",
+            "/check_out",
           ]}
         >
           <RootLayouts>
@@ -74,8 +82,10 @@ const App: React.FC = () => {
               />
               <Route exact path="/collections/:name" component={Collections} />
               <Route exact path="/cart" component={Cart} />
+              <Route exact path="/profile" component={Profile} />
+              <Route exact path="/check_out" component={Checkout} />
             </Switch>
-            <Footer5 />
+            <Footer1 />
           </RootLayouts>
         </Route>
         {user?.isAdmin && (

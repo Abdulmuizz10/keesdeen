@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { Images } from "../assets";
 import { toast } from "react-toastify";
 
@@ -572,14 +578,99 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [products] = useState<ClothingProduct[]>(initialProducts);
-  const [cartItems, setCartItems] = useState<any>();
+
+  {
+    /* Unused cart code */
+  }
+
+  // const [cartItems, setCartItems] = useState<any>({});
+
+  // const addToCart = async (itemId: number, size: string) => {
+  //   if (!size) {
+  //     toast.error("Select Product Size");
+  //     return;
+  //   }
+  //   // Clone the cartItems to avoid mutating state directly
+  //   let cartData = structuredClone(cartItems || {});
+
+  //   // Check if the cart has this itemId already
+  //   if (!cartData[itemId]) {
+  //     // Initialize the item object if it doesn't exist
+  //     cartData[itemId] = {};
+  //   }
+
+  //   // Check if the size exists for this item
+  //   if (cartData[itemId][size]) {
+  //     // If the size exists, increment the quantity
+  //     cartData[itemId][size] += 1;
+  //   } else {
+  //     // If the size doesn't exist, initialize it with 1
+  //     cartData[itemId][size] = 1;
+  //   }
+
+  //   // Update the state with the new cart data
+  //   setCartItems(cartData);
+  // };
+
+  // const getCartCount = () => {
+  //   let totalCount = 0;
+  //   for (const items in cartItems) {
+  //     for (const item in cartItems[items]) {
+  //       try {
+  //         if (cartItems[items][item] > 0) {
+  //           totalCount += cartItems[items][item];
+  //         }
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   }
+  //   return totalCount;
+  // };
+
+  // const updateQuantity = async (
+  //   itemId: number,
+  //   size: string,
+  //   quantity: number
+  // ) => {
+  //   let cartData = structuredClone(cartItems || {});
+  //   cartData[itemId][size] = quantity;
+  //   setCartItems(cartData);
+  // };
+
+  // const getCartAmount = () => {
+  //   let totalAmount = 0;
+  //   for (const items in cartItems) {
+  //     let itemInfo = products.find((product) => product.id === Number(items));
+  //     for (const item in cartItems[items]) {
+  //       try {
+  //         if (cartItems[items][item] > 0 && itemInfo) {
+  //           totalAmount += itemInfo.price * cartItems[items][item];
+  //         }
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   }
+  //   return totalAmount;
+  // };
+
+  const [cartItems, setCartItems] = useState<any>(() => {
+    // Retrieve cart data from localStorage on initial render
+    const storedCart = localStorage.getItem("cart");
+    return storedCart ? JSON.parse(storedCart) : {}; // Use stored cart or an empty object
+  });
+
+  useEffect(() => {
+    // Save cart data to localStorage whenever cartItems state changes
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = async (itemId: number, size: string) => {
     if (!size) {
       toast.error("Select Product Size");
       return;
     }
-
     // Clone the cartItems to avoid mutating state directly
     let cartData = structuredClone(cartItems || {});
 
@@ -624,7 +715,14 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     quantity: number
   ) => {
     let cartData = structuredClone(cartItems || {});
-    cartData[itemId][size] = quantity;
+    if (quantity > 0) {
+      cartData[itemId][size] = quantity;
+    } else {
+      delete cartData[itemId][size]; // Remove size if quantity is 0
+      if (Object.keys(cartData[itemId]).length === 0) {
+        delete cartData[itemId]; // Remove item if no sizes left
+      }
+    }
     setCartItems(cartData);
   };
 
