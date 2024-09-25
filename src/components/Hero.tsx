@@ -25,16 +25,24 @@ export const Header76 = (props: Header76Props) => {
   return (
     <section
       id="relume"
-      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0"
+      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0 bg-background-primary"
     >
       <div className="mx-[5%] max-w-[40rem] justify-self-start lg:ml-[5vw] lg:mr-20 lg:justify-self-end">
-        <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque">
+        <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-brand-neutral">
           {heading}
         </h1>
-        <p className="md:text-md">{description}</p>
+        <p className="md:text-md text-text-primary">{description}</p>
         <div className="mt-6 flex gap-x-4 md:mt-8">
           {buttons.map((button, index) => (
-            <Button key={index} {...button}>
+            <Button
+              key={index}
+              {...button}
+              className={`${
+                index === 0
+                  ? "bg-brand-secondary rounded-full"
+                  : "bg-brand-primary rounded-full"
+              } text-text-light`}
+            >
               {button.title}
             </Button>
           ))}
@@ -76,10 +84,13 @@ export const Header76 = (props: Header76Props) => {
 
 export const Header76Defaults: Header76Props = {
   // heading: "Medium length hero heading goes here",
-  heading: "Be boundless",
+  heading: "Be boundless, Stay Fly Always",
   description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat.",
-  buttons: [{ title: "Button" }, { title: "Button", variant: "secondary" }],
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi qui.",
+  buttons: [
+    { title: "New arrivals" },
+    { title: "Shop now", variant: "secondary" },
+  ],
   images: [
     {
       src: Images.img_1,

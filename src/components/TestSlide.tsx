@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import clsx from "clsx";
+import { mainLogo } from "../assets";
 
 type Props = {
   headings: string[];
@@ -38,7 +39,7 @@ export const Banner13 = (props: Banner13Props) => {
             key={index}
             style={index % 2 === 0 ? { x: xPartOne } : { x: xPartTwo }}
             className={clsx(
-              "text-[6rem] font-bold leading-[1.2] bricolage-grotesque",
+              "text-[6rem] font-bold leading-[1.2] bricolage-grotesque text-brand-primary",
               {
                 "self-end": index % 2 !== 0,
               }
@@ -54,7 +55,7 @@ export const Banner13 = (props: Banner13Props) => {
 
 export const Banner13Defaults: Banner13Props = {
   headings: [
-    "Medium length banner heading goes here",
-    "Medium length banner heading goes here",
+    "Keesdeen Keesdeen Keesdeen Keesdeen Keesdeen",
+    "Keesdeen Keesdeen Keesdeen Keesdeen Keesdeen",
   ],
 };

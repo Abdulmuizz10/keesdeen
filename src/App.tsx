@@ -19,8 +19,9 @@ import { Footer1 } from "./components/Footer";
 import Home from "./pages/root pages/Home";
 import ShopAll from "./pages/root pages/ShopAll";
 import ProductDetails from "./pages/root pages/ProductDetails";
-import Collections from "./pages/root pages/Collections";
+import BestSellers from "./pages/root pages/BestSellers";
 import Cart from "./pages/root pages/Cart";
+import Checkout from "./pages/root pages/CheckOut";
 
 // Auth Pages
 import { Login7 } from "./pages/auth pages/Login";
@@ -33,7 +34,6 @@ import NewArrivals from "./pages/root pages/NewArrivals";
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import Profile from "./pages/root pages/Profile";
-import Checkout from "./pages/root pages/CheckOut";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -63,7 +63,7 @@ const App: React.FC = () => {
             "/shop_all",
             "/new_in",
             "/product_details/:id",
-            "/collections/:name",
+            "/best_sellers/:name",
             "/cart",
             "/profile",
             "/check_out",
@@ -80,7 +80,7 @@ const App: React.FC = () => {
                 path="/product_details/:id"
                 component={ProductDetails}
               />
-              <Route exact path="/collections/:name" component={Collections} />
+              <Route exact path="/best_sellers/:name" component={BestSellers} />
               <Route exact path="/cart" component={Cart} />
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/check_out" component={Checkout} />

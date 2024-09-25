@@ -92,7 +92,7 @@ export const Gallery21 = (props: Gallery21Props) => {
                   onClick={() => api?.scrollTo(index)}
                   className={clsx("mx-[3px] inline-block size-2 rounded-full", {
                     "bg-black": current === index + 1,
-                    "bg-neutral-light": current !== index + 1,
+                    "bg-neutral-400": current !== index + 1,
                   })}
                 />
               ))}
@@ -109,24 +109,6 @@ export const Gallery21 = (props: Gallery21Props) => {
 };
 
 export const Gallery21Defaults: Gallery21Props = {
-  heading: "Image Gallery",
+  heading: "New Arrivals",
   description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  // images: [
-  //   {
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 1",
-  //   },
-  //   {
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 2",
-  //   },
-  //   {
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 3",
-  //   },
-  //   {
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 4",
-  //   },
-  // ],
 };

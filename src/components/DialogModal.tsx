@@ -17,7 +17,7 @@ const DialogModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <CiSearch className="text-3xl cursor-pointer" />
+        <CiSearch className="text-3xl cursor-pointer text-text-primary" />
       </DialogTrigger>
       <DialogPortal>
         <DialogOverlay className="bg-black/50" />

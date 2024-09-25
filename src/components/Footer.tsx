@@ -1,4 +1,4 @@
-import { mainLogo } from "../assets";
+import { mainLogo, mainLogoWhite } from "../assets";
 import { Button, Input } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { FaXTwitter } from "react-icons/fa6";
@@ -60,7 +60,7 @@ export const Footer1 = (props: Footer1Props) => {
     ...props,
   } as Props;
   return (
-    <footer className="px-[5%] py-12 md:py-18 lg:py-20">
+    <footer className="px-[5%] py-12 md:py-18 lg:py-20 bg-brand-neutral text-text-light">
       <div className="container">
         <div className="grid grid-cols-1 gap-x-[8vw] gap-y-12 pb-12 md:gap-y-16 md:pb-18 lg:grid-cols-[0.75fr,1fr] lg:gap-y-4 lg:pb-20">
           <div className="flex flex-col">
@@ -92,7 +92,10 @@ export const Footer1 = (props: Footer1Props) => {
                 <ul>
                   {column.links.map((link, linkIndex) => (
                     <li key={linkIndex} className="py-2 text-sm">
-                      <a href={link.url} className="flex items-center gap-3">
+                      <a
+                        href={link.url}
+                        className="flex items-center gap-3 text-text-secondary"
+                      >
                         {link.icon && <span>{link.icon}</span>}
                         <span>{link.title}</span>
                       </a>
@@ -103,7 +106,7 @@ export const Footer1 = (props: Footer1Props) => {
             ))}
           </div>
         </div>
-        <div className="h-px w-full bg-black" />
+        <div className="h-px w-full bg-background-primary" />
         <div className="flex flex-col-reverse items-start justify-between pb-4 pt-6 text-sm md:flex-row md:items-center md:pb-0 md:pt-8">
           <p className="mt-6 md:mt-0">{footerText}</p>
           <ul className="grid grid-flow-row grid-cols-[max-content] justify-center gap-x-0 gap-y-4 text-sm md:grid-flow-col md:gap-x-6 md:gap-y-0">
@@ -122,7 +125,7 @@ export const Footer1 = (props: Footer1Props) => {
 export const Footer1Defaults: Footer1Props = {
   logo: {
     url: "/",
-    src: mainLogo,
+    src: mainLogoWhite,
     alt: "Logo image",
   },
   newsletterDescription:
@@ -192,6 +195,5 @@ export const Footer1Defaults: Footer1Props = {
   footerLinks: [
     { title: "Privacy Policy", url: "#" },
     { title: "Terms of Service", url: "#" },
-    { title: "Cookies Settings", url: "#" },
   ],
 };

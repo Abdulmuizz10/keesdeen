@@ -7,7 +7,7 @@ import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
 import DialogModal from "./DialogModal";
 import { Link } from "react-router-dom";
-import { mainLogo, smallLogo } from "../assets";
+import { mainLogo, smallLogo, mainLogoWhite } from "../assets";
 import { IoBagOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";
@@ -64,7 +64,7 @@ export const Navbar7 = (props: Navbar7Props) => {
   const { getCartCount } = useShop();
 
   return (
-    <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18">
+    <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary px-[5%] md:min-h-18  bg-background-primary">
       <div className="mx-auto flex size-full max-w-full items-center justify-between">
         <a href={logo.url}>
           <img
@@ -91,7 +91,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                 ) : (
                   <Link
                     to={navLink.url}
-                    className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins"
+                    className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary"
                   >
                     {navLink.title}
                   </Link>
@@ -103,7 +103,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             <div className="hidden lg:flex gap-2">
               <DialogModal />
               <Link className="relative" to="/cart">
-                <IoBagOutline className="text-2xl" />
+                <IoBagOutline className="text-2xl text-text-primary" />
                 {/* <div className="h-4 w-4 p-2 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full text-sm">
                   {getCartCount()}
                 </div> */}
@@ -117,7 +117,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                 <div className="flex flex-col items-center">
                   <Link
                     to="/admin"
-                    className="relative block w-auto  text-md lg:inline-block lg:px-1 lg:text-xl"
+                    className="relative block w-auto  text-md lg:inline-block lg:px-1 lg:text-xl text-text-primary"
                   >
                     Admin
                   </Link>
@@ -128,8 +128,8 @@ export const Navbar7 = (props: Navbar7Props) => {
               )}
             </div>
             {user ? (
-              <Link to={"/profile"}>
-                <CiUser className="text-3xl" />
+              <Link to="/profile">
+                <CiUser className="text-3xl text-text-primary" />
               </Link>
             ) : (
               <>
@@ -151,7 +151,7 @@ export const Navbar7 = (props: Navbar7Props) => {
         <div className="flex lg:hidden gap-2">
           <DialogModal />
           <Link className="relative" to="/cart">
-            <IoBagOutline className="text-2xl" />
+            <IoBagOutline className="text-2xl text-text-primary" />
             {/* <div className="h-4 w-4 p-1 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full flex items-center justify-center text-sm">
               {getCartCount()}
             </div> */}
@@ -233,10 +233,10 @@ export const Navbar7 = (props: Navbar7Props) => {
                 <div className="mt-6 flex flex-col items-stretch gap-4">
                   {user ? (
                     <Link
-                      to={"/profile"}
+                      to="/profile"
                       onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
-                      <CiUser className="text-3xl" />
+                      <CiUser className="text-3xl text-text-primary" />
                     </Link>
                   ) : (
                     <>
@@ -296,7 +296,9 @@ const SubMenu = ({
         className="relative flex w-full items-center justify-between whitespace-nowrap py-3 text-md lg:w-auto lg:justify-start lg:gap-2 lg:px-4 lg:py-6 lg:text-base"
         onClick={() => setIsDropdownOpen((prev) => !prev)}
       >
-        <span>{title}</span>
+        <span className="text-text-primary text-md lg:text-base poppins hover:text-brand-primary">
+          {title}
+        </span>
         <motion.span
           animate={isDropdownOpen ? "rotated" : "initial"}
           variants={{

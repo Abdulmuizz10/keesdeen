@@ -1,6 +1,7 @@
 import mainLogo from "./Main logo.png";
+import mainLogoWhite from "./Main logo white.png";
 import smallLogo from "./Fvaicon.png";
-export { mainLogo, smallLogo };
+export { mainLogo, smallLogo, mainLogoWhite };
 
 import img_1 from "./product-images/p_img1.png";
 import img_2_1 from "./product-images/p_img2_1.png";

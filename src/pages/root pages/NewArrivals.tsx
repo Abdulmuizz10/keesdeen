@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
+import { useInView } from "framer-motion";
+import gsap from "gsap";
 
 const NewArrivals: React.FC = () => {
   // Define the type for a clothing product
@@ -174,7 +176,7 @@ const NewArrivals: React.FC = () => {
 
             {/* Category Filter */}
             <div
-              className={`border border-border-tertiary pl-5 py-3 mt-2 ${
+              className={`border border-border-primary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
@@ -199,7 +201,7 @@ const NewArrivals: React.FC = () => {
 
             {/* Size Filter */}
             <div
-              className={`border border-border-tertiary pl-5 py-3 mt-2 ${
+              className={`border border-border-primary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
@@ -233,7 +235,7 @@ const NewArrivals: React.FC = () => {
 
             {/* Color Filter */}
             <div
-              className={`border border-border-tertiary pl-5 py-3 mt-2 ${
+              className={`border border-border-primary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
@@ -273,8 +275,8 @@ const NewArrivals: React.FC = () => {
               </div>
             </div>
             <Button
-              className="my-2 w-full"
-              variant="secondary"
+              className="my-4 w-full bg-brand-primary text-text-light"
+              variant="primary"
               onClick={clearFilters}
             >
               Clear filter
@@ -295,12 +297,12 @@ const NewArrivals: React.FC = () => {
                 Showing 1 . {filteredProducts.length} of 31 Products
               </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full">
+              <div className="md:max-w-xxs max-w-[200px] w-full ">
                 <Select onValueChange={setSortType}>
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background-light">
                     <SelectItem value="relevant">Sort by: Relevance</SelectItem>
                     <SelectItem value="Low - High">
                       Sort by: Low to High

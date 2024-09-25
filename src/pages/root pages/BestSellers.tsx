@@ -10,8 +10,10 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
+import { useLocation } from "react-router-dom";
+import { useInView } from "framer-motion";
 
-const ShopAll: React.FC = () => {
+const BestSellers: React.FC = () => {
   // Define the type for a clothing product
   interface ClothingProduct {
     id: number;
@@ -29,7 +31,7 @@ const ShopAll: React.FC = () => {
     imageUrl: string[];
     description: string;
   }
-
+  // const { name }: { name: any } = useParams();
   const { products } = useShop();
   const [showFilter, setShowFilter] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
@@ -123,6 +125,15 @@ const ShopAll: React.FC = () => {
   useEffect(() => {
     sortProducts();
   }, [sortType]);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  const container = useRef(null);
+  const isInView = useInView(container, { once: true });
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
@@ -285,6 +296,11 @@ const ShopAll: React.FC = () => {
             <div className="flex justify-between text-base items-center">
               <h3 className="text-base md:text-md">All Collections</h3>
               {/* {Product Sort} */}
+              {/* <select className="border-2 border-border-secondary py-2 px-2 rounded-md">
+                <option value="relevant">Sort by: Relevance</option>
+                <option value="low - high">Sort by: Low to High</option>
+                <option value="high - low">Sort by: High to Low</option>
+              </select> */}
 
               <p className="info-text hidden xl:flex">
                 Showing 1 . {filteredProducts.length} of 31 Products
@@ -306,18 +322,12 @@ const ShopAll: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* <select
-                className="border border-border-primary py-2 px-2 rounded-md"
-                onChange={(e) => setSortType(e.target.value)}
-              >
-                <option value="relevant">Sort by: Relevance</option>
-                <option value="Low - High">Sort by: Low to High</option>
-                <option value="High - Low">Sort by: High to Low</option>
-              </select> */}
             </div>
             {/* {Map Products} */}
-            <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
+            <div
+              className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6"
+              ref={container}
+            >
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product, index) => (
                   <ProductItem product={product} key={index} />
@@ -338,4 +348,4 @@ const ProductUnavailable = () => {
     <p className="text-center text-xl w-full">Product is not available...</p>
   );
 };
-export default ShopAll;
+export default BestSellers;

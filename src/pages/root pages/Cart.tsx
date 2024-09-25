@@ -37,7 +37,7 @@ const Cart: React.FC = () => {
           </h2>
         </div>
 
-        <div className="border-t ">
+        <div className="border-t border-border-secondary ">
           {cartData &&
             cartData.map((item: any, index: number) => {
               const productData = products.find(
@@ -47,7 +47,7 @@ const Cart: React.FC = () => {
               return productData ? (
                 <div
                   key={index}
-                  className="py-4 border-b  text-text-secondary grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4 "
+                  className="py-4 border-b border-border-secondary  text-text-secondary grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4 "
                 >
                   <div className="flex items-start gap-6">
                     <img
@@ -92,11 +92,11 @@ const Cart: React.FC = () => {
         </div>
 
         <div className="flex justify-end my-20">
-          <div className="w-full sm:w-[450px] border border-border-primary p-5 rounded-md shadow-xlarge">
+          <div className="w-full sm:w-[450px] border p-5 rounded-md border-border-secondary  shadow-xxlarge">
             <CartTotal />
             <div className="w-full text-end mt-5">
               <Button
-                className="w-full rounded-md"
+                className="w-full rounded-md bg-brand-primary border-none text-text-light"
                 onClick={() => history.push("/check_out")}
               >
                 PROCEED TO CHECKOUT

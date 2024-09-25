@@ -44,22 +44,17 @@ const ProductDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchProductData();
     window.scrollTo(0, 0);
+    fetchProductData();
   }, [id, location.pathname]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return productData ? (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
       <div className="container">
-        {/* <div className="rb-12 mb-12 md:mb-5">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            New Arrivals
-          </h2>
-          <p className="md:text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
-        </div> */}
-
         <div className="flex gap-5 md:gap-10 flex-col sm:flex-row">
           {/* Product images */}
           <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
@@ -116,7 +111,7 @@ const ProductDetails: React.FC = () => {
               </div>
             </div>
             <Button
-              className=" active:bg-gray-700 rounded-sm"
+              className=" active:bg-gray-700 rounded-sm bg-brand-primary text-text-light border-none"
               onClick={() => addToCart(productData?.id, size)}
             >
               ADD TO CART
