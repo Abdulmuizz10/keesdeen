@@ -60,7 +60,7 @@ export const Footer1 = (props: Footer1Props) => {
     ...props,
   } as Props;
   return (
-    <footer className="px-[5%] py-12 md:py-18 lg:py-20 bg-brand-neutral text-text-light">
+    <footer className="px-[5%] py-12 md:py-18 lg:py-20 bg-brand-neutral text-text-light gradient-bg-footer">
       <div className="container">
         <div className="grid grid-cols-1 gap-x-[8vw] gap-y-12 pb-12 md:gap-y-16 md:pb-18 lg:grid-cols-[0.75fr,1fr] lg:gap-y-4 lg:pb-20">
           <div className="flex flex-col">

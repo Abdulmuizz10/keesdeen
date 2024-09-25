@@ -25,13 +25,17 @@ export const Header76 = (props: Header76Props) => {
   return (
     <section
       id="relume"
-      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0 bg-background-primary"
+      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0 bg-[#3c3c3c] gradient-bg-welcome "
     >
       <div className="mx-[5%] max-w-[40rem] justify-self-start lg:ml-[5vw] lg:mr-20 lg:justify-self-end">
-        <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-brand-neutral">
+        {/* <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-brand-neutral">
+          {heading}
+        </h1> */}
+        <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-gradient">
           {heading}
         </h1>
-        <p className="md:text-md text-text-primary">{description}</p>
+        {/* <p className="md:text-md text-text-primary">{description}</p> */}
+        <p className="md:text-md text-text-secondary">{description}</p>
         <div className="mt-6 flex gap-x-4 md:mt-8">
           {buttons.map((button, index) => (
             <Button
@@ -41,7 +45,7 @@ export const Header76 = (props: Header76Props) => {
                 index === 0
                   ? "bg-brand-secondary rounded-full"
                   : "bg-brand-primary rounded-full"
-              } text-text-light`}
+              } text-text-light poppins`}
             >
               {button.title}
             </Button>

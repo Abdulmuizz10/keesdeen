@@ -60,13 +60,13 @@ const Reviews: React.FC = () => {
     <>
       <div className="flex gap-2">
         <h3
-          className="border px-5 py-3 text-sm cursor-pointer rounded-md"
+          className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
           onClick={() => setChange(false)}
         >
           Write your Reviews
         </h3>
         <p
-          className="border px-5 py-3 text-sm cursor-pointer rounded-md"
+          className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
           onClick={() => setChange(true)}
         >
           All Reviews ({reviews.length})
@@ -77,7 +77,10 @@ const Reviews: React.FC = () => {
           {reviews.length > 0 ? (
             <ul>
               {reviews.map((review, index) => (
-                <li key={index} className="mb-6 border-b border-gray-200 pb-4">
+                <li
+                  key={index}
+                  className="mb-6 border-b border-border-secondary pb-4"
+                >
                   <div className="flex justify-between">
                     <h3 className="font-semibold text-lg">{review.name}</h3>
                     <p className="text-sm text-gray-500">{review.date}</p>
@@ -144,7 +147,9 @@ const Reviews: React.FC = () => {
             >
               Submit Review
             </button> */}
-            <Button className="rounded-md">Submit Review</Button>
+            <Button className="rounded-md bg-brand-primary border-none poppins text-white">
+              Submit Review
+            </Button>
           </form>
         </div>
       )}

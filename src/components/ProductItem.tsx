@@ -44,14 +44,14 @@ interface Product {
 // };
 
 const ProductItem = ({ product }: { product: Product }) => {
-  const [image, setImage] = useState<string>(product.imageUrl[0]);
+  const [image, setImage] = useState<boolean>(false);
   const ref = useRef(null);
   const isInView = useInView(ref);
   return (
     <motion.div
-      className="max-w-xs mx-auto bg-white rounded-sm shadow-md overflow-hidden relative"
-      onMouseOver={() => setImage(product.imageUrl[1])}
-      onMouseLeave={() => setImage(product.imageUrl[0])}
+      className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative"
+      onMouseOver={() => setImage(true)}
+      onMouseLeave={() => setImage(false)}
       ref={ref}
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
@@ -66,7 +66,11 @@ const ProductItem = ({ product }: { product: Product }) => {
       </div>
       <div className="relative">
         <Link to={`/product_details/${product.id}`}>
-          <img src={image} alt="Product" className="w-full h-auto" />
+          <img
+            src={image ? product.imageUrl[1] : product.imageUrl[0]}
+            alt="Product"
+            className="w-full h-auto"
+          />
         </Link>
       </div>
       <div className="p-4">

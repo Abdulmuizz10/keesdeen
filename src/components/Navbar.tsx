@@ -139,6 +139,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                       key={index}
                       variant={button.variant}
                       size={button.size}
+                      className="bg-brand-neutral text-text-light rounded-full px-10 py-3 poppins border-none"
                     >
                       {button.title}
                     </Button>
@@ -246,7 +247,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                             key={index}
                             variant={button.variant}
                             size={button.size}
-                            className="w-full"
+                            className="w-full bg-brand-primary border-none rounded-md text-text-light poppins"
                           >
                             {button.title}
                           </Button>

@@ -142,7 +142,7 @@ const BestSellers: React.FC = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-primary">
+        <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary">
           {/* Left Side */}
           <div className="min-w-60">
             <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ const BestSellers: React.FC = () => {
 
             {/* Category Filter */}
             <div
-              className={`border border-border-primary pl-5 py-3 mt-2 ${
+              className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
@@ -206,7 +206,7 @@ const BestSellers: React.FC = () => {
 
             {/* Size Filter */}
             <div
-              className={`border border-border-primary pl-5 py-3 mt-2 ${
+              className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
@@ -240,7 +240,7 @@ const BestSellers: React.FC = () => {
 
             {/* Color Filter */}
             <div
-              className={`border border-border-primary pl-5 py-3 mt-2 ${
+              className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
               } sm:block shadow-medium rounded`}
             >
@@ -280,7 +280,7 @@ const BestSellers: React.FC = () => {
               </div>
             </div>
             <Button
-              className="my-4 w-full bg-brand-primary text-text-light"
+              className="my-4 w-full bg-brand-primary text-text-light border-none rounded-md"
               variant="primary"
               onClick={clearFilters}
             >

@@ -86,7 +86,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                   ease: "easeOut",
                   delay: index * 0.4,
                 }}
-                className={`max-w-xs mx-auto bg-white rounded-sm shadow-md overflow-hidden relative `}
+                className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative"
                 // onMouseOver={() => setImage(product.imageUrl[1])}
                 // onMouseLeave={() => setImage(product.imageUrl[0])}
               >

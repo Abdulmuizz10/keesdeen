@@ -33,7 +33,7 @@ const CollectionItem = ({
   // const [image, setImage] = useState<string>(product.imageUrl[0]);
   return (
     <div
-      className={`max-w-xs mx-auto bg-white rounded-sm shadow-md overflow-hidden relative ${className}`}
+      className={`max-w-xs mx-auto bg-white rounded-xl  shadow-md overflow-hidden relative ${className}`}
       // onMouseOver={() => setImage(product.imageUrl[1])}
       // onMouseLeave={() => setImage(product.imageUrl[0])}
     >

@@ -13,6 +13,77 @@ body {
   background: #ececec;
 }
 
+/* .gradient-bg-welcome {
+  background-color: #0f0e13;
+  background-image: radial-gradient(
+      at 0% 0%,
+      hsla(253, 16%, 7%, 1) 0,
+      transparent 50%
+    ),
+    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+} */
+
+.gradient-bg-welcome {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      at 0% 0%,
+      hsla(253, 16%, 7%, 1) 0,
+      transparent 50%
+    ),
+    /* radial-gradient(at 50% 0%, #5f5f5f 0, transparent 50%), */
+      radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+}
+
+/* .gradient-bg-footer {
+  background-color: #0f0e13;
+  background-image: radial-gradient(
+      at 0% 100%,
+      hsla(253, 16%, 7%, 1) 0,
+      transparent 53%
+    ),
+    radial-gradient(at 50% 150%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+} */
+
+.gradient-bg-footer {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      at 0% 100%,
+      hsla(253, 16%, 7%, 1) 0,
+      transparent 53%
+    ),
+    radial-gradient(at 50% 100%, #3c3c3c 0, transparent 50%),
+    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+}
+
+/* .text-gradient {
+  background-color: #fff;
+  background-image: radial-gradient(
+      at 4% 36%,
+      hsla(0, 0%, 100%, 1) 0,
+      transparent 53%
+    ),
+    radial-gradient(at 100% 60%, rgb(0, 0, 0) 0, transparent 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+} */
+
+.text-gradient {
+  background-color: #fff;
+  background-image: radial-gradient(
+      at 4% 36%,
+      hsla(0, 0%, 100%, 1) 0,
+      transparent 53%
+    ),
+    radial-gradient(at 100% 60%, rgb(0, 0, 0) 0, transparent 50%),
+    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .scrollbar::-webkit-scrollbar {
   display: block;
   width: 10px;
