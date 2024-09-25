@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -10,8 +10,6 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
-import { useInView } from "framer-motion";
-import gsap from "gsap";
 
 const NewArrivals: React.FC = () => {
   // Define the type for a clothing product

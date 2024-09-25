@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
 import { useLocation } from "react-router-dom";
-import { useInView } from "framer-motion";
 
 const BestSellers: React.FC = () => {
   // Define the type for a clothing product
@@ -131,9 +130,6 @@ const BestSellers: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
-
-  const container = useRef(null);
-  const isInView = useInView(container, { once: true });
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
@@ -324,10 +320,7 @@ const BestSellers: React.FC = () => {
               </div>
             </div>
             {/* {Map Products} */}
-            <div
-              className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6"
-              ref={container}
-            >
+            <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product, index) => (
                   <ProductItem product={product} key={index} />

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useShop } from "../context/ShopContext";
 // import { useInView } from "framer-motion";
 // import gsap from "gsap";

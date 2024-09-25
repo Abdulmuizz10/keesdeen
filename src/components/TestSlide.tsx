@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import clsx from "clsx";
-import { mainLogo } from "../assets";
 
 type Props = {
   headings: string[];

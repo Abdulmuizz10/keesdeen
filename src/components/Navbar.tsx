@@ -7,7 +7,7 @@ import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
 import DialogModal from "./DialogModal";
 import { Link } from "react-router-dom";
-import { mainLogo, smallLogo, mainLogoWhite } from "../assets";
+import { mainLogo, smallLogo } from "../assets";
 import { IoBagOutline } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 // import { useInView } from "framer-motion";
 // import gsap from "gsap";
 import { useInView } from "../lib/utils";
