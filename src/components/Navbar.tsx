@@ -64,7 +64,7 @@ export const Navbar7 = (props: Navbar7Props) => {
   const { getCartCount } = useShop();
 
   return (
-    <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary px-[5%] md:min-h-18  bg-background-primary">
+    <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18 bg-none">
       <div className="mx-auto flex size-full max-w-full items-center justify-between">
         <a href={logo.url}>
           <img
@@ -133,18 +133,9 @@ export const Navbar7 = (props: Navbar7Props) => {
               </Link>
             ) : (
               <>
-                {buttons.map((button, index) => (
-                  <Link to="/register/login">
-                    <Button
-                      key={index}
-                      variant={button.variant}
-                      size={button.size}
-                      className="bg-brand-neutral text-text-light rounded-full px-10 py-3 poppins border-none"
-                    >
-                      {button.title}
-                    </Button>
-                  </Link>
-                ))}
+                <Link to="/register/login">
+                  <CiUser className="text-3xl text-text-primary" />
+                </Link>
               </>
             )}
           </div>

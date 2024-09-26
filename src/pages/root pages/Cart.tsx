@@ -68,7 +68,7 @@ const Cart: React.FC = () => {
                     </div>
                   </div>
                   <input
-                    className="border border-border-primary max-w-[40px] sm:max-w-[80px] px-1 sm:px-2 sm:py-1 py-[2px] text-text-primary rounded-md"
+                    className="border border-border-secondary bg-background-primary max-w-[40px] sm:max-w-[80px] px-1 sm:px-2 sm:py-1 py-[2px] text-text-primary rounded-md"
                     type="number"
                     min={1}
                     defaultValue={item.quantity}

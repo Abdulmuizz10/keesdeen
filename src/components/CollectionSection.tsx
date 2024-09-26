@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useShop } from "../context/ShopContext";
 // import { useInView } from "framer-motion";
 // import gsap from "gsap";
@@ -21,7 +21,7 @@ export const Gallery5 = (props: Gallery5Props) => {
     ...props,
   } as Props;
   const { products } = useShop();
-  const collections = products.slice(21, 29);
+  const collections = products.slice(0, 29);
 
   // const Container = useRef(null);
   // const inView = useInView(Container, { once: true });
@@ -47,7 +47,7 @@ export const Gallery5 = (props: Gallery5Props) => {
 
   const ref = useRef(null);
   const isInView = useInView(ref);
-
+  const [image, setImage] = useState<boolean>(false);
   return (
     <section
       id="relume"
@@ -65,18 +65,6 @@ export const Gallery5 = (props: Gallery5Props) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
           {collections &&
             collections.map((product, index) => (
-              // <Link key={index} to={`/product_details/${product.id}`}>
-              //   <img
-              //     src={product.imageUrl[0]}
-              //     alt="best seller image"
-              //     className="size-full object-cover"
-              //   />
-              // </Link>
-              // <CollectionItem
-              //   product={product}
-              //   key={index}
-              //   className="block-container"
-              // />
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
@@ -87,8 +75,8 @@ export const Gallery5 = (props: Gallery5Props) => {
                   delay: index * 0.4,
                 }}
                 className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative"
-                // onMouseOver={() => setImage(product.imageUrl[1])}
-                // onMouseLeave={() => setImage(product.imageUrl[0])}
+                onMouseOver={() => setImage(true)}
+                onMouseLeave={() => setImage(false)}
               >
                 <div className="absolute top-3 right-3 z-50 cursor-pointer">
                   {/* <LuHeart /> */}
@@ -96,7 +84,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                 <div className="relative">
                   <Link to={`/product_details/${product.id}`}>
                     <img
-                      src={product.imageUrl[0]}
+                      src={image ? product.imageUrl[1] : product.imageUrl[0]}
                       alt="Product"
                       className="w-full h-auto"
                     />
@@ -112,7 +100,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                     <h4 className="text-sm font-medium text-gray-600 mb-2">
                       Sizes:
                     </h4>
-                    <div className="grid grid-cols-6 gap-2">
+                    <div className="flex flex-wrap gap-2 items-center">
                       {[
                         "XXS",
                         "XS",
@@ -127,7 +115,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                       ].map((size) => (
                         <button
                           key={size}
-                          className="border border-gray-300 rounded-lg text-gray-600 text-sm px-2 py-1 hover:bg-gray-100 transition"
+                          className="border border-gray-300 rounded-lg text-gray-600 text-sm px-2 py-1 h-8 w-10 hover:bg-gray-100 transition poppins"
                         >
                           {size}
                         </button>

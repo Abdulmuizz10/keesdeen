@@ -81,12 +81,12 @@ const ProductItem = ({ product }: { product: Product }) => {
 
         <div className="mt-4">
           <h4 className="text-sm font-medium text-gray-600 mb-2">Sizes:</h4>
-          <div className="grid grid-cols-6 gap-2">
+          <div className="flex flex-wrap gap-2 items-center justify-start">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (size) => (
                 <button
                   key={size}
-                  className="border border-gray-300 rounded-lg text-gray-600 text-sm px-2 py-1 hover:bg-gray-100 transition"
+                  className="border border-gray-300 rounded-lg text-gray-600 text-sm px-2 py-1 h-8 w-10 hover:bg-gray-100 transition poppins"
                 >
                   {size}
                 </button>
