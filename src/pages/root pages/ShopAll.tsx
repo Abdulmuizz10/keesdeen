@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -115,8 +115,6 @@ const ShopAll: React.FC = () => {
     sortProducts();
   }, [sortType]);
 
-  const [isChecked, setIsChecked] = useState<boolean>();
-
   const clearFilters = () => {
     setCategory([]);
     setSizeCategory([]);
@@ -162,7 +160,6 @@ const ShopAll: React.FC = () => {
                   (wear, index) => (
                     <p className="flex gap-2">
                       <input
-                        checked={isChecked}
                         type="checkbox"
                         className="w-3 my"
                         value={wear}
@@ -198,7 +195,6 @@ const ShopAll: React.FC = () => {
                 ].map((size, index) => (
                   <p className="flex gap-2">
                     <input
-                      checked={isChecked}
                       type="checkbox"
                       className="w-3"
                       value={size}
@@ -233,7 +229,6 @@ const ShopAll: React.FC = () => {
                 ].map((color, index) => (
                   <p className="flex gap-2 items-center">
                     <input
-                      checked={isChecked}
                       type="checkbox"
                       className="w-3"
                       value={color}
