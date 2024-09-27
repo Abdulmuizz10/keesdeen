@@ -145,11 +145,11 @@ const BestSellers: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary">
           {/* Left Side */}
           <div className="min-w-60">
-            <div className="flex items-center gap-2">
-              <p
-                className="my-2 text-xl flex items-center cursor-pointer gap-2"
-                onClick={() => setShowFilter(!showFilter)}
-              >
+            <div
+              className="flex items-center gap-2"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <p className="my-2 text-xl flex items-center cursor-pointer gap-2">
                 Filters
               </p>
               <RxChevronDown

@@ -21,7 +21,7 @@ export const Gallery5 = (props: Gallery5Props) => {
     ...props,
   } as Props;
   const { products } = useShop();
-  const collections = products.slice(0, 29);
+  const collections = products.slice(21, 29);
 
   // const Container = useRef(null);
   // const inView = useInView(Container, { once: true });

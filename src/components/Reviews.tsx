@@ -1,6 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { ChangeEvent, FormEvent } from "react";
-import { AuthContext } from "../context/AuthContext/AuthContext";
 import { Button } from "@relume_io/relume-ui";
 
 interface Review {
@@ -27,8 +26,6 @@ const Reviews: React.FC = () => {
     },
   ]);
 
-  const { user } = useContext(AuthContext);
-
   const [newReview, setNewReview] = useState<Omit<Review, "date">>({
     name: "",
     rating: 0,
@@ -50,10 +47,7 @@ const Reviews: React.FC = () => {
       day: "numeric",
     });
 
-    setReviews([
-      ...reviews,
-      { ...newReview, name: user.username, date: today },
-    ]);
+    setReviews([...reviews, { ...newReview, date: today }]);
     setNewReview({ name: "", rating: 0, comment: "" });
   };
   return (
@@ -110,6 +104,21 @@ const Reviews: React.FC = () => {
           {/* Review Form */}
           <form onSubmit={handleSubmit} className="mb-8">
             <div className="mb-4">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Name
+                </label>
+
+                <input
+                  type="text"
+                  name="name"
+                  value={newReview.name}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  required
+                />
+              </div>
+
               <label className="block text-sm font-medium text-gray-700">
                 Rating
               </label>

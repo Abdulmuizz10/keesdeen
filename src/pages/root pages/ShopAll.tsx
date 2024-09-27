@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -90,15 +90,6 @@ const ShopAll: React.FC = () => {
     setFilteredProducts(productsCopy);
   };
 
-  const clearFilters = () => {
-    // toggleCategory();
-    // toggleSizeCategory();
-    // toggleColorCategory();
-    setCategory([]);
-    setSizeCategory([]);
-    setColorCategory([]);
-  };
-
   const sortProducts = () => {
     let spCopy = filteredProducts.slice();
 
@@ -124,6 +115,14 @@ const ShopAll: React.FC = () => {
     sortProducts();
   }, [sortType]);
 
+  const [isChecked, setIsChecked] = useState<boolean>();
+
+  const clearFilters = () => {
+    setCategory([]);
+    setSizeCategory([]);
+    setColorCategory([]);
+  };
+
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
       <div className="container">
@@ -138,11 +137,11 @@ const ShopAll: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary">
           {/* Left Side */}
           <div className="min-w-60">
-            <div className="flex items-center gap-2">
-              <p
-                className="my-2 text-xl flex items-center cursor-pointer gap-2"
-                onClick={() => setShowFilter(!showFilter)}
-              >
+            <div
+              className="flex items-center gap-2"
+              onClick={() => setShowFilter(!showFilter)}
+            >
+              <p className="my-2 text-xl flex items-center cursor-pointer gap-2">
                 Filters
               </p>
               <RxChevronDown
@@ -151,28 +150,7 @@ const ShopAll: React.FC = () => {
                 }`}
               />
             </div>
-            {/* Category Filter */}
-            {/* <div
-              className={`border border-border-tertiary pl-5 py-3 mt-5 ${
-                showFilter ? "" : "hidden"
-              } sm:block shadow-medium rounded`}
-            >
-              <p className="text-base md:text-md pb-1">Categories</p>
-              <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                <p className="flex gap-2">
-                  <input type="checkbox" className="w-3" value={"Men"} /> Men
-                </p>
-                <p className="flex gap-2">
-                  <input type="checkbox" className="w-3" value={"Women"} />
-                  Woman
-                </p>
-                <p className="flex gap-2">
-                  <input type="checkbox" className="w-3" value={"Men"} /> Kids
-                </p>
-              </div>
-            </div> */}
-
-            {/* Category Filter */}
+            {/* category Filter */}
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
@@ -184,8 +162,9 @@ const ShopAll: React.FC = () => {
                   (wear, index) => (
                     <p className="flex gap-2">
                       <input
+                        checked={isChecked}
                         type="checkbox"
-                        className="w-3"
+                        className="w-3 my"
                         value={wear}
                         key={index}
                         onChange={toggleCategory}
@@ -219,6 +198,7 @@ const ShopAll: React.FC = () => {
                 ].map((size, index) => (
                   <p className="flex gap-2">
                     <input
+                      checked={isChecked}
                       type="checkbox"
                       className="w-3"
                       value={size}
@@ -253,6 +233,7 @@ const ShopAll: React.FC = () => {
                 ].map((color, index) => (
                   <p className="flex gap-2 items-center">
                     <input
+                      checked={isChecked}
                       type="checkbox"
                       className="w-3"
                       value={color}
@@ -275,7 +256,9 @@ const ShopAll: React.FC = () => {
             <Button
               className="my-4 w-full bg-brand-primary text-text-light border-none rounded-md"
               variant="primary"
-              onClick={clearFilters}
+              onClick={() => {
+                clearFilters();
+              }}
             >
               Clear filter
             </Button>

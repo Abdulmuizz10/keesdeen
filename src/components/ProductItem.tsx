@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { LuHeart } from "react-icons/lu";
-import { useInView } from "../lib/utils";
-import { motion } from "framer-motion";
+// import { useInView } from "../lib/utils";
+// import { motion } from "framer-motion";
 
 interface Product {
   id: number;
@@ -45,21 +45,21 @@ interface Product {
 
 const ProductItem = ({ product }: { product: Product }) => {
   const [image, setImage] = useState<boolean>(false);
-  const ref = useRef(null);
-  const isInView = useInView(ref);
+  // const ref = useRef(null);
+  // const isInView = useInView(ref);
   return (
-    <motion.div
+    <div
       className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative"
       onMouseOver={() => setImage(true)}
       onMouseLeave={() => setImage(false)}
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-      transition={{
-        duration: 0.5,
-        ease: "easeOut",
-        delay: product.id * 0.03,
-      }}
+      // ref={ref}
+      // initial={{ opacity: 0, y: 50 }}
+      // animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
+      // transition={{
+      //   duration: 0.5,
+      //   ease: "easeOut",
+      //   delay: product.id * 0.03,
+      // }}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
         <LuHeart />
@@ -73,20 +73,19 @@ const ProductItem = ({ product }: { product: Product }) => {
           />
         </Link>
       </div>
-      <div className="p-4">
+      <div className="p-4 text-center">
         <h3 className="text-lg font-semibold text-gray-800 bricolage-grotesque">
           {product.name}
         </h3>
         <p className="text-gray-500">{formatAmount(product.price)}</p>
 
         <div className="mt-4">
-          <h4 className="text-sm font-medium text-gray-600 mb-2">Sizes:</h4>
-          <div className="flex flex-wrap gap-2 items-center justify-start">
+          <div className="flex flex-wrap gap-2 items-center justify-center">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (size) => (
                 <button
                   key={size}
-                  className="border border-gray-300 rounded-lg text-gray-600 text-sm px-2 py-1 h-8 w-10 hover:bg-gray-100 transition poppins"
+                  className="border border-gray-300 rounded-lg text-gray-600 text-xs px-2 py-1 h-8 w-10 hover:bg-gray-100 transition poppins"
                 >
                   {size}
                 </button>
@@ -95,7 +94,7 @@ const ProductItem = ({ product }: { product: Product }) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
