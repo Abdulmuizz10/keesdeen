@@ -103,7 +103,7 @@ const CheckOut: React.FC<CheckoutProps> = ({}) => {
 
         {/* Right Section: Order Summary, Payment Methods, and Credit Card Information */}
         <div>
-          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+          <h2 className="text-xl font-semibold mb-4">Payment</h2>
           <div className="mb-4">
             <div className="flex justify-between">
               <p>Subtotal:</p>
