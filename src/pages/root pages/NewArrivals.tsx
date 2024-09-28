@@ -283,13 +283,8 @@ const NewArrivals: React.FC = () => {
           {/* Right Side */}
           <div className="flex-1 flex flex-col gap-5 w-full">
             <div className="flex justify-between text-base items-center">
-              <h3 className="text-base md:text-md">All Arrivals</h3>
+              <h3 className="text-base md:text-md">All Collections</h3>
               {/* {Product Sort} */}
-              {/* <select className="border-2 border-border-secondary py-2 px-2 rounded-md">
-                <option value="relevant">Sort by: Relevance</option>
-                <option value="low - high">Sort by: Low to High</option>
-                <option value="high - low">Sort by: High to Low</option>
-              </select> */}
 
               <p className="info-text hidden xl:flex">
                 Showing 1 . {filteredProducts.length} of 31 Products
@@ -300,17 +295,28 @@ const NewArrivals: React.FC = () => {
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background-light">
-                    <SelectItem value="relevant">Sort by: Relevance</SelectItem>
-                    <SelectItem value="Low - High">
+                  <SelectContent className=" bg-background-primary rounded-lg">
+                    <SelectItem value="relevant" className=" cursor-pointer">
+                      Sort by: Relevance
+                    </SelectItem>
+                    <SelectItem value="Low - High" className=" cursor-pointer">
                       Sort by: Low to High
                     </SelectItem>
-                    <SelectItem value="High - Low">
+                    <SelectItem value="High - Low" className=" cursor-pointer">
                       Sort by: High to Low
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* <select
+                className="border border-border-primary py-2 px-2 rounded-md"
+                onChange={(e) => setSortType(e.target.value)}
+              >
+                <option value="relevant">Sort by: Relevance</option>
+                <option value="Low - High">Sort by: Low to High</option>
+                <option value="High - Low">Sort by: High to Low</option>
+              </select> */}
             </div>
             {/* {Map Products} */}
             <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">

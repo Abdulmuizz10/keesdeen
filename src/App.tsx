@@ -34,6 +34,8 @@ import NewArrivals from "./pages/root pages/NewArrivals";
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import Profile from "./pages/root pages/Profile";
+import AddProducts from "./pages/admin pages/AddProducts";
+import WishLists from "./pages/root pages/WishLists";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -53,7 +55,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden ">
       <ToastContainer />
       <Router>
         <Route
@@ -65,6 +67,7 @@ const App: React.FC = () => {
             "/product_details/:id",
             "/best_sellers/:name",
             "/cart",
+            "/wishlists",
             "/profile",
             "/check_out",
           ]}
@@ -82,6 +85,7 @@ const App: React.FC = () => {
               />
               <Route exact path="/best_sellers/:name" component={BestSellers} />
               <Route exact path="/cart" component={Cart} />
+              <Route exact path="/wishlists" component={WishLists} />
               <Route exact path="/profile" component={Profile} />
               <Route exact path="/check_out" component={Checkout} />
             </Switch>
@@ -89,12 +93,11 @@ const App: React.FC = () => {
           </RootLayouts>
         </Route>
         {user?.isAdmin && (
-          <Route exact path={["/admin", "/price", "/buy"]}>
+          <Route exact path={["/admin", "/chart"]}>
             <AdminLayout>
               <Switch>
-                <Route exact path="/admin" component={Chart} />
-                <Route exact path="/price" component={Chart} />
-                <Route exact path="/buy" component={Chart} />
+                <Route exact path="/admin" component={AddProducts} />
+                <Route exact path="/chart" component={Chart} />
               </Switch>
             </AdminLayout>
           </Route>

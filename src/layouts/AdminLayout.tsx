@@ -247,7 +247,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
-        {children}
+        <div className="overflow-y-auto max-h-screen">{children}</div>
       </main>
     </main>
   );
@@ -255,8 +255,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
 const Navigation = () => {
   return (
-    <nav className="absolute left-0 right-auto top-0 float-right h-full w-[80vw] max-w-[none] md:w-full md:max-w-[19.5rem] lg:relative lg:inset-auto lg:w-auto lg:max-w-[auto]">
-      <div className="absolute flex size-full flex-col gap-4 border-r border-border-primary bg-white py-6 lg:gap-6 lg:border-none lg:py-0">
+    <nav className="absolute left-0 right-auto top-0  float-right h-full w-[80vw] max-w-[none] md:w-full md:max-w-[19.5rem] lg:relative lg:inset-auto lg:w-auto lg:max-w-[auto]">
+      <div className="absolute flex size-full flex-col gap-4 border-r border-border-primary py-6 lg:gap-6 lg:border-none lg:py-0">
         <div className="flex size-full flex-col overflow-auto px-4">
           <a href="#" className="flex items-center gap-x-2 p-2 text-center">
             <span className="flex w-full items-center gap-3">

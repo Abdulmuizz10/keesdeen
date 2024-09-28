@@ -273,12 +273,14 @@ const ShopAll: React.FC = () => {
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className="bg-background-light">
-                    <SelectItem value="relevant">Sort by: Relevance</SelectItem>
-                    <SelectItem value="Low - High">
+                  <SelectContent className=" bg-background-primary rounded-lg">
+                    <SelectItem value="relevant" className=" cursor-pointer">
+                      Sort by: Relevance
+                    </SelectItem>
+                    <SelectItem value="Low - High" className=" cursor-pointer">
                       Sort by: Low to High
                     </SelectItem>
-                    <SelectItem value="High - Low">
+                    <SelectItem value="High - Low" className=" cursor-pointer">
                       Sort by: High to Low
                     </SelectItem>
                   </SelectContent>

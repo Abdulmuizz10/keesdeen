@@ -9,6 +9,7 @@ import DialogModal from "./DialogModal";
 import { Link } from "react-router-dom";
 import { mainLogo, smallLogo } from "../assets";
 import { IoBagOutline } from "react-icons/io5";
+import { LuHeart } from "react-icons/lu";
 import { CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
@@ -100,7 +101,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden lg:flex gap-2">
+            <div className="hidden lg:flex gap-3 items-center">
               <DialogModal />
               <Link className="relative" to="/cart">
                 <IoBagOutline className="text-2xl text-text-primary" />
@@ -112,6 +113,9 @@ export const Navbar7 = (props: Navbar7Props) => {
                     {getCartCount()}
                   </div>
                 )}
+              </Link>
+              <Link to="/wishlists">
+                <LuHeart className="text-2xl text-text-primary" />
               </Link>
               {user?.isAdmin ? (
                 <div className="flex flex-col items-center">
@@ -140,7 +144,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             )}
           </div>
         </div>
-        <div className="flex lg:hidden gap-2">
+        <div className="flex lg:hidden gap-3 items-center">
           <DialogModal />
           <Link className="relative" to="/cart">
             <IoBagOutline className="text-2xl text-text-primary" />
@@ -152,6 +156,9 @@ export const Navbar7 = (props: Navbar7Props) => {
                 {getCartCount()}
               </div>
             )}
+          </Link>
+          <Link to="/wishlists">
+            <LuHeart className="text-2xl text-text-primary" />
           </Link>
         </div>
         <button
