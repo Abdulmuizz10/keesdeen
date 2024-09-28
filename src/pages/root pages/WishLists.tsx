@@ -1,6 +1,6 @@
 import React from "react";
 
-const WishLists = () => {
+const WishLists: React.FC = () => {
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
       <div className="container">
