@@ -38,6 +38,11 @@ const Cart: React.FC = () => {
         </div>
 
         <div className="border-t border-border-secondary ">
+          {cartData && cartData.length === 0 && (
+            <p className="mt-4 text-3xl text-text-secondary">
+              Your cart is empty.
+            </p>
+          )}
           {cartData &&
             cartData.map((item: any, index: number) => {
               const productData = products.find(
@@ -96,7 +101,7 @@ const Cart: React.FC = () => {
             <CartTotal />
             <div className="w-full text-end mt-5">
               <Button
-                className="w-full rounded-md bg-brand-primary border-none text-text-light"
+                className="w-full rounded-md  active:bg-gray-700 bg-brand-neutral border-none text-text-light"
                 onClick={() => history.push("/check_out")}
               >
                 PROCEED TO CHECKOUT

@@ -44,7 +44,9 @@ const WishLists: React.FC = () => {
 
         <div className="mt-4 border-t border-border-secondary ">
           {lists && lists.length === 0 ? (
-            <p>Your wishlist is empty.</p>
+            <p className="mt-4 text-3xl text-text-secondary">
+              Your wishlists is empty.
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
               {lists &&

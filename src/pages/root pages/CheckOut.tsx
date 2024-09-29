@@ -137,7 +137,7 @@ const CheckOut: React.FC<CheckoutProps> = ({}) => {
                 placeholder="Enter coupon code"
               />
               <Button
-                className="w-full bg-green-500 text-white px-2 py-2 rounded-md poppins border-none"
+                className="w-full  active:bg-gray-700 bg-brand-neutral text-text-light px-2 py-2 rounded-md poppins border-none"
                 onClick={handleCouponApply}
               >
                 Apply
@@ -212,7 +212,7 @@ const CheckOut: React.FC<CheckoutProps> = ({}) => {
           )}
 
           {/* Pay Button */}
-          <Button className="w-full bg-green-500 text-white py-3 rounded-md poppins border-none">
+          <Button className="w-full  active:bg-gray-700 bg-brand-neutral text-text-light py-3 rounded-md poppins border-none">
             Place order {formatAmount(finalTotal)}
           </Button>
         </div>
