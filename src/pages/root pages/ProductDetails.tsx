@@ -111,7 +111,7 @@ const ProductDetails: React.FC = () => {
               </div>
             </div>
             <Button
-              className=" active:bg-gray-700 rounded-sm bg-brand-primary text-text-light border-none"
+              className=" active:bg-gray-700 rounded-md bg-brand-neutral text-text-light border-none"
               onClick={() => addToCart(productData?.id, size)}
             >
               ADD TO CART

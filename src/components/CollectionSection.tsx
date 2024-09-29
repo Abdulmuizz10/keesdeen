@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
 import { useShop } from "../context/ShopContext";
-// import { useInView } from "framer-motion";
-// import gsap from "gsap";
-// import CollectionItem from "./CollectionItem";
+import { LuHeart } from "react-icons/lu";
 import { formatAmount, useInView } from "../lib/utils";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -23,38 +21,12 @@ export const Gallery5 = (props: Gallery5Props) => {
   const { products } = useShop();
   const collections = products.slice(21, 29);
 
-  // const Container = useRef(null);
-  // const inView = useInView(Container, { once: true });
-
-  // useEffect(() => {
-  //   gsap.fromTo(
-  //     ".block-container",
-  //     {
-  //       opacity: 0,
-  //       y: 100,
-  //       scale: 0.5,
-  //     },
-  //     {
-  //       opacity: 1,
-  //       y: 0,
-  //       scale: 1,
-  //       ease: "power3.in",
-  //       stagger: 0.4,
-  //       delay: 0.2,
-  //     }
-  //   );
-  // }, [inView]);
-
   const ref = useRef(null);
   const isInView = useInView(ref);
   const [image, setImage] = useState<boolean>(false);
+  const { manageWishLists } = useShop();
   return (
-    <section
-      id="relume"
-      className="px-[5%] py-16 md:py-24 lg:py-28"
-      // ref={Container}
-      ref={ref}
-    >
+    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28" ref={ref}>
       <div className="container">
         <div className="rb-12 mb-12 text-center md:mb-18 lg:mb-20">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
@@ -79,7 +51,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                 onMouseLeave={() => setImage(false)}
               >
                 <div className="absolute top-3 right-3 z-50 cursor-pointer">
-                  {/* <LuHeart /> */}
+                  <LuHeart onClick={() => manageWishLists(product.id)} />
                 </div>
                 <div className="relative">
                   <Link to={`/product_details/${product.id}`}>
@@ -96,10 +68,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                   </h3>
                   <p className="text-gray-500">{formatAmount(product.price)}</p>
 
-                  <div className="mt-4">
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">
-                      Sizes:
-                    </h4>
+                  <div className="mt-2">
                     <div className="flex flex-wrap gap-2 items-center">
                       {[
                         "XXS",

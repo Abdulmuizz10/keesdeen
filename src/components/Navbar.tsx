@@ -62,7 +62,7 @@ export const Navbar7 = (props: Navbar7Props) => {
   const isMobile = useMediaQuery("(max-width: 991px)");
 
   const { user } = useContext(AuthContext);
-  const { getCartCount } = useShop();
+  const { getCartCount, wishLists } = useShop();
 
   return (
     <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18 bg-none">
@@ -114,8 +114,13 @@ export const Navbar7 = (props: Navbar7Props) => {
                   </div>
                 )}
               </Link>
-              <Link to="/wishlists">
+              <Link to="/wishlists" className="relative">
                 <LuHeart className="text-2xl text-text-primary" />
+                {wishLists.length > 0 && (
+                  <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
+                    {wishLists.length}
+                  </div>
+                )}
               </Link>
               {user?.isAdmin ? (
                 <div className="flex flex-col items-center">
@@ -157,8 +162,13 @@ export const Navbar7 = (props: Navbar7Props) => {
               </div>
             )}
           </Link>
-          <Link to="/wishlists">
+          <Link to="/wishlists" className="relative">
             <LuHeart className="text-2xl text-text-primary" />
+            {wishLists.length > 0 && (
+              <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
+                {wishLists.length}
+              </div>
+            )}
           </Link>
         </div>
         <button

@@ -34,6 +34,8 @@ interface ShopContextType {
   getCartCount: any;
   updateQuantity: any;
   getCartAmount: any;
+  wishLists: any;
+  manageWishLists: any;
 }
 
 // Create the ShopContext with an empty default value
@@ -743,6 +745,27 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     return totalAmount;
   };
 
+  const [wishLists, setWishLists] = useState(() => {
+    const storedWishLists = localStorage.getItem("wishLists");
+    return storedWishLists ? JSON.parse(storedWishLists) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("wishLists", JSON.stringify(wishLists));
+  }, [wishLists]);
+
+  const manageWishLists = (productId: any) => {
+    setWishLists((prevWishLists: any) => {
+      if (prevWishLists.includes(productId)) {
+        // Remove the product if it's already in the wishlist
+        return prevWishLists.filter((id: any) => id !== Number(productId));
+      } else {
+        // Add the product if it's not in the wishlist
+        return [...prevWishLists, productId];
+      }
+    });
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -752,6 +775,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         getCartCount,
         updateQuantity,
         getCartAmount,
+        wishLists,
+        manageWishLists,
       }}
     >
       {children}

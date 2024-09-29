@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
 import { useState } from "react";
 import { LuHeart } from "react-icons/lu";
+import { useShop } from "../context/ShopContext";
 // import { useInView } from "../lib/utils";
 // import { motion } from "framer-motion";
 
@@ -22,47 +23,18 @@ interface Product {
   description: string;
 }
 
-// const ProductItem = ({ product }: { product: Product }) => {
-//   return (
-//     <Link
-//       className="text-text-secondary cursor-pointer"
-//       to={`/product_details/${product.id}`}
-//     >
-//       <div className="overflow-hidden">
-//         <img
-//           src={product.imageUrl[0]}
-//           alt="product image"
-//           className="transition ease-in-out hover:scale-110 w-full h-full"
-//         />
-//         <p className="pt-3 pb-1 text-sm">{product.name}</p>
-//         <p className=" font-medium text-sm text-text-primary">
-//           {formatAmount(product.price)}
-//         </p>
-//       </div>
-//     </Link>
-//   );
-// };
-
 const ProductItem = ({ product }: { product: Product }) => {
   const [image, setImage] = useState<boolean>(false);
-  // const ref = useRef(null);
-  // const isInView = useInView(ref);
+  const { manageWishLists } = useShop();
+
   return (
     <div
       className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative"
       onMouseOver={() => setImage(true)}
       onMouseLeave={() => setImage(false)}
-      // ref={ref}
-      // initial={{ opacity: 0, y: 50 }}
-      // animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-      // transition={{
-      //   duration: 0.5,
-      //   ease: "easeOut",
-      //   delay: product.id * 0.03,
-      // }}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        <LuHeart />
+        <LuHeart onClick={() => manageWishLists(product.id)} />
       </div>
       <div className="relative">
         <Link to={`/product_details/${product.id}`}>
@@ -79,7 +51,7 @@ const ProductItem = ({ product }: { product: Product }) => {
         </h3>
         <p className="text-gray-500">{formatAmount(product.price)}</p>
 
-        <div className="mt-4">
+        <div className="mt-2">
           <div className="flex flex-wrap gap-2 items-center justify-center">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (size) => (

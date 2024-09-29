@@ -151,28 +151,7 @@ const NewArrivals: React.FC = () => {
                 }`}
               />
             </div>
-            {/* Category Filter */}
-            {/* <div
-              className={`border border-border-tertiary pl-5 py-3 mt-5 ${
-                showFilter ? "" : "hidden"
-              } sm:block shadow-medium rounded`}
-            >
-              <p className="text-base md:text-md pb-1">Categories</p>
-              <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                <p className="flex gap-2">
-                  <input type="checkbox" className="w-3" value={"Men"} /> Men
-                </p>
-                <p className="flex gap-2">
-                  <input type="checkbox" className="w-3" value={"Women"} />
-                  Woman
-                </p>
-                <p className="flex gap-2">
-                  <input type="checkbox" className="w-3" value={"Men"} /> Kids
-                </p>
-              </div>
-            </div> */}
-
-            {/* Category Filter */}
+            {/* category Filter */}
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
@@ -185,7 +164,7 @@ const NewArrivals: React.FC = () => {
                     <p className="flex gap-2">
                       <input
                         type="checkbox"
-                        className="w-3"
+                        className="w-3 my"
                         value={wear}
                         key={index}
                         onChange={toggleCategory}
@@ -273,9 +252,11 @@ const NewArrivals: React.FC = () => {
               </div>
             </div>
             <Button
-              className="my-4 w-full bg-brand-primary text-text-light border-none rounded-md"
+              className="my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md"
               variant="primary"
-              onClick={clearFilters}
+              onClick={() => {
+                clearFilters();
+              }}
             >
               Clear filter
             </Button>
@@ -296,13 +277,23 @@ const NewArrivals: React.FC = () => {
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
                   <SelectContent className=" bg-background-primary rounded-lg">
-                    <SelectItem value="relevant" className=" cursor-pointer">
+                    <SelectItem
+                      value="relevant"
+                      className=" cursor-pointer hover:text-text-secondary
+                      "
+                    >
                       Sort by: Relevance
                     </SelectItem>
-                    <SelectItem value="Low - High" className=" cursor-pointer">
+                    <SelectItem
+                      value="Low - High"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
                       Sort by: Low to High
                     </SelectItem>
-                    <SelectItem value="High - Low" className=" cursor-pointer">
+                    <SelectItem
+                      value="High - Low"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
                       Sort by: High to Low
                     </SelectItem>
                   </SelectContent>

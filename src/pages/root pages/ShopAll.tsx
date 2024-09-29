@@ -249,7 +249,7 @@ const ShopAll: React.FC = () => {
               </div>
             </div>
             <Button
-              className="my-4 w-full bg-brand-primary text-text-light border-none rounded-md"
+              className="my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md"
               variant="primary"
               onClick={() => {
                 clearFilters();
@@ -274,13 +274,23 @@ const ShopAll: React.FC = () => {
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
                   <SelectContent className=" bg-background-primary rounded-lg">
-                    <SelectItem value="relevant" className=" cursor-pointer">
+                    <SelectItem
+                      value="relevant"
+                      className=" cursor-pointer hover:text-text-secondary
+                      "
+                    >
                       Sort by: Relevance
                     </SelectItem>
-                    <SelectItem value="Low - High" className=" cursor-pointer">
+                    <SelectItem
+                      value="Low - High"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
                       Sort by: Low to High
                     </SelectItem>
-                    <SelectItem value="High - Low" className=" cursor-pointer">
+                    <SelectItem
+                      value="High - Low"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
                       Sort by: High to Low
                     </SelectItem>
                   </SelectContent>
