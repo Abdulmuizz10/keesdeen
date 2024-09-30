@@ -22,20 +22,25 @@ import ProductDetails from "./pages/root pages/ProductDetails";
 import BestSellers from "./pages/root pages/BestSellers";
 import Cart from "./pages/root pages/Cart";
 import Checkout from "./pages/root pages/CheckOut";
+import WishLists from "./pages/root pages/WishLists";
+import NewArrivals from "./pages/root pages/NewArrivals";
+import Profile from "./pages/root pages/Profile";
 
 // Auth Pages
 import { Login7 } from "./pages/auth pages/Login";
 import { Signup7 } from "./pages/auth pages/SignUp";
 
 // Admin Pages
-import Chart from "./pages/admin pages/Testimonials";
-import NewArrivals from "./pages/root pages/NewArrivals";
 
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
-import Profile from "./pages/root pages/Profile";
+import { Navbar2 } from "./pages/admin pages/AdminNavbar";
+import AdminHome from "./pages/admin pages/AdminHome";
+import AdminOrders from "./pages/admin pages/AdminOrders";
 import AddProducts from "./pages/admin pages/AddProducts";
-import WishLists from "./pages/root pages/WishLists";
+import AdminDashBoardSales from "./pages/admin pages/AdminDashBoardSales";
+import AdminDashBoardOrders from "./pages/admin pages/AdminDashBoardOrders";
+import AdminProducts from "./pages/admin pages/AdminProducts";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -93,11 +98,40 @@ const App: React.FC = () => {
           </RootLayouts>
         </Route>
         {user?.isAdmin && (
-          <Route exact path={["/admin", "/chart"]}>
+          <Route
+            exact
+            path={[
+              "/admin",
+              "/admin/customers",
+              "/admin/products",
+              "/admin/orders",
+              "/admin/add_product",
+              "/admin/chart",
+              "/admin/dashboard/sales",
+              "/admin/dashboard/orders",
+            ]}
+          >
             <AdminLayout>
+              <Navbar2 />
               <Switch>
-                <Route exact path="/admin" component={AddProducts} />
-                <Route exact path="/chart" component={Chart} />
+                <Route exact path="/admin" component={AdminHome} />
+                <Route exact path="/admin/products" component={AdminProducts} />
+                <Route exact path="/admin/orders" component={AdminOrders} />
+                <Route
+                  exact
+                  path="/admin/add_product"
+                  component={AddProducts}
+                />
+                <Route
+                  exact
+                  path="/admin/dashboard/sales"
+                  component={AdminDashBoardSales}
+                />
+                <Route
+                  exact
+                  path="/admin/dashboard/orders"
+                  component={AdminDashBoardOrders}
+                />
               </Switch>
             </AdminLayout>
           </Route>
