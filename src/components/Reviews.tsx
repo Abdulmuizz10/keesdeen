@@ -156,7 +156,7 @@ const Reviews: React.FC = () => {
             >
               Submit Review
             </button> */}
-            <Button className="rounded-md bg-brand-primary border-none poppins text-white">
+            <Button className="rounded-md bg-brand-neutral border-none poppins text-white">
               Submit Review
             </Button>
           </form>

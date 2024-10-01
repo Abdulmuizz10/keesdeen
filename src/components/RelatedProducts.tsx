@@ -3,6 +3,7 @@ import { useShop } from "../context/ShopContext";
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
+import { LuHeart } from "react-icons/lu";
 
 interface Product {
   id: number;
@@ -36,6 +37,7 @@ const RelatedProducts = ({ category }: any) => {
   const ref = useRef(null);
   const isInView = useInView(ref);
   const [image, setImage] = useState<boolean>(false);
+  const { manageWishLists } = useShop();
 
   return (
     <div className="my-10" ref={ref}>
@@ -64,7 +66,7 @@ const RelatedProducts = ({ category }: any) => {
               onMouseLeave={() => setImage(false)}
             >
               <div className="absolute top-3 right-3 z-50 cursor-pointer">
-                {/* <LuHeart /> */}
+                <LuHeart onClick={() => manageWishLists(product.id)} />
               </div>
               <div className="relative">
                 <Link to={`/product_details/${product.id}`}>
@@ -81,10 +83,7 @@ const RelatedProducts = ({ category }: any) => {
                 </h3>
                 <p className="text-gray-500">{formatAmount(product.price)}</p>
 
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-600 mb-2">
-                    Sizes:
-                  </h4>
+                <div className="mt-2">
                   <div className="flex flex-wrap gap-2 items-center">
                     {[
                       "XXS",

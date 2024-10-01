@@ -136,7 +136,7 @@ const BestSellers: React.FC = () => {
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            Shop All
+            Best sellers
           </h2>
           <p className="md:text-md">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
