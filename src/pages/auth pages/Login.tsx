@@ -251,7 +251,7 @@ export const Login7: React.FC = (props: Login7Props) => {
   return (
     <section className="bg-neutral-100">
       <div className="relative grid min-h-screen grid-cols-1 items-stretch justify-center overflow-auto lg:grid-cols-2">
-        <div className="absolute bottom-auto left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
+        <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
           <a href={logo.url}>
             <img src={logo.src} alt={logo.alt} className="w-full h-[25px]" />
           </a>

@@ -38,7 +38,7 @@ const CollectionItem = ({
       // onMouseLeave={() => setImage(product.imageUrl[0])}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        <LuHeart />
+        <LuHeart className="text-2xl text-text-primary" />
       </div>
       <div className="relative">
         <Link to={`/product_details/${product.id}`}>

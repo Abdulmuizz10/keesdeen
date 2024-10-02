@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const BestSellers: React.FC = () => {
   // Define the type for a clothing product
@@ -30,12 +30,13 @@ const BestSellers: React.FC = () => {
     imageUrl: string[];
     description: string;
   }
-  // const { name }: { name: any } = useParams();
+  const { name }: { name: string } = useParams();
   const { products } = useShop();
   const [showFilter, setShowFilter] = useState(true);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
     []
   );
+
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -67,8 +68,15 @@ const BestSellers: React.FC = () => {
     }
   };
 
+  const filteredItems = products.filter(
+    (product) =>
+      product.category.toLowerCase().indexOf(name.toLowerCase()) !== -1
+  );
+
+  console.log(filteredItems);
+
   const applyFilter = () => {
-    let productsCopy = products.slice();
+    let productsCopy = filteredItems;
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>

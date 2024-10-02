@@ -64,7 +64,7 @@ const initialProducts: ClothingProduct[] = [
   },
   {
     id: 2,
-    name: "Silk Trunks",
+    name: "Silk Trunks T-Shirt",
     brand: "Levi's",
     category: "Bottom wear",
     price: 49.99,

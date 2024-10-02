@@ -75,7 +75,7 @@ export const Gallery4 = (props: Gallery4Props) => {
               >
                 <Link
                   key={index}
-                  to={`/best_sellers/${product.name}`}
+                  to={`/best_sellers/${product.category}`}
                   className="block-container"
                 >
                   <img

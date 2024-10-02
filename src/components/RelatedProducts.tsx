@@ -66,7 +66,10 @@ const RelatedProducts = ({ category }: any) => {
               onMouseLeave={() => setImage(false)}
             >
               <div className="absolute top-3 right-3 z-50 cursor-pointer">
-                <LuHeart onClick={() => manageWishLists(product.id)} />
+                <LuHeart
+                  onClick={() => manageWishLists(product.id)}
+                  className="text-2xl text-text-primary"
+                />
               </div>
               <div className="relative">
                 <Link to={`/product_details/${product.id}`}>
