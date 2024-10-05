@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { formatAmount } from "../../lib/utils";
 import { Button } from "@relume_io/relume-ui";
+import { useLocation } from "react-router-dom";
 
 interface CheckoutProps {
   subtotal: number;
 }
 
 const CheckOut: React.FC<CheckoutProps> = ({}) => {
+  const location = useLocation();
   const subtotal = 299;
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>("CreditCard");
@@ -33,7 +35,7 @@ const CheckOut: React.FC<CheckoutProps> = ({}) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [location.pathname]);
   return (
     <div className="container mx-auto p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

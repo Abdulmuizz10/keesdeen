@@ -106,51 +106,49 @@ const AdminProducts: React.FC = () => {
     });
 
   return (
-    <section className="px-[5%] py-30 md:py-24 lg:py-20">
-      <div className="container rounded-lg shadow-lg">
-        <div className="rb-12 mb-12 md:mb-5">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            Products
-          </h2>
-        </div>
-        <table
-          {...getTableProps()}
-          className="min-w-full bg-white rounded-lg overflow-hidden shadow-md"
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr
-                {...headerGroup.getHeaderGroupProps()}
-                className="bg-gray-200 text-gray-700"
-              >
-                {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    className="p-4 text-left border-b"
-                  >
-                    {column.render("Header")}
-                  </th>
+    <div className="container">
+      <div className="mb-12 md:mb-5">
+        <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+          Products
+        </h2>
+      </div>
+      <table
+        {...getTableProps()}
+        className="min-w-full bg-white rounded-lg overflow-hidden shadow-md"
+      >
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr
+              {...headerGroup.getHeaderGroupProps()}
+              className="bg-gray-200 text-gray-700"
+            >
+              {headerGroup.headers.map((column) => (
+                <th
+                  {...column.getHeaderProps()}
+                  className="p-4 text-left border-b"
+                >
+                  {column.render("Header")}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()} className="text-gray-600">
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} className="hover:bg-gray-50">
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()} className="p-4 border-b">
+                    {cell.render("Cell")}
+                  </td>
                 ))}
               </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()} className="text-gray-600">
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} className="hover:bg-gray-50">
-                  {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()} className="p-4 border-b">
-                      {cell.render("Cell")}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </section>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

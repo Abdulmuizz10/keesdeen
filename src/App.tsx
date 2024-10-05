@@ -34,7 +34,7 @@ import { Signup7 } from "./pages/auth pages/SignUp";
 
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
-import { Navbar2 } from "./pages/admin pages/AdminNavbar";
+// import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
 import AddProducts from "./pages/admin pages/AddProducts";
@@ -106,13 +106,12 @@ const App: React.FC = () => {
               "/admin/products",
               "/admin/orders",
               "/admin/add_product",
-              "/admin/chart",
               "/admin/dashboard/sales",
               "/admin/dashboard/orders",
             ]}
           >
             <AdminLayout>
-              <Navbar2 />
+              {/* <Navbar2 /> */}
               <Switch>
                 <Route exact path="/admin" component={AdminHome} />
                 <Route exact path="/admin/products" component={AdminProducts} />

@@ -1,5 +1,6 @@
 import { Button } from "@relume_io/relume-ui";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext/AuthContext";
 
 // src/types/User.ts
 export interface Order {
@@ -18,10 +19,12 @@ export interface UserProfile {
 }
 
 const Profile: React.FC = () => {
+  const { user } = useContext(AuthContext);
+
   const sampleUser: UserProfile = {
     id: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
+    name: user.username,
+    email: user.email,
     avatar: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
     orders: [
       {
@@ -34,13 +37,13 @@ const Profile: React.FC = () => {
     ],
   };
 
-  const [user, setUser] = useState<UserProfile>(sampleUser);
+  const [updatedUser, setUpdatedUser] = useState<UserProfile>(sampleUser);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editedName, setEditedName] = useState<string>(user.name);
-  const [editedEmail, setEditedEmail] = useState<string>(user.email);
+  const [editedName, setEditedName] = useState<string>(updatedUser.name);
+  const [editedEmail, setEditedEmail] = useState<string>(updatedUser.email);
 
   const handleSave = () => {
-    setUser({ ...user, name: editedName, email: editedEmail });
+    setUpdatedUser({ ...updatedUser, name: editedName, email: editedEmail });
     setIsEditing(false);
   };
 
@@ -52,8 +55,8 @@ const Profile: React.FC = () => {
         <div className="max-sm:flex-col flex max-sm:items-start items-center justify-between max-sm:space-y-5">
           <div className="flex items-center gap-3">
             <img
-              src={user.avatar}
-              alt={user.name}
+              src={updatedUser.avatar}
+              alt={updatedUser.name}
               className="w-20 h-20 rounded-full border"
             />
             {isEditing ? (
@@ -73,14 +76,14 @@ const Profile: React.FC = () => {
               </div>
             ) : (
               <div>
-                <h2 className="text-xl font-semibold">{user.name}</h2>
-                <p className="text-gray-500">{user.email}</p>
+                <h2 className="text-xl font-semibold">{updatedUser.name}</h2>
+                <p className="text-gray-500">{updatedUser.email}</p>
               </div>
             )}
           </div>
 
           <Button
-            className="rounded-md md:w-56"
+            className="rounded-md md:w-56 bg-brand-neutral text-white poppins"
             onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
           >
             {isEditing ? "Save" : "Edit Profile"}
@@ -91,7 +94,7 @@ const Profile: React.FC = () => {
         <div className="mt-8">
           <h3 className="text-xl font-semibold mb-4">Order History</h3>
           <ul className="space-y-4">
-            {user.orders.map((order) => (
+            {updatedUser.orders.map((order) => (
               <li
                 key={order.id}
                 className="border p-4 rounded-lg shadow-sm flex justify-between"
