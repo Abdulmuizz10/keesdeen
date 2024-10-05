@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 
 // Libraries
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,8 +12,8 @@ import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
 // Components
-import { Navbar7 } from "./components/Navbar";
-import { Footer1 } from "./components/Footer";
+// import { Navbar7 } from "./components/Navbar";
+// import { Footer1 } from "./components/Footer";
 
 // Root Pages
 import Home from "./pages/root pages/Home";
@@ -32,15 +32,17 @@ import { Signup7 } from "./pages/auth pages/SignUp";
 
 // Admin Pages
 
-// Context
-import { AuthContext } from "./context/AuthContext/AuthContext";
-// import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
 import AddProducts from "./pages/admin pages/AddProducts";
 import AdminDashBoardSales from "./pages/admin pages/AdminDashBoardSales";
 import AdminDashBoardOrders from "./pages/admin pages/AdminDashBoardOrders";
 import AdminProducts from "./pages/admin pages/AdminProducts";
+import AdminCustomers from "./pages/admin pages/AdminCustomers";
+
+// Context
+import { AuthContext } from "./context/AuthContext/AuthContext";
+// import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -62,7 +64,7 @@ const App: React.FC = () => {
   return (
     <div className="overflow-x-hidden ">
       <ToastContainer />
-      <Router>
+      {/* <Router>
         <Route
           exact
           path={[
@@ -111,7 +113,7 @@ const App: React.FC = () => {
             ]}
           >
             <AdminLayout>
-              {/* <Navbar2 /> */}
+            
               <Switch>
                 <Route exact path="/admin" component={AdminHome} />
                 <Route exact path="/admin/products" component={AdminProducts} />
@@ -144,6 +146,47 @@ const App: React.FC = () => {
             </Switch>
           </AuthLayout>
         </Route>
+      </Router> */}
+      <Router>
+        <Routes>
+          {/* Root Layout with common pages */}
+          <Route element={<RootLayouts />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/shop_all" element={<ShopAll />} />
+            <Route path="/new_in" element={<NewArrivals />} />
+            <Route path="/product_details/:id" element={<ProductDetails />} />
+            <Route path="/best_sellers/:name" element={<BestSellers />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlists" element={<WishLists />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/check_out" element={<Checkout />} />
+          </Route>
+
+          {/* Admin Routes (Only accessible to admins) */}
+          {user?.isAdmin && (
+            <Route element={<AdminLayout />}>
+              <Route path="/admin" element={<AdminHome />} />
+              <Route path="/admin/customers" element={<AdminCustomers />} />
+              <Route path="/admin/products" element={<AdminProducts />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route path="/admin/add_product" element={<AddProducts />} />
+              <Route
+                path="/admin/dashboard/sales"
+                element={<AdminDashBoardSales />}
+              />
+              <Route
+                path="/admin/dashboard/orders"
+                element={<AdminDashBoardOrders />}
+              />
+            </Route>
+          )}
+
+          {/* Auth Routes */}
+          <Route element={<AuthLayout />}>
+            <Route path="/register/login" element={<Login7 />} />
+            <Route path="/register/signUp" element={<Signup7 />} />
+          </Route>
+        </Routes>
       </Router>
     </div>
   );

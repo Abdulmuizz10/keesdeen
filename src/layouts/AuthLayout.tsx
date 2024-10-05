@@ -1,11 +1,17 @@
-import React, { ReactNode } from "react";
+import React from "react";
+import { Outlet } from "react-router-dom";
 
-interface AuthLayout {
-  children: ReactNode; // Define children as part of the props
+interface AuthLayoutProps {
+  children?: React.ReactNode;
 }
 
-const AuthLayout: React.FC<AuthLayout> = ({ children }) => {
-  return <main>{children}</main>;
+const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+  return (
+    <main>
+      {children}
+      <Outlet /> {/* This renders the nested routes */}
+    </main>
+  );
 };
 
 export default AuthLayout;

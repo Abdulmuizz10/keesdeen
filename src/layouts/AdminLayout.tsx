@@ -1,4 +1,5 @@
-import React, { ReactNode } from "react";
+import React from "react";
+import { Outlet } from "react-router-dom";
 import {
   // Button,
   // DropdownMenuGroup,
@@ -50,7 +51,7 @@ import { mainLogo } from "../assets";
 import { Link } from "react-router-dom";
 
 interface AdminLayoutProps {
-  children: ReactNode; // Define children as part of the props
+  children?: React.ReactNode;
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
@@ -93,6 +94,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       </div>
       <main className="flex-1 py-20 px-8 w-full bg-background-primary lg:p-10 min-h-screen h-screen overflow-y-auto">
         {children}
+        <Outlet />
       </main>
     </main>
   );

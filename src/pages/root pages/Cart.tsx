@@ -4,7 +4,7 @@ import { formatAmount } from "../../lib/utils";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const { products, cartItems, updateQuantity } = useShop();
@@ -26,7 +26,7 @@ const Cart: React.FC = () => {
     setCartData(tempData);
   }, [cartItems]);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
@@ -102,7 +102,7 @@ const Cart: React.FC = () => {
             <div className="w-full text-end mt-5">
               <Button
                 className="w-full rounded-md  active:bg-gray-700 bg-brand-neutral border-none text-text-light"
-                onClick={() => history.push("/check_out")}
+                onClick={() => navigate("/check_out")}
               >
                 PROCEED TO CHECKOUT
               </Button>

@@ -366,7 +366,7 @@ import React, { useContext, useState } from "react";
 import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { SignUp } from "../../context/AuthContext/AuthApiCalls";
@@ -413,12 +413,11 @@ export const Signup7: React.FC = (props: Signup7Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { dispatch } = useContext(AuthContext);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    SignUp({ username: userName, email, password }, dispatch, history);
-    history.push("/");
+    SignUp({ username: userName, email, password }, dispatch, navigate);
   };
 
   return (

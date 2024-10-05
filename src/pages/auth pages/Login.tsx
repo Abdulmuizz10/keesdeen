@@ -193,7 +193,7 @@ import React, { useContext, useState } from "react";
 import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { Login } from "../../context/AuthContext/AuthApiCalls";
@@ -240,12 +240,12 @@ export const Login7: React.FC = (props: Login7Props) => {
   const [password, setPassword] = useState<string>("");
   const { dispatch } = useContext(AuthContext);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log({ email, password });
-    Login({ email, password }, dispatch, history);
+    Login({ email, password }, dispatch, navigate);
   };
 
   return (

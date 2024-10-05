@@ -4,11 +4,7 @@ import { formatAmount } from "../../lib/utils";
 import { Button } from "@relume_io/relume-ui";
 import { useLocation } from "react-router-dom";
 
-interface CheckoutProps {
-  subtotal: number;
-}
-
-const CheckOut: React.FC<CheckoutProps> = ({}) => {
+const CheckOut: React.FC = ({}) => {
   const location = useLocation();
   const subtotal = 299;
   const [selectedPaymentMethod, setSelectedPaymentMethod] =

@@ -13,7 +13,7 @@ interface Response {
 export const Login = async (
   user: any,
   dispatch: Dispatch<any>,
-  history: any
+  navigate: any
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
@@ -22,7 +22,7 @@ export const Login = async (
       user
     );
     dispatch(AccessSuccess(res.data));
-    history.push("/");
+    navigate("/");
   } catch (err) {
     dispatch(AccessFailure());
   }
@@ -31,7 +31,7 @@ export const Login = async (
 export const SignUp = async (
   user: any,
   dispatch: Dispatch<any>,
-  history: any
+  navigate: any
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
@@ -40,7 +40,7 @@ export const SignUp = async (
       user
     );
     dispatch(AccessSuccess(res.data));
-    history.push("/");
+    navigate("/");
   } catch (err) {
     dispatch(AccessFailure());
   }

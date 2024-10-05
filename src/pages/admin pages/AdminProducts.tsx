@@ -1,153 +1,96 @@
 import React from "react";
-import { useTable, Column } from "react-table";
-
-// Define your ClothingProduct type
-interface ClothingProduct {
-  id: number;
-  name: string;
-  brand: string;
-  price: number;
-  isAvailable: boolean;
-}
-
-// Sample product data
-const products: ClothingProduct[] = [
-  { id: 1, name: "T-Shirt", brand: "Brand A", price: 25.99, isAvailable: true },
-  { id: 2, name: "Jeans", brand: "Brand B", price: 49.99, isAvailable: true },
-  {
-    id: 3,
-    name: "Sneakers",
-    brand: "Brand C",
-    price: 89.99,
-    isAvailable: false,
-  },
-  { id: 4, name: "Jacket", brand: "Brand D", price: 99.99, isAvailable: true },
-  { id: 5, name: "Hat", brand: "Brand E", price: 19.99, isAvailable: true },
-  {
-    id: 6,
-    name: "Sweater",
-    brand: "Brand F",
-    price: 34.99,
-    isAvailable: false,
-  },
-  { id: 7, name: "Shorts", brand: "Brand G", price: 29.99, isAvailable: true },
-  { id: 8, name: "Scarf", brand: "Brand H", price: 14.99, isAvailable: true },
-  { id: 9, name: "Belt", brand: "Brand I", price: 18.99, isAvailable: false },
-  { id: 10, name: "Gloves", brand: "Brand J", price: 12.99, isAvailable: true },
-  { id: 11, name: "Socks", brand: "Brand K", price: 5.99, isAvailable: true },
-  {
-    id: 12,
-    name: "Tank Top",
-    brand: "Brand L",
-    price: 21.99,
-    isAvailable: true,
-  },
-  { id: 13, name: "Blazer", brand: "Brand M", price: 89.99, isAvailable: true },
-  { id: 14, name: "Dress", brand: "Brand N", price: 59.99, isAvailable: true },
-  { id: 15, name: "Skirt", brand: "Brand O", price: 39.99, isAvailable: true },
-  { id: 16, name: "Boots", brand: "Brand P", price: 99.99, isAvailable: false },
-  {
-    id: 17,
-    name: "Flip Flops",
-    brand: "Brand Q",
-    price: 24.99,
-    isAvailable: true,
-  },
-  {
-    id: 18,
-    name: "Pajamas",
-    brand: "Brand R",
-    price: 34.99,
-    isAvailable: true,
-  },
-  {
-    id: 19,
-    name: "Overalls",
-    brand: "Brand S",
-    price: 54.99,
-    isAvailable: true,
-  },
-  {
-    id: 20,
-    name: "Cardigan",
-    brand: "Brand T",
-    price: 49.99,
-    isAvailable: true,
-  },
-];
-
-// Define columns
-const columns: Column<ClothingProduct>[] = [
-  {
-    Header: "Product Name",
-    accessor: "name",
-  },
-  {
-    Header: "Brand",
-    accessor: "brand",
-  },
-  {
-    Header: "Price",
-    accessor: "price",
-    Cell: ({ value }: { value: number }) => `$${value.toFixed(2)}`,
-  },
-  {
-    Header: "Available",
-    accessor: "isAvailable",
-    Cell: ({ value }: { value: boolean }) => (value ? "Yes" : "No"),
-  },
-];
 
 const AdminProducts: React.FC = () => {
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns,
-      data: products,
-    });
+  // Sample data for products
+  const products = [
+    {
+      name: "Men's T-Shirt",
+      category: "Clothing",
+      price: 25.99,
+      isAvailable: true,
+      date: "01.01.2024",
+    },
+    {
+      name: "Women's Jacket",
+      category: "Clothing",
+      price: 49.99,
+      isAvailable: false,
+      date: "12.12.2023",
+    },
+    {
+      name: "Sneakers",
+      category: "Footwear",
+      price: 79.99,
+      isAvailable: true,
+      date: "15.11.2023",
+    },
+    {
+      name: "Leather Handbag",
+      category: "Accessories",
+      price: 120.0,
+      isAvailable: true,
+      date: "18.10.2023",
+    },
+    {
+      name: "Wool Scarf",
+      category: "Accessories",
+      price: 19.99,
+      isAvailable: false,
+      date: "25.09.2023",
+    },
+  ];
 
   return (
-    <div className="container">
-      <div className="mb-12 md:mb-5">
-        <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-          Products
-        </h2>
-      </div>
-      <table
-        {...getTableProps()}
-        className="min-w-full bg-white rounded-lg overflow-hidden shadow-md"
-      >
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr
-              {...headerGroup.getHeaderGroupProps()}
-              className="bg-gray-200 text-gray-700"
-            >
-              {headerGroup.headers.map((column) => (
-                <th
-                  {...column.getHeaderProps()}
-                  className="p-4 text-left border-b"
-                >
-                  {column.render("Header")}
+    <div className="w-full">
+      {/* Product List */}
+      <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <h3 className="text-xl font-semibold mb-4">Product List</h3>
+
+        <div className="overflow-x-auto">
+          <table className="w-full bg-white">
+            <thead>
+              <tr className="bg-gray-100 rounded-t-xl font-extrabold">
+                <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
+                  Product
                 </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()} className="text-gray-600">
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()} className="hover:bg-gray-50">
-                {row.cells.map((cell) => (
-                  <td {...cell.getCellProps()} className="p-4 border-b">
-                    {cell.render("Cell")}
-                  </td>
-                ))}
+                <th className="text-left p-4 font-semibold">Category</th>
+                <th className="text-left p-4 font-semibold">Price</th>
+                <th className="text-left p-4 font-semibold">Availability</th>
+                <th className="text-left p-4 font-semibold rounded-tr-xl">
+                  Date Added
+                </th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {products.map((product, index) => (
+                <tr
+                  key={index}
+                  className="border-b hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <td className="flex items-center space-x-4 p-4">
+                    <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
+                    <span className="font-semibold">{product.name}</span>
+                  </td>
+                  <td className="p-4 text-sm">{product.category}</td>
+                  <td className="p-4 text-sm">${product.price.toFixed(2)}</td>
+                  <td className="p-4">
+                    <span
+                      className={`px-4 py-1 rounded-full text-sm ${
+                        product.isAvailable
+                          ? "bg-green-200 text-green-800"
+                          : "bg-red-200 text-red-800"
+                      }`}
+                    >
+                      {product.isAvailable ? "Available" : "Out of Stock"}
+                    </span>
+                  </td>
+                  <td className="p-4 text-sm">{product.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
