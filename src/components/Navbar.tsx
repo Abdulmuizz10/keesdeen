@@ -135,7 +135,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               ) : (
                 <></>
               )} */}
-
+              {/* big screen */}
               <div className="flex flex-col items-center">
                 <Link
                   to="/admin"

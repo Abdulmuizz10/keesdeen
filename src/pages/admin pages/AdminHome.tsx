@@ -7,9 +7,9 @@ Chart.register(ArcElement);
 const AdminHome: React.FC = () => {
   return (
     <section className="container ">
-      <h2 className=" mb-10 text-4xl font-bold md:text-6xl lg:text-7xl bricolage-grotesque">
+      {/* <h2 className=" mb-10 text-4xl font-bold md:text-6xl lg:text-7xl bricolage-grotesque">
         Admin
-      </h2>
+      </h2> */}
       <Dashboard />
     </section>
   );
@@ -99,11 +99,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="w-full">
         {/* Latest Transactions */}
-        <div className="col-span-2 bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
           <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             {[
               {
                 name: "Josephine Zimmerman",
@@ -144,6 +144,7 @@ const Dashboard = () => {
                   <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
                   <span className="font-semibold">{transaction.name}</span>
                 </div>
+
                 <span
                   className={`px-4 py-1 rounded-full ${
                     transaction.status === "done"
@@ -155,20 +156,173 @@ const Dashboard = () => {
                 >
                   {transaction.status}
                 </span>
+
                 <span className="mt-2 md:mt-0">{transaction.date}</span>
                 <span className="font-semibold mt-2 md:mt-0">
                   {transaction.amount}
                 </span>
               </div>
             ))}
+          </div> */}
+
+          {/* <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-xl">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="text-left p-4 font-semibold">Customer</th>
+                  <th className="text-left p-4 font-semibold">Status</th>
+                  <th className="text-left p-4 font-semibold">Date</th>
+                  <th className="text-left p-4 font-semibold">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    name: "Josephine Zimmerman",
+                    status: "pending",
+                    date: "14.01.2024",
+                    amount: "$3,200",
+                  },
+                  {
+                    name: "Cecilia Harriet",
+                    status: "done",
+                    date: "13.01.2024",
+                    amount: "$2,800",
+                  },
+                  {
+                    name: "Dennis Thomas",
+                    status: "canceled",
+                    date: "12.01.2024",
+                    amount: "$2,600",
+                  },
+                  {
+                    name: "Lula Neal",
+                    status: "pending",
+                    date: "11.01.2024",
+                    amount: "$3,200",
+                  },
+                  {
+                    name: "Jeff Montgomery",
+                    status: "done",
+                    date: "10.01.2024",
+                    amount: "$4,600",
+                  },
+                ].map((transaction, index) => (
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    <td className="flex items-center space-x-4 p-4">
+                      <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
+                      <span className="font-semibold">{transaction.name}</span>
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`px-4 py-1 rounded-full text-sm ${
+                          transaction.status === "done"
+                            ? "bg-green-200 text-green-800"
+                            : transaction.status === "canceled"
+                            ? "bg-red-200 text-red-800"
+                            : "bg-yellow-200 text-yellow-800"
+                        }`}
+                      >
+                        {transaction.status}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm">{transaction.date}</td>
+                    <td className="p-4 font-semibold text-lg">
+                      {transaction.amount}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div> */}
+
+          <div className="overflow-x-auto">
+            <table className="w-full bg-white">
+              <thead>
+                <tr className="bg-gray-100 rounded-t-xl bricolage-grotesque font-extrabold">
+                  <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl ">
+                    Customer
+                  </th>
+                  <th className="text-left p-4 font-semibold">Status</th>
+                  <th className="text-left p-4 font-semibold">Date</th>
+                  <th className="text-left p-4 font-semibold rounded-tr-xl">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    name: "Josephine Zimmerman",
+                    status: "pending",
+                    date: "14.01.2024",
+                    amount: "$3,200",
+                  },
+                  {
+                    name: "Cecilia Harriet",
+                    status: "done",
+                    date: "13.01.2024",
+                    amount: "$2,800",
+                  },
+                  {
+                    name: "Dennis Thomas",
+                    status: "canceled",
+                    date: "12.01.2024",
+                    amount: "$2,600",
+                  },
+                  {
+                    name: "Lula Neal",
+                    status: "pending",
+                    date: "11.01.2024",
+                    amount: "$3,200",
+                  },
+                  {
+                    name: "Jeff Montgomery",
+                    status: "done",
+                    date: "10.01.2024",
+                    amount: "$4,600",
+                  },
+                ].map((transaction, index) => (
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    <td className="flex items-center space-x-4 p-4 bricolage-grotesque ">
+                      <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
+                      <span className="font-semibold">{transaction.name}</span>
+                    </td>
+                    <td className="p-4 poppins">
+                      <span
+                        className={`px-4 py-1 rounded-full text-sm ${
+                          transaction.status === "done"
+                            ? "bg-green-200 text-green-800"
+                            : transaction.status === "canceled"
+                            ? "bg-red-200 text-red-800"
+                            : "bg-yellow-200 text-yellow-800"
+                        }`}
+                      >
+                        {transaction.status}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm poppins">{transaction.date}</td>
+                    <td className="p-4 font-semibold text-lg bricolage-grotesque ">
+                      {transaction.amount}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Weekly Recap */}
+        {/* Weekly Recap
         <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
           <h3 className="text-xl font-semibold mb-4">Weekly Recap</h3>
           <div className="h-40 bg-gray-300 rounded-lg"></div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
