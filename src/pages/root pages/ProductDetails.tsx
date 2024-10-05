@@ -26,7 +26,7 @@ interface Product {
 }
 
 const ProductDetails: React.FC = () => {
-  const { id }: { id: any } = useParams();
+  const { id } = useParams();
   const { products, addToCart } = useShop();
   const [productData, setProductData] = useState<Product>();
   const [image, setImage] = useState<string>("");
