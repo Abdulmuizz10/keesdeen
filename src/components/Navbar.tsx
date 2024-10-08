@@ -136,7 +136,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                 <></>
               )}
               {/* big screen */}
-              {/* <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center">
                 <Link
                   to="/admin"
                   className="relative block w-auto  text-md lg:inline-block lg:px-1 lg:text-xl text-text-primary"
@@ -144,7 +144,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                   Admin
                 </Link>
                 <hr className="h-[2px] w-1/2 bg-background-alternative" />
-              </div> */}
+              </div>
             </div>
             {user ? (
               <Link to="/profile">
@@ -285,12 +285,12 @@ export const Navbar7 = (props: Navbar7Props) => {
                     <></>
                   )}
 
-                  {/* <Link
+                  <Link
                     to="/admin"
                     className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base"
                   >
                     Admin
-                  </Link> */}
+                  </Link>
                 </div>
               </div>
             </motion.div>
