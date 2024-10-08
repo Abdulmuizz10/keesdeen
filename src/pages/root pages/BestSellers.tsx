@@ -32,7 +32,7 @@ const BestSellers: React.FC = () => {
   }
   // const { name } = useParams<{ name: string }>();
   const { products } = useShop();
-  const [showFilter, setShowFilter] = useState(true);
+  const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
     []
   );

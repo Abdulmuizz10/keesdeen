@@ -21,7 +21,7 @@ const Dashboard = () => {
     datasets: [
       {
         data: [75, 25], // 75% completion
-        backgroundColor: ["#04BB6E", "#eee"],
+        backgroundColor: ["#13034bef", "#eee"],
         borderWidth: 0,
       },
     ],

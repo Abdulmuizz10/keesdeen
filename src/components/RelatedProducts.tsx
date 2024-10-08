@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
 import { LuHeart } from "react-icons/lu";
+import { BsFillHeartFill } from "react-icons/bs";
 
 interface Product {
   id: number;
@@ -37,7 +38,7 @@ const RelatedProducts = ({ category }: any) => {
   const ref = useRef(null);
   const isInView = useInView(ref);
   const [image, setImage] = useState<boolean>(false);
-  const { manageWishLists } = useShop();
+  const { manageWishLists, wishLists } = useShop();
 
   return (
     <div className="my-10" ref={ref}>
@@ -61,15 +62,22 @@ const RelatedProducts = ({ category }: any) => {
                 ease: "easeOut",
                 delay: index * 0.4,
               }}
-              className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative"
+              className="max-w-xs mx-auto bg-white rounded-b-lg shadow-large overflow-hidden relative text-center"
               onMouseOver={() => setImage(true)}
               onMouseLeave={() => setImage(false)}
             >
               <div className="absolute top-3 right-3 z-50 cursor-pointer">
-                <LuHeart
-                  onClick={() => manageWishLists(product.id)}
-                  className="text-2xl text-text-primary"
-                />
+                {wishLists.includes(product.id) ? (
+                  <BsFillHeartFill
+                    onClick={() => manageWishLists(product.id)}
+                    className="text-2xl text-text-primary"
+                  />
+                ) : (
+                  <LuHeart
+                    onClick={() => manageWishLists(product.id)}
+                    className="text-2xl text-text-primary"
+                  />
+                )}
               </div>
               <div className="relative">
                 <Link to={`/product_details/${product.id}`}>
@@ -102,7 +110,7 @@ const RelatedProducts = ({ category }: any) => {
                     ].map((size) => (
                       <button
                         key={size}
-                        className="border border-gray-300 rounded-lg text-gray-600 text-sm px-2 py-1 h-8 w-10 hover:bg-gray-100 transition poppins"
+                        className="border border-gray-300 rounded-lg text-gray-600 text-[8px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
                       >
                         {size}
                       </button>

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
 import { useState } from "react";
 import { LuHeart } from "react-icons/lu";
+import { BsFillHeartFill } from "react-icons/bs";
 import { useShop } from "../context/ShopContext";
 // import { useInView } from "../lib/utils";
 // import { motion } from "framer-motion";
@@ -25,7 +26,7 @@ interface Product {
 
 const ProductItem = ({ product }: { product: Product }) => {
   const [image, setImage] = useState<boolean>(false);
-  const { manageWishLists } = useShop();
+  const { manageWishLists, wishLists } = useShop();
 
   return (
     <div
@@ -34,10 +35,17 @@ const ProductItem = ({ product }: { product: Product }) => {
       onMouseLeave={() => setImage(false)}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        <LuHeart
-          onClick={() => manageWishLists(product.id)}
-          className="text-2xl text-text-primary"
-        />
+        {wishLists.includes(product.id) ? (
+          <BsFillHeartFill
+            onClick={() => manageWishLists(product.id)}
+            className="text-2xl text-text-primary"
+          />
+        ) : (
+          <LuHeart
+            onClick={() => manageWishLists(product.id)}
+            className="text-2xl text-text-primary"
+          />
+        )}
       </div>
       <div className="relative">
         <Link to={`/product_details/${product.id}`}>
@@ -49,7 +57,7 @@ const ProductItem = ({ product }: { product: Product }) => {
         </Link>
       </div>
       <div className="p-4 text-center">
-        <h3 className="text-lg font-semibold text-gray-800 bricolage-grotesque">
+        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
           {product.name}
         </h3>
         <p className="text-gray-500">{formatAmount(product.price)}</p>
@@ -60,7 +68,7 @@ const ProductItem = ({ product }: { product: Product }) => {
               (size) => (
                 <button
                   key={size}
-                  className="border border-gray-300 rounded-lg text-gray-600 text-xs px-2 py-1 h-8 w-10 hover:bg-gray-100 transition poppins"
+                  className="border border-gray-300 rounded-lg text-gray-600 text-[8px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
                 >
                   {size}
                 </button>

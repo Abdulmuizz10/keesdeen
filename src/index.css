@@ -23,10 +23,10 @@ body::-webkit-scrollbar {
       hsla(253, 16%, 7%, 1) 0,
       transparent 50%
     ),
-    /* radial-gradient(at 50% 0%, #5f5f5f 0, transparent 50%), */
-      radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
     radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
 }
+
 .gradient-bg-footer {
   background-color: #3c3c3c;
   background-image: radial-gradient(
