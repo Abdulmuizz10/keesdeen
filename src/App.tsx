@@ -1,5 +1,5 @@
-import { useContext, useEffect } from "react";
-
+// import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 // Libraries
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
@@ -41,7 +41,7 @@ import AdminProducts from "./pages/admin pages/AdminProducts";
 import AdminCustomers from "./pages/admin pages/AdminCustomers";
 
 // Context
-import { AuthContext } from "./context/AuthContext/AuthContext";
+// import { AuthContext } from "./context/AuthContext/AuthContext";
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
@@ -55,7 +55,7 @@ const App: React.FC = () => {
     requestAnimationFrame(raf);
   });
 
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);

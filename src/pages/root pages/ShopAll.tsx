@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -115,10 +115,13 @@ const ShopAll: React.FC = () => {
     sortProducts();
   }, [sortType]);
 
+  const checkboxesRef = useRef<HTMLInputElement[]>([]);
+
   const clearFilters = () => {
     setCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
+    checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
   };
 
   return (
@@ -165,6 +168,9 @@ const ShopAll: React.FC = () => {
                         value={wear}
                         key={index}
                         onChange={toggleCategory}
+                        ref={(el) => {
+                          if (el) checkboxesRef.current.push(el);
+                        }}
                       />
                       {wear}
                     </p>
@@ -200,6 +206,9 @@ const ShopAll: React.FC = () => {
                       value={size}
                       key={index}
                       onChange={toggleSizeCategory}
+                      ref={(el) => {
+                        if (el) checkboxesRef.current.push(el);
+                      }}
                     />
                     {size}
                   </p>
@@ -234,6 +243,9 @@ const ShopAll: React.FC = () => {
                       value={color}
                       key={index}
                       onChange={toggleColorCategory}
+                      ref={(el) => {
+                        if (el) checkboxesRef.current.push(el);
+                      }}
                     />
                     <div
                       style={{ background: color }}

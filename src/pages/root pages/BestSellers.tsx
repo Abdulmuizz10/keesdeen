@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { RxChevronDown } from "react-icons/rx";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -99,15 +99,6 @@ const BestSellers: React.FC = () => {
     setFilteredProducts(productsCopy);
   };
 
-  const clearFilters = () => {
-    // toggleCategory();
-    // toggleSizeCategory();
-    // toggleColorCategory();
-    setCategory([]);
-    setSizeCategory([]);
-    setColorCategory([]);
-  };
-
   const sortProducts = () => {
     let spCopy = filteredProducts.slice();
 
@@ -132,6 +123,18 @@ const BestSellers: React.FC = () => {
   useEffect(() => {
     sortProducts();
   }, [sortType]);
+
+  const checkboxesRef = useRef<HTMLInputElement[]>([]);
+
+  const clearFilters = () => {
+    // toggleCategory();
+    // toggleSizeCategory();
+    // toggleColorCategory();
+    setCategory([]);
+    setSizeCategory([]);
+    setColorCategory([]);
+    checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
+  };
 
   const location = useLocation();
 
@@ -183,6 +186,9 @@ const BestSellers: React.FC = () => {
                         value={wear}
                         key={index}
                         onChange={toggleCategory}
+                        ref={(el) => {
+                          if (el) checkboxesRef.current.push(el);
+                        }}
                       />
                       {wear}
                     </p>
@@ -218,6 +224,9 @@ const BestSellers: React.FC = () => {
                       value={size}
                       key={index}
                       onChange={toggleSizeCategory}
+                      ref={(el) => {
+                        if (el) checkboxesRef.current.push(el);
+                      }}
                     />
                     {size}
                   </p>
@@ -252,6 +261,9 @@ const BestSellers: React.FC = () => {
                       value={color}
                       key={index}
                       onChange={toggleColorCategory}
+                      ref={(el) => {
+                        if (el) checkboxesRef.current.push(el);
+                      }}
                     />
                     <div
                       style={{ background: color }}
