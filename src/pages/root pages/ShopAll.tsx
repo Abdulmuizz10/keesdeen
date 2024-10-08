@@ -135,7 +135,7 @@ const ShopAll: React.FC = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary">
+        <div className="flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary">
           {/* Left Side */}
           <div className="min-w-60">
             <div
@@ -146,7 +146,7 @@ const ShopAll: React.FC = () => {
                 Filters
               </p>
               <RxChevronDown
-                className={`text-2xl sm:hidden ${
+                className={`text-2xl lg:hidden ${
                   showFilter ? "" : "rotate-180"
                 }`}
               />
@@ -155,7 +155,7 @@ const ShopAll: React.FC = () => {
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
-              } sm:block shadow-medium rounded`}
+              } lg:block shadow-medium rounded`}
             >
               <p className="text-base md:text-md pb-1">Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
@@ -183,7 +183,7 @@ const ShopAll: React.FC = () => {
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
-              } sm:block shadow-medium rounded`}
+              } lg:block shadow-medium rounded`}
             >
               <p className="text-base md:text-md pb-1">Size</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
@@ -220,7 +220,7 @@ const ShopAll: React.FC = () => {
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
-              } sm:block shadow-medium rounded`}
+              } lg:block shadow-medium rounded`}
             >
               <p className="text-base md:text-md pb-1">Colour</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
@@ -261,7 +261,9 @@ const ShopAll: React.FC = () => {
               </div>
             </div>
             <Button
-              className="my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md"
+              className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
+                showFilter ? "" : "hidden"
+              }`}
               variant="primary"
               onClick={() => {
                 clearFilters();
@@ -319,7 +321,7 @@ const ShopAll: React.FC = () => {
               </select> */}
             </div>
             {/* {Map Products} */}
-            <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
+            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product, index) => (
                   <ProductItem product={product} key={index} />
@@ -340,4 +342,5 @@ const ProductUnavailable = () => {
     <p className="text-center text-xl w-full">Product is not available...</p>
   );
 };
+
 export default ShopAll;
