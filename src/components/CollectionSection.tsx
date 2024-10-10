@@ -55,12 +55,12 @@ export const Gallery5 = (props: Gallery5Props) => {
                   {wishLists.includes(product.id) ? (
                     <BsFillHeartFill
                       onClick={() => manageWishLists(product.id)}
-                      className="text-2xl text-text-primary"
+                      className="text-xl text-text-primary"
                     />
                   ) : (
                     <LuHeart
                       onClick={() => manageWishLists(product.id)}
-                      className="text-2xl text-text-primary"
+                      className="text-xl text-text-primary"
                     />
                   )}
                 </div>
@@ -80,7 +80,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                   <p className="text-gray-500">{formatAmount(product.price)}</p>
 
                   <div className="mt-2">
-                    <div className="flex flex-wrap gap-2 items-center">
+                    <div className="flex flex-wrap gap-1 items-center">
                       {[
                         "XXS",
                         "XS",
@@ -95,7 +95,7 @@ export const Gallery5 = (props: Gallery5Props) => {
                       ].map((size) => (
                         <button
                           key={size}
-                          className="border border-gray-300 rounded-lg text-gray-600 text-[8px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
+                          className="border border-gray-300 rounded-lg text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
                         >
                           {size}
                         </button>

@@ -77,9 +77,9 @@ const AddProducts: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-10 w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-          {[0, 1, 2, 3].map((index) => (
+          {[0, 1, 2, 3, 4].map((index) => (
             <div key={index} className="w-full">
-              <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-white dark:bg-gray-800 hover:bg-gray-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-700">
+              <label className="flex flex-col items-center justify-center lg:w-26 h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-50">
                 <div className="flex flex-col items-center pt-2 pb-3">
                   <svg
                     className="w-10 h-10 mb-3 text-gray-500 dark:text-gray-400"

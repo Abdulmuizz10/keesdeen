@@ -20,7 +20,7 @@ interface ClothingProduct {
 }
 
 const WishLists: React.FC = () => {
-  const { wishLists, products } = useShop();
+  const { wishLists, products, isActive } = useShop();
   const [lists, setLists] = useState<ClothingProduct[]>();
 
   useEffect(() => {
@@ -39,7 +39,11 @@ const WishLists: React.FC = () => {
           </h2>
         </div>
 
-        <div className="mt-4 border-t border-border-secondary ">
+        <div
+          className={`mt-4 border-t border-border-secondary ${
+            isActive && "opacity-0 transition-opacity"
+          } `}
+        >
           {lists && lists.length === 0 ? (
             <p className="mt-4 text-3xl text-text-secondary">
               Your wishlists is empty.

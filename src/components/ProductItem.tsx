@@ -38,12 +38,12 @@ const ProductItem = ({ product }: { product: Product }) => {
         {wishLists.includes(product.id) ? (
           <BsFillHeartFill
             onClick={() => manageWishLists(product.id)}
-            className="text-2xl text-text-primary"
+            className="text-xl text-text-primary"
           />
         ) : (
           <LuHeart
             onClick={() => manageWishLists(product.id)}
-            className="text-2xl text-text-primary"
+            className="text-xl text-text-primary"
           />
         )}
       </div>
@@ -63,12 +63,12 @@ const ProductItem = ({ product }: { product: Product }) => {
         <p className="text-gray-500">{formatAmount(product.price)}</p>
 
         <div className="mt-2">
-          <div className="flex flex-wrap gap-2 items-center justify-center">
+          <div className="flex flex-wrap gap-1 items-center justify-center">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (size) => (
                 <button
                   key={size}
-                  className="border border-gray-300 rounded-lg text-gray-600 text-[8px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
+                  className="border border-gray-300 rounded-lg text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
                 >
                   {size}
                 </button>

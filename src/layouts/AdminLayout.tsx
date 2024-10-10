@@ -144,7 +144,7 @@ const Navigation = () => {
               >
                 <span className="flex items-center gap-3">
                   <BiPieChartAlt2 className="size-6 shrink-0" />
-                  <p>Dashboard</p>
+                  <p>Analytics</p>
                 </span>
               </AccordionTrigger>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[2.75rem] text-center">

@@ -30,7 +30,7 @@ const ShopAll: React.FC = () => {
     description: string;
   }
 
-  const { products } = useShop();
+  const { products, isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
     []
@@ -135,7 +135,11 @@ const ShopAll: React.FC = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           </p>
         </div>
-        <div className="flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary">
+        <div
+          className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
+            isActive && "opacity-0 transition-opacity"
+          }`}
+        >
           {/* Left Side */}
           <div className="min-w-60">
             <div
@@ -263,7 +267,7 @@ const ShopAll: React.FC = () => {
             <Button
               className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
                 showFilter ? "" : "hidden"
-              }`}
+              } lg:block`}
               variant="primary"
               onClick={() => {
                 clearFilters();
@@ -282,12 +286,12 @@ const ShopAll: React.FC = () => {
                 Showing 1 . {filteredProducts.length} of 31 Products
               </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full ">
+              <div className="md:max-w-xxs max-w-[200px] w-full">
                 <Select onValueChange={setSortType}>
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className=" bg-background-primary rounded-lg">
+                  <SelectContent className=" bg-background-primary rounded-lg border border-border-secondary">
                     <SelectItem
                       value="relevant"
                       className=" cursor-pointer hover:text-text-secondary

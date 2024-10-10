@@ -5,12 +5,11 @@ import { Button, useMediaQuery } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
-import DialogModal from "./DialogModal";
 import { Link } from "react-router-dom";
 import { mainLogo, smallLogo } from "../assets";
 import { IoBagOutline } from "react-icons/io5";
 import { LuHeart } from "react-icons/lu";
-import { CiUser } from "react-icons/ci";
+import { CiSearch, CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
 
@@ -62,7 +61,7 @@ export const Navbar7 = (props: Navbar7Props) => {
   const isMobile = useMediaQuery("(max-width: 991px)");
 
   const { user } = useContext(AuthContext);
-  const { getCartCount, wishLists } = useShop();
+  const { getCartCount, wishLists, isActive, setIsActive } = useShop();
 
   return (
     <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18 bg-none">
@@ -93,6 +92,11 @@ export const Navbar7 = (props: Navbar7Props) => {
                   <Link
                     to={navLink.url}
                     className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary"
+                    onClick={() => {
+                      if (isActive === true) {
+                        setIsActive(!isActive);
+                      }
+                    }}
                   >
                     {navLink.title}
                   </Link>
@@ -102,9 +106,19 @@ export const Navbar7 = (props: Navbar7Props) => {
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex gap-3 items-center">
-              <DialogModal />
+              <CiSearch
+                className="text-3xl cursor-pointer text-text-primary"
+                onClick={() => setIsActive(!isActive)}
+              />
               <Link className="relative" to="/cart">
-                <IoBagOutline className="text-2xl text-text-primary" />
+                <IoBagOutline
+                  className="text-2xl text-text-primary"
+                  onClick={() => {
+                    if (isActive === true) {
+                      setIsActive(!isActive);
+                    }
+                  }}
+                />
                 {/* <div className="h-4 w-4 p-2 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full text-sm">
                   {getCartCount()}
                 </div> */}
@@ -115,7 +129,14 @@ export const Navbar7 = (props: Navbar7Props) => {
                 )}
               </Link>
               <Link to="/wishlists" className="relative">
-                <LuHeart className="text-2xl text-text-primary" />
+                <LuHeart
+                  className="text-2xl text-text-primary"
+                  onClick={() => {
+                    if (isActive === true) {
+                      setIsActive(!isActive);
+                    }
+                  }}
+                />
                 {wishLists.length > 0 && (
                   <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
                     {wishLists.length}
@@ -160,9 +181,19 @@ export const Navbar7 = (props: Navbar7Props) => {
           </div>
         </div>
         <div className="flex lg:hidden gap-3 items-center">
-          <DialogModal />
+          <CiSearch
+            className="text-3xl cursor-pointer text-text-primary"
+            onClick={() => setIsActive(!isActive)}
+          />
           <Link className="relative" to="/cart">
-            <IoBagOutline className="text-2xl text-text-primary" />
+            <IoBagOutline
+              className="text-2xl text-text-primary"
+              onClick={() => {
+                if (isActive === true) {
+                  setIsActive(!isActive);
+                }
+              }}
+            />
             {/* <div className="h-4 w-4 p-1 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full flex items-center justify-center text-sm">
               {getCartCount()}
             </div> */}
@@ -173,7 +204,14 @@ export const Navbar7 = (props: Navbar7Props) => {
             )}
           </Link>
           <Link to="/wishlists" className="relative">
-            <LuHeart className="text-2xl text-text-primary" />
+            <LuHeart
+              className="text-2xl text-text-primary"
+              onClick={() => {
+                if (isActive === true) {
+                  setIsActive(!isActive);
+                }
+              }}
+            />
             {wishLists.length > 0 && (
               <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
                 {wishLists.length}
@@ -242,7 +280,12 @@ export const Navbar7 = (props: Navbar7Props) => {
                       <Link
                         to={navLink.url}
                         className="block py-3 text-md"
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        onClick={() => {
+                          setIsMobileMenuOpen(!isMobileMenuOpen);
+                          if (isActive === true) {
+                            setIsActive(!isActive);
+                          }
+                        }}
                       >
                         {navLink.title}
                       </Link>

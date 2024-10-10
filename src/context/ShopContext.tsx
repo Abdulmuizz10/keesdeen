@@ -36,6 +36,8 @@ interface ShopContextType {
   getCartAmount: any;
   wishLists: any;
   manageWishLists: any;
+  isActive: any;
+  setIsActive: any;
 }
 
 // Create the ShopContext with an empty default value
@@ -766,6 +768,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  const [isActive, setIsActive] = useState(false);
+
   return (
     <ShopContext.Provider
       value={{
@@ -777,6 +781,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         getCartAmount,
         wishLists,
         manageWishLists,
+        isActive,
+        setIsActive,
       }}
     >
       {children}

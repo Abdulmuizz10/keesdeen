@@ -13,8 +13,8 @@ const Home: React.FC = () => {
   return (
     <>
       <Header76 />
-      <Banner13 />
       <Gallery4 />
+      <Banner13 />
       <Gallery5 />
       <Cta3 />
       <Gallery21 />
