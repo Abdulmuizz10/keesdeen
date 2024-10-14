@@ -1,0 +1,172 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * {
+  color: ;
+} */
+
+body {
+  background: #ececec;
+}
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* .gradient-bg-welcome {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      at 0% 0%,
+      hsla(253, 16%, 7%, 1) 0,
+      transparent 50%
+    ),
+    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+} */
+
+/* .gradient-bg-welcome {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(218, 91, 20, 0.8) 15%,
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 75% 25%,
+      rgba(4, 187, 110, 0.8) 20%,
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 50% 75%,
+      rgba(60, 60, 60, 0.8) 20%,
+      transparent 50%
+    );
+} */
+
+/* .gradient-bg-welcome {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      circle at 30% 40%,
+      rgba(218, 91, 20, 0.9) 0%,
+      rgba(218, 91, 20, 0.6) 20%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(4, 187, 110, 0.9) 0%,
+      rgba(4, 187, 110, 0.6) 30%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(60, 60, 60, 0.7) 0%,
+      transparent 50%
+    );
+  background-size: cover;
+} */
+
+/* .gradient-bg-welcome {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      circle at 30% 30%,
+      rgba(218, 91, 20, 0.7) 10%,
+      rgba(218, 91, 20, 0.4) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 70% 70%,
+      rgba(4, 187, 110, 0.7) 15%,
+      rgba(4, 187, 110, 0.4) 35%,
+      transparent 65%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(60, 60, 60, 0.5) 5%,
+      transparent 40%
+    );
+} */
+
+/* .gradient-bg-welcome {
+  background-color: #3c3c3c;
+  background-image: linear-gradient(
+      120deg,
+      rgba(218, 91, 20, 0.7) 30%,
+      rgba(4, 187, 110, 0.7) 70%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(60, 60, 60, 0.6) 0%,
+      transparent 70%
+    );
+} */
+
+.gradient-bg-footer {
+  background-color: #3c3c3c;
+  background-image: radial-gradient(
+      at 0% 100%,
+      hsla(253, 16%, 7%, 1) 0,
+      transparent 53%
+    ),
+    radial-gradient(at 50% 100%, #3c3c3c 0, transparent 50%),
+    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+}
+
+.text-gradient {
+  background-color: #fff;
+  background-image: radial-gradient(
+      at 4% 36%,
+      hsla(0, 0%, 100%, 1) 0,
+      transparent 53%
+    ),
+    radial-gradient(at 100% 60%, rgb(0, 0, 0) 0, transparent 50%),
+    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
+    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bricolage-grotesque {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.poppins {
+  font-family: "poppins", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+p,
+label {
+  font-family: "poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3c3c3c;
+  border-radius: 10px;
+}

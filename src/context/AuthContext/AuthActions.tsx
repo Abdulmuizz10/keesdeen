@@ -1,0 +1,22 @@
+import { AuthAction, User } from "../../lib/types";
+
+// Action for login start
+export const AccessStart = (): AuthAction => ({
+  type: "ACCESS_START",
+});
+
+// Action for login success with a typed user parameter
+export const AccessSuccess = (user: User): AuthAction => ({
+  type: "ACCESS_SUCCESS",
+  payload: user,
+});
+
+// Action for login failure
+export const AccessFailure = (): AuthAction => ({
+  type: "ACCESS_FAILURE",
+});
+
+// Action for logout
+export const logout = (): AuthAction => ({
+  type: "LOGOUT",
+});
