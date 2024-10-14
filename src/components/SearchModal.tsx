@@ -105,7 +105,7 @@ const SearchModal: React.FC = () => {
                         <div className="h-[1px] w-full bg-border-secondary" />
                       </div>
                     </div>
-                    <div className="hidden lg:flex w-full gap-3">
+                    <div className="hidden lg:grid grid-cols-4 w-full gap-3">
                       {filteredProducts && filteredProducts.length > 0 ? (
                         filteredProducts
                           .slice(-4)
