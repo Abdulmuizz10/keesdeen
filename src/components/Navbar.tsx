@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { Button, useMediaQuery } from "@relume_io/relume-ui";
+import { useMediaQuery } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
@@ -52,7 +52,7 @@ export type Navbar7Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const Navbar7 = (props: Navbar7Props) => {
-  const { logo, mobileLogo, navLinks, buttons } = {
+  const { logo, mobileLogo, navLinks } = {
     ...Navbar7Defaults,
     ...props,
   } as Props;
