@@ -17,6 +17,7 @@ import AuthLayout from "./layouts/AuthLayout";
 // Root Pages
 import Home from "./pages/root pages/Home";
 import ShopAll from "./pages/root pages/ShopAll";
+import ActiveWear from "./pages/root pages/ActiveWear";
 import ProductDetails from "./pages/root pages/ProductDetails";
 import BestSellers from "./pages/root pages/BestSellers";
 import Cart from "./pages/root pages/Cart";
@@ -41,6 +42,8 @@ import AdminCustomers from "./pages/admin pages/AdminCustomers";
 
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
+import FitnessAccessories from "./pages/root pages/FitnessAccessories";
+
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
@@ -153,8 +156,14 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/shop_all" element={<ShopAll />} />
             <Route path="/new_in" element={<NewArrivals />} />
-            <Route path="/product_details/:id" element={<ProductDetails />} />
+            <Route path="/Active_wear" element={<ActiveWear />} />
+            <Route
+              path="/Fitness_Accessories"
+              element={<FitnessAccessories />}
+            />
+            <Route path="/new_in" element={<NewArrivals />} />
             <Route path="/best_sellers/:name" element={<BestSellers />} />
+            <Route path="/product_details/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlists" element={<WishLists />} />
             <Route path="/profile" element={<Profile />} />

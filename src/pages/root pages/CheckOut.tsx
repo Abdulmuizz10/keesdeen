@@ -284,132 +284,136 @@ const CheckOut: React.FC = () => {
   }, [location.pathname]);
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left Section: Delivery Information */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-          <form
-            className="grid grid-cols-2 gap-6"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <input
-              {...register("firstName")}
-              type="text"
-              placeholder="First name"
-              className="border border-border-secondary px-2 py-3 w-full rounded-md"
-            />
-            <input
-              {...register("lastName")}
-              type="text"
-              placeholder="Last name"
-              className="border border-border-secondary px-2 py-3 w-full rounded-md"
-            />
-            <input
-              {...register("email")}
-              type="email"
-              placeholder="Email address"
-              className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-            />
-            <input
-              {...register("street")}
-              type="text"
-              placeholder="Street"
-              className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-            />
-            <input
-              {...register("city")}
-              type="text"
-              placeholder="City"
-              className="border border-border-secondary px-2 py-3 w-full rounded-md"
-            />
-            <input
-              {...register("state")}
-              type="text"
-              placeholder="State"
-              className="border border-border-secondary px-2 py-3 w-full rounded-md"
-            />
-            <input
-              {...register("zipcode")}
-              type="text"
-              placeholder="Zipcode"
-              className="border border-border-secondary px-2 py-3 w-full rounded-md"
-            />
-            <input
-              {...register("country")}
-              type="text"
-              placeholder="Country"
-              className="border border-border-secondary  px-2 py-3 w-full rounded-md"
-            />
-            <input
-              {...register("phone")}
-              type="text"
-              placeholder="Phone"
-              className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-            />
-          </form>
-        </div>
-
-        {/* Right Section: Order Summary, Payment Methods, and Stripe Payment Form */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Payment</h2>
-          <div className="mb-4">
-            <div className="flex justify-between">
-              <p>Subtotal:</p>
-              <span>${subtotal}</span>
-            </div>
-            <div className="flex justify-between">
-              <p>Discount:</p>
-              <span>{discount}%</span>
-            </div>
-            <div className="flex justify-between font-bold">
-              <p>Total:</p>
-              <p>${finalTotal}</p>
-            </div>
-          </div>
-
-          {/* Coupon Section */}
-          <div className="mb-6">
-            <label
-              htmlFor="coupon"
-              className="block text-sm font-medium poppins my-1"
+    <section className="px-[5%] py-24 md:py-30">
+      <div className="container">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Section: Delivery Information */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
+            <form
+              className="grid grid-cols-2 gap-6"
+              onSubmit={handleSubmit(onSubmit)}
             >
-              Coupon Code
-            </label>
-            <div className="flex space-x-2">
               <input
+                {...register("firstName")}
                 type="text"
-                id="coupon"
-                value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
-                className="border border-border-secondary p-2 w-full rounded-md"
-                placeholder="Enter coupon code"
+                placeholder="First name"
+                className="border border-border-secondary px-2 py-3 w-full rounded-md"
               />
-              <Button
-                className="w-full active:bg-gray-700 bg-brand-neutral text-text-light px-2 py-2 rounded-md poppins border-none"
-                onClick={handleCouponApply}
-              >
-                Apply
-              </Button>
+              <input
+                {...register("lastName")}
+                type="text"
+                placeholder="Last name"
+                className="border border-border-secondary px-2 py-3 w-full rounded-md"
+              />
+              <input
+                {...register("email")}
+                type="email"
+                placeholder="Email address"
+                className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
+              />
+              <input
+                {...register("street")}
+                type="text"
+                placeholder="Street"
+                className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
+              />
+              <input
+                {...register("city")}
+                type="text"
+                placeholder="City"
+                className="border border-border-secondary px-2 py-3 w-full rounded-md"
+              />
+              <input
+                {...register("state")}
+                type="text"
+                placeholder="State"
+                className="border border-border-secondary px-2 py-3 w-full rounded-md"
+              />
+              <input
+                {...register("zipcode")}
+                type="text"
+                placeholder="Zipcode"
+                className="border border-border-secondary px-2 py-3 w-full rounded-md"
+              />
+              <input
+                {...register("country")}
+                type="text"
+                placeholder="Country"
+                className="border border-border-secondary  px-2 py-3 w-full rounded-md"
+              />
+              <input
+                {...register("phone")}
+                type="text"
+                placeholder="Phone"
+                className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
+              />
+            </form>
+          </div>
+
+          {/* Right Section: Order Summary, Payment Methods, and Stripe Payment Form */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Payment</h2>
+            <div className="mb-4">
+              <div className="flex justify-between">
+                <p>Subtotal:</p>
+                <span>${subtotal}</span>
+              </div>
+              <div className="flex justify-between">
+                <p>Discount:</p>
+                <span>{discount}%</span>
+              </div>
+              <div className="flex justify-between font-bold">
+                <p>Total:</p>
+                <p>${finalTotal}</p>
+              </div>
             </div>
-          </div>
 
-          {/* Stripe Payment Form */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Payment Information</h3>
-            <CardElement className="border border-border-secondary p-2 w-full rounded-md mb-4" />
-          </div>
+            {/* Coupon Section */}
+            <div className="mb-6">
+              <label
+                htmlFor="coupon"
+                className="block text-sm font-medium poppins my-1"
+              >
+                Coupon Code
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  id="coupon"
+                  value={coupon}
+                  onChange={(e) => setCoupon(e.target.value)}
+                  className="border border-border-secondary p-2 w-full rounded-md"
+                  placeholder="Enter coupon code"
+                />
+                <Button
+                  className="w-full active:bg-gray-700 bg-brand-neutral text-text-light px-2 py-2 rounded-md poppins border-none"
+                  onClick={handleCouponApply}
+                >
+                  Apply
+                </Button>
+              </div>
+            </div>
 
-          {/* Pay Button */}
-          <Button
-            className="w-full active:bg-gray-700 bg-brand-neutral text-text-light py-3 rounded-md poppins border-none"
-            onClick={handleSubmit(onSubmit)}
-          >
-            Place order ${finalTotal}
-          </Button>
+            {/* Stripe Payment Form */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-2">
+                Payment Information
+              </h3>
+              <CardElement className="border border-border-secondary p-2 w-full rounded-md mb-4" />
+            </div>
+
+            {/* Pay Button */}
+            <Button
+              className="w-full active:bg-gray-700 bg-brand-neutral text-text-light py-3 rounded-md poppins border-none"
+              onClick={handleSubmit(onSubmit)}
+            >
+              Place order ${finalTotal}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

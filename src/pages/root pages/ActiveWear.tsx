@@ -11,7 +11,7 @@ import {
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
 
-const ShopAll: React.FC = () => {
+const ActiveWear: React.FC = () => {
   // Define the type for a clothing product
   interface ClothingProduct {
     id: number;
@@ -67,11 +67,11 @@ const ShopAll: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products.slice();
+    let productsCopy = products.filter((i) => i.category === "Active wear");
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        category.includes(item.category)
+        category.includes(item.subcategory)
       );
     }
 
@@ -129,7 +129,7 @@ const ShopAll: React.FC = () => {
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            Shop All
+            Active Wear
           </h2>
           <p className="md:text-md">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -163,7 +163,14 @@ const ShopAll: React.FC = () => {
             >
               <p className="text-base md:text-md pb-3">Product Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Active wear", "Fitness Accessories"].map((wear, index) => (
+                {[
+                  "Modest Workout Tops",
+                  "Joggers & Bottoms",
+                  "Complete Active wear Sets",
+                  "High-Support Sports Bras",
+                  "Sports Hijabs",
+                  "Burkinis / Swimwear",
+                ].map((wear, index) => (
                   <p className="flex gap-2">
                     <input
                       type="checkbox"
@@ -345,4 +352,4 @@ const ProductUnavailable = () => {
   );
 };
 
-export default ShopAll;
+export default ActiveWear;

@@ -53,7 +53,7 @@ const ProductDetails: React.FC = () => {
   }, []);
 
   return productData ? (
-    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
+    <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">
         <div className="flex gap-5 md:gap-10 flex-col sm:flex-row">
           {/* Product images */}

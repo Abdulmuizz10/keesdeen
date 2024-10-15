@@ -118,9 +118,6 @@ const NewArrivals: React.FC = () => {
   const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
   const clearFilters = () => {
-    // toggleCategory();
-    // toggleSizeCategory();
-    // toggleColorCategory();
     setCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
@@ -128,11 +125,11 @@ const NewArrivals: React.FC = () => {
   };
 
   return (
-    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
+    <section className="px-[5%] py-24 md:py-30">
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            New Arrivals
+            New arrivals
           </h2>
           <p className="md:text-md">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -164,25 +161,23 @@ const NewArrivals: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Type</p>
+              <p className="text-base md:text-md pb-3">Product Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Top wear", "Bottom wear", "Inner wear"].map(
-                  (wear, index) => (
-                    <p className="flex gap-2">
-                      <input
-                        type="checkbox"
-                        className="w-3 my"
-                        value={wear}
-                        key={index}
-                        onChange={toggleCategory}
-                        ref={(el) => {
-                          if (el) checkboxesRef.current.push(el);
-                        }}
-                      />
-                      {wear}
-                    </p>
-                  )
-                )}
+                {["Active wear", "Fitness Accessories"].map((wear, index) => (
+                  <p className="flex gap-2">
+                    <input
+                      type="checkbox"
+                      className="w-3 my"
+                      value={wear}
+                      key={index}
+                      onChange={toggleCategory}
+                      ref={(el) => {
+                        if (el) checkboxesRef.current.push(el);
+                      }}
+                    />
+                    {wear}
+                  </p>
+                ))}
               </div>
             </div>
 
@@ -192,7 +187,7 @@ const NewArrivals: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Size</p>
+              <p className="text-base md:text-md pb-3">Size</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "XXS",
@@ -229,7 +224,7 @@ const NewArrivals: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Colour</p>
+              <p className="text-base md:text-md pb-3">Colour</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "Black",
@@ -289,12 +284,12 @@ const NewArrivals: React.FC = () => {
                 Showing 1 . {filteredProducts.length} of 31 Products
               </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full ">
+              <div className="md:max-w-xxs max-w-[200px] w-full">
                 <Select onValueChange={setSortType}>
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className=" bg-background-primary rounded-lg  border border-border-secondary">
+                  <SelectContent className=" bg-background-primary rounded-lg border border-border-secondary">
                     <SelectItem
                       value="relevant"
                       className=" cursor-pointer hover:text-text-secondary

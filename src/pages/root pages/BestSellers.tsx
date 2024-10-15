@@ -10,8 +10,7 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
-// import { useLocation, useParams } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+
 const BestSellers: React.FC = () => {
   // Define the type for a clothing product
   interface ClothingProduct {
@@ -30,13 +29,12 @@ const BestSellers: React.FC = () => {
     imageUrl: string[];
     description: string;
   }
-  // const { name } = useParams<{ name: string }>();
+
   const { products, isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
     []
   );
-
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -68,15 +66,8 @@ const BestSellers: React.FC = () => {
     }
   };
 
-  // const filteredItems = products.filter(
-  //   (product) =>
-  //     product.category.toLowerCase().indexOf(name.toLowerCase()) !== -1
-  // );
-
-  // console.log(filteredItems);
-
   const applyFilter = () => {
-    let productsCopy = products;
+    let productsCopy = products.slice();
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
@@ -127,23 +118,14 @@ const BestSellers: React.FC = () => {
   const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
   const clearFilters = () => {
-    // toggleCategory();
-    // toggleSizeCategory();
-    // toggleColorCategory();
     setCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
     checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
   };
 
-  const location = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
   return (
-    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-10">
+    <section className="px-[5%] py-24 md:py-30">
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
@@ -179,25 +161,23 @@ const BestSellers: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Type</p>
+              <p className="text-base md:text-md pb-3">Product Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Top wear", "Bottom wear", "Inner wear"].map(
-                  (wear, index) => (
-                    <p className="flex gap-2">
-                      <input
-                        type="checkbox"
-                        className="w-3 my"
-                        value={wear}
-                        key={index}
-                        onChange={toggleCategory}
-                        ref={(el) => {
-                          if (el) checkboxesRef.current.push(el);
-                        }}
-                      />
-                      {wear}
-                    </p>
-                  )
-                )}
+                {["Active wear", "Fitness Accessories"].map((wear, index) => (
+                  <p className="flex gap-2">
+                    <input
+                      type="checkbox"
+                      className="w-3 my"
+                      value={wear}
+                      key={index}
+                      onChange={toggleCategory}
+                      ref={(el) => {
+                        if (el) checkboxesRef.current.push(el);
+                      }}
+                    />
+                    {wear}
+                  </p>
+                ))}
               </div>
             </div>
 
@@ -207,7 +187,7 @@ const BestSellers: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Size</p>
+              <p className="text-base md:text-md pb-3">Size</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "XXS",
@@ -244,7 +224,7 @@ const BestSellers: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Colour</p>
+              <p className="text-base md:text-md pb-3">Colour</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "Black",
@@ -304,12 +284,12 @@ const BestSellers: React.FC = () => {
                 Showing 1 . {filteredProducts.length} of 31 Products
               </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full ">
+              <div className="md:max-w-xxs max-w-[200px] w-full">
                 <Select onValueChange={setSortType}>
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className=" bg-background-primary rounded-lg  border border-border-secondary">
+                  <SelectContent className=" bg-background-primary rounded-lg border border-border-secondary">
                     <SelectItem
                       value="relevant"
                       className=" cursor-pointer hover:text-text-secondary
@@ -364,4 +344,5 @@ const ProductUnavailable = () => {
     <p className="text-center text-xl w-full">Product is not available...</p>
   );
 };
+
 export default BestSellers;

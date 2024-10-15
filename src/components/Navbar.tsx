@@ -1,9 +1,9 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { useMediaQuery } from "@relume_io/relume-ui";
+// import { useMediaQuery } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
-import { RxChevronDown } from "react-icons/rx";
+// import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { mainLogo, smallLogo } from "../assets";
@@ -19,26 +19,9 @@ type ImageProps = {
   alt?: string;
 };
 
-type SubMenuLink = {
-  url: string;
-  image: ImageProps;
-  title: string;
-  description: string;
-};
-
-type LinkGroup = {
-  title: string;
-  subMenuLinks: SubMenuLink[];
-};
-
-type MegaMenuProps = {
-  linkGroups: LinkGroup[];
-};
-
 type NavLink = {
   url: string;
   title: string;
-  megaMenu?: MegaMenuProps;
 };
 
 type Props = {
@@ -58,13 +41,13 @@ export const Navbar7 = (props: Navbar7Props) => {
   } as Props;
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 991px)");
+  // const isMobile = useMediaQuery("(max-width: 991px)");
 
   const { user } = useContext(AuthContext);
   const { getCartCount, wishLists, isActive, setIsActive } = useShop();
 
   return (
-    <nav className="relative z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18 bg-none">
+    <nav className="fixed z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18 bg-none">
       <div className="mx-auto flex size-full max-w-full items-center justify-between">
         <a href={logo.url}>
           <img
@@ -82,25 +65,17 @@ export const Navbar7 = (props: Navbar7Props) => {
           <div className="flex flex-col items-center lg:flex-row">
             {navLinks.map((navLink, index) => (
               <div key={index}>
-                {navLink.megaMenu ? (
-                  <SubMenu
-                    megaMenu={navLink.megaMenu}
-                    title={navLink.title}
-                    isMobile={isMobile}
-                  />
-                ) : (
-                  <Link
-                    to={navLink.url}
-                    className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary"
-                    onClick={() => {
-                      if (isActive === true) {
-                        setIsActive(!isActive);
-                      }
-                    }}
-                  >
-                    {navLink.title}
-                  </Link>
-                )}
+                <Link
+                  to={navLink.url}
+                  className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary"
+                  onClick={() => {
+                    if (isActive === true) {
+                      setIsActive(!isActive);
+                    }
+                  }}
+                >
+                  {navLink.title}
+                </Link>
               </div>
             ))}
           </div>
@@ -281,29 +256,18 @@ export const Navbar7 = (props: Navbar7Props) => {
               <div className="flex flex-col">
                 {navLinks.map((navLink, index) => (
                   <div key={index}>
-                    {navLink.megaMenu ? (
-                      <SubMenu
-                        megaMenu={navLink.megaMenu}
-                        title={navLink.title}
-                        isMobile={isMobile}
-                      />
-                    ) : (
-                      // <a href={navLink.url} className="block py-3 text-md">
-                      //   {navLink.title}
-                      // </a>
-                      <Link
-                        to={navLink.url}
-                        className="block py-3 text-md"
-                        onClick={() => {
-                          setIsMobileMenuOpen(!isMobileMenuOpen);
-                          if (isActive === true) {
-                            setIsActive(!isActive);
-                          }
-                        }}
-                      >
-                        {navLink.title}
-                      </Link>
-                    )}
+                    <Link
+                      to={navLink.url}
+                      className="block py-3 text-md"
+                      onClick={() => {
+                        setIsMobileMenuOpen(!isMobileMenuOpen);
+                        if (isActive === true) {
+                          setIsActive(!isActive);
+                        }
+                      }}
+                    >
+                      {navLink.title}
+                    </Link>
                   </div>
                 ))}
                 <div className="mt-6 flex flex-col items-stretch gap-4">
@@ -334,109 +298,109 @@ export const Navbar7 = (props: Navbar7Props) => {
   );
 };
 
-const SubMenu = ({
-  title,
-  megaMenu,
-  isMobile,
-}: {
-  title: string;
-  megaMenu: MegaMenuProps;
-  isMobile: boolean;
-}) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+// const SubMenu = ({
+//   title,
+//   megaMenu,
+//   isMobile,
+// }: {
+//   title: string;
+//   megaMenu: MegaMenuProps;
+//   isMobile: boolean;
+// }) => {
+//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  return (
-    <div
-      onMouseEnter={() => !isMobile && setIsDropdownOpen(true)}
-      onMouseLeave={() => !isMobile && setIsDropdownOpen(false)}
-    >
-      <button
-        className="relative flex w-full items-center justify-between whitespace-nowrap py-3 text-md lg:w-auto lg:justify-start lg:gap-2 lg:px-4 lg:py-6 lg:text-base"
-        onClick={() => setIsDropdownOpen((prev) => !prev)}
-      >
-        <span className="text-text-primary text-md lg:text-base poppins hover:text-brand-primary">
-          {title}
-        </span>
-        <motion.span
-          animate={isDropdownOpen ? "rotated" : "initial"}
-          variants={{
-            rotated: { rotate: 180 },
-            initial: { rotate: 0 },
-          }}
-          transition={{ duration: 0.3 }}
-        >
-          <RxChevronDown />
-        </motion.span>
-      </button>
-      <AnimatePresence>
-        {isDropdownOpen && (
-          <motion.nav
-            variants={{
-              open: {
-                opacity: 1,
-                height: "var(--height-open, auto)",
-              },
-              close: {
-                opacity: 0,
-                height: "var(--height-close, 0)",
-              },
-            }}
-            animate={isDropdownOpen ? "open" : "close"}
-            initial="close"
-            exit="close"
-            transition={{ duration: 0.2 }}
-            className="bottom-auto left-0 top-full w-full min-w-full max-w-full overflow-hidden bg-background-primary lg:absolute lg:w-screen lg:border-b lg:border-border-primary lg:px-[5%] lg:[--height-close:auto]"
-          >
-            <div className="mx-auto flex size-full max-w-full items-center justify-between">
-              <div className="flex w-full flex-col lg:flex-row">
-                <div className="grid flex-1 grid-cols-1 content-start items-start gap-x-8 gap-y-6 py-4 sm:py-0 md:grid-cols-2 md:py-8 lg:auto-cols-fr lg:grid-cols-4 lg:content-stretch lg:items-stretch lg:gap-y-0">
-                  {megaMenu.linkGroups.map((linkGroup, index) => (
-                    <div
-                      key={index}
-                      className="grid auto-cols-fr grid-cols-1 grid-rows-[max-content_max-content_max-content_max-content_max-content] gap-y-2 md:gap-y-4"
-                    >
-                      <h4 className="text-2xl font-semibold leading-[1.3]">
-                        {linkGroup.title}
-                      </h4>
-                      {linkGroup.subMenuLinks.map((subMenuLink, index) => (
-                        <a
-                          key={index}
-                          href={subMenuLink.url}
-                          className="grid w-full auto-cols-fr grid-cols-[max-content_1fr] items-start gap-x-3 py-2"
-                          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                          {/* <div className="flex size-6 flex-col items-center justify-center">
-                            <img
-                              src={subMenuLink.image.src}
-                              alt={subMenuLink.image.alt}
-                              className="shrink-0"
-                            />
-                          </div> */}
-                          <div
-                            className="flex flex-col items-start justify-center"
-                            onClick={() =>
-                              setIsMobileMenuOpen(!isMobileMenuOpen)
-                            }
-                          >
-                            <h5 className="font-medium">{subMenuLink.title}</h5>
-                            <p className="hidden text-sm md:block">
-                              {subMenuLink.description}
-                            </p>
-                          </div>
-                        </a>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+//   return (
+//     <div
+//       onMouseEnter={() => !isMobile && setIsDropdownOpen(true)}
+//       onMouseLeave={() => !isMobile && setIsDropdownOpen(false)}
+//     >
+//       <button
+//         className="relative flex w-full items-center justify-between whitespace-nowrap py-3 text-md lg:w-auto lg:justify-start lg:gap-2 lg:px-4 lg:py-6 lg:text-base"
+//         onClick={() => setIsDropdownOpen((prev) => !prev)}
+//       >
+//         <span className="text-text-primary text-md lg:text-base poppins hover:text-brand-primary">
+//           {title}
+//         </span>
+//         <motion.span
+//           animate={isDropdownOpen ? "rotated" : "initial"}
+//           variants={{
+//             rotated: { rotate: 180 },
+//             initial: { rotate: 0 },
+//           }}
+//           transition={{ duration: 0.3 }}
+//         >
+//           <RxChevronDown />
+//         </motion.span>
+//       </button>
+//       <AnimatePresence>
+//         {isDropdownOpen && (
+//           <motion.nav
+//             variants={{
+//               open: {
+//                 opacity: 1,
+//                 height: "var(--height-open, auto)",
+//               },
+//               close: {
+//                 opacity: 0,
+//                 height: "var(--height-close, 0)",
+//               },
+//             }}
+//             animate={isDropdownOpen ? "open" : "close"}
+//             initial="close"
+//             exit="close"
+//             transition={{ duration: 0.2 }}
+//             className="bottom-auto left-0 top-full w-full min-w-full max-w-full overflow-hidden bg-background-primary lg:absolute lg:w-screen lg:border-b lg:border-border-primary lg:px-[5%] lg:[--height-close:auto]"
+//           >
+//             <div className="mx-auto flex size-full max-w-full items-center justify-between">
+//               <div className="flex w-full flex-col lg:flex-row">
+//                 <div className="grid flex-1 grid-cols-1 content-start items-start gap-x-8 gap-y-6 py-4 sm:py-0 md:grid-cols-2 md:py-8 lg:auto-cols-fr lg:grid-cols-4 lg:content-stretch lg:items-stretch lg:gap-y-0">
+//                   {megaMenu.linkGroups.map((linkGroup, index) => (
+//                     <div
+//                       key={index}
+//                       className="grid auto-cols-fr grid-cols-1 grid-rows-[max-content_max-content_max-content_max-content_max-content] gap-y-2 md:gap-y-4"
+//                     >
+//                       <h4 className="text-2xl font-semibold leading-[1.3]">
+//                         {linkGroup.title}
+//                       </h4>
+//                       {linkGroup.subMenuLinks.map((subMenuLink, index) => (
+//                         <a
+//                           key={index}
+//                           href={subMenuLink.url}
+//                           className="grid w-full auto-cols-fr grid-cols-[max-content_1fr] items-start gap-x-3 py-2"
+//                           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+//                         >
+//                           {/* <div className="flex size-6 flex-col items-center justify-center">
+//                             <img
+//                               src={subMenuLink.image.src}
+//                               alt={subMenuLink.image.alt}
+//                               className="shrink-0"
+//                             />
+//                           </div> */}
+//                           <div
+//                             className="flex flex-col items-start justify-center"
+//                             onClick={() =>
+//                               setIsMobileMenuOpen(!isMobileMenuOpen)
+//                             }
+//                           >
+//                             <h5 className="font-medium">{subMenuLink.title}</h5>
+//                             <p className="hidden text-sm md:block">
+//                               {subMenuLink.description}
+//                             </p>
+//                           </div>
+//                         </a>
+//                       ))}
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+//           </motion.nav>
+//         )}
+//       </AnimatePresence>
+//     </div>
+//   );
+// };
 
 // const RelumeLogo = (props: React.SVGProps<SVGSVGElement>) => {
 //   return (
@@ -473,178 +437,8 @@ export const Navbar7Defaults: Navbar7Props = {
     { title: "Home", url: "/" },
     { title: "Shop All", url: "/shop_all" },
     { title: "New In", url: "/new_in" },
-    {
-      title: "Categories",
-      url: "/categories",
-      megaMenu: {
-        linkGroups: [
-          {
-            title: "Activewear",
-            subMenuLinks: [
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 1",
-                },
-                title: "Modest Workout Tops",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 2",
-                },
-                title: "Joggers & Bottoms",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 3",
-                },
-                title: "Complete Activewear Sets",
-                description: "Top + Bottom + Sports Bra + Hijab + Bonus Item",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 4",
-                },
-                title: "High-Support Sports Bras",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 5",
-                },
-                title: "Sports Hijabs",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 6",
-                },
-                title: "Burkinis / Swimwear",
-                description: "",
-              },
-            ],
-          },
-          {
-            title: "",
-            subMenuLinks: [
-              // {
-              //   url: "#",
-              //   image: {
-              //     src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-              //     alt: "Icon 7",
-              //   },
-              //   title: "Page Seven",
-              //   description: "Lorem ipsum dolor sit amet consectetur elit",
-              // },
-              // {
-              //   url: "#",
-              //   image: {
-              //     src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-              //     alt: "Icon 8",
-              //   },
-              //   title: "Page Eight",
-              //   description: "Lorem ipsum dolor sit amet consectetur elit",
-              // },
-            ],
-          },
-          {
-            title: "Fitness Accessories",
-            subMenuLinks: [
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 9",
-                },
-                title: "Gym Essentials Kit",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 10",
-                },
-                title: "Workout Bag",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 11",
-                },
-                title: "Water Bottle",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 12",
-                },
-                title: "Sweat Towel",
-                description: "",
-              },
-              {
-                url: "#",
-                image: {
-                  src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-                  alt: "Icon 13",
-                },
-                title: "Athletic Socks",
-                description: "",
-              },
-            ],
-          },
-          {
-            title: "",
-            subMenuLinks: [
-              // {
-              //   url: "#",
-              //   image: {
-              //     src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-              //     alt: "Icon 14",
-              //   },
-              //   title: "Page Fourteen",
-              //   description: "Lorem ipsum dolor sit amet consectetur elit",
-              // },
-              // {
-              //   url: "#",
-              //   image: {
-              //     src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-              //     alt: "Icon 15",
-              //   },
-              //   title: "Page Fifteen",
-              //   description: "Lorem ipsum dolor sit amet consectetur elit",
-              // },
-              // {
-              //   url: "#",
-              //   image: {
-              //     src: "https://d22po4pjz3o32e.cloudfront.net/relume-icon.svg",
-              //     alt: "Icon 16",
-              //   },
-              //   title: "Page Sixteen",
-              //   description: "Lorem ipsum dolor sit amet consectetur elit",
-              // },
-            ],
-          },
-        ],
-      },
-    },
+    { title: "Active wear", url: "/Active_wear" },
+    { title: "Fitness Accessories", url: "/Fitness_Accessories" },
   ],
   buttons: [
     // {
