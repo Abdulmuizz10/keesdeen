@@ -19,7 +19,7 @@ const FitnessAccessories: React.FC = () => {
     brand: string;
     category: string;
     price: number;
-    size: string;
+    size: string[];
     color: string;
     rating: number;
     reviews: number;
@@ -79,7 +79,7 @@ const FitnessAccessories: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        sizeCategory.includes(item.size)
+        item.size.some((s) => sizeCategory.includes(s))
       );
     }
 
@@ -289,7 +289,7 @@ const FitnessAccessories: React.FC = () => {
               {/* {Product Sort} */}
 
               <p className="info-text hidden xl:flex">
-                Showing 1 . {filteredProducts.length} of 31 Products
+                Showing 1 . {filteredProducts.length} of 14 Products
               </p>
 
               <div className="md:max-w-xxs max-w-[200px] w-full">
@@ -348,9 +348,7 @@ const FitnessAccessories: React.FC = () => {
 };
 
 const ProductUnavailable = () => {
-  return (
-    <p className="text-center text-xl w-full">Product is not available...</p>
-  );
+  return <p className="text-xl w-full">Product is not available...</p>;
 };
 
 export default FitnessAccessories;

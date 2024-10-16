@@ -19,7 +19,7 @@ const ShopAll: React.FC = () => {
     brand: string;
     category: string;
     price: number;
-    size: string;
+    size: string[];
     color: string;
     rating: number;
     reviews: number;
@@ -77,7 +77,7 @@ const ShopAll: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        sizeCategory.includes(item.size)
+        item.size.some((s) => sizeCategory.includes(s))
       );
     }
 
@@ -163,7 +163,7 @@ const ShopAll: React.FC = () => {
             >
               <p className="text-base md:text-md pb-3">Product Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Active wear", "Fitness Accessories"].map((wear, index) => (
+                {["Active wear", "Fitness accessories"].map((wear, index) => (
                   <p className="flex gap-2">
                     <input
                       type="checkbox"
@@ -340,9 +340,7 @@ const ShopAll: React.FC = () => {
 };
 
 const ProductUnavailable = () => {
-  return (
-    <p className="text-center text-xl w-full">Product is not available...</p>
-  );
+  return <p className="text-xl w-full">Product is not available...</p>;
 };
 
 export default ShopAll;

@@ -19,7 +19,7 @@ const ActiveWear: React.FC = () => {
     brand: string;
     category: string;
     price: number;
-    size: string;
+    size: string[];
     color: string;
     rating: number;
     reviews: number;
@@ -77,7 +77,7 @@ const ActiveWear: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        sizeCategory.includes(item.size)
+        item.size.some((s) => sizeCategory.includes(s))
       );
     }
 
@@ -288,7 +288,7 @@ const ActiveWear: React.FC = () => {
               {/* {Product Sort} */}
 
               <p className="info-text hidden xl:flex">
-                Showing 1 . {filteredProducts.length} of 31 Products
+                Showing 1 . {filteredProducts.length} of 16 Products
               </p>
 
               <div className="md:max-w-xxs max-w-[200px] w-full">
@@ -347,9 +347,7 @@ const ActiveWear: React.FC = () => {
 };
 
 const ProductUnavailable = () => {
-  return (
-    <p className="text-center text-xl w-full">Product is not available...</p>
-  );
+  return <p className="text-xl w-full">Product is not available...</p>;
 };
 
 export default ActiveWear;

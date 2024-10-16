@@ -19,7 +19,7 @@ const Collections: React.FC = () => {
     brand: string;
     category: string;
     price: number;
-    size: string;
+    size: string[];
     color: string;
     rating: number;
     reviews: number;
@@ -77,7 +77,7 @@ const Collections: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        sizeCategory.includes(item.size)
+        item.size.some((s) => sizeCategory.includes(s))
       );
     }
 
@@ -342,9 +342,7 @@ const Collections: React.FC = () => {
 };
 
 const ProductUnavailable = () => {
-  return (
-    <p className="text-center text-xl w-full">Product is not available...</p>
-  );
+  return <p className="text-xl w-full">Product is not available...</p>;
 };
 
 export default Collections;

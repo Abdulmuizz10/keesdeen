@@ -95,7 +95,9 @@ export const Gallery5 = (props: Gallery5Props) => {
                       ].map((size) => (
                         <button
                           key={size}
-                          className="border border-gray-300 rounded-lg text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins"
+                          className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                            product.size.includes(size) ? "" : "opacity-[0.3]"
+                          }`}
                         >
                           {size}
                         </button>

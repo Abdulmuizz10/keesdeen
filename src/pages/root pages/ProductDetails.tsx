@@ -14,7 +14,7 @@ interface Product {
   brand: string;
   category: string;
   price: number;
-  size: string;
+  size: string[];
   color: string;
   rating: number;
   reviews: number;
@@ -97,7 +97,7 @@ const ProductDetails: React.FC = () => {
             <div className="flex flex-col gap4 my-8">
               <p className="mb-2">Select size</p>
               <div className="flex gap-2">
-                {["XS", "S", "M", "L", "XL"].map((item, index) => (
+                {productData.size.map((item, index) => (
                   <div
                     className={`p-2 h-[45px] w-[45px] bg-gray-300 flex items-center justify-center cursor-pointer rounded-sm ${
                       item === size && "border-2 border-border-primary"

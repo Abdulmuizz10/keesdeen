@@ -8,7 +8,7 @@ interface ClothingProduct {
   brand: string;
   category: string;
   price: number;
-  size: string;
+  size: string[];
   color: string;
   rating: number;
   reviews: number;
