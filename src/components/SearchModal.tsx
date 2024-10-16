@@ -51,7 +51,7 @@ const SearchModal: React.FC = () => {
       variants={background}
       initial="initial"
       animate={isActive ? "open" : "closed"}
-      className={`bg-[#ececec] h-screen w-screen fixed top-0 left-0 right-0 bottom-0 z-[1000px] flex  justify-center border-b border-border-secondary ${
+      className={`bg-background-light h-screen w-screen fixed top-0 left-0 right-0 bottom-0 z-[1000px] flex  justify-center border-b border-border-secondary ${
         searchQuery.length === 0 ? "items-center" : "items-start"
       }`}
     >

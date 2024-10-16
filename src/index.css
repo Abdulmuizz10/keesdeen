@@ -10,7 +10,8 @@
 } */
 
 body {
-  background: #ececec;
+  /* background: #ececec; */
+  background: #ffffff;
 }
 body::-webkit-scrollbar {
   display: none;
@@ -116,15 +117,7 @@ body::-webkit-scrollbar {
 }
 
 .text-gradient {
-  background-color: #fff;
-  background-image: radial-gradient(
-      at 4% 36%,
-      hsla(0, 0%, 100%, 1) 0,
-      transparent 53%
-    ),
-    radial-gradient(at 100% 60%, rgb(0, 0, 0) 0, transparent 50%),
-    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
-    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
+  background: linear-gradient(90deg, #000000, #04b96d, #db5d14);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

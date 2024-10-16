@@ -105,7 +105,7 @@ export default {
         brand: {
           primary: "#04BB6E",
           secondary: "#DA5B14",
-          neutral: "#3C3C3C",
+          neutral: "#3d3d3d",
         },
         neutral: {
           black: "#000000",

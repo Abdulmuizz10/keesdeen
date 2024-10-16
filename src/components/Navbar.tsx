@@ -47,7 +47,7 @@ export const Navbar7 = (props: Navbar7Props) => {
   const { getCartCount, wishLists, isActive, setIsActive } = useShop();
 
   return (
-    <nav className="fixed z-[999] flex min-h-16 w-full items-center border-b border-border-primary bg-background-primary px-[5%] md:min-h-18 bg-none">
+    <nav className="fixed z-[999] flex min-h-16 w-full items-center shadow-xxsmall bg-background-light px-[5%] md:min-h-18 bg-none">
       <div className="mx-auto flex size-full max-w-full items-center justify-between">
         <a href={logo.url}>
           <img
@@ -61,7 +61,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             className="w-full h-[25px] flex sm:hidden"
           />
         </a>
-        <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-primary px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 lg:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
+        <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 lg:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
           <div className="flex flex-col items-center lg:flex-row">
             {navLinks.map((navLink, index) => (
               <div key={index}>

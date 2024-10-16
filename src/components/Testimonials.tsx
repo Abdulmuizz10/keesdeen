@@ -42,7 +42,7 @@ export const Testimonial21 = (props: Testimonial21Props) => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="mr-8 flex w-[25rem] min-w-[25rem] flex-col items-start justify-between border border-border-secondary p-6 md:p-8 rounded-md shadow-large bg-brand-primary text-text-light"
+                className="mr-8 flex w-[25rem] min-w-[25rem] flex-col items-start justify-between border border-border-secondary p-6 md:p-8 rounded-md shadow-large bg-brand-neutral text-text-light"
               >
                 <div className="rb-6 mb-6 flex">
                   {Array(testimonial.numberOfStars)

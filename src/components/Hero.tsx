@@ -2,6 +2,7 @@ import { Button } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { Images } from "../assets";
 import { useShop } from "../context/ShopContext";
+import { Link } from "react-router-dom";
 
 type ImageProps = {
   src: string;
@@ -29,7 +30,7 @@ export const Header76 = (props: Header76Props) => {
   return (
     <section
       id="relume"
-      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0 bg-[#3c3c3c] gradient-bg-welcome"
+      className="grid grid-cols-1 gap-y-16 pt-16 md:grid-flow-row md:pt-24 lg:grid-flow-col lg:grid-cols-2 lg:items-center lg:pt-0 bg-background-light"
     >
       <div className="mx-[5%] max-w-[40rem] justify-self-start lg:ml-[5vw] lg:mr-20 lg:justify-self-end">
         {/* <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-brand-neutral">
@@ -39,20 +40,23 @@ export const Header76 = (props: Header76Props) => {
           {heading}
         </h1>
         {/* <p className="md:text-md text-text-primary">{description}</p> */}
-        <p className="md:text-md text-text-secondary">{description}</p>
+        <p className="md:text-md text-text-primary">{description}</p>
         <div className="mt-6 flex gap-x-4 md:mt-8">
-          {buttons.map((button, index) => (
-            <Button
-              key={index}
-              {...button}
-              className={`${
-                index === 0
-                  ? "bg-brand-secondary rounded-full"
-                  : "bg-brand-primary rounded-full"
-              } text-text-light poppins`}
-            >
-              {button.title}
-            </Button>
+          {[
+            { route: "/new_in", text: "New arrivals" },
+            { route: "/shop_all", text: "Shop now" },
+          ].map((link, index) => (
+            <Link to={link.route} key={index}>
+              <Button
+                className={`${
+                  index === 0
+                    ? "bg-brand-secondary rounded-full"
+                    : "bg-brand-primary rounded-full"
+                } text-text-light poppins rounded-md border-none`}
+              >
+                {link.text}
+              </Button>
+            </Link>
           ))}
         </div>
       </div>
