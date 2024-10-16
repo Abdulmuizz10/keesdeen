@@ -88,7 +88,7 @@ const initialProducts: ClothingProduct[] = [
     id: 3,
     name: "Running Shoes",
     brand: "Nike",
-    category: "Active Wear",
+    category: "Active wear",
     subcategory: "Complete Active wear Sets",
     price: 89.99,
     size: ["XXS", "L", "XL", "2XL", "3XL", "4XL", "5XL"],

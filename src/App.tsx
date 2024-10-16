@@ -189,22 +189,6 @@ const App: React.FC = () => {
             </Route>
           ) : null}
 
-          <Route element={<AdminLayout />}>
-            <Route path="/admin" element={<AdminHome />} />
-            <Route path="/admin/customers" element={<AdminCustomers />} />
-            <Route path="/admin/products" element={<AdminProducts />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/add_product" element={<AddProducts />} />
-            <Route
-              path="/admin/dashboard/sales"
-              element={<AdminDashBoardSales />}
-            />
-            <Route
-              path="/admin/dashboard/orders"
-              element={<AdminDashBoardOrders />}
-            />
-          </Route>
-
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>
             <Route path="/register/login" element={<Login7 />} />

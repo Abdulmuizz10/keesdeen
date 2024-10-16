@@ -211,11 +211,14 @@ const Profile: React.FC = () => {
         {/* Profile Section */}
         <div className="py-2">
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <img
+            {/* <img
               src={updatedUser.avatar}
               alt={updatedUser.name}
               className="w-24 h-24 rounded-full border shadow-lg"
-            />
+            /> */}
+            <div className="w-24 h-24 rounded-full border shadow-lg bg-brand-neutral flex items-center justify-center text-text-light text-3xl lg:text-4xl">
+              {user.username.split("")[0]}
+            </div>
             {isEditing ? (
               <div className="grid grid-cols-1 gap-4 md:flex-1 md:grid-cols-2 w-full">
                 <div className="flex flex-col">

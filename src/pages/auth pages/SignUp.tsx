@@ -370,6 +370,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { SignUp } from "../../context/AuthContext/AuthApiCalls";
+import { useGoogleLogin } from "@react-oauth/google";
+import Axios from "axios";
+import {
+  AccessFailure,
+  AccessSuccess,
+} from "../../context/AuthContext/AuthActions";
 
 type ImageProps = {
   url?: string;
@@ -420,6 +426,28 @@ export const Signup7: React.FC = (props: Signup7Props) => {
     SignUp({ username: userName, email, password }, dispatch, navigate);
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Send the access token (googleToken) to get user info and authenticate
+        const res = await Axios.post(
+          "http://localhost:5000/auth/google-sign-in",
+          {
+            googleToken: tokenResponse.access_token,
+          }
+        );
+
+        dispatch(AccessSuccess(res.data));
+        navigate("/");
+      } catch (error) {
+        dispatch(AccessFailure());
+      }
+    },
+    onError: (error) => {
+      console.error("Google login error:", error);
+    },
+  });
+
   return (
     <section className="bg-neutral-100">
       <div className="relative grid min-h-screen grid-cols-1 items-stretch justify-center overflow-auto lg:grid-cols-2 overflow-x-hidden">
@@ -431,7 +459,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="mb-6 text-center">
-              <h1 className="mb-5 text-5xl font-bold text-neutral-800 md:mb-6 md:text-7xl lg:text-8xl">
+              <h1 className="mb-5 text-5xl font-bold text-neutral-800 md:mb-1 md:text-7xl lg:text-8xl">
                 {title}
               </h1>
               <p className="text-neutral-600 md:text-md">{description}</p>
@@ -485,17 +513,18 @@ export const Signup7: React.FC = (props: Signup7Props) => {
                 >
                   {signUpButton.title}
                 </Button>
-                <Button
-                  variant={signUpWithGoogleButton.variant}
-                  size={signUpWithGoogleButton.size}
-                  iconLeft={signUpWithGoogleButton.iconLeft}
-                  iconRight={signUpWithGoogleButton.iconRight}
-                  className="gap-x-3"
-                >
-                  {signUpWithGoogleButton.title}
-                </Button>
               </div>
             </form>
+            <Button
+              variant={signUpWithGoogleButton.variant}
+              size={signUpWithGoogleButton.size}
+              iconLeft={signUpWithGoogleButton.iconLeft}
+              iconRight={signUpWithGoogleButton.iconRight}
+              className="gap-x-3 w-full mt-3"
+              onClick={() => googleLogin()}
+            >
+              {signUpWithGoogleButton.title}
+            </Button>
             <div className="mt-5 inline-flex w-full items-center justify-center gap-x-1 text-center md:mt-6">
               <p>{logInText}</p>
               <Link to={logInLink.url} className="underline text-[#04BB6E]">
