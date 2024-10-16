@@ -1,5 +1,4 @@
 import { Button } from "@relume_io/relume-ui";
-import type { ButtonProps } from "@relume_io/relume-ui";
 import { Images } from "../assets";
 import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
@@ -12,7 +11,6 @@ type ImageProps = {
 type Props = {
   heading: string;
   description: string;
-  buttons: ButtonProps[];
   images: ImageProps[];
   images1: ImageProps[];
 };
@@ -21,7 +19,7 @@ export type Header76Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const Header76 = (props: Header76Props) => {
-  const { heading, description, buttons, images, images1 } = {
+  const { heading, description, images, images1 } = {
     ...Header76Defaults,
     ...props,
   } as Props;
@@ -103,10 +101,6 @@ export const Header76Defaults: Header76Props = {
   heading: "Be boundless, Stay Fly Always",
   description:
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi qui.",
-  buttons: [
-    { title: "New arrivals" },
-    { title: "Shop now", variant: "secondary" },
-  ],
   images: [
     {
       src: Images.img_1,
