@@ -30,7 +30,7 @@ const ProductItem = ({ product }: { product: Product }) => {
 
   return (
     <div
-      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative"
+      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px]"
       onMouseOver={() => setImage(true)}
       onMouseLeave={() => setImage(false)}
     >

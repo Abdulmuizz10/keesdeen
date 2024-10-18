@@ -292,16 +292,15 @@ const FitnessAccessories: React.FC = () => {
                 Showing 1 . {filteredProducts.length} of 14 Products
               </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full">
+              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
                 <Select onValueChange={setSortType}>
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className=" bg-background-primary rounded-lg border border-border-secondary">
+                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
                     <SelectItem
                       value="relevant"
-                      className=" cursor-pointer hover:text-text-secondary
-                      "
+                      className=" cursor-pointer hover:text-text-secondary"
                     >
                       Sort by: Relevance
                     </SelectItem>
@@ -320,15 +319,16 @@ const FitnessAccessories: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* <select
-                className="border border-border-primary py-2 px-2 rounded-md"
-                onChange={(e) => setSortType(e.target.value)}
-              >
-                <option value="relevant">Sort by: Relevance</option>
-                <option value="Low - High">Sort by: Low to High</option>
-                <option value="High - Low">Sort by: High to Low</option>
-              </select> */}
+              <div className=" max-w-[200px] w-full flex lg:hidden">
+                <select
+                  className="border border-border-primary py-2 px-4 rounded-md"
+                  onChange={(e) => setSortType(e.target.value)}
+                >
+                  <option value="relevant">Sort by: Relevance</option>
+                  <option value="Low - High">Sort by: Low to High</option>
+                  <option value="High - Low">Sort by: High to Low</option>
+                </select>
+              </div>
             </div>
             {/* {Map Products} */}
             <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">

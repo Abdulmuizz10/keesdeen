@@ -55,7 +55,7 @@ const ProductDetails: React.FC = () => {
   return productData ? (
     <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="flex gap-5 md:gap-10 flex-col sm:flex-row">
+        <div className="flex gap-5 md:gap-10 flex-col lg:flex-row">
           {/* Product images */}
           <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
             <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal no-scrollbar">
@@ -64,7 +64,7 @@ const ProductDetails: React.FC = () => {
                   src={item}
                   alt="product images"
                   key={index}
-                  className="w-[24%] sm:w-[110px] sm:mb-3 flex-shrink-0 cursor-pointer"
+                  className="w-[24%] max-lg:h-[25%] sm:w-[110px] sm:mb-3 flex-shrink-0 cursor-pointer"
                   onClick={() => setImage(item)}
                 />
               ))}
