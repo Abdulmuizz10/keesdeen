@@ -449,7 +449,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
   });
 
   return (
-    <section className="bg-neutral-100">
+    <section className="bg-background-light">
       <div className="relative grid min-h-screen grid-cols-1 items-stretch justify-center overflow-auto lg:grid-cols-2 overflow-x-hidden">
         <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
           <a href={logo.url}>
