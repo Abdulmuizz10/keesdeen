@@ -17,6 +17,6 @@ export const AccessFailure = (): AuthAction => ({
 });
 
 // Action for logout
-export const logout = (): AuthAction => ({
+export const Logout = (): AuthAction => ({
   type: "LOGOUT",
 });

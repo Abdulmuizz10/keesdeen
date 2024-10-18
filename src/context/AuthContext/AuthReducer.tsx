@@ -1,4 +1,4 @@
-import { AuthAction, AuthState } from "../../lib/types";
+import { AuthState, AuthAction } from "../../lib/types";
 
 const AuthReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {

@@ -115,10 +115,6 @@ const BestSellers: React.FC = () => {
     sortProducts();
   }, [sortType]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
   const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
   const clearFilters = () => {

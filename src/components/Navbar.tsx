@@ -242,7 +242,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               initial="close"
               exit="close"
               transition={{ duration: 0.4 }}
-              className="absolute left-0 right-0 top-0 block h-[100dvh] overflow-auto border-b border-border-primary bg-background-primary px-[5%] pb-8 pt-4"
+              className="absolute left-0 right-0 top-0 block h-[100dvh] overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-8 pt-4"
             >
               <div className="flex flex-col">
                 {navLinks.map((navLink, index) => (

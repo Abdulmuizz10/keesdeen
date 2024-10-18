@@ -11,6 +11,7 @@
 
 // const Reviews: React.FC = () => {
 //   const [change, setChange] = useState<boolean>(true);
+//   const [sortOption, setSortOption] = useState<string>("all");
 //   const [reviews, setReviews] = useState<Review[]>([
 //     {
 //       name: "John Doe",
@@ -24,6 +25,12 @@
 //       comment: "Great quality but shipping was a bit slow.",
 //       date: "September 20, 2024",
 //     },
+//     {
+//       name: "Mark Johnson",
+//       rating: 3,
+//       comment: "It's okay. Not the best I've seen.",
+//       date: "September 19, 2024",
+//     },
 //   ]);
 
 //   const [newReview, setNewReview] = useState<Omit<Review, "date">>({
@@ -33,7 +40,7 @@
 //   });
 
 //   const handleInputChange = (
-//     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+//     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 //   ) => {
 //     const { name, value } = e.target;
 //     setNewReview((prev) => ({ ...prev, [name]: value }));
@@ -50,6 +57,25 @@
 //     setReviews([...reviews, { ...newReview, date: today }]);
 //     setNewReview({ name: "", rating: 0, comment: "" });
 //   };
+
+//   const sortReviews = () => {
+//     let sortedReviews = [...reviews];
+//     if (sortOption === "highest") {
+//       sortedReviews = sortedReviews
+//         .filter((review) => review.rating >= 4)
+//         .sort((a, b) => b.rating - a.rating);
+//     } else if (sortOption === "lowest") {
+//       sortedReviews = sortedReviews
+//         .filter((review) => review.rating <= 3)
+//         .sort((a, b) => a.rating - b.rating);
+//     } else if (sortOption === "latest") {
+//       sortedReviews = sortedReviews.sort(
+//         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+//       );
+//     }
+//     return sortedReviews;
+//   };
+
 //   return (
 //     <>
 //       <div className="flex gap-2">
@@ -66,31 +92,77 @@
 //           All Reviews ({reviews.length})
 //         </p>
 //       </div>
+
 //       {change ? (
-//         <div className="mx-auto  shadow-md rounded-lg mt-10">
+//         <div className="mx-auto shadow-md rounded-lg mt-10">
 //           {reviews.length > 0 ? (
-//             <ul>
-//               {reviews.map((review, index) => (
-//                 <li
-//                   key={index}
-//                   className="mb-6 border-b border-border-secondary pb-4"
+//             <>
+//               <div className="flex gap-4 mb-4 flex-wrap">
+//                 <Button
+//                   className={`px-4 py-2 rounded-md text-sm ${
+//                     sortOption === "all"
+//                       ? "bg-brand-neutral text-text-light"
+//                       : "border-border-secondary"
+//                   }`}
+//                   onClick={() => setSortOption("all")}
 //                 >
-//                   <div className="flex justify-between">
-//                     <h3 className="font-semibold text-lg">{review.name}</h3>
-//                     <p className="text-sm text-gray-500">{review.date}</p>
-//                   </div>
-//                   <div className="flex items-center mt-2">
-//                     <span className="text-yellow-500 text-xl mr-2">
-//                       {"★".repeat(review.rating)}
-//                     </span>
-//                     <span className="text-gray-400 text-xl">
-//                       {"★".repeat(5 - review.rating)}
-//                     </span>
-//                   </div>
-//                   <p className="mt-2 text-gray-700">{review.comment}</p>
-//                 </li>
-//               ))}
-//             </ul>
+//                   All
+//                 </Button>
+//                 <Button
+//                   className={`px-4 py-2 rounded-md text-sm ${
+//                     sortOption === "latest"
+//                       ? "bg-brand-neutral text-text-light"
+//                       : "border-border-secondary"
+//                   }`}
+//                   onClick={() => setSortOption("latest")}
+//                 >
+//                   latest
+//                 </Button>
+//                 <Button
+//                   className={`px-4 py-2 rounded-md text-sm ${
+//                     sortOption === "highest"
+//                       ? "bg-brand-neutral text-text-light"
+//                       : "border-border-secondary"
+//                   }`}
+//                   onClick={() => setSortOption("highest")}
+//                 >
+//                   Highest Rating
+//                 </Button>
+//                 <Button
+//                   className={`px-4 py-2 rounded-md text-sm  ${
+//                     sortOption === "lowest"
+//                       ? "bg-brand-neutral text-text-light"
+//                       : "border-border-secondary"
+//                   }`}
+//                   onClick={() => setSortOption("lowest")}
+//                 >
+//                   Lowest Rating
+//                 </Button>
+//               </div>
+
+//               <ul>
+//                 {sortReviews().map((review, index) => (
+//                   <li
+//                     key={index}
+//                     className="mb-6 border-b border-border-secondary pb-4"
+//                   >
+//                     <div className="flex justify-between">
+//                       <h3 className="font-semibold text-lg">{review.name}</h3>
+//                       <p className="text-sm text-gray-500">{review.date}</p>
+//                     </div>
+//                     <div className="flex items-center mt-2">
+//                       <span className="text-yellow-500 text-xl mr-2">
+//                         {"★".repeat(review.rating)}
+//                       </span>
+//                       <span className="text-gray-400 text-xl">
+//                         {"★".repeat(5 - review.rating)}
+//                       </span>
+//                     </div>
+//                     <p className="mt-2 text-gray-700">{review.comment}</p>
+//                   </li>
+//                 ))}
+//               </ul>
+//             </>
 //           ) : (
 //             <p className="text-gray-500">
 //               No reviews yet. Be the first to write one!
@@ -98,45 +170,41 @@
 //           )}
 //         </div>
 //       ) : (
-//         <div className="mx-auto  shadow-md rounded-lg mt-10">
+//         <div className="mx-auto shadow-md rounded-lg mt-10">
 //           <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
 
 //           {/* Review Form */}
 //           <form onSubmit={handleSubmit} className="mb-8">
 //             <div className="mb-4">
-//               <div className="mb-4">
-//                 <label className="block text-sm font-medium text-gray-700">
-//                   Name
-//                 </label>
+//               <label className="block text-sm font-medium text-gray-700">
+//                 Name
+//               </label>
+//               <input
+//                 type="text"
+//                 name="name"
+//                 value={newReview.name}
+//                 onChange={handleInputChange}
+//                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+//                 required
+//               />
+//             </div>
 
-//                 <input
-//                   type="text"
-//                   name="name"
-//                   value={newReview.name}
-//                   onChange={handleInputChange}
-//                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-//                   required
-//                 />
-//               </div>
-
+//             <div className="mb-4">
 //               <label className="block text-sm font-medium text-gray-700">
 //                 Rating
 //               </label>
-//               <select
+//               <input
+//                 type="number"
 //                 name="rating"
 //                 value={newReview.rating}
 //                 onChange={handleInputChange}
 //                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
 //                 required
-//               >
-//                 <option value={0}>Select Rating</option>
-//                 <option value={5}>5 - Excellent</option>
-//                 <option value={4}>4 - Good</option>
-//                 <option value={3}>3 - Average</option>
-//                 <option value={2}>2 - Poor</option>
-//                 <option value={1}>1 - Terrible</option>
-//               </select>
+//                 min="1"
+//                 max="5"
+//               />
 //             </div>
+
 //             <div className="mb-4">
 //               <label className="block text-sm font-medium text-gray-700">
 //                 Comment
@@ -150,12 +218,7 @@
 //                 required
 //               ></textarea>
 //             </div>
-//             {/* <button
-//               type="submit"
-//               className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
-//             >
-//               Submit Review
-//             </button> */}
+
 //             <Button className="rounded-md bg-brand-neutral border-none poppins text-white">
 //               Submit Review
 //             </Button>
@@ -170,7 +233,14 @@
 
 import React, { useState } from "react";
 import { ChangeEvent, FormEvent } from "react";
-import { Button } from "@relume_io/relume-ui";
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@relume_io/relume-ui";
 
 interface Review {
   name: string;
@@ -238,9 +308,13 @@ const Reviews: React.FC = () => {
       sortedReviews = sortedReviews
         .filter((review) => review.rating <= 3)
         .sort((a, b) => a.rating - b.rating);
-    } else if (sortOption === "most-relevant") {
+    } else if (sortOption === "latest") {
       sortedReviews = sortedReviews.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+    } else if (sortOption === "oldest") {
+      sortedReviews = sortedReviews.sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
       );
     }
     return sortedReviews;
@@ -267,47 +341,60 @@ const Reviews: React.FC = () => {
         <div className="mx-auto shadow-md rounded-lg mt-10">
           {reviews.length > 0 ? (
             <>
-              <div className="flex gap-4 mb-4 flex-wrap">
-                <Button
-                  className={`px-4 py-2 rounded-md text-sm ${
-                    sortOption === "all"
-                      ? " border-border-secondary"
-                      : "bg-brand-neutral text-text-light"
-                  }`}
-                  onClick={() => setSortOption("all")}
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold mb-4">All Reviews</h2>
+                {/* <select
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 >
-                  All
-                </Button>
-                <Button
-                  className={`px-4 py-2 rounded-md text-sm ${
-                    sortOption === "most-relevant"
-                      ? "border-border-secondary"
-                      : "bg-brand-neutral text-text-light"
-                  }`}
-                  onClick={() => setSortOption("most-relevant")}
-                >
-                  Most Relevant
-                </Button>
-                <Button
-                  className={`px-4 py-2 rounded-md text-sm ${
-                    sortOption === "highest"
-                      ? "border-border-secondary"
-                      : "bg-brand-neutral text-text-light"
-                  }`}
-                  onClick={() => setSortOption("highest")}
-                >
-                  Highest Rating
-                </Button>
-                <Button
-                  className={`px-4 py-2 rounded-md text-sm  ${
-                    sortOption === "lowest"
-                      ? "border-border-secondary"
-                      : "bg-brand-neutral text-text-light"
-                  }`}
-                  onClick={() => setSortOption("lowest")}
-                >
-                  Lowest Rating
-                </Button>
+                  <option value="all">All</option>
+                  <option value="highest">Highest Rating</option>
+                  <option value="lowest">Lowest Rating</option>
+                  <option value="latest">Latest</option>
+                  <option value="oldest">Oldest</option>
+                </select> */}
+
+                <div className="w-full md:w-1/2 mt-1">
+                  <Select onValueChange={setSortOption}>
+                    <SelectTrigger className="rounded-md">
+                      <SelectValue placeholder="Sort Reviews" />
+                    </SelectTrigger>
+                    <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                      <SelectItem
+                        value="all"
+                        className=" cursor-pointer hover:text-text-secondary
+                      "
+                      >
+                        All
+                      </SelectItem>
+                      <SelectItem
+                        value="highest"
+                        className=" cursor-pointer  hover:text-text-secondary"
+                      >
+                        Highest Rating
+                      </SelectItem>
+                      <SelectItem
+                        value="lowest"
+                        className=" cursor-pointer  hover:text-text-secondary"
+                      >
+                        Lowest Rating
+                      </SelectItem>
+                      <SelectItem
+                        value="latest"
+                        className=" cursor-pointer  hover:text-text-secondary"
+                      >
+                        Latest
+                      </SelectItem>
+                      <SelectItem
+                        value="oldest"
+                        className=" cursor-pointer  hover:text-text-secondary"
+                      >
+                        Oldest
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <ul>
@@ -341,7 +428,7 @@ const Reviews: React.FC = () => {
         </div>
       ) : (
         <div className="mx-auto shadow-md rounded-lg mt-10">
-          <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+          <h2 className="text-2xl font-bold mb-4">Customer Review</h2>
 
           {/* Review Form */}
           <form onSubmit={handleSubmit} className="mb-8">

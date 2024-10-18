@@ -17,6 +17,8 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
     if (isActive) {
       setIsActive(!isActive);
     }
+
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   return (

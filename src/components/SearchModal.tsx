@@ -40,8 +40,9 @@ const SearchModal: React.FC = () => {
     //  setFilteredSuggestions(filteredSugg);
 
     // Filter products
-    const filteredProds = products.filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredProds = products.filter(
+      (product) =>
+        product.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1
     );
     setFilteredProducts(filteredProds);
   };
@@ -70,7 +71,10 @@ const SearchModal: React.FC = () => {
                 />
                 <FiX
                   className="text-2xl cursor-pointer text-text-primary my-2"
-                  onClick={() => setIsActive(!isActive)}
+                  onClick={() => {
+                    setIsActive(!isActive);
+                    setSearchQuery("");
+                  }}
                 />
               </div>
               {searchQuery && (
@@ -116,9 +120,7 @@ const SearchModal: React.FC = () => {
                             />
                           ))
                       ) : (
-                        <p className="text-xl lg:text-2xl">
-                          Product is not available...
-                        </p>
+                        <p className="text-xl">Product is not available...</p>
                       )}
                     </div>
                     <div className="flex flex-col lg:hidden w-full gap-3">
@@ -132,9 +134,7 @@ const SearchModal: React.FC = () => {
                             />
                           ))
                       ) : (
-                        <p className="text-xl lg:text-2xl">
-                          Product is not available...
-                        </p>
+                        <p className="text-xl">Product is not available...</p>
                       )}
                     </div>
                   </div>
@@ -171,11 +171,27 @@ const LargeScreenSearchItem = ({ product }: { product: Product }) => {
           />
         </Link>
       </div>
-      <div className="p-4 text-left">
+      <div className="p-2 text-center">
         <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
           {product.name}
         </h3>
         <p className="text-gray-500">{formatAmount(product.price)}</p>
+      </div>
+      <div className="mb-5">
+        <div className="flex flex-wrap gap-1 items-center justify-center">
+          {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
+            (size) => (
+              <button
+                key={size}
+                className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                  product.size.includes(size) ? "" : "opacity-[0.3]"
+                }`}
+              >
+                {size}
+              </button>
+            )
+          )}
+        </div>
       </div>
     </div>
   );
