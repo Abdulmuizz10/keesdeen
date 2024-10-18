@@ -313,7 +313,7 @@ const BestSellers: React.FC = () => {
               </div>
               <div className=" max-w-[200px] w-full flex lg:hidden">
                 <select
-                  className="border border-border-primary py-2 px-4 rounded-md"
+                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
                   onChange={(e) => setSortType(e.target.value)}
                 >
                   <option value="relevant">Sort by: Relevance</option>
