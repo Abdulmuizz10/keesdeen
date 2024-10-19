@@ -35,7 +35,7 @@ export type Navbar7Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const Navbar7 = (props: Navbar7Props) => {
-  const { logo, mobileLogo, navLinks } = {
+  const { logo, navLinks } = {
     ...Navbar7Defaults,
     ...props,
   } as Props;
@@ -53,13 +53,13 @@ export const Navbar7 = (props: Navbar7Props) => {
           <img
             src={logo.src}
             alt={logo.alt}
-            className="w-full h-[25px] hidden sm:flex"
+            className="w-[120px] h-[30px] sm:w-full sm:h-[35px]"
           />
-          <img
+          {/* <img
             src={mobileLogo.src}
             alt={mobileLogo.alt}
             className="w-full h-[25px] flex sm:hidden"
-          />
+          /> */}
         </a>
         <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 lg:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
           <div className="flex flex-col items-center lg:flex-row">
@@ -82,12 +82,12 @@ export const Navbar7 = (props: Navbar7Props) => {
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex gap-3 items-center">
               <CiSearch
-                className="text-3xl cursor-pointer text-text-primary"
+                className="text-3xl cursor-pointer text-text-primary hover:text-brand-primary"
                 onClick={() => setIsActive(!isActive)}
               />
               <Link className="relative" to="/cart">
                 <IoBagOutline
-                  className="text-2xl text-text-primary"
+                  className="text-2xl text-text-primary  hover:text-brand-primary"
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
@@ -105,7 +105,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               </Link>
               <Link to="/wishlists" className="relative">
                 <LuHeart
-                  className="text-2xl text-text-primary"
+                  className="text-2xl text-text-primary hover:text-brand-primary"
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
@@ -135,12 +135,12 @@ export const Navbar7 = (props: Navbar7Props) => {
             </div>
             {user ? (
               <Link to="/profile">
-                <CiUser className="text-3xl text-text-primary" />
+                <CiUser className="text-3xl text-text-primary hover:text-brand-primary" />
               </Link>
             ) : (
               <>
                 <Link to="/register/login">
-                  <CiUser className="text-3xl text-text-primary" />
+                  <CiUser className="text-3xl text-text-primary hover:text-brand-primary" />
                 </Link>
               </>
             )}
@@ -153,7 +153,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           />
           <Link className="relative" to="/cart">
             <IoBagOutline
-              className="text-2xl text-text-primary"
+              className="text-2xl text-text-primary hover:text-brand-primary"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -171,7 +171,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           </Link>
           <Link to="/wishlists" className="relative">
             <LuHeart
-              className="text-2xl text-text-primary"
+              className="text-2xl text-text-primary hover:text-brand-primary"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);

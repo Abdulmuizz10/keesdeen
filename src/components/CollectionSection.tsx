@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { useShop } from "../context/ShopContext";
 import { LuHeart } from "react-icons/lu";
 import { BsFillHeartFill } from "react-icons/bs";
-import { formatAmount, useInView } from "../lib/utils";
-import { motion } from "framer-motion";
+import { formatAmount } from "../lib/utils";
+import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
 
 type Props = {
@@ -23,7 +23,7 @@ export const Gallery5 = (props: Gallery5Props) => {
   const collections = products.slice(21, 29);
 
   const ref = useRef(null);
-  const isInView = useInView(ref);
+  const isInView = useInView(ref, { once: true });
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
   return (

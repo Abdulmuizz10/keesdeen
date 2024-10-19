@@ -3,8 +3,7 @@ import { useShop } from "../context/ShopContext";
 import { useRef } from "react";
 // import { useInView } from "framer-motion";
 // import gsap from "gsap";
-import { useInView } from "../lib/utils";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 type Props = {
   heading: string;
@@ -23,37 +22,10 @@ export const Gallery4 = (props: Gallery4Props) => {
   const { products } = useShop();
   const bestSellers = products.slice(0, 4);
 
-  // const Container = useRef(null);
-  // const inView = useInView(Container, { once: true });
-
-  // useEffect(() => {
-  //   gsap.fromTo(
-  //     ".block-container",
-  //     {
-  //       opacity: 0,
-  //       y: 100,
-  //       scale: 0.5,
-  //     },
-  //     {
-  //       opacity: 1,
-  //       y: 0,
-  //       scale: 1,
-  //       ease: "power3.in",
-  //       stagger: 0.4,
-  //       delay: 0.2,
-  //     }
-  //   );
-  // }, [inView]);
-
   const ref = useRef(null);
-  const isInView = useInView(ref);
+  const isInView = useInView(ref, { once: true });
   return (
-    <section
-      id="relume"
-      className="px-[5%] py-16 md:py-24 lg:py-28"
-      // ref={Container}
-      ref={ref}
-    >
+    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28">
       <div className="container">
         <div className="rb-12 mb-12 text-center md:mb-18 lg:mb-20">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl text-text-primary">
@@ -61,7 +33,10 @@ export const Gallery4 = (props: Gallery4Props) => {
           </h2>
           <p className="md:text-md">{description}</p>
         </div>
-        <div className="grid grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-4">
+        <div
+          className="grid grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-4"
+          ref={ref}
+        >
           {bestSellers &&
             bestSellers.map((product, index) => (
               <motion.div

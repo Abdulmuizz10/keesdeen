@@ -192,10 +192,9 @@ const Profile: React.FC = () => {
   const [updatedUser, setUpdatedUser] = useState<UserProfile>(sampleUser);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editedName, setEditedName] = useState<string>(updatedUser.name);
-  const [editedEmail, setEditedEmail] = useState<string>(updatedUser.email);
 
   const handleSave = () => {
-    setUpdatedUser({ ...updatedUser, name: editedName, email: editedEmail });
+    setUpdatedUser({ ...updatedUser, name: editedName });
     setIsEditing(false);
   };
 
@@ -234,19 +233,6 @@ const Profile: React.FC = () => {
                     placeholder="Enter your name"
                   />
                 </div>
-                <div className="flex flex-col">
-                  <label htmlFor="email" className="text-sm text-gray-500">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="border border-border-secondary px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-neutral focus:border-transparent"
-                    value={editedEmail}
-                    onChange={(e) => setEditedEmail(e.target.value)}
-                    placeholder="Enter your email"
-                  />
-                </div>
               </div>
             ) : (
               <div className="flex flex-col max-md:items-center">
@@ -258,7 +244,7 @@ const Profile: React.FC = () => {
             )}
 
             <Button
-              className="rounded-md bg-brand-neutral text-text-light poppins md:ml-auto max-md:w-full"
+              className="rounded-md bg-brand-neutral text-text-light poppins md:ml-auto max-md:w-full py-[10px]"
               onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
             >
               {isEditing ? "Save" : "Edit Profile"}

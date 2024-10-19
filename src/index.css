@@ -5,16 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* * {
-  color: ;
-} */
-
 body {
   /* background: #ececec; */
   background: #ffffff;
-}
-body::-webkit-scrollbar {
-  display: none;
 }
 
 .gradient-bg-footer {
@@ -70,6 +63,7 @@ label {
 
 ::-webkit-scrollbar {
   width: 10px;
+  background: #d4d4d4;
 }
 
 ::-webkit-scrollbar-thumb {

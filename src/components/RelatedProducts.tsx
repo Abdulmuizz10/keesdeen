@@ -36,7 +36,7 @@ const RelatedProducts = ({ category }: any) => {
   }, [products]);
 
   const ref = useRef(null);
-  const isInView = useInView(ref);
+  const isInView = useInView(ref, { once: true });
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
 
@@ -52,7 +52,7 @@ const RelatedProducts = ({ category }: any) => {
       </div>
       <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-6">
         {related &&
-          related.map((product, index) => (
+          related.slice(-8).map((product, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}

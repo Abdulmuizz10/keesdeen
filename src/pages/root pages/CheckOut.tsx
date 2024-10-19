@@ -233,6 +233,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { useShop } from "../../context/ShopContext";
+import { formatAmount } from "../../lib/utils";
 
 // Stripe initialization with your publishable key
 const stripePromise = loadStripe("your-publishable-key");
@@ -357,7 +358,7 @@ const CheckOut: React.FC = () => {
             <div className="mb-4">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
-                <span>${subtotal}</span>
+                <span>{formatAmount(subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <p>Discount:</p>
@@ -365,7 +366,7 @@ const CheckOut: React.FC = () => {
               </div>
               <div className="flex justify-between font-bold">
                 <p>Total:</p>
-                <p>${finalTotal}</p>
+                <p>{formatAmount(finalTotal)}</p>
               </div>
             </div>
 
@@ -408,7 +409,7 @@ const CheckOut: React.FC = () => {
               className="w-full active:bg-gray-700 bg-brand-neutral text-text-light py-3 rounded-md poppins border-none"
               onClick={handleSubmit(onSubmit)}
             >
-              Place order ${finalTotal}
+              Place order {formatAmount(finalTotal)}
             </Button>
           </div>
         </div>
