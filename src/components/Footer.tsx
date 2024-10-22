@@ -174,7 +174,7 @@ export const Footer1Defaults: Footer1Props = {
         },
         {
           title: "Instagram",
-          url: "#",
+          url: "https://www.instagram.com/keesdeen_active?igsh=MWhvcnhqcjZra2ZlZw%3D%3D&utm_source=qr",
           icon: <BiLogoInstagram className="size-6" />,
         },
         { title: "X", url: "#", icon: <FaXTwitter className="size-6 p-0.5" /> },

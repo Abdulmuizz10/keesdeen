@@ -6,6 +6,7 @@ import { CiSearch } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
 import { FiX } from "react-icons/fi";
+import { useMediaQuery } from "@relume_io/relume-ui";
 
 interface Product {
   id: number;
@@ -47,12 +48,14 @@ const SearchModal: React.FC = () => {
     setFilteredProducts(filteredProds);
   };
 
+  const isIpad = useMediaQuery("(max-width: 1024px)");
+
   return (
     <motion.div
       variants={background}
       initial="initial"
       animate={isActive ? "open" : "closed"}
-      className={`bg-background-light h-screen w-screen fixed top-0 left-0 right-0 bottom-0 z-[1000px] flex  justify-center border-b border-border-secondary ${
+      className={`bg-background-light h-screen w-screen fixed top-0 left-0 right-0 bottom-0 z-[1000px] flex  justify-center border-b border-border-secondary max-lg:overflow-y-auto ${
         searchQuery.length === 0 ? "items-center" : "items-start"
       }`}
     >
@@ -90,7 +93,7 @@ const SearchModal: React.FC = () => {
                     </div>
                     <ul className="flex flex-col gap-2">
                       {filteredProducts &&
-                        filteredProducts.slice(-5).map((product, index) => (
+                        filteredProducts.slice(-7).map((product, index) => (
                           <Link to={`/product_details/${product.id}`}>
                             <li
                               key={index}
@@ -109,10 +112,10 @@ const SearchModal: React.FC = () => {
                         <div className="h-[1px] w-full bg-border-secondary" />
                       </div>
                     </div>
-                    <div className="hidden lg:grid grid-cols-4 w-full gap-3">
+                    <div className="hidden lg:grid lg:grid-cols-3 xl:grid-cols-4 w-full gap-3">
                       {filteredProducts && filteredProducts.length > 0 ? (
                         filteredProducts
-                          .slice(-4)
+                          .slice(isIpad ? -3 : -4)
                           .map((product, index) => (
                             <LargeScreenSearchItem
                               product={product}
@@ -123,10 +126,10 @@ const SearchModal: React.FC = () => {
                         <p className="text-xl">Product is not available...</p>
                       )}
                     </div>
-                    <div className="flex flex-col lg:hidden w-full gap-3">
+                    <div className="flex flex-col lg:hidden w-full gap-3 mb-10">
                       {filteredProducts && filteredProducts.length > 0 ? (
                         filteredProducts
-                          .slice(-3)
+                          .slice(-5)
                           .map((product, index) => (
                             <SmallScreenSearchItem
                               product={product}

@@ -1,15 +1,12 @@
 import axios from "axios";
 import { AccessFailure, AccessStart, AccessSuccess } from "./AuthActions";
 import { Dispatch } from "react";
+import { URL } from "../../lib/constants";
+import { User } from "../../lib/types";
 
-// Define the structure of the user object
-
-// Define the structure of the Axios response
 interface Response {
-  data: any; // Replace `any` with the actual data structure if known
+  data: User; // Replace `any` with the actual data structure if known
 }
-
-const URL = "http://localhost:5000/auth";
 
 // Type definition for the login function
 export const Login = async (

@@ -1,32 +1,22 @@
 import React, { useState } from "react";
 
-// // import {
-// //   // Button,
-// //   Select,
-// //   SelectContent,
-// //   SelectItem,
-// //   SelectTrigger,
-// //   SelectValue,
-// // } from "@relume_io/relume-ui";
-
 const AddProducts: React.FC = () => {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productCategory, setProductCategory] = useState("");
   const [productSubCategory, setProductSubCategory] = useState("");
   const [productSize, setProductSize] = useState<string[]>([]);
-  //   const [productColor, setProductColor] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productImages, setProductImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isBestseller, setIsBestseller] = useState(false);
 
-  const handleSizeChange = (size: string) => {
-    setProductSize((prevSizes) =>
-      prevSizes.includes(size)
-        ? prevSizes.filter((s) => s !== size)
-        : [...prevSizes, size]
-    );
+  const handleSizeToggle = (size: string) => {
+    if (productSize.includes(size)) {
+      setProductSize(productSize.filter((s) => s !== size));
+    } else {
+      setProductSize([...productSize, size]);
+    }
   };
 
   const handleImageChange = (index: number, file: File | null) => {
@@ -52,57 +42,44 @@ const AddProducts: React.FC = () => {
     formData.append("productPrice", productPrice);
     formData.append("isBestseller", isBestseller.toString());
 
-    // Append the selected sizes
     productSize.forEach((size) => {
       formData.append("productSize[]", size);
     });
 
-    // Append the images
     productImages.forEach((image, index) => {
       formData.append(`image${index + 1}`, image);
     });
 
-    // You can submit the formData to your backend API here
     console.log("Form submitted");
   };
 
-  if (productCategory) {
-    console.log(productCategory);
-  }
   return (
-    <section className="w-full">
-      <h2 className=" mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+    <section className="w-full py-6">
+      <h2 className="md:text-7xl lg:text-8xl font-semibold mb-10">
         Add Product
       </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-10 w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+      <form onSubmit={handleSubmit} className="space-y-8 poppins">
+        {/* Image Upload */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[0, 1, 2, 3, 4].map((index) => (
             <div key={index} className="w-full">
-              <label className="flex flex-col items-center justify-center lg:w-26 h-36 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-white hover:bg-gray-50">
-                <div className="flex flex-col items-center pt-2 pb-3">
-                  <svg
-                    className="w-10 h-10 mb-3 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 16"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                    />           
-                  </svg>
-                  <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">
-                    <span className="font-semibold">Click to upload</span>
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    SVG, PNG, JPG, or GIF
-                  </p>
-                </div>
+              <label className="flex flex-col items-center justify-center h-36 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all">
+                <svg
+                  className="w-8 h-8 mb-2 text-gray-500"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                  />
+                </svg>
+                <p className="text-xs text-gray-500">Upload image</p>
                 <input
                   type="file"
                   accept="image/*"
@@ -113,138 +90,122 @@ const AddProducts: React.FC = () => {
                     )
                   }
                   className="hidden"
-                  required
                 />
               </label>
               {imagePreviews[index] && (
                 <img
                   src={imagePreviews[index]}
                   alt={`Preview ${index + 1}`}
-                  className="mt-4 w-full h-36 object-cover rounded-lg"
+                  className="mt-4 w-full h-36 object-cover rounded-md"
                 />
               )}
             </div>
           ))}
         </div>
 
-        <div className="space-y-6">
+        {/* Product Information */}
+        <div className="space-y-4 poppins">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Product Name
-            </label>
             <input
               type="text"
+              placeholder="Product Name"
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
-              className="mt-2 p-3 block w-full border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Product Description
-            </label>
             <textarea
+              placeholder="Product Description"
               value={productDescription}
               onChange={(e) => setProductDescription(e.target.value)}
-              className="mt-2 p-3 block w-full border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+              rows={3}
               required
             />
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Product Category
-            </label>
-            <select
-              value={productCategory}
-              onChange={(e) => setProductCategory(e.target.value)}
-              className="mt-2 p-3 block w-full border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-              required
-            >
-              <option value="">Select category</option>
-              <option value="Men">Men</option>
-              <option value="Women">Women</option>
-              <option value="Kids">Kids</option>
-            </select>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div>
+              <select
+                value={productCategory}
+                onChange={(e) => setProductCategory(e.target.value)}
+                className="w-full p-3 border border-gray-300  transition-all"
+                required
+              >
+                <option value="">Select Category</option>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
+                <option value="Kids">Kids</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Sub Category
-            </label>
-            <select
-              value={productSubCategory}
-              onChange={(e) => setProductSubCategory(e.target.value)}
-              className="mt-2 p-3 block w-full border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-              required
-            >
-              <option value="">Select sub-category</option>
-              <option value="Topwear">Topwear</option>
-              <option value="Bottomwear">Bottomwear</option>
-              <option value="Footwear">Footwear</option>
-            </select>
-          </div>
+            <div>
+              <select
+                value={productSubCategory}
+                onChange={(e) => setProductSubCategory(e.target.value)}
+                className="w-full p-3 border border-gray-300 transition-all"
+                required
+              >
+                <option value="">Select Sub-Category</option>
+                <option value="Topwear">Topwear</option>
+                <option value="Bottomwear">Bottomwear</option>
+                <option value="Footwear">Footwear</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Product Price
-            </label>
-            <input
-              type="number"
-              value={productPrice}
-              onChange={(e) => setProductPrice(e.target.value)}
-              className="mt-2 p-3 block w-full border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-              required
-            />
+            <div>
+              <input
+                type="number"
+                placeholder="Product Price"
+                value={productPrice}
+                onChange={(e) => setProductPrice(e.target.value)}
+                className="w-full p-3 border border-gray-300 transition-all"
+                required
+              />
+            </div>
           </div>
         </div>
 
+        {/* Sizes */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Product Sizes
-          </label>
-          <div className="mt-4 flex flex-wrap gap-4">
-            {["S", "M", "L", "XL", "XXL"].map((size) => (
-              <label key={size} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={productSize.includes(size)}
-                  onChange={() => handleSizeChange(size)}
-                  className="form-checkbox rounded text-indigo-600 dark:bg-gray-800 dark:border-gray-600"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300">
-                  {size}
-                </span>
-              </label>
-            ))}
+          <label className="text-sm font-medium">Sizes:</label>
+          <div className="mt-2 flex gap-4">
+            {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
+              (item, index) => (
+                <div
+                  className={`p-2 h-[45px] w-[45px] bg-gray-300 flex items-center justify-center cursor-pointer ${
+                    productSize.includes(item)
+                      ? "border-2 border-border-primary"
+                      : ""
+                  }`}
+                  key={index}
+                  onClick={() => handleSizeToggle(item)}
+                >
+                  {item}
+                </div>
+              )
+            )}
           </div>
         </div>
 
+        {/* Bestseller Checkbox */}
         <div className="flex items-center">
           <input
             type="checkbox"
             checked={isBestseller}
             onChange={() => setIsBestseller(!isBestseller)}
-            className="form-checkbox rounded text-indigo-600 dark:bg-gray-800 dark:border-gray-600"
+            className="form-checkbox rounded"
           />
-          <span className="ml-3 text-sm text-gray-700 dark:text-gray-300">
-            Add to bestseller
-          </span>
+          <span className="ml-2 text-sm">Add to Bestseller</span>
         </div>
 
-        {/* <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-          ></button> */}
-
+        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800"
+          className="w-full bg-brand-neutral text-white py-3 rounded-lg hover:bg-gray-500 transition-all poppins"
         >
           Add Product
         </button>

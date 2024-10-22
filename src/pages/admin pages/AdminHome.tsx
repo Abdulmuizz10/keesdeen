@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement } from "chart.js";
 
@@ -7,9 +7,6 @@ Chart.register(ArcElement);
 const AdminHome: React.FC = () => {
   return (
     <section className="container ">
-      {/* <h2 className=" mb-10 text-4xl font-bold md:text-6xl lg:text-7xl bricolage-grotesque">
-        Admin
-      </h2> */}
       <Dashboard />
     </section>
   );
@@ -54,6 +51,576 @@ const Dashboard = () => {
       tooltip: { enabled: false },
     },
   };
+
+  const transactions = [
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Josephine Zimmerman",
+      status: "pending",
+      date: "14.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Cecilia Harriet",
+      status: "done",
+      date: "13.01.2024",
+      amount: "$2,800",
+    },
+    {
+      name: "Dennis Thomas",
+      status: "canceled",
+      date: "12.01.2024",
+      amount: "$2,600",
+    },
+    {
+      name: "Lula Neal",
+      status: "pending",
+      date: "11.01.2024",
+      amount: "$3,200",
+    },
+    {
+      name: "Jeff Montgomery",
+      status: "done",
+      date: "10.01.2024",
+      amount: "$4,600",
+    },
+    {
+      name: "Emily Scott",
+      status: "pending",
+      date: "09.01.2024",
+      amount: "$1,900",
+    },
+    {
+      name: "Henry Wallace",
+      status: "done",
+      date: "08.01.2024",
+      amount: "$5,500",
+    },
+    {
+      name: "Anna Watkins",
+      status: "canceled",
+      date: "07.01.2024",
+      amount: "$3,400",
+    },
+    {
+      name: "Peter Young",
+      status: "pending",
+      date: "06.01.2024",
+      amount: "$4,000",
+    },
+    {
+      name: "Grace Turner",
+      status: "done",
+      date: "05.01.2024",
+      amount: "$2,200",
+    },
+    {
+      name: "Robert Lee",
+      status: "pending",
+      date: "04.01.2024",
+      amount: "$6,000",
+    },
+    {
+      name: "Victoria Hayes",
+      status: "done",
+      date: "03.01.2024",
+      amount: "$3,800",
+    },
+    {
+      name: "Isaac Watson",
+      status: "canceled",
+      date: "02.01.2024",
+      amount: "$2,500",
+    },
+    {
+      name: "Sophia Barnes",
+      status: "pending",
+      date: "01.01.2024",
+      amount: "$1,700",
+    },
+    {
+      name: "Peter Young",
+      status: "pending",
+      date: "06.01.2024",
+      amount: "$4,000",
+    },
+    {
+      name: "Grace Turner",
+      status: "done",
+      date: "05.01.2024",
+      amount: "$2,200",
+    },
+    {
+      name: "Robert Lee",
+      status: "pending",
+      date: "04.01.2024",
+      amount: "$6,000",
+    },
+    {
+      name: "Victoria Hayes",
+      status: "done",
+      date: "03.01.2024",
+      amount: "$3,800",
+    },
+    {
+      name: "Isaac Watson",
+      status: "canceled",
+      date: "02.01.2024",
+      amount: "$2,500",
+    },
+    {
+      name: "Sophia Barnes",
+      status: "pending",
+      date: "01.01.2024",
+      amount: "$1,700",
+    },
+    {
+      name: "Peter Young",
+      status: "pending",
+      date: "06.01.2024",
+      amount: "$4,000",
+    },
+    {
+      name: "Grace Turner",
+      status: "done",
+      date: "05.01.2024",
+      amount: "$2,200",
+    },
+    {
+      name: "Robert Lee",
+      status: "pending",
+      date: "04.01.2024",
+      amount: "$6,000",
+    },
+    {
+      name: "Victoria Hayes",
+      status: "done",
+      date: "03.01.2024",
+      amount: "$3,800",
+    },
+    {
+      name: "Isaac Watson",
+      status: "canceled",
+      date: "02.01.2024",
+      amount: "$2,500",
+    },
+    {
+      name: "Sophia Barnes",
+      status: "pending",
+      date: "01.01.2024",
+      amount: "$1,700",
+    },
+    {
+      name: "Peter Young",
+      status: "pending",
+      date: "06.01.2024",
+      amount: "$4,000",
+    },
+    {
+      name: "Grace Turner",
+      status: "done",
+      date: "05.01.2024",
+      amount: "$2,200",
+    },
+    {
+      name: "Robert Lee",
+      status: "pending",
+      date: "04.01.2024",
+      amount: "$6,000",
+    },
+    {
+      name: "Victoria Hayes",
+      status: "done",
+      date: "03.01.2024",
+      amount: "$3,800",
+    },
+    {
+      name: "Isaac Watson",
+      status: "canceled",
+      date: "02.01.2024",
+      amount: "$2,500",
+    },
+    {
+      name: "Sophia Barnes",
+      status: "pending",
+      date: "01.01.2024",
+      amount: "$1,700",
+    },
+  ];
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const transactionsPerPage = 6; // Adjust this number as needed
+
+  // Calculate total pages
+  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+
+  // Get the transactions for the current page
+  const currentTransactions = transactions.slice(
+    (currentPage - 1) * transactionsPerPage,
+    currentPage * transactionsPerPage
+  );
+
+  // Function to change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <div className="">
@@ -119,43 +686,12 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    name: "Josephine Zimmerman",
-                    status: "pending",
-                    date: "14.01.2024",
-                    amount: "$3,200",
-                  },
-                  {
-                    name: "Cecilia Harriet",
-                    status: "done",
-                    date: "13.01.2024",
-                    amount: "$2,800",
-                  },
-                  {
-                    name: "Dennis Thomas",
-                    status: "canceled",
-                    date: "12.01.2024",
-                    amount: "$2,600",
-                  },
-                  {
-                    name: "Lula Neal",
-                    status: "pending",
-                    date: "11.01.2024",
-                    amount: "$3,200",
-                  },
-                  {
-                    name: "Jeff Montgomery",
-                    status: "done",
-                    date: "10.01.2024",
-                    amount: "$4,600",
-                  },
-                ].map((transaction, index) => (
+                {currentTransactions.map((transaction, index) => (
                   <tr
                     key={index}
-                    className="border-b hover:bg-gray-50 transition-colors duration-150"
+                    className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
                   >
-                    <td className="flex items-center space-x-4 p-4 bricolage-grotesque ">
+                    <td className="flex items-center space-x-4 p-4">
                       <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
                       <span className="font-semibold">{transaction.name}</span>
                     </td>
@@ -172,8 +708,8 @@ const Dashboard = () => {
                         {transaction.status}
                       </span>
                     </td>
-                    <td className="p-4 text-sm poppins">{transaction.date}</td>
-                    <td className="p-4 font-semibold text-lg bricolage-grotesque ">
+                    <td className="p-4 text-sm">{transaction.date}</td>
+                    <td className="p-4 font-semibold text-md">
                       {transaction.amount}
                     </td>
                   </tr>
@@ -181,13 +717,76 @@ const Dashboard = () => {
               </tbody>
             </table>
           </div>
-        </div>
 
-        {/* Weekly Recap
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <h3 className="text-xl font-semibold mb-4">Weekly Recap</h3>
-          <div className="h-40 bg-gray-300 rounded-lg"></div>
-        </div> */}
+          {/* Pagination controls */}
+          <div className="flex justify-end mt-4 poppins">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 mr-2 ${
+                currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
+              } text-white rounded-lg`}
+            >
+              Previous
+            </button>
+
+            {currentPage > 3 && (
+              <>
+                <button
+                  onClick={() => paginate(1)}
+                  className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg mx-1"
+                >
+                  1
+                </button>
+                <span className="px-4 py-2">...</span>
+              </>
+            )}
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(
+                (pageNumber) =>
+                  pageNumber === 1 ||
+                  pageNumber === totalPages ||
+                  (pageNumber >= currentPage - 2 &&
+                    pageNumber <= currentPage + 2)
+              )
+              .map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => paginate(pageNumber)}
+                  className={`px-4 py-2 ${
+                    currentPage === pageNumber
+                      ? "bg-brand-neutral text-white"
+                      : "px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
+                  }  rounded-lg mx-1`}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+
+            {currentPage < totalPages - 2 && (
+              <>
+                <span className="px-4 py-2">...</span>
+                <button
+                  onClick={() => paginate(totalPages)}
+                  className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg mx-1"
+                >
+                  {totalPages}
+                </button>
+              </>
+            )}
+
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 ml-2 ${
+                currentPage === totalPages ? "bg-gray-300" : "bg-brand-neutral"
+              } text-white rounded-lg`}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

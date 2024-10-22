@@ -53,7 +53,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           <img
             src={logo.src}
             alt={logo.alt}
-            className="w-[120px] h-[30px] sm:w-full sm:h-[35px]"
+            className="inline-block w-[150px] md:w-[200px]"
           />
           {/* <img
             src={mobileLogo.src}
@@ -146,7 +146,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             )}
           </div>
         </div>
-        <div className="flex lg:hidden gap-3 items-center">
+        <div className="flex lg:hidden gap-[6px] items-center">
           <CiSearch
             className="text-3xl cursor-pointer text-text-primary"
             onClick={() => setIsActive(!isActive)}

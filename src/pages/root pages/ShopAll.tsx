@@ -164,12 +164,11 @@ const ShopAll: React.FC = () => {
               <p className="text-base md:text-md pb-3">Product Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {["Active wear", "Fitness accessories"].map((wear, index) => (
-                  <p className="flex gap-2">
+                  <p className="flex gap-2" key={index}>
                     <input
                       type="checkbox"
                       className="w-3 my"
                       value={wear}
-                      key={index}
                       onChange={toggleCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
@@ -201,12 +200,11 @@ const ShopAll: React.FC = () => {
                   "4XL",
                   "5XL",
                 ].map((size, index) => (
-                  <p className="flex gap-2">
+                  <p className="flex gap-2" key={index}>
                     <input
                       type="checkbox"
                       className="w-3"
                       value={size}
-                      key={index}
                       onChange={toggleSizeCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
@@ -238,12 +236,11 @@ const ShopAll: React.FC = () => {
                   "Red",
                   "White",
                 ].map((color, index) => (
-                  <p className="flex gap-2 items-center">
+                  <p className="flex gap-2 items-center" key={index}>
                     <input
                       type="checkbox"
                       className="w-3"
                       value={color}
-                      key={index}
                       onChange={toggleColorCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);

@@ -14,6 +14,7 @@ import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
+import { URL } from "../../lib/constants";
 
 type ImageProps = {
   url?: string;
@@ -64,45 +65,13 @@ export const Login7: React.FC = (props: Login7Props) => {
     Login({ email, password }, dispatch, navigate);
   };
 
-  // const handleLoginSuccess = async (response: any) => {
-  //   const token = response.tokenId;
-
-  //   // Send the token to the backend
-  //   const res = await fetch("http://localhost:5000/auth/google-sign-in", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ token }),
-  //   });
-
-  //   if (res.ok) {
-  //     const userData = await res.json();
-  //     console.log("User authenticated", userData);
-  //   } else {
-  //     console.error("Failed to authenticate");
-  //   }
-  // };
-
-  // const login = useGoogleLogin({
-  //   onSuccess: (tokenResponse) => console.log(tokenResponse),
-  //   onError: (error) => console.error("Login Failed:", error),
-  // });
-
-  // const handleGoogle = () => {
-  //   GoogleSignIn()
-  // };
-
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
         // Send the access token (googleToken) to get user info and authenticate
-        const res = await axios.post(
-          "http://localhost:5000/auth/google-sign-in",
-          {
-            googleToken: tokenResponse.access_token,
-          }
-        );
+        const res = await axios.post(`${URL}/auth/google-sign-in`, {
+          googleToken: tokenResponse.access_token,
+        });
 
         dispatch(AccessSuccess(res.data));
         navigate("/");

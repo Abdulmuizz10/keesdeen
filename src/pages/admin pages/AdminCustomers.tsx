@@ -1,105 +1,104 @@
-import React from "react";
+import React, { useState } from "react";
 
 const AdminCustomers: React.FC = () => {
   // Sample data for customers
   const customers = [
     {
       name: "Josephine Zimmerman",
-      status: "active",
       date: "01.01.2024",
       email: "josephine.z@example.com",
     },
     {
       name: "Cecilia Harriet",
-      status: "inactive",
       date: "12.12.2023",
       email: "cecilia.h@example.com",
     },
     {
       name: "Dennis Thomas",
-      status: "active",
       date: "15.11.2023",
       email: "dennis.t@example.com",
     },
     {
       name: "Lula Neal",
-      status: "pending",
       date: "18.10.2023",
       email: "lula.n@example.com",
     },
     {
       name: "Jeff Montgomery",
-      status: "active",
       date: "25.09.2023",
       email: "jeff.m@example.com",
     },
     {
       name: "Michael Scott",
-      status: "inactive",
       date: "11.01.2024",
       email: "michael.s@example.com",
     },
     {
       name: "Pam Beesly",
-      status: "active",
       date: "21.10.2023",
       email: "pam.b@example.com",
     },
     {
       name: "Jim Halpert",
-      status: "active",
       date: "15.09.2023",
       email: "jim.h@example.com",
     },
     {
       name: "Dwight Schrute",
-      status: "inactive",
       date: "05.12.2023",
       email: "dwight.s@example.com",
     },
     {
       name: "Angela Martin",
-      status: "pending",
       date: "10.11.2023",
       email: "angela.m@example.com",
     },
     {
       name: "Stanley Hudson",
-      status: "active",
       date: "18.10.2023",
       email: "stanley.h@example.com",
     },
     {
       name: "Kelly Kapoor",
-      status: "inactive",
       date: "30.08.2023",
       email: "kelly.k@example.com",
     },
     {
       name: "Toby Flenderson",
-      status: "active",
       date: "22.07.2023",
       email: "toby.f@example.com",
     },
     {
       name: "Ryan Howard",
-      status: "pending",
       date: "04.05.2023",
       email: "ryan.h@example.com",
     },
     {
       name: "Oscar Martinez",
-      status: "active",
       date: "09.03.2024",
       email: "oscar.m@example.com",
     },
     {
       name: "Phyllis Vance",
-      status: "inactive",
       date: "20.02.2024",
       email: "phyllis.v@example.com",
     },
   ];
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const customersPerPage = 8;
+  const totalPages = Math.ceil(customers.length / customersPerPage);
+
+  // Get current customers for the page
+  const currentCustomers = customers.slice(
+    (currentPage - 1) * customersPerPage,
+    currentPage * customersPerPage
+  );
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="w-full">
@@ -110,46 +109,99 @@ const AdminCustomers: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full bg-white">
             <thead>
-              <tr className="bg-gray-100 rounded-t-xl font-extrabold">
+              <tr className="bg-gray-100 rounded-t-xl font-extrabold bricolage-grotesque">
                 <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
                   Customer
                 </th>
                 <th className="text-left p-4 font-semibold">Email</th>
-                <th className="text-left p-4 font-semibold">Status</th>
                 <th className="text-left p-4 font-semibold rounded-tr-xl">
                   Registration Date
                 </th>
               </tr>
             </thead>
             <tbody>
-              {customers.map((customer, index) => (
+              {currentCustomers.map((customer, index) => (
                 <tr
                   key={index}
-                  className="border-b hover:bg-gray-50 transition-colors duration-150"
+                  className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
                 >
                   <td className="flex items-center space-x-4 p-4">
                     <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-                    <span className="font-semibold">{customer.name}</span>
+                    <p className="font-semibold">{customer.name}</p>
                   </td>
                   <td className="p-4 text-sm">{customer.email}</td>
-                  <td className="p-4">
-                    <span
-                      className={`px-4 py-1 rounded-full text-sm ${
-                        customer.status === "active"
-                          ? "bg-green-200 text-green-800"
-                          : customer.status === "inactive"
-                          ? "bg-red-200 text-red-800"
-                          : "bg-yellow-200 text-yellow-800"
-                      }`}
-                    >
-                      {customer.status}
-                    </span>
+                  <td className="p-4 text-base font-semibold">
+                    {customer.date}
                   </td>
-                  <td className="p-4 text-sm">{customer.date}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination controls */}
+        <div className="flex justify-end mt-4 poppins">
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-4 py-2 mr-2 ${
+              currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
+            } text-white rounded-lg`}
+          >
+            Previous
+          </button>
+
+          {currentPage > 3 && (
+            <>
+              <button className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg">
+                1
+              </button>
+              <span className="px-4 py-2">...</span>
+            </>
+          )}
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(
+              (pageNumber) =>
+                pageNumber === 1 ||
+                pageNumber === totalPages ||
+                (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
+            )
+            .map((pageNumber) => (
+              <button
+                key={pageNumber}
+                onClick={() => paginate(pageNumber)}
+                className={`px-4 py-2 ${
+                  currentPage === pageNumber
+                    ? "bg-brand-neutral text-white "
+                    : "bg-white border border-border-primary text-text-primary"
+                }  mx-1 rounded-lg`}
+              >
+                {pageNumber}
+              </button>
+            ))}
+
+          {currentPage < totalPages - 2 && (
+            <>
+              <span className="px-4 py-2">...</span>
+              <button
+                onClick={() => paginate(totalPages)}
+                className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-4 py-2 ml-2 ${
+              currentPage === totalPages ? "bg-gray-300" : "bg-brand-neutral"
+            } text-white rounded-lg`}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
