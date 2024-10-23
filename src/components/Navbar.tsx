@@ -422,7 +422,7 @@ export const Navbar7Defaults: Navbar7Props = {
     { title: "Shop All", url: "/shop_all" },
     { title: "New In", url: "/new_in" },
     { title: "Active wear", url: "/Active_wear" },
-    { title: "Fitness Accessories", url: "/Fitness_Accessories" },
+    { title: "Fitness Accessories", url: "/Fitness_accessories" },
   ],
   buttons: [
     // {

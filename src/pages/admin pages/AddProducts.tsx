@@ -5,6 +5,7 @@ const AddProducts: React.FC = () => {
   const [productDescription, setProductDescription] = useState("");
   const [productCategory, setProductCategory] = useState("");
   const [productSubCategory, setProductSubCategory] = useState("");
+  const [productType, setProductType] = useState("");
   const [productSize, setProductSize] = useState<string[]>([]);
   const [productPrice, setProductPrice] = useState("");
   const [productImages, setProductImages] = useState<File[]>([]);
@@ -39,6 +40,7 @@ const AddProducts: React.FC = () => {
     formData.append("productDescription", productDescription);
     formData.append("productCategory", productCategory);
     formData.append("productSubCategory", productSubCategory);
+    formData.append("productType", productType);
     formData.append("productPrice", productPrice);
     formData.append("isBestseller", isBestseller.toString());
 
@@ -55,13 +57,16 @@ const AddProducts: React.FC = () => {
 
   return (
     <section className="w-full py-6">
-      <h2 className="md:text-7xl lg:text-8xl font-semibold mb-10">
-        Add Product
-      </h2>
+      {/* <div className="mb-12 md:mb-10">
+        <h2 className="text-4xl font-semibold mb-5">Add Product</h2>
+        <p className="md:text-md">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        </p>
+      </div> */}
 
       <form onSubmit={handleSubmit} className="space-y-8 poppins">
         {/* Image Upload */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {[0, 1, 2, 3, 4].map((index) => (
             <div key={index} className="w-full">
               <label className="flex flex-col items-center justify-center h-36 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all">
@@ -127,7 +132,7 @@ const AddProducts: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
               <select
                 value={productCategory}
@@ -135,21 +140,63 @@ const AddProducts: React.FC = () => {
                 className="w-full p-3 border border-gray-300  transition-all"
                 required
               >
-                <option value="">Select Category</option>
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
-                <option value="Kids">Kids</option>
+                <option value=" ">Select Category</option>
+                <option value="Active wear">Active Wear</option>
+                <option value="Fitness accessories">Fitness Accessories</option>
               </select>
             </div>
 
+            {productCategory === "Active wear" ? (
+              <div>
+                <select
+                  value={productSubCategory}
+                  onChange={(e) => setProductSubCategory(e.target.value)}
+                  className="w-full p-3 border border-gray-300 transition-all"
+                  required
+                >
+                  <option value="">Select Sub-Category</option>
+                  <option value="Modest Workout Tops">
+                    Modest Workout Tops
+                  </option>
+                  <option value="Joggers & Bottoms">Joggers & Bottoms</option>
+                  <option value="Complete Active wear Sets">
+                    Complete Active wear Sets
+                  </option>
+                  <option value="High-Support Sports Bras">
+                    High-Support Sports Bras
+                  </option>
+                  <option value="Sports Hijabs">Sports Hijabs</option>
+                  <option value="Burkinis / Swimwear">
+                    Burkinis / Swimwear
+                  </option>
+                </select>
+              </div>
+            ) : (
+              <div>
+                <select
+                  value={productSubCategory}
+                  onChange={(e) => setProductSubCategory(e.target.value)}
+                  className="w-full p-3 border border-gray-300 transition-all"
+                  required
+                >
+                  <option value="">Select Sub-Category</option>
+                  <option value="Gym Essentials Kit">Gym Essentials Kit</option>
+                  <option value="Workout Bag">Workout Bag</option>
+                  <option value="Water Bottle">Water Bottle</option>
+                  <option value="Sweat Towel">Sweat Towel</option>
+                  <option value="Athletic Socks">Athletic Socks</option>
+                </select>
+              </div>
+            )}
+
             <div>
               <select
-                value={productSubCategory}
-                onChange={(e) => setProductSubCategory(e.target.value)}
+                value={productType}
+                onChange={(e) => setProductType(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all"
                 required
               >
-                <option value="">Select Sub-Category</option>
+                <option value="">Select Product Type</option>
                 <option value="Topwear">Topwear</option>
                 <option value="Bottomwear">Bottomwear</option>
                 <option value="Footwear">Footwear</option>

@@ -31,7 +31,7 @@ const AdminDashBoardOrders: React.FC = () => {
   return (
     <section className="container">
       <div className=" mb-12 md:mb-5">
-        <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+        <h2 className="rb-5 mb-5 text-4xl font-bold md:mb-6  bricolage-grotesque">
           Orders Dashboard
         </h2>
         <p className="md:text-md">
@@ -45,7 +45,7 @@ const AdminDashBoardOrders: React.FC = () => {
             margin={{
               top: 20,
               right: 30,
-              left: 20,
+              left: -10,
               bottom: 5,
             }}
           >
@@ -54,12 +54,8 @@ const AdminDashBoardOrders: React.FC = () => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="orders" barSize={20} fill="rgba(255, 99, 132, 0.6)" />
-            <Line
-              type="monotone"
-              dataKey="orders"
-              stroke="rgba(255, 99, 132, 1)"
-            />
+            <Bar dataKey="orders" barSize={20} fill="#3c3c3c" />
+            <Line type="monotone" dataKey="orders" stroke="#3c3c3c" />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

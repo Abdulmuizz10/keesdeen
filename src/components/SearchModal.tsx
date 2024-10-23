@@ -105,7 +105,7 @@ const SearchModal: React.FC = () => {
                         ))}
                     </ul>
                   </div>
-                  <div className="w-full lg:w-4/5">
+                  <div className="w-full lg:w-4/5 max-md:mb-10">
                     <div className="w-full mb-5">
                       <div>
                         <p className="text-black mb-3 font-medium">Products</p>

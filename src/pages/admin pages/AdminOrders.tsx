@@ -649,7 +649,7 @@ const AdminOrders: React.FC = () => {
 
   const [orders, setOrders] = useState(initialOrders);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 10;
 
   const totalPages = Math.ceil(orders.length / itemsPerPage);
   const indexOfLastOrder = currentPage * itemsPerPage;
@@ -691,7 +691,7 @@ const AdminOrders: React.FC = () => {
                   key={index}
                   className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
                 >
-                  <td className="p-4 font-semibold">{order.orderId}</td>
+                  <td className="p-4 font-semibold text-xs">{order.orderId}</td>
                   <td className="p-4">{order.customerName}</td>
                   <td className="p-4">${order.totalAmount.toFixed(2)}</td>
                   <td className="p-4">

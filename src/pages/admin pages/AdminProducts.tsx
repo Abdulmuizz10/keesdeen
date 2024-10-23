@@ -322,7 +322,7 @@ const AdminProducts: React.FC = () => {
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; // Change this to however many items you want per page
+  const itemsPerPage = 10; // Change this to however many items you want per page
 
   // Calculate the total number of pages
   const totalPages = Math.ceil(products.length / itemsPerPage);

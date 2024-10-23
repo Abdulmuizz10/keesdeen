@@ -83,11 +83,111 @@ const AdminCustomers: React.FC = () => {
       date: "20.02.2024",
       email: "phyllis.v@example.com",
     },
+    {
+      name: "Toby Flenderson",
+      date: "22.07.2023",
+      email: "toby.f@example.com",
+    },
+    {
+      name: "Ryan Howard",
+      date: "04.05.2023",
+      email: "ryan.h@example.com",
+    },
+    {
+      name: "Oscar Martinez",
+      date: "09.03.2024",
+      email: "oscar.m@example.com",
+    },
+    {
+      name: "Phyllis Vance",
+      date: "20.02.2024",
+      email: "phyllis.v@example.com",
+    },
+    {
+      name: "Toby Flenderson",
+      date: "22.07.2023",
+      email: "toby.f@example.com",
+    },
+    {
+      name: "Ryan Howard",
+      date: "04.05.2023",
+      email: "ryan.h@example.com",
+    },
+    {
+      name: "Oscar Martinez",
+      date: "09.03.2024",
+      email: "oscar.m@example.com",
+    },
+    {
+      name: "Phyllis Vance",
+      date: "20.02.2024",
+      email: "phyllis.v@example.com",
+    },
+    {
+      name: "Toby Flenderson",
+      date: "22.07.2023",
+      email: "toby.f@example.com",
+    },
+    {
+      name: "Ryan Howard",
+      date: "04.05.2023",
+      email: "ryan.h@example.com",
+    },
+    {
+      name: "Oscar Martinez",
+      date: "09.03.2024",
+      email: "oscar.m@example.com",
+    },
+    {
+      name: "Phyllis Vance",
+      date: "20.02.2024",
+      email: "phyllis.v@example.com",
+    },
+    {
+      name: "Toby Flenderson",
+      date: "22.07.2023",
+      email: "toby.f@example.com",
+    },
+    {
+      name: "Ryan Howard",
+      date: "04.05.2023",
+      email: "ryan.h@example.com",
+    },
+    {
+      name: "Oscar Martinez",
+      date: "09.03.2024",
+      email: "oscar.m@example.com",
+    },
+    {
+      name: "Phyllis Vance",
+      date: "20.02.2024",
+      email: "phyllis.v@example.com",
+    },
+    {
+      name: "Toby Flenderson",
+      date: "22.07.2023",
+      email: "toby.f@example.com",
+    },
+    {
+      name: "Ryan Howard",
+      date: "04.05.2023",
+      email: "ryan.h@example.com",
+    },
+    {
+      name: "Oscar Martinez",
+      date: "09.03.2024",
+      email: "oscar.m@example.com",
+    },
+    {
+      name: "Phyllis Vance",
+      date: "20.02.2024",
+      email: "phyllis.v@example.com",
+    },
   ];
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const customersPerPage = 8;
+  const customersPerPage = 10;
   const totalPages = Math.ceil(customers.length / customersPerPage);
 
   // Get current customers for the page

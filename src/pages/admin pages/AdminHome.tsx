@@ -608,7 +608,7 @@ const Dashboard = () => {
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 6; // Adjust this number as needed
+  const transactionsPerPage = 10; // Adjust this number as needed
 
   // Calculate total pages
   const totalPages = Math.ceil(transactions.length / transactionsPerPage);

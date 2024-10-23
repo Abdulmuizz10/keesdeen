@@ -115,6 +115,15 @@ const Navigation = () => {
             </span>
           </Link>
           <Link
+            to="/admin/orders"
+            className="flex items-center gap-x-2 p-2 text-center"
+          >
+            <span className="flex w-full items-center gap-3">
+              <FaRegPaperPlane />
+              <p>Orders</p>
+            </span>
+          </Link>
+          <Link
             to="/admin/customers"
             className="flex items-center gap-x-2 p-2 text-center"
           >
@@ -173,16 +182,7 @@ const Navigation = () => {
           >
             <span className="flex w-full items-center gap-3">
               <BiLayer className="size-6 shrink-0" />
-              <p>Add Products</p>
-            </span>
-          </Link>
-          <Link
-            to="/admin/orders"
-            className="flex items-center gap-x-2 p-2 text-center"
-          >
-            <span className="flex w-full items-center gap-3">
-              <FaRegPaperPlane />
-              <p>Orders</p>
+              <p>Add Product</p>
             </span>
           </Link>
         </div>
