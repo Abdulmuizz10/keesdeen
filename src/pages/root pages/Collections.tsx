@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
+import { useParams } from "react-router-dom";
 
 const Collections: React.FC = () => {
   // Define the type for a clothing product
@@ -29,24 +30,16 @@ const Collections: React.FC = () => {
     imageUrl: string[];
     description: string;
   }
-
+  const { name } = useParams();
   const { products, isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
     []
   );
-  const [category, setCategory] = useState<string[]>([]);
+
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
   const [sortType, setSortType] = useState<string>("Relevance");
-
-  const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (category.includes(e.target.value)) {
-      setCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setCategory((prev) => [...prev, e.target.value]);
-    }
-  };
 
   const toggleSizeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (sizeCategory.includes(e.target.value)) {
@@ -67,13 +60,9 @@ const Collections: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products.slice();
-
-    if (category.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        category.includes(item.category)
-      );
-    }
+    let productsCopy = products.filter((product) =>
+      product.name.split(" ").some((p) => name?.split(" ").includes(p))
+    );
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
@@ -109,7 +98,7 @@ const Collections: React.FC = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, sizeCategory, colorCategory]);
+  }, [sizeCategory, colorCategory]);
 
   useEffect(() => {
     sortProducts();
@@ -118,22 +107,21 @@ const Collections: React.FC = () => {
   const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
   const clearFilters = () => {
-    setCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
     checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
   };
 
   return (
-    <section className="px-[5%] py-16 md:py-24 lg:py-10">
+    <section className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="rb-12 mb-12 md:mb-5">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            Collections
-          </h2>
-          <p className="md:text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
+        <div className="mb-12 md:mb-5">
+          <div className="flex items-center mb-5 md:mb-6 gap-1">
+            <h2 className="md:text-7xl lg:text-8xl text-5xl font-bold bricolage-grotesque">
+              Search for:
+            </h2>
+            <p className="poppins text-xl lg:pt-2">{name}</p>
+          </div>
         </div>
         <div
           className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
@@ -155,33 +143,6 @@ const Collections: React.FC = () => {
                 }`}
               />
             </div>
-            {/* category Filter */}
-            <div
-              className={`border border-border-secondary pl-5 py-3 mt-2 ${
-                showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
-            >
-              <p className="text-base md:text-md pb-1">Type</p>
-              <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Top wear", "Bottom wear", "Inner wear"].map(
-                  (wear, index) => (
-                    <p className="flex gap-2">
-                      <input
-                        type="checkbox"
-                        className="w-3 my"
-                        value={wear}
-                        key={index}
-                        onChange={toggleCategory}
-                        ref={(el) => {
-                          if (el) checkboxesRef.current.push(el);
-                        }}
-                      />
-                      {wear}
-                    </p>
-                  )
-                )}
-              </div>
-            </div>
 
             {/* Size Filter */}
             <div
@@ -189,7 +150,7 @@ const Collections: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Size</p>
+              <p className="text-base md:text-md pb-3">Size</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "XXS",
@@ -203,12 +164,11 @@ const Collections: React.FC = () => {
                   "4XL",
                   "5XL",
                 ].map((size, index) => (
-                  <p className="flex gap-2">
+                  <p className="flex gap-2" key={index}>
                     <input
                       type="checkbox"
                       className="w-3"
                       value={size}
-                      key={index}
                       onChange={toggleSizeCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
@@ -226,7 +186,7 @@ const Collections: React.FC = () => {
                 showFilter ? "" : "hidden"
               } lg:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-1">Colour</p>
+              <p className="text-base md:text-md pb-3">Colour</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   "Black",
@@ -240,12 +200,11 @@ const Collections: React.FC = () => {
                   "Red",
                   "White",
                 ].map((color, index) => (
-                  <p className="flex gap-2 items-center">
+                  <p className="flex gap-2 items-center" key={index}>
                     <input
                       type="checkbox"
                       className="w-3"
                       value={color}
-                      key={index}
                       onChange={toggleColorCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
@@ -286,16 +245,15 @@ const Collections: React.FC = () => {
                 Showing 1 . {filteredProducts.length} of 31 Products
               </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full">
+              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
                 <Select onValueChange={setSortType}>
                   <SelectTrigger className="rounded-md">
                     <SelectValue placeholder="Sort by price" />
                   </SelectTrigger>
-                  <SelectContent className=" bg-background-primary rounded-lg border border-border-secondary">
+                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
                     <SelectItem
                       value="relevant"
-                      className=" cursor-pointer hover:text-text-secondary
-                      "
+                      className=" cursor-pointer hover:text-text-secondary"
                     >
                       Sort by: Relevance
                     </SelectItem>
@@ -314,15 +272,16 @@ const Collections: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* <select
-                className="border border-border-primary py-2 px-2 rounded-md"
-                onChange={(e) => setSortType(e.target.value)}
-              >
-                <option value="relevant">Sort by: Relevance</option>
-                <option value="Low - High">Sort by: Low to High</option>
-                <option value="High - Low">Sort by: High to Low</option>
-              </select> */}
+              <div className=" max-w-[200px] w-full flex lg:hidden">
+                <select
+                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
+                  onChange={(e) => setSortType(e.target.value)}
+                >
+                  <option value="relevant">Sort by: Relevance</option>
+                  <option value="Low - High">Sort by: Low to High</option>
+                  <option value="High - Low">Sort by: High to Low</option>
+                </select>
+              </div>
             </div>
             {/* {Map Products} */}
             <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">

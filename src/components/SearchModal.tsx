@@ -80,7 +80,7 @@ const SearchModal: React.FC = () => {
                   }}
                 />
               </div>
-              {searchQuery && (
+              {searchQuery.length > 1 && (
                 <div className="w-full flex flex-col justify-start lg:flex-row mt-5 gap-10">
                   <div className=" w-full lg:w-1/5">
                     <div className="w-full mb-4">
@@ -94,7 +94,7 @@ const SearchModal: React.FC = () => {
                     <ul className="flex flex-col gap-2">
                       {filteredProducts &&
                         filteredProducts.slice(-7).map((product, index) => (
-                          <Link to={`/product_details/${product.id}`}>
+                          <Link to={`/collections/${product.name}`}>
                             <li
                               key={index}
                               className="poppins text-md md:text-xl text-gray-500"
@@ -115,7 +115,7 @@ const SearchModal: React.FC = () => {
                     <div className="hidden lg:grid lg:grid-cols-3 xl:grid-cols-4 w-full gap-3">
                       {filteredProducts && filteredProducts.length > 0 ? (
                         filteredProducts
-                          .slice(isIpad ? -3 : -4)
+                          .slice(0, isIpad ? 3 : 4)
                           .map((product, index) => (
                             <LargeScreenSearchItem
                               product={product}

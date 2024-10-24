@@ -1,95 +1,73 @@
-import { Link } from "react-router-dom";
 import { useShop } from "../context/ShopContext";
-import { useRef } from "react";
-// import { useInView } from "framer-motion";
-// import gsap from "gsap";
-import { motion, useInView } from "framer-motion";
+import { useState, useEffect } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@relume_io/relume-ui";
+import type { CarouselApi } from "@relume_io/relume-ui";
+import ProductItem from "./ProductItem";
 
-type Props = {
-  heading: string;
-  description: string;
-};
+export const Gallery19 = () => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [_, setCurrent] = useState(0);
 
-export type Gallery4Props = React.ComponentPropsWithoutRef<"section"> &
-  Partial<Props>;
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
 
-export const Gallery4 = (props: Gallery4Props) => {
-  const { heading, description } = {
-    ...Gallery4Defaults,
-    ...props,
-  } as Props;
+    setCurrent(api.selectedScrollSnap() + 1);
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+
+    // Automatically scroll to next item every 3 seconds
+    const autoScroll = setInterval(() => {
+      api.scrollNext(); // Scroll to the next item
+    }, 6000); // Adjust the interval time as needed (3 seconds here)
+
+    return () => clearInterval(autoScroll); // Clear the interval when the component unmounts
+  }, [api]);
 
   const { products } = useShop();
-  const bestSellers = products.slice(0, 4);
+  const bestSellers = products.slice(0, 20);
 
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
   return (
-    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28">
-      <div className="container">
-        <div className="rb-12 mb-12 text-center md:mb-18 lg:mb-20">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl text-text-primary">
-            {heading}
-          </h2>
-          <p className="md:text-md">{description}</p>
-        </div>
-        <div
-          className="grid grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-4"
-          ref={ref}
-        >
-          {bestSellers &&
-            bestSellers.map((product, index) => (
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 50 }}
-                transition={{
-                  duration: 0.5,
-                  ease: "easeOut",
-                  delay: index * 0.4,
-                }}
-              >
-                <Link
-                  key={index}
-                  to={`/best_sellers/${product.category}`}
-                  className="block-container"
-                >
-                  <img
-                    src={product.imageUrl[0]}
-                    alt="best seller image"
-                    className="size-full object-cover"
-                  />
-                </Link>
-              </motion.div>
-            ))}
+    <section>
+      <div className="px-[5%] py-16 md:py-24 lg:py-28">
+        <div className="container">
+          <div className="mb-12 text-center md:mb-18 lg:mb-10">
+            <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+              Best Sellers
+            </h2>
+          </div>
+          <Carousel
+            setApi={setApi}
+            opts={{
+              loop: true,
+              align: "start",
+            }}
+          >
+            <div className="relative">
+              <CarouselContent className="ml-0">
+                {bestSellers.map((product, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="basis-2/2 md:basis-2/4 lg:basis-1/4"
+                  >
+                    <ProductItem product={product} key={index} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden md:flex md:size-12 lg:size-14" />
+              <CarouselNext className="hidden md:flex md:size-12 lg:size-14" />
+            </div>
+          </Carousel>
         </div>
       </div>
     </section>
   );
-};
-
-export const Gallery4Defaults: Gallery4Props = {
-  heading: "Our Best Sellers",
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  // images: [
-  //   {
-  //     url: "#",
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 1",
-  //   },
-  //   {
-  //     url: "#",
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 2",
-  //   },
-  //   {
-  //     url: "#",
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 3",
-  //   },
-  //   {
-  //     url: "#",
-  //     src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-  //     alt: "Relume placeholder image 4",
-  //   },
-  // ],
 };

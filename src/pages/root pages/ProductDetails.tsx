@@ -99,7 +99,7 @@ const ProductDetails: React.FC = () => {
               <div className="flex gap-2">
                 {productData.size.map((item, index) => (
                   <div
-                    className={`p-2 h-[45px] w-[45px] bg-gray-300 flex items-center justify-center cursor-pointer rounded-sm ${
+                    className={`p-2 h-[40px] w-[40px] bg-gray-300 flex items-center justify-center cursor-pointer poppins text-sm ${
                       item === size && "border-2 border-border-primary"
                     }`}
                     key={index}

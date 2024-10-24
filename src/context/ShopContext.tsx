@@ -50,10 +50,10 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 const initialProducts: ClothingProduct[] = [
   {
     id: 1,
-    name: "Classic White T-Shirt",
+    name: "T-Shirt",
     brand: "Burberry",
     category: "Active wear",
-    subcategory: " Modest Workout Tops",
+    subcategory: "Modest Workout Tops",
     price: 199.99,
     size: ["XXS", "XS", "S", "M", "L"],
     color: "Cream",
@@ -413,7 +413,7 @@ const initialProducts: ClothingProduct[] = [
     name: "Cargo Pants",
     brand: "Patagonia",
     category: "Active wear",
-    subcategory: " Modest Workout Tops",
+    subcategory: "Modest Workout Tops",
     price: 59.99,
     size: ["XXS", "XS", "S", "M", "3XL", "4XL", "5XL"],
     color: "Brown",

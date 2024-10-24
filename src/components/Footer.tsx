@@ -145,23 +145,22 @@ export const Footer1Defaults: Footer1Props = {
   `,
   columnLinks: [
     {
-      title: "Column One",
+      title: "Default links",
       links: [
-        { title: "Link One", url: "#" },
-        { title: "Link Two", url: "#" },
-        { title: "Link Three", url: "#" },
-        { title: "Link Four", url: "#" },
-        { title: "Link Five", url: "#" },
+        { title: "Home", url: "/" },
+        { title: "Shop All", url: "/collections/shop_all" },
+        { title: "New In", url: "/collections/new_in" },
       ],
     },
     {
-      title: "Column Two",
+      title: "Default links",
       links: [
-        { title: "Link Six", url: "#" },
-        { title: "Link Seven", url: "#" },
-        { title: "Link Eight", url: "#" },
-        { title: "Link Nine", url: "#" },
-        { title: "Link Ten", url: "#" },
+        { title: "Active wear", url: "/collections/Active_wear" },
+        {
+          title: "Fitness Accessories",
+          url: "/collections/Fitness_accessories",
+        },
+        { title: "Link Six", url: "/profile" },
       ],
     },
     {
@@ -178,16 +177,11 @@ export const Footer1Defaults: Footer1Props = {
           icon: <BiLogoInstagram className="size-6" />,
         },
         { title: "X", url: "#", icon: <FaXTwitter className="size-6 p-0.5" /> },
-        {
-          title: "LinkedIn",
-          url: "#",
-          icon: <BiLogoLinkedinSquare className="size-6" />,
-        },
-        {
-          title: "Youtube",
-          url: "#",
-          icon: <BiLogoYoutube className="size-6" />,
-        },
+        // {
+        //   title: "Youtube",
+        //   url: "#",
+        //   icon: <BiLogoYoutube className="size-6" />,
+        // },
       ],
     },
   ],

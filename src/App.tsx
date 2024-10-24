@@ -19,7 +19,7 @@ import Home from "./pages/root pages/Home";
 import ShopAll from "./pages/root pages/ShopAll";
 import ActiveWear from "./pages/root pages/ActiveWear";
 import ProductDetails from "./pages/root pages/ProductDetails";
-import BestSellers from "./pages/root pages/BestSellers";
+import Collections from "./pages/root pages/Collections";
 import Cart from "./pages/root pages/Cart";
 import Checkout from "./pages/root pages/CheckOut";
 import WishLists from "./pages/root pages/WishLists";
@@ -154,15 +154,14 @@ const App: React.FC = () => {
           {/* Root Layout with common pages */}
           <Route element={<RootLayouts />}>
             <Route path="/" element={<Home />} />
-            <Route path="/shop_all" element={<ShopAll />} />
-            <Route path="/new_in" element={<NewArrivals />} />
-            <Route path="/Active_wear" element={<ActiveWear />} />
+            <Route path="/collections/shop_all" element={<ShopAll />} />
+            <Route path="/collections/new_in" element={<NewArrivals />} />
+            <Route path="/collections/Active_wear" element={<ActiveWear />} />
             <Route
-              path="/Fitness_accessories"
+              path="/collections/Fitness_accessories"
               element={<FitnessAccessories />}
             />
-            <Route path="/new_in" element={<NewArrivals />} />
-            <Route path="/best_sellers/:name" element={<BestSellers />} />
+            <Route path="/collections/:name" element={<Collections />} />
             <Route path="/product_details/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlists" element={<WishLists />} />
@@ -189,7 +188,7 @@ const App: React.FC = () => {
             </Route>
           ) : null}
 
-          {/* <Route element={<AdminLayout />}>
+          <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/customers" element={<AdminCustomers />} />
             <Route path="/admin/products" element={<AdminProducts />} />
@@ -203,7 +202,7 @@ const App: React.FC = () => {
               path="/admin/dashboard/orders"
               element={<AdminDashBoardOrders />}
             />
-          </Route> */}
+          </Route>
 
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>

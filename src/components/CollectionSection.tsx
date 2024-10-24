@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useShop } from "../context/ShopContext";
-import { LuHeart } from "react-icons/lu";
-import { BsFillHeartFill } from "react-icons/bs";
+import { RiHeartLine } from "react-icons/ri";
+import { RiHeartFill } from "react-icons/ri";
 import { formatAmount } from "../lib/utils";
 import { motion, useInView } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -53,12 +53,12 @@ export const Gallery5 = (props: Gallery5Props) => {
               >
                 <div className="absolute top-3 right-3 z-50 cursor-pointer">
                   {wishLists.includes(product.id) ? (
-                    <BsFillHeartFill
+                    <RiHeartFill
                       onClick={() => manageWishLists(product.id)}
                       className="text-xl text-text-primary"
                     />
                   ) : (
-                    <LuHeart
+                    <RiHeartLine
                       onClick={() => manageWishLists(product.id)}
                       className="text-xl text-text-primary"
                     />

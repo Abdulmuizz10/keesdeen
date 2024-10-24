@@ -49,18 +49,13 @@ export const Navbar7 = (props: Navbar7Props) => {
   return (
     <nav className="fixed z-[999] flex min-h-16 w-full items-center shadow-xxsmall bg-background-light px-[5%] md:min-h-18 bg-none">
       <div className="mx-auto flex size-full max-w-full items-center justify-between">
-        <a href={logo.url}>
+        <Link to={`${logo.url}`}>
           <img
             src={logo.src}
             alt={logo.alt}
             className="inline-block w-[150px] md:w-[200px]"
           />
-          {/* <img
-            src={mobileLogo.src}
-            alt={mobileLogo.alt}
-            className="w-full h-[25px] flex sm:hidden"
-          /> */}
-        </a>
+        </Link>
         <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 lg:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
           <div className="flex flex-col items-center lg:flex-row">
             {navLinks.map((navLink, index) => (
@@ -418,11 +413,11 @@ export const Navbar7Defaults: Navbar7Props = {
     alt: "Logo image",
   },
   navLinks: [
-    { title: "Home", url: "/" },
-    { title: "Shop All", url: "/shop_all" },
-    { title: "New In", url: "/new_in" },
-    { title: "Active wear", url: "/Active_wear" },
-    { title: "Fitness Accessories", url: "/Fitness_accessories" },
+    // { title: "Home", url: "/" },
+    { title: "Shop All", url: "/collections/shop_all" },
+    { title: "New In", url: "/collections/new_in" },
+    { title: "Active wear", url: "/collections/Active_wear" },
+    { title: "Fitness Accessories", url: "/collections/Fitness_accessories" },
   ],
   buttons: [
     // {
