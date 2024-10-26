@@ -62,7 +62,9 @@ export const Navbar7 = (props: Navbar7Props) => {
               <div key={index}>
                 <Link
                   to={navLink.url}
-                  className="relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary"
+                  className={`relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary ${
+                    index === 0 ? "lg:hidden" : ""
+                  }`}
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
@@ -413,7 +415,7 @@ export const Navbar7Defaults: Navbar7Props = {
     alt: "Logo image",
   },
   navLinks: [
-    // { title: "Home", url: "/" },
+    { title: "Home", url: "/" },
     { title: "Shop All", url: "/collections/shop_all" },
     { title: "New In", url: "/collections/new_in" },
     { title: "Active wear", url: "/collections/Active_wear" },

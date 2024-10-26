@@ -41,8 +41,8 @@ export const Header76 = (props: Header76Props) => {
         <p className="md:text-md text-text-primary">{description}</p>
         <div className="mt-6 flex gap-x-4 md:mt-8">
           {[
-            { route: "/new_in", text: "New arrivals" },
-            { route: "/shop_all", text: "Shop now" },
+            { route: "/collections/new_in", text: "New arrivals" },
+            { route: "/collections/shop_all", text: "Shop now" },
           ].map((link, index) => (
             <Link to={link.route} key={index}>
               <Button
