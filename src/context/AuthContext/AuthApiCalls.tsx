@@ -16,7 +16,7 @@ export const Login = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res: Response = await axios.post(`${URL}/sign-in`, user);
+    const res: Response = await axios.post(`${URL}/auth/sign-in`, user);
     dispatch(AccessSuccess(res.data));
     navigate("/");
   } catch (err) {
@@ -31,7 +31,7 @@ export const SignUp = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res: Response = await axios.post(`${URL}/sign-up`, user);
+    const res: Response = await axios.post(`${URL}/auth/sign-up`, user);
     dispatch(AccessSuccess(res.data));
     navigate("/");
   } catch (err) {
