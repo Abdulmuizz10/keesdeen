@@ -1,16 +1,25 @@
 import React, { useState } from "react";
+import { useProducts } from "../../context/ProductContext/ProductContext";
+import { createProduct } from "../../context/ProductContext/ProductApiCalls";
+import { toast } from "react-toastify";
 
 const AddProducts: React.FC = () => {
-  const [productName, setProductName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [productCategory, setProductCategory] = useState("");
-  const [productSubCategory, setProductSubCategory] = useState("");
-  const [productType, setProductType] = useState("");
+  const [productName, setProductName] = useState<string>("");
+  const [productBrand, setProductBrand] = useState<string>("");
+  const [productDescription, setProductDescription] = useState<string>("");
+  const [productCategory, setProductCategory] = useState<string>("");
+  const [productSubCategory, setProductSubCategory] = useState<string>("");
+  const [productType, setProductType] = useState<string>("");
+  const [productSex, setProductSex] = useState<string>("");
+  const [productColor, setProductColor] = useState<string>("");
+  const [productPrice, setProductPrice] = useState<string>("");
   const [productSize, setProductSize] = useState<string[]>([]);
-  const [productPrice, setProductPrice] = useState("");
-  const [productImages, setProductImages] = useState<File[]>([]);
+  const [productImages, setProductImages] = useState<string[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [isBestseller, setIsBestseller] = useState(false);
+  const [bestSeller, setBestSeller] = useState<boolean>(false);
+  const [newArrival, setNewArrival] = useState<boolean>(false);
+
+  const { dispatch } = useProducts();
 
   const handleSizeToggle = (size: string) => {
     if (productSize.includes(size)) {
@@ -22,41 +31,87 @@ const AddProducts: React.FC = () => {
 
   const handleImageChange = (index: number, file: File | null) => {
     if (file) {
-      const updatedImages = [...productImages];
       const updatedPreviews = [...imagePreviews];
-
-      updatedImages[index] = file;
       updatedPreviews[index] = URL.createObjectURL(file);
-
-      setProductImages(updatedImages);
       setImagePreviews(updatedPreviews);
+
+      uploadToCloudinary(file, index); // Upload image to Cloudinary
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const uploadToCloudinary = async (file: File, index: number) => {
     const formData = new FormData();
-    formData.append("productName", productName);
-    formData.append("productDescription", productDescription);
-    formData.append("productCategory", productCategory);
-    formData.append("productSubCategory", productSubCategory);
-    formData.append("productType", productType);
-    formData.append("productPrice", productPrice);
-    formData.append("isBestseller", isBestseller.toString());
+    formData.append("file", file);
+    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET); // Replace with your preset
+    formData.append("folder", "product_images"); // Optional: set folder in Cloudinary
 
-    productSize.forEach((size) => {
-      formData.append("productSize[]", size);
-    });
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    productImages.forEach((image, index) => {
-      formData.append(`image${index + 1}`, image);
-    });
-
-    console.log("Form submitted");
+      const data = await res.json();
+      if (data.secure_url) {
+        const updatedImages = [...productImages];
+        updatedImages[index] = data.secure_url;
+        toast("image uploaded");
+        setProductImages(updatedImages.slice(0, 5));
+      }
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+    }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (productImages.length < 5) {
+      alert("Please upload all product images.");
+      return;
+    }
+
+    const formData = {
+      name: productName,
+      brand: productBrand,
+      description: productDescription,
+      category: productCategory,
+      subcategory: productSubCategory,
+      type: productType,
+      gender: productSex,
+      color: productColor,
+      price: productPrice,
+      bestSeller: bestSeller,
+      newArrival: newArrival,
+      size: productSize,
+      imageUrls: productImages, // Store URLs in product data
+    };
+
+    createProduct(formData, dispatch);
+
+    // Clear form after submission
+    setProductName("");
+    setProductBrand("");
+    setProductDescription("");
+    setProductCategory("");
+    setProductSubCategory("");
+    setProductType("");
+    setProductSex("");
+    setProductColor("");
+    setProductPrice("");
+    setProductSize([]);
+    setProductImages([]);
+    setImagePreviews([]);
+    setBestSeller(false);
+    setNewArrival(false);
+  };
   return (
-    <section className="w-full py-6">
+    <section className="w-full pb-6">
       {/* <div className="mb-12 md:mb-10">
         <h2 className="text-4xl font-semibold mb-5">Add Product</h2>
         <p className="md:text-md">
@@ -110,7 +165,7 @@ const AddProducts: React.FC = () => {
 
         {/* Product Information */}
         <div className="space-y-4 poppins">
-          <div>
+          <div className="flex gap-5">
             <input
               type="text"
               placeholder="Product Name"
@@ -118,6 +173,14 @@ const AddProducts: React.FC = () => {
               onChange={(e) => setProductName(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg transition-all"
               required
+            />
+
+            <input
+              type="text"
+              placeholder="Product Brand"
+              value={productBrand}
+              onChange={(e) => setProductBrand(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
             />
           </div>
 
@@ -141,12 +204,12 @@ const AddProducts: React.FC = () => {
                 required
               >
                 <option value=" ">Select Category</option>
-                <option value="Active wear">Active Wear</option>
-                <option value="Fitness accessories">Fitness Accessories</option>
+                <option value="Active Wear">Active Wear</option>
+                <option value="Fitness Accessories">Fitness Accessories</option>
               </select>
             </div>
 
-            {productCategory === "Active wear" ? (
+            {productCategory === "Active Wear" ? (
               <div>
                 <select
                   value={productSubCategory}
@@ -159,7 +222,7 @@ const AddProducts: React.FC = () => {
                     Modest Workout Tops
                   </option>
                   <option value="Joggers & Bottoms">Joggers & Bottoms</option>
-                  <option value="Complete Active wear Sets">
+                  <option value="Complete Active Wear Sets">
                     Complete Active wear Sets
                   </option>
                   <option value="High-Support Sports Bras">
@@ -197,9 +260,44 @@ const AddProducts: React.FC = () => {
                 required
               >
                 <option value="">Select Product Type</option>
-                <option value="Topwear">Topwear</option>
-                <option value="Bottomwear">Bottomwear</option>
-                <option value="Footwear">Footwear</option>
+                <option value="Top wear">Top Wear</option>
+                <option value="Bottom wear">Bottom Wear</option>
+                <option value="Foot wear">Foot Wear</option>
+              </select>
+            </div>
+
+            <div>
+              <select
+                value={productSex}
+                onChange={(e) => setProductSex(e.target.value)}
+                className="w-full p-3 border border-gray-300 transition-all"
+                required
+              >
+                <option value="">Select Product Sex</option>
+                <option value="Female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Unisex">Unisex</option>
+              </select>
+            </div>
+
+            <div>
+              <select
+                value={productColor}
+                onChange={(e) => setProductColor(e.target.value)}
+                className="w-full p-3 border border-gray-300 transition-all"
+                required
+              >
+                <option value="">Select Product Color</option>
+                <option value="Black">Black</option>
+                <option value="Blue">Blue</option>
+                <option value="Brown">Brown</option>
+                <option value="Cream">Cream</option>
+                <option value="Green">Green</option>
+                <option value="Grey">Grey</option>
+                <option value="Pink">Pink</option>
+                <option value="Purple">Purple</option>
+                <option value="Red">Red</option>
+                <option value="White">White</option>
               </select>
             </div>
 
@@ -238,15 +336,27 @@ const AddProducts: React.FC = () => {
           </div>
         </div>
 
-        {/* Bestseller Checkbox */}
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            checked={isBestseller}
-            onChange={() => setIsBestseller(!isBestseller)}
-            className="form-checkbox rounded"
-          />
-          <span className="ml-2 text-sm">Add to Bestseller</span>
+        <div className="flex items-center gap-10">
+          {/* Bestseller Checkbox */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={bestSeller}
+              onChange={() => setBestSeller(!bestSeller)}
+              className="form-checkbox rounded h-4 w-4"
+            />
+            <span className="ml-2 text-sm">Add to Best sellers</span>
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={newArrival}
+              onChange={() => setNewArrival(!newArrival)}
+              className="form-checkbox rounded h-4 w-4"
+            />
+            <span className="ml-2 text-sm">Add to New Arrivals</span>
+          </div>
         </div>
 
         {/* Submit Button */}

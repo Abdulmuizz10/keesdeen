@@ -1,7 +1,7 @@
 import React from "react";
 import { Header76 } from "../../components/Hero";
 import { Banner13 } from "../../components/TestSlide";
-import { Gallery21 } from "../../components/Arrivals";
+import { Gallery21 } from "../../components/NewArrivalsSection";
 import { Cta3 } from "../../components/Cta";
 import { Testimonial21 } from "../../components/Testimonials";
 import { Gallery5 } from "../../components/CollectionSection";

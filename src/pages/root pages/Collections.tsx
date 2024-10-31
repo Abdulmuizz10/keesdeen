@@ -11,31 +11,20 @@ import {
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
 import { useParams } from "react-router-dom";
+import { Product } from "../../lib/types";
+import Spinner from "../../components/Spinner";
+import { useProducts } from "../../context/ProductContext/ProductContext";
 
-const Collections: React.FC = () => {
-  // Define the type for a clothing product
-  interface ClothingProduct {
-    id: number;
-    name: string;
-    brand: string;
-    category: string;
-    price: number;
-    size: string[];
-    color: string;
-    rating: number;
-    reviews: number;
-    isAvailable: boolean;
-    material: string;
-    gender: string;
-    imageUrl: string[];
-    description: string;
-  }
+interface ProductListProps {
+  products: Product[];
+}
+
+const Collections: React.FC<ProductListProps> = ({ products }) => {
   const { name } = useParams();
-  const { products, isActive } = useShop();
+  const { isActive } = useShop();
+  const { isFetching } = useProducts();
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
-    []
-  );
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -236,62 +225,67 @@ const Collections: React.FC = () => {
             </Button>
           </div>
           {/* Right Side */}
-          <div className="flex-1 flex flex-col gap-5 w-full">
-            <div className="flex justify-between text-base items-center">
-              <h3 className="text-base md:text-md">All Collections</h3>
-              {/* {Product Sort} */}
+          <div className="w-full">
+            <div className="flex-1 flex flex-col gap-5 w-full">
+              <div className="flex justify-between text-base items-center">
+                <h3 className="text-base md:text-md">All Collections</h3>
+                {/* {Product Sort} */}
 
-              <p className="info-text hidden xl:flex">
-                Showing 1 . {filteredProducts.length} of 31 Products
-              </p>
+                <p className="info-text hidden xl:flex">
+                  Showing 1 . {filteredProducts.length} of 31 Products
+                </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
-                <Select onValueChange={setSortType}>
-                  <SelectTrigger className="rounded-md">
-                    <SelectValue placeholder="Sort by price" />
-                  </SelectTrigger>
-                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                    <SelectItem
-                      value="relevant"
-                      className=" cursor-pointer hover:text-text-secondary"
-                    >
-                      Sort by: Relevance
-                    </SelectItem>
-                    <SelectItem
-                      value="Low - High"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: Low to High
-                    </SelectItem>
-                    <SelectItem
-                      value="High - Low"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: High to Low
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
+                  <Select onValueChange={setSortType}>
+                    <SelectTrigger className="rounded-md">
+                      <SelectValue placeholder="Sort by price" />
+                    </SelectTrigger>
+                    <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                      <SelectItem
+                        value="relevant"
+                        className=" cursor-pointer hover:text-text-secondary"
+                      >
+                        Sort by: Relevance
+                      </SelectItem>
+                      <SelectItem
+                        value="Low - High"
+                        className=" cursor-pointer  hover:text-text-secondary"
+                      >
+                        Sort by: Low to High
+                      </SelectItem>
+                      <SelectItem
+                        value="High - Low"
+                        className=" cursor-pointer  hover:text-text-secondary"
+                      >
+                        Sort by: High to Low
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className=" max-w-[200px] w-full flex lg:hidden">
+                  <select
+                    className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
+                    onChange={(e) => setSortType(e.target.value)}
+                  >
+                    <option value="relevant">Sort by: Relevance</option>
+                    <option value="Low - High">Sort by: Low to High</option>
+                    <option value="High - Low">Sort by: High to Low</option>
+                  </select>
+                </div>
               </div>
-              <div className=" max-w-[200px] w-full flex lg:hidden">
-                <select
-                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
-                  onChange={(e) => setSortType(e.target.value)}
-                >
-                  <option value="relevant">Sort by: Relevance</option>
-                  <option value="Low - High">Sort by: Low to High</option>
-                  <option value="High - Low">Sort by: High to Low</option>
-                </select>
+              {/* {Map Products} */}
+              <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
+                {filteredProducts.length > 0 &&
+                  filteredProducts.map((product, index) => (
+                    <ProductItem product={product} key={index} />
+                  ))}
               </div>
             </div>
-            {/* {Map Products} */}
-            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product, index) => (
-                  <ProductItem product={product} key={index} />
-                ))
-              ) : (
+            <div className="w-full flex justify-center mt-10">
+              {isFetching && <Spinner />}
+              {!isFetching && filteredProducts.length < 1 ? (
                 <ProductUnavailable />
-              )}
+              ) : null}
             </div>
           </div>
         </div>
@@ -301,7 +295,9 @@ const Collections: React.FC = () => {
 };
 
 const ProductUnavailable = () => {
-  return <p className="text-xl w-full">Product is not available...</p>;
+  return (
+    <p className="text-xl w-full text-center">Product is not available...</p>
+  );
 };
 
 export default Collections;

@@ -16,7 +16,12 @@ interface Review {
   date: string;
 }
 
-const Reviews: React.FC = () => {
+interface ReviewsProps {
+  currentReviews: Review[];
+  id: string;
+}
+
+const Reviews: React.FC<ReviewsProps> = ({ id }) => {
   const [change, setChange] = useState<boolean>(true);
   const [sortOption, setSortOption] = useState<string>("all");
   const [reviews, setReviews] = useState<Review[]>([

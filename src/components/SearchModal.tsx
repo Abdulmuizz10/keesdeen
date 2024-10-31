@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { background } from "../lib/anim";
 import { useShop } from "../context/ShopContext";
@@ -7,41 +7,25 @@ import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
 import { FiX } from "react-icons/fi";
 import { useMediaQuery } from "@relume_io/relume-ui";
-
-interface Product {
-  id: number;
-  name: string;
-  brand: string;
-  category: string;
-  price: number;
-  size: string[];
-  color: string;
-  rating: number;
-  reviews: number;
-  isAvailable: boolean;
-  material: string;
-  gender: string;
-  imageUrl: string[];
-  description: string;
-}
+import { getProducts } from "../context/ProductContext/ProductApiCalls";
+import { useProducts } from "../context/ProductContext/ProductContext";
+import { Product } from "../lib/types";
 
 const SearchModal: React.FC = () => {
-  const { isActive, setIsActive, products } = useShop();
+  const { isActive, setIsActive } = useShop();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const { products, dispatch } = useProducts();
+
+  useEffect(() => {
+    getProducts(dispatch);
+  }, [dispatch]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    // Filter suggestions
-    //  const filteredSugg = suggestions.filter((suggestion) =>
-    //    suggestion.toLowerCase().includes(query.toLowerCase())
-    //  );
-    //  setFilteredSuggestions(filteredSugg);
-
-    // Filter products
-    const filteredProds = products.filter(
+    const filteredProds = products?.filter(
       (product) =>
         product.name.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1
     );
@@ -112,32 +96,46 @@ const SearchModal: React.FC = () => {
                         <div className="h-[1px] w-full bg-border-secondary" />
                       </div>
                     </div>
-                    <div className="hidden lg:grid lg:grid-cols-3 xl:grid-cols-4 w-full gap-3">
-                      {filteredProducts && filteredProducts.length > 0 ? (
-                        filteredProducts
-                          .slice(0, isIpad ? 3 : 4)
-                          .map((product, index) => (
-                            <LargeScreenSearchItem
-                              product={product}
-                              key={index}
-                            />
-                          ))
-                      ) : (
-                        <p className="text-xl">Product is not available...</p>
+                    <div className="w-full">
+                      <div className="hidden lg:grid lg:grid-cols-3 xl:grid-cols-4 w-full gap-3">
+                        {filteredProducts &&
+                          filteredProducts.length > 0 &&
+                          filteredProducts
+                            .slice(0, isIpad ? 3 : 4)
+                            .map((product, index) => (
+                              <LargeScreenSearchItem
+                                product={product}
+                                key={index}
+                              />
+                            ))}
+                      </div>
+                      {filteredProducts && filteredProducts.length < 1 && (
+                        <div className="w-full flex justify-center">
+                          <p className="text-xl text-center">
+                            Product is not available...
+                          </p>
+                        </div>
                       )}
                     </div>
-                    <div className="flex flex-col lg:hidden w-full gap-3 mb-10">
-                      {filteredProducts && filteredProducts.length > 0 ? (
-                        filteredProducts
-                          .slice(-5)
-                          .map((product, index) => (
-                            <SmallScreenSearchItem
-                              product={product}
-                              key={index}
-                            />
-                          ))
-                      ) : (
-                        <p className="text-xl">Product is not available...</p>
+                    <div className="w-full flex lg:hidden">
+                      <div className="flex flex-col lg:hidden w-full gap-3 mb-10">
+                        {filteredProducts &&
+                          filteredProducts.length > 0 &&
+                          filteredProducts
+                            .slice(-5)
+                            .map((product, index) => (
+                              <SmallScreenSearchItem
+                                product={product}
+                                key={index}
+                              />
+                            ))}
+                      </div>
+                      {filteredProducts && filteredProducts.length < 1 && (
+                        <div className="w-full flex justify-center">
+                          <p className="text-xl text-center">
+                            Product is not available...
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -161,9 +159,9 @@ const LargeScreenSearchItem = ({ product }: { product: Product }) => {
       onMouseLeave={() => setImage(false)}
     >
       <div className="relative">
-        <Link to={`/product_details/${product.id}`}>
+        <Link to={`/product_details/${product._id}`}>
           <img
-            src={image ? product.imageUrl[1] : product.imageUrl[0]}
+            src={image ? product.imageUrls[1] : product.imageUrls[0]}
             alt="Product"
             className="w-full h-auto"
             onClick={() => {
@@ -202,10 +200,10 @@ const LargeScreenSearchItem = ({ product }: { product: Product }) => {
 
 const SmallScreenSearchItem = ({ product }: { product: Product }) => {
   return (
-    <Link to={`/product_details/${product.id}`}>
+    <Link to={`/product_details/${product._id}`}>
       <div className="w-full flex gap-5 md:gap-2">
         <div className="w-1/5">
-          <img src={product.imageUrl[0]} alt="" className="w-[120px] h-auto" />
+          <img src={product.imageUrls[0]} alt="" className="w-[120px] h-auto" />
         </div>
         <div className="w-4/5">
           <h3>{product.name}</h3>

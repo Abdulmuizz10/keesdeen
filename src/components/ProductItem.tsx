@@ -4,23 +4,7 @@ import { useState } from "react";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
-
-interface Product {
-  id: number;
-  name: string;
-  brand: string;
-  category: string;
-  price: number;
-  size: string[];
-  color: string;
-  rating: number;
-  reviews: number;
-  isAvailable: boolean;
-  material: string;
-  gender: string;
-  imageUrl: string[];
-  description: string;
-}
+import { Product } from "../lib/types";
 
 const ProductItem = ({ product }: { product: Product }) => {
   const [image, setImage] = useState<boolean>(false);
@@ -33,22 +17,22 @@ const ProductItem = ({ product }: { product: Product }) => {
       onMouseLeave={() => setImage(false)}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        {wishLists.includes(product.id) ? (
+        {wishLists.includes(product._id) ? (
           <RiHeartFill
-            onClick={() => manageWishLists(product.id)}
+            onClick={() => manageWishLists(product._id)}
             className="text-xl text-text-primary"
           />
         ) : (
           <RiHeartLine
-            onClick={() => manageWishLists(product.id)}
+            onClick={() => manageWishLists(product._id)}
             className="text-xl text-text-primary"
           />
         )}
       </div>
       <div className="relative">
-        <Link to={`/product_details/${product.id}`}>
+        <Link to={`/product_details/${product._id}`}>
           <img
-            src={image ? product.imageUrl[1] : product.imageUrl[0]}
+            src={image ? product.imageUrls[1] : product.imageUrls[0]}
             alt="Product"
             className="w-full h-auto"
           />

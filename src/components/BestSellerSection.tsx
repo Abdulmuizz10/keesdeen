@@ -1,5 +1,4 @@
-import { useShop } from "../context/ShopContext";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -9,10 +8,19 @@ import {
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
 import ProductItem from "./ProductItem";
+import { Product } from "../lib/types";
+import { getProducts } from "../context/ProductContext/ProductApiCalls";
+import { useProducts } from "../context/ProductContext/ProductContext";
 
-export const Gallery19 = () => {
+export const Gallery19: React.FC = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [_, setCurrent] = useState(0);
+
+  const { products, dispatch } = useProducts();
+
+  useEffect(() => {
+    getProducts(dispatch);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!api) {
@@ -32,8 +40,7 @@ export const Gallery19 = () => {
     return () => clearInterval(autoScroll); // Clear the interval when the component unmounts
   }, [api]);
 
-  const { products } = useShop();
-  const bestSellers = products.slice(0, 20);
+  // const bestSellers = products;
 
   return (
     <section>
@@ -53,14 +60,17 @@ export const Gallery19 = () => {
           >
             <div className="relative">
               <CarouselContent className="ml-0">
-                {bestSellers.map((product, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="basis-2/2 md:basis-2/4 lg:basis-1/4"
-                  >
-                    <ProductItem product={product} key={index} />
-                  </CarouselItem>
-                ))}
+                {products &&
+                  products
+                    ?.filter((product: Product) => product.bestSeller === true)
+                    .map((product: Product, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="basis-2/2 md:basis-2/4 lg:basis-1/4"
+                      >
+                        <ProductItem product={product} key={index} />
+                      </CarouselItem>
+                    ))}
               </CarouselContent>
               <CarouselPrevious className="hidden md:flex md:size-12 lg:size-14" />
               <CarouselNext className="hidden md:flex md:size-12 lg:size-14" />

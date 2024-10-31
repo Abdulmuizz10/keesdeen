@@ -10,31 +10,19 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
+import { Product } from "../../lib/types";
+import Spinner from "../../components/Spinner";
+import { useProducts } from "../../context/ProductContext/ProductContext";
+import { getProducts } from "../../context/ProductContext/ProductApiCalls";
 
 const NewArrivals: React.FC = () => {
-  // Define the type for a clothing product
-  interface ClothingProduct {
-    id: number;
-    name: string;
-    brand: string;
-    category: string;
-    price: number;
-    size: string[];
-    color: string;
-    rating: number;
-    reviews: number;
-    isAvailable: boolean;
-    material: string;
-    gender: string;
-    imageUrl: string[];
-    description: string;
-  }
-
-  const { products, isActive } = useShop();
+  const { isActive } = useShop();
+  const { products, dispatch, isFetching } = useProducts();
+  useEffect(() => {
+    getProducts(dispatch);
+  }, []);
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
-    []
-  );
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -67,7 +55,7 @@ const NewArrivals: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products.slice();
+    let productsCopy = products?.slice();
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
@@ -77,7 +65,7 @@ const NewArrivals: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        item.size.some((s) => sizeCategory.includes(s))
+        item.size.some((s: string) => sizeCategory.includes(s))
       );
     }
 
@@ -109,7 +97,7 @@ const NewArrivals: React.FC = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, sizeCategory, colorCategory]);
+  }, [category, sizeCategory, colorCategory, products]);
 
   useEffect(() => {
     sortProducts();
@@ -135,199 +123,207 @@ const NewArrivals: React.FC = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           </p>
         </div>
-        <div
-          className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
-            isActive && "opacity-0 transition-opacity"
-          }`}
-        >
-          {/* Left Side */}
-          <div className="min-w-60">
-            <div
-              className="flex items-center gap-2"
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <p className="my-2 text-xl flex items-center cursor-pointer gap-2">
-                Filters
-              </p>
-              <RxChevronDown
-                className={`text-2xl lg:hidden ${
-                  showFilter ? "" : "rotate-180"
-                }`}
-              />
+        <div>
+          <div
+            className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
+              isActive && "opacity-0 transition-opacity"
+            }`}
+          >
+            {/* Left Side */}
+            <div className="min-w-60">
+              <div
+                className="flex items-center gap-2"
+                onClick={() => setShowFilter(!showFilter)}
+              >
+                <p className="my-2 text-xl flex items-center cursor-pointer gap-2">
+                  Filters
+                </p>
+                <RxChevronDown
+                  className={`text-2xl lg:hidden ${
+                    showFilter ? "" : "rotate-180"
+                  }`}
+                />
+              </div>
+              {/* category Filter */}
+              <div
+                className={`border border-border-secondary pl-5 py-3 mt-2 ${
+                  showFilter ? "" : "hidden"
+                } lg:block shadow-medium rounded`}
+              >
+                <p className="text-base md:text-md pb-3">Product Type</p>
+                <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
+                  {["Active wear", "Fitness accessories"].map((wear, index) => (
+                    <p className="flex gap-2" key={index}>
+                      <input
+                        type="checkbox"
+                        className="w-3 my"
+                        value={wear}
+                        onChange={toggleCategory}
+                        ref={(el) => {
+                          if (el) checkboxesRef.current.push(el);
+                        }}
+                      />
+                      {wear}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Size Filter */}
+              <div
+                className={`border border-border-secondary pl-5 py-3 mt-2 ${
+                  showFilter ? "" : "hidden"
+                } lg:block shadow-medium rounded`}
+              >
+                <p className="text-base md:text-md pb-3">Size</p>
+                <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
+                  {[
+                    "XXS",
+                    "XS",
+                    "S",
+                    "M",
+                    "L",
+                    "XL",
+                    "2XL",
+                    "3XL",
+                    "4XL",
+                    "5XL",
+                  ].map((size, index) => (
+                    <p className="flex gap-2" key={index}>
+                      <input
+                        type="checkbox"
+                        className="w-3"
+                        value={size}
+                        onChange={toggleSizeCategory}
+                        ref={(el) => {
+                          if (el) checkboxesRef.current.push(el);
+                        }}
+                      />
+                      {size}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Filter */}
+              <div
+                className={`border border-border-secondary pl-5 py-3 mt-2 ${
+                  showFilter ? "" : "hidden"
+                } lg:block shadow-medium rounded`}
+              >
+                <p className="text-base md:text-md pb-3">Colour</p>
+                <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
+                  {[
+                    "Black",
+                    "Blue",
+                    "Brown",
+                    "Cream",
+                    "Green",
+                    "Grey",
+                    "Pink",
+                    "Purple",
+                    "Red",
+                    "White",
+                  ].map((color, index) => (
+                    <p className="flex gap-2 items-center" key={index}>
+                      <input
+                        type="checkbox"
+                        className="w-3"
+                        value={color}
+                        onChange={toggleColorCategory}
+                        ref={(el) => {
+                          if (el) checkboxesRef.current.push(el);
+                        }}
+                      />
+                      <div
+                        style={{ background: color }}
+                        className={`h-3 w-3 rounded-full ${
+                          color === "WHITE" || "CREAM"
+                            ? "border border-border-primary"
+                            : ""
+                        }`}
+                      ></div>
+                      {color}
+                    </p>
+                  ))}
+                </div>
+              </div>
+              <Button
+                className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
+                  showFilter ? "" : "hidden"
+                } lg:block`}
+                variant="primary"
+                onClick={() => {
+                  clearFilters();
+                }}
+              >
+                Clear filter
+              </Button>
             </div>
-            {/* category Filter */}
-            <div
-              className={`border border-border-secondary pl-5 py-3 mt-2 ${
-                showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
-            >
-              <p className="text-base md:text-md pb-3">Product Type</p>
-              <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Active wear", "Fitness accessories"].map((wear, index) => (
-                  <p className="flex gap-2" key={index}>
-                    <input
-                      type="checkbox"
-                      className="w-3 my"
-                      value={wear}
-                      onChange={toggleCategory}
-                      ref={(el) => {
-                        if (el) checkboxesRef.current.push(el);
-                      }}
-                    />
-                    {wear}
+            {/* Right Side */}
+            <div className="w-full">
+              <div className="flex-1 flex flex-col gap-5 w-full">
+                <div className="flex justify-between text-base items-center">
+                  <h3 className="text-base md:text-md">All Collections</h3>
+                  {/* {Product Sort} */}
+
+                  <p className="info-text hidden xl:flex">
+                    Showing 1 . {filteredProducts.length} of 31 Products
                   </p>
-                ))}
-              </div>
-            </div>
 
-            {/* Size Filter */}
-            <div
-              className={`border border-border-secondary pl-5 py-3 mt-2 ${
-                showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
-            >
-              <p className="text-base md:text-md pb-3">Size</p>
-              <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {[
-                  "XXS",
-                  "XS",
-                  "S",
-                  "M",
-                  "L",
-                  "XL",
-                  "2XL",
-                  "3XL",
-                  "4XL",
-                  "5XL",
-                ].map((size, index) => (
-                  <p className="flex gap-2" key={index}>
-                    <input
-                      type="checkbox"
-                      className="w-3"
-                      value={size}
-                      onChange={toggleSizeCategory}
-                      ref={(el) => {
-                        if (el) checkboxesRef.current.push(el);
-                      }}
-                    />
-                    {size}
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            {/* Color Filter */}
-            <div
-              className={`border border-border-secondary pl-5 py-3 mt-2 ${
-                showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
-            >
-              <p className="text-base md:text-md pb-3">Colour</p>
-              <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {[
-                  "Black",
-                  "Blue",
-                  "Brown",
-                  "Cream",
-                  "Green",
-                  "Grey",
-                  "Pink",
-                  "Purple",
-                  "Red",
-                  "White",
-                ].map((color, index) => (
-                  <p className="flex gap-2 items-center" key={index}>
-                    <input
-                      type="checkbox"
-                      className="w-3"
-                      value={color}
-                      onChange={toggleColorCategory}
-                      ref={(el) => {
-                        if (el) checkboxesRef.current.push(el);
-                      }}
-                    />
-                    <div
-                      style={{ background: color }}
-                      className={`h-3 w-3 rounded-full ${
-                        color === "WHITE" || "CREAM"
-                          ? "border border-border-primary"
-                          : ""
-                      }`}
-                    ></div>
-                    {color}
-                  </p>
-                ))}
-              </div>
-            </div>
-            <Button
-              className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
-                showFilter ? "" : "hidden"
-              } lg:block`}
-              variant="primary"
-              onClick={() => {
-                clearFilters();
-              }}
-            >
-              Clear filter
-            </Button>
-          </div>
-          {/* Right Side */}
-          <div className="flex-1 flex flex-col gap-5 w-full">
-            <div className="flex justify-between text-base items-center">
-              <h3 className="text-base md:text-md">All Collections</h3>
-              {/* {Product Sort} */}
-
-              <p className="info-text hidden xl:flex">
-                Showing 1 . {filteredProducts.length} of 31 Products
-              </p>
-
-              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
-                <Select onValueChange={setSortType}>
-                  <SelectTrigger className="rounded-md">
-                    <SelectValue placeholder="Sort by price" />
-                  </SelectTrigger>
-                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                    <SelectItem
-                      value="relevant"
-                      className=" cursor-pointer hover:text-text-secondary"
+                  <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
+                    <Select onValueChange={setSortType}>
+                      <SelectTrigger className="rounded-md">
+                        <SelectValue placeholder="Sort by price" />
+                      </SelectTrigger>
+                      <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                        <SelectItem
+                          value="relevant"
+                          className=" cursor-pointer hover:text-text-secondary"
+                        >
+                          Sort by: Relevance
+                        </SelectItem>
+                        <SelectItem
+                          value="Low - High"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Sort by: Low to High
+                        </SelectItem>
+                        <SelectItem
+                          value="High - Low"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Sort by: High to Low
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className=" max-w-[200px] w-full flex lg:hidden">
+                    <select
+                      className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
+                      onChange={(e) => setSortType(e.target.value)}
                     >
-                      Sort by: Relevance
-                    </SelectItem>
-                    <SelectItem
-                      value="Low - High"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: Low to High
-                    </SelectItem>
-                    <SelectItem
-                      value="High - Low"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: High to Low
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                      <option value="relevant">Sort by: Relevance</option>
+                      <option value="Low - High">Sort by: Low to High</option>
+                      <option value="High - Low">Sort by: High to Low</option>
+                    </select>
+                  </div>
+                </div>
+                {/* {Map Products} */}
+
+                <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
+                  {products &&
+                    filteredProducts?.map((product, index) => (
+                      <ProductItem product={product} key={index} />
+                    ))}
+                </div>
               </div>
-              <div className=" max-w-[200px] w-full flex lg:hidden">
-                <select
-                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
-                  onChange={(e) => setSortType(e.target.value)}
-                >
-                  <option value="relevant">Sort by: Relevance</option>
-                  <option value="Low - High">Sort by: Low to High</option>
-                  <option value="High - Low">Sort by: High to Low</option>
-                </select>
+              <div className="w-full flex justify-center mt-10">
+                {isFetching && <Spinner />}
+                {/* {!isFetching && filteredProducts.length < 1 ? (
+                  <ProductUnavailable />
+                ) : null} */}
               </div>
-            </div>
-            {/* {Map Products} */}
-            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product, index) => (
-                  <ProductItem product={product} key={index} />
-                ))
-              ) : (
-                <ProductUnavailable />
-              )}
             </div>
           </div>
         </div>
@@ -336,8 +332,8 @@ const NewArrivals: React.FC = () => {
   );
 };
 
-const ProductUnavailable = () => {
-  return <p className="text-xl w-full">Product is not available...</p>;
-};
+// const ProductUnavailable = () => {
+//   return <p className="text-xl text-center">Product is not available...</p>;
+// };
 
 export default NewArrivals;

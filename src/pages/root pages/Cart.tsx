@@ -5,9 +5,14 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
 import { useNavigate } from "react-router-dom";
+import { Product } from "../../lib/types";
 
-const Cart: React.FC = () => {
-  const { products, cartItems, updateQuantity } = useShop();
+interface ProductListProps {
+  products: Product[];
+}
+
+const Cart: React.FC<ProductListProps> = ({ products }) => {
+  const { cartItems, updateQuantity } = useShop();
   const [cartData, setCartData] = useState<any>();
 
   useEffect(() => {
@@ -24,7 +29,7 @@ const Cart: React.FC = () => {
       }
     }
     setCartData(tempData);
-  }, [cartItems]);
+  }, [cartItems, products]);
 
   const navigate = useNavigate();
 
@@ -44,9 +49,9 @@ const Cart: React.FC = () => {
             </p>
           )}
           {cartData &&
-            cartData.map((item: any, index: number) => {
-              const productData = products.find(
-                (product) => product.id === Number(item.id)
+            cartData?.map((item: any, index: number) => {
+              const productData = products?.find(
+                (product) => product._id === item.id
               );
 
               return productData ? (
@@ -57,7 +62,7 @@ const Cart: React.FC = () => {
                   <div className="flex items-start gap-6">
                     <img
                       className="w-16 sm:w-20 rounded-sm"
-                      src={productData.imageUrl[0]}
+                      src={productData.imageUrls[0]}
                       alt="cart image"
                     />
                     <div className="flex flex-col gap-2">

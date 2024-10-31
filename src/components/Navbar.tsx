@@ -123,7 +123,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                   >
                     Admin
                   </Link>
-                  <hr className="h-[2px] w-1/2 bg-background-alternative" />
+                  <div className="h-[3px] w-[90%] bg-brand-neutral" />
                 </div>
               ) : (
                 <></>

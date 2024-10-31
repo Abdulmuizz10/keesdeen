@@ -10,31 +10,19 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
+import { Product } from "../../lib/types";
+import { getProducts } from "../../context/ProductContext/ProductApiCalls";
+import { useProducts } from "../../context/ProductContext/ProductContext";
+import Spinner from "../../components/Spinner";
 
 const ActiveWear: React.FC = () => {
-  // Define the type for a clothing product
-  interface ClothingProduct {
-    id: number;
-    name: string;
-    brand: string;
-    category: string;
-    price: number;
-    size: string[];
-    color: string;
-    rating: number;
-    reviews: number;
-    isAvailable: boolean;
-    material: string;
-    gender: string;
-    imageUrl: string[];
-    description: string;
-  }
-
-  const { products, isActive } = useShop();
+  const { isActive } = useShop();
+  const { products, dispatch, isFetching } = useProducts();
+  useEffect(() => {
+    getProducts(dispatch);
+  }, []);
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<ClothingProduct[]>(
-    []
-  );
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -67,7 +55,7 @@ const ActiveWear: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products.filter((i) => i.category === "Active wear");
+    let productsCopy = products?.filter((i) => i.category === "Active Wear");
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
@@ -77,7 +65,7 @@ const ActiveWear: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        item.size.some((s) => sizeCategory.includes(s))
+        item.size.some((s: string) => sizeCategory.includes(s))
       );
     }
 
@@ -109,7 +97,7 @@ const ActiveWear: React.FC = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, sizeCategory, colorCategory]);
+  }, [category, sizeCategory, colorCategory, products]);
 
   useEffect(() => {
     sortProducts();
@@ -166,7 +154,7 @@ const ActiveWear: React.FC = () => {
                 {[
                   "Modest Workout Tops",
                   "Joggers & Bottoms",
-                  "Complete Active wear Sets",
+                  "Complete Active Wear Sets",
                   "High-Support Sports Bras",
                   "Sports Hijabs",
                   "Burkinis / Swimwear",
@@ -279,62 +267,69 @@ const ActiveWear: React.FC = () => {
             </Button>
           </div>
           {/* Right Side */}
-          <div className="flex-1 flex flex-col gap-5 w-full">
-            <div className="flex justify-between text-base items-center">
-              <h3 className="text-base md:text-md">All Collections</h3>
-              {/* {Product Sort} */}
+          <div className="w-full">
+            <div>
+              <div className="flex-1 flex flex-col gap-5 w-full">
+                <div className="flex justify-between text-base items-center">
+                  <h3 className="text-base md:text-md">All Collections</h3>
+                  {/* {Product Sort} */}
 
-              <p className="info-text hidden xl:flex">
-                Showing 1 . {filteredProducts.length} of 16 Products
-              </p>
+                  <p className="info-text hidden xl:flex">
+                    Showing 1 . {filteredProducts.length} of 16 Products
+                  </p>
 
-              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
-                <Select onValueChange={setSortType}>
-                  <SelectTrigger className="rounded-md">
-                    <SelectValue placeholder="Sort by price" />
-                  </SelectTrigger>
-                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                    <SelectItem
-                      value="relevant"
-                      className=" cursor-pointer hover:text-text-secondary"
+                  <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
+                    <Select onValueChange={setSortType}>
+                      <SelectTrigger className="rounded-md">
+                        <SelectValue placeholder="Sort by price" />
+                      </SelectTrigger>
+                      <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                        <SelectItem
+                          value="relevant"
+                          className=" cursor-pointer hover:text-text-secondary"
+                        >
+                          Sort by: Relevance
+                        </SelectItem>
+                        <SelectItem
+                          value="Low - High"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Sort by: Low to High
+                        </SelectItem>
+                        <SelectItem
+                          value="High - Low"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Sort by: High to Low
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className=" max-w-[200px] w-full flex lg:hidden">
+                    <select
+                      className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
+                      onChange={(e) => setSortType(e.target.value)}
                     >
-                      Sort by: Relevance
-                    </SelectItem>
-                    <SelectItem
-                      value="Low - High"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: Low to High
-                    </SelectItem>
-                    <SelectItem
-                      value="High - Low"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: High to Low
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                      <option value="relevant">Sort by: Relevance</option>
+                      <option value="Low - High">Sort by: Low to High</option>
+                      <option value="High - Low">Sort by: High to Low</option>
+                    </select>
+                  </div>
+                </div>
+                {/* {Map Products} */}
+                <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
+                  {filteredProducts.length > 0 &&
+                    filteredProducts.map((product, index) => (
+                      <ProductItem product={product} key={index} />
+                    ))}
+                </div>
+                <div className="w-full flex justify-center mt-10">
+                  {isFetching && <Spinner />}
+                  {/* {!isFetching && filteredProducts.length < 1 ? (
+                  <ProductUnavailable />
+                ) : null} */}
+                </div>
               </div>
-              <div className=" max-w-[200px] w-full flex lg:hidden">
-                <select
-                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
-                  onChange={(e) => setSortType(e.target.value)}
-                >
-                  <option value="relevant">Sort by: Relevance</option>
-                  <option value="Low - High">Sort by: Low to High</option>
-                  <option value="High - Low">Sort by: High to Low</option>
-                </select>
-              </div>
-            </div>
-            {/* {Map Products} */}
-            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product, index) => (
-                  <ProductItem product={product} key={index} />
-                ))
-              ) : (
-                <ProductUnavailable />
-              )}
             </div>
           </div>
         </div>
@@ -343,8 +338,8 @@ const ActiveWear: React.FC = () => {
   );
 };
 
-const ProductUnavailable = () => {
-  return <p className="text-xl w-full">Product is not available...</p>;
-};
+// const ProductUnavailable = () => {
+//   return <p className="text-xl w-full">Product is not available...</p>;
+// };
 
 export default ActiveWear;

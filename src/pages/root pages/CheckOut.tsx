@@ -239,7 +239,7 @@ import { formatAmount } from "../../lib/utils";
 const stripePromise = loadStripe("your-publishable-key");
 
 const CheckOut: React.FC = () => {
-  const { getCartAmount } = useShop();
+  const { getCartAmount, delivery_fee } = useShop();
   const location = useLocation();
   const subtotal = getCartAmount();
   const [coupon, setCoupon] = useState<string>("");
@@ -358,7 +358,7 @@ const CheckOut: React.FC = () => {
             <div className="mb-4">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
-                <span>{formatAmount(subtotal)}</span>
+                <span>{formatAmount(subtotal + delivery_fee)}</span>
               </div>
               <div className="flex justify-between">
                 <p>Discount:</p>
@@ -366,7 +366,7 @@ const CheckOut: React.FC = () => {
               </div>
               <div className="flex justify-between font-bold">
                 <p>Total:</p>
-                <p>{formatAmount(finalTotal)}</p>
+                <p>{formatAmount(finalTotal + delivery_fee)}</p>
               </div>
             </div>
 
@@ -409,7 +409,7 @@ const CheckOut: React.FC = () => {
               className="w-full active:bg-gray-700 bg-brand-neutral text-text-light py-3 rounded-md poppins border-none"
               onClick={handleSubmit(onSubmit)}
             >
-              Place order {formatAmount(finalTotal)}
+              Place order {formatAmount(finalTotal + delivery_fee)}
             </Button>
           </div>
         </div>

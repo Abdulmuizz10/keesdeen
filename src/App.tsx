@@ -43,6 +43,8 @@ import AdminCustomers from "./pages/admin pages/AdminCustomers";
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import FitnessAccessories from "./pages/root pages/FitnessAccessories";
+import { useProducts } from "./context/ProductContext/ProductContext";
+import { getProducts } from "./context/ProductContext/ProductApiCalls";
 
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
@@ -63,92 +65,15 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const { products, dispatch } = useProducts();
+
+  useEffect(() => {
+    getProducts(dispatch);
+  }, [dispatch]);
+
   return (
     <div className="overflow-x-hidden ">
       <ToastContainer />
-      {/* <Router>
-        <Route
-          exact
-          path={[
-            "/",
-            "/shop_all",
-            "/new_in",
-            "/product_details/:id",
-            "/best_sellers/:name",
-            "/cart",
-            "/wishlists",
-            "/profile",
-            "/check_out",
-          ]}
-        >
-          <RootLayouts>
-            <Navbar7 />
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/shop_all" component={ShopAll} />
-              <Route exact path="/new_in" component={NewArrivals} />
-              <Route
-                exact
-                path="/product_details/:id"
-                component={ProductDetails}
-              />
-              <Route exact path="/best_sellers/:name" component={BestSellers} />
-              <Route exact path="/cart" component={Cart} />
-              <Route exact path="/wishlists" component={WishLists} />
-              <Route exact path="/profile" component={Profile} />
-              <Route exact path="/check_out" component={Checkout} />
-            </Switch>
-            <Footer1 />
-          </RootLayouts>
-        </Route>
-        {user?.isAdmin && (
-          <Route
-            exact
-            path={[
-              "/admin",
-              "/admin/customers",
-              "/admin/products",
-              "/admin/orders",
-              "/admin/add_product",
-              "/admin/dashboard/sales",
-              "/admin/dashboard/orders",
-            ]}
-          >
-            <AdminLayout>
-            
-              <Switch>
-                <Route exact path="/admin" component={AdminHome} />
-                <Route exact path="/admin/products" component={AdminProducts} />
-                <Route exact path="/admin/orders" component={AdminOrders} />
-                <Route
-                  exact
-                  path="/admin/add_product"
-                  component={AddProducts}
-                />
-                <Route
-                  exact
-                  path="/admin/dashboard/sales"
-                  component={AdminDashBoardSales}
-                />
-                <Route
-                  exact
-                  path="/admin/dashboard/orders"
-                  component={AdminDashBoardOrders}
-                />
-              </Switch>
-            </AdminLayout>
-          </Route>
-        )}
-
-        <Route exact path={["/register/login", "/register/signUp"]}>
-          <AuthLayout>
-            <Switch>
-              <Route exact path="/register/login" component={Login7} />
-              <Route exact path="/register/signUp" component={Signup7} />
-            </Switch>
-          </AuthLayout>
-        </Route>
-      </Router> */}
       <Router>
         <Routes>
           {/* Root Layout with common pages */}
@@ -161,10 +86,16 @@ const App: React.FC = () => {
               path="/collections/Fitness_accessories"
               element={<FitnessAccessories />}
             />
-            <Route path="/collections/:name" element={<Collections />} />
+            <Route
+              path="/collections/:name"
+              element={<Collections products={products} />}
+            />
             <Route path="/product_details/:id" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/wishlists" element={<WishLists />} />
+            <Route path="/cart" element={<Cart products={products} />} />
+            <Route
+              path="/wishlists"
+              element={<WishLists products={products} />}
+            />
             <Route path="/profile" element={<Profile />} />
             <Route path="/check_out" element={<Checkout />} />
           </Route>
