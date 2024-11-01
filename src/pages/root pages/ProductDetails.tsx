@@ -85,7 +85,7 @@ const ProductDetails: React.FC = () => {
               <FaStar />
               <FaStar />
               <FaStarHalfAlt />
-              <p className="pl-2">({product.reviews.length})</p>
+              <p className="pl-2">({product.reviews?.length})</p>
             </div>
             <p className="mt-5 text-3xl font-medium">
               {formatAmount(product.price)}
