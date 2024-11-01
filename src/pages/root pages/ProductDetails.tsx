@@ -41,7 +41,7 @@ const ProductDetails: React.FC = () => {
     }
   }, [product]);
 
-  return (
+  return product ? (
     <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">
         {isFetching || (!product && <Spinner />)}
@@ -67,7 +67,7 @@ const ProductDetails: React.FC = () => {
                 src={image}
                 alt="product image"
                 className="w-full max-xl:h-full h-auto"
-                onClick={() => setImage(product.imageUrls[0])}
+                onClick={() => setImage(product?.imageUrls[0])}
               />
             </div>
           </div>
@@ -107,7 +107,7 @@ const ProductDetails: React.FC = () => {
             </div>
             <Button
               className="active:bg-gray-700 rounded-md bg-brand-neutral text-text-light border-none"
-              onClick={() => addToCart(product._id, size)}
+              onClick={() => addToCart(product?._id, size)}
             >
               ADD TO CART
             </Button>
@@ -120,18 +120,20 @@ const ProductDetails: React.FC = () => {
         {/* Description and Review Section */}
         <div className="mt-20">
           {product && (
-            <Reviews currentReviews={product?.reviews} id={product._id} />
+            <Reviews currentReviews={product?.reviews} id={product?._id} />
           )}
         </div>
 
         {/* Related products */}
         <div className="mt-20">
           {products && product && (
-            <RelatedProducts category={product.category} products={products} />
+            <RelatedProducts category={product?.category} products={products} />
           )}
         </div>
       </div>
     </section>
+  ) : (
+    <Spinner />
   );
 };
 
