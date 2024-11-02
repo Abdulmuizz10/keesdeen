@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChangeEvent, FormEvent } from "react";
 import {
   Button,
@@ -8,47 +8,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
-
-interface Review {
-  name: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
+import { Review } from "../lib/types";
+import {
+  createReview,
+  getProduct,
+} from "../context/ProductContext/ProductApiCalls";
+import { useProducts } from "../context/ProductContext/ProductContext";
 
 interface ReviewsProps {
-  currentReviews: Review[];
+  // currentReviews: Review[];
   id: string;
 }
 
-const Reviews: React.FC<ReviewsProps> = ({}) => {
+const Reviews: React.FC<ReviewsProps> = ({ id }) => {
   const [change, setChange] = useState<boolean>(true);
-  const [sortOption, setSortOption] = useState<string>("all");
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      name: "John Doe",
-      rating: 5,
-      comment: "Amazing product! Highly recommend.",
-      date: "September 21, 2024",
-    },
-    {
-      name: "Jane Smith",
-      rating: 4,
-      comment: "Great quality but shipping was a bit slow.",
-      date: "September 20, 2024",
-    },
-    {
-      name: "Mark Johnson",
-      rating: 3,
-      comment: "It's okay. Not the best I've seen.",
-      date: "September 19, 2024",
-    },
-  ]);
+  const [sortOption, setSortOption] = useState<string>("oldest");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const { product, dispatch } = useProducts();
 
-  const [newReview, setNewReview] = useState<Omit<Review, "date">>({
+  useEffect(() => {
+    getProduct(id, dispatch);
+    setReviews(product.reviews);
+  }, [id]);
+
+  const [newReview, setNewReview] = useState<Review>({
     name: "",
     rating: 0,
     comment: "",
+    date: "",
   });
 
   const handleInputChange = (
@@ -60,14 +47,16 @@ const Reviews: React.FC<ReviewsProps> = ({}) => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const today = new Date().toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const today = new Date().toISOString();
 
     setReviews([...reviews, { ...newReview, date: today }]);
-    setNewReview({ name: "", rating: 0, comment: "" });
+    createReview({ ...newReview, date: today }, id, dispatch);
+    setNewReview({
+      name: "",
+      rating: 0,
+      comment: "",
+      date: "",
+    });
   };
 
   const sortReviews = () => {
@@ -89,29 +78,30 @@ const Reviews: React.FC<ReviewsProps> = ({}) => {
   };
 
   return (
-    <>
-      <div className="flex gap-2">
-        <h3
-          className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
-          onClick={() => setChange(false)}
-        >
-          Write your Reviews
-        </h3>
-        <p
-          className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
-          onClick={() => setChange(true)}
-        >
-          All Reviews ({reviews.length})
-        </p>
-      </div>
+    reviews && (
+      <>
+        <div className="flex gap-2">
+          <h3
+            className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
+            onClick={() => setChange(false)}
+          >
+            Write your Reviews
+          </h3>
+          <p
+            className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
+            onClick={() => setChange(true)}
+          >
+            All Reviews ({reviews?.length})
+          </p>
+        </div>
 
-      {change ? (
-        <div className="mx-auto shadow-md rounded-lg mt-10">
-          {reviews.length > 0 ? (
-            <>
-              <div className="mb-4">
-                <h2 className="text-2xl font-bold mb-4">All Reviews</h2>
-                {/* <select
+        {change ? (
+          <div className="mx-auto shadow-md rounded-lg mt-10">
+            {reviews?.length > 0 ? (
+              <>
+                <div className="mb-4">
+                  <h2 className="text-2xl font-bold mb-4">All Reviews</h2>
+                  {/* <select
                   value={sortOption}
                   onChange={(e) => setSortOption(e.target.value)}
                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
@@ -123,134 +113,146 @@ const Reviews: React.FC<ReviewsProps> = ({}) => {
                   <option value="oldest">Oldest</option>
                 </select> */}
 
-                <div className="w-full md:w-1/2 mt-1">
-                  <Select onValueChange={setSortOption}>
-                    <SelectTrigger className="rounded-md">
-                      <SelectValue placeholder="Sort Reviews" />
-                    </SelectTrigger>
-                    <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                      <SelectItem
-                        value="all"
-                        className=" cursor-pointer hover:text-text-secondary
+                  <div className="w-full md:w-1/2 mt-1">
+                    <Select onValueChange={setSortOption}>
+                      <SelectTrigger className="rounded-md">
+                        <SelectValue placeholder="Sort Reviews" />
+                      </SelectTrigger>
+                      <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                        <SelectItem
+                          value="all"
+                          className=" cursor-pointer hover:text-text-secondary
                       "
-                      >
-                        All
-                      </SelectItem>
-                      <SelectItem
-                        value="highest"
-                        className=" cursor-pointer  hover:text-text-secondary"
-                      >
-                        Highest Rating
-                      </SelectItem>
-                      <SelectItem
-                        value="lowest"
-                        className=" cursor-pointer  hover:text-text-secondary"
-                      >
-                        Lowest Rating
-                      </SelectItem>
-                      <SelectItem
-                        value="latest"
-                        className=" cursor-pointer  hover:text-text-secondary"
-                      >
-                        Latest
-                      </SelectItem>
-                      <SelectItem
-                        value="oldest"
-                        className=" cursor-pointer  hover:text-text-secondary"
-                      >
-                        Oldest
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                        >
+                          All
+                        </SelectItem>
+                        <SelectItem
+                          value="highest"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Highest Rating
+                        </SelectItem>
+                        <SelectItem
+                          value="lowest"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Lowest Rating
+                        </SelectItem>
+                        <SelectItem
+                          value="latest"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Latest
+                        </SelectItem>
+                        <SelectItem
+                          value="oldest"
+                          className=" cursor-pointer  hover:text-text-secondary"
+                        >
+                          Oldest
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+
+                <ul>
+                  {sortReviews().map((review, index) => (
+                    <li
+                      key={index}
+                      className="mb-6 border-b border-border-secondary pb-4"
+                    >
+                      <div className="flex justify-between">
+                        <h3 className="font-semibold text-lg">{review.name}</h3>
+                        <div className="flex gap-2">
+                          <p className="text-sm text-gray-500 ">
+                            <div className="flex gap-2">
+                              <p className="text-sm text-gray-500 ">
+                                {review?.date?.split("").slice(0, 10)}
+                              </p>
+                              <p className="text-sm text-gray-500 ">
+                                {review?.date?.split("").slice(11, 19)}
+                              </p>
+                            </div>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center mt-2">
+                        <span className="text-yellow-500 text-xl mr-2">
+                          {"★".repeat(review.rating)}
+                        </span>
+                        <span className="text-gray-400 text-xl">
+                          {"★".repeat(5 - review.rating)}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-gray-700">{review.comment}</p>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="text-gray-500">
+                No reviews yet. Be the first to write one!
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="mx-auto shadow-md rounded-lg mt-10">
+            <h2 className="text-2xl font-bold mb-4">Customer Review</h2>
+
+            {/* Review Form */}
+            <form onSubmit={handleSubmit} className="mb-8">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={newReview.name}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  required
+                />
               </div>
 
-              <ul>
-                {sortReviews().map((review, index) => (
-                  <li
-                    key={index}
-                    className="mb-6 border-b border-border-secondary pb-4"
-                  >
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold text-lg">{review.name}</h3>
-                      <p className="text-sm text-gray-500">{review.date}</p>
-                    </div>
-                    <div className="flex items-center mt-2">
-                      <span className="text-yellow-500 text-xl mr-2">
-                        {"★".repeat(review.rating)}
-                      </span>
-                      <span className="text-gray-400 text-xl">
-                        {"★".repeat(5 - review.rating)}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-gray-700">{review.comment}</p>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <p className="text-gray-500">
-              No reviews yet. Be the first to write one!
-            </p>
-          )}
-        </div>
-      ) : (
-        <div className="mx-auto shadow-md rounded-lg mt-10">
-          <h2 className="text-2xl font-bold mb-4">Customer Review</h2>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Rating
+                </label>
+                <input
+                  type="number"
+                  name="rating"
+                  value={newReview.rating}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  required
+                  min="1"
+                  max="5"
+                />
+              </div>
 
-          {/* Review Form */}
-          <form onSubmit={handleSubmit} className="mb-8">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={newReview.name}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                required
-              />
-            </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Comment
+                </label>
+                <textarea
+                  name="comment"
+                  value={newReview.comment}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  rows={4}
+                  required
+                ></textarea>
+              </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Rating
-              </label>
-              <input
-                type="number"
-                name="rating"
-                value={newReview.rating}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                required
-                min="1"
-                max="5"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Comment
-              </label>
-              <textarea
-                name="comment"
-                value={newReview.comment}
-                onChange={handleInputChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                rows={4}
-                required
-              ></textarea>
-            </div>
-
-            <Button className="rounded-md bg-brand-neutral border-none poppins text-white">
-              Submit Review
-            </Button>
-          </form>
-        </div>
-      )}
-    </>
+              <Button className="rounded-md bg-brand-neutral border-none poppins text-white">
+                Submit Review
+              </Button>
+            </form>
+          </div>
+        )}
+      </>
+    )
   );
 };
 

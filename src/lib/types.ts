@@ -75,12 +75,12 @@ export interface Review {
   name: string;
   rating: number;
   comment: string;
-  createdAt: string;
-  updatedAt: string;
+  date: string;
 }
 
-// import React, { useState } from "react";
-// import { ChangeEvent, FormEvent } from "react";
+// import React, { useEffect, useRef, useState } from "react";
+// import { RxChevronDown } from "react-icons/rx";
+// import { useShop } from "../../context/ShopContext";
 // import {
 //   Button,
 //   Select,
@@ -89,246 +89,411 @@ export interface Review {
 //   SelectTrigger,
 //   SelectValue,
 // } from "@relume_io/relume-ui";
-// import { Review } from "../lib/types";
-// import { createReview } from "../context/ProductContext/ProductApiCalls";
-// import { useProducts } from "../context/ProductContext/ProductContext";
+// import ProductItem from "../../components/ProductItem";
+// import { useProducts } from "../../context/ProductContext/ProductContext";
+// import { Product } from "../../lib/types";
+// import Spinner from "../../components/Spinner";
+// import { getProducts } from "../../context/ProductContext/ProductApiCalls";
 
-// interface ReviewsProps {
-//   reviews: Review[];
-//   id: string;
-// }
+// const ShopAll: React.FC = () => {
+//   const { isActive } = useShop();
+//   const { products, dispatch, isFetching } = useProducts();
+//   useEffect(() => {
+//     getProducts(dispatch);
+//   }, []);
 
-// const Reviews: React.FC<ReviewsProps> = ({ reviews, id }) => {
-//   const [change, setChange] = useState<boolean>(true);
-//   const [sortOption, setSortOption] = useState<string>("all");
-//   const { dispatch } = useProducts();
-//   const [currentReviews, setCurrentReviews] = useState<Review[]>(reviews);
+//   const [showFilter, setShowFilter] = useState(false);
+//   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
-//   const [newReview, setNewReview] = useState<Omit<Review, "date">>({
-//     name: "",
-//     rating: 0,
-//     comment: "",
-//     createdAt: "",
-//     updatedAt: "",
-//   });
+//   const [category, setCategory] = useState<string[]>([]);
+//   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
+//   const [colorCategory, setColorCategory] = useState<string[]>([]);
+//   const [sortType, setSortType] = useState<string>("Relevance");
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const itemsPerPage = 12;
 
-//   const handleInputChange = (
-//     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-//   ) => {
-//     const { name, value } = e.target;
-//     setNewReview((prev) => ({ ...prev, [name]: value }));
-//   };
+//   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+//   const indexOfLastProduct = currentPage * itemsPerPage;
+//   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+//   const currentProducts = filteredProducts.slice(
+//     indexOfFirstProduct,
+//     indexOfLastProduct
+//   );
 
-//   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     // const today = new Date().toLocaleDateString("en-US", {
-//     //   year: "numeric",
-//     //   month: "long",
-//     //   day: "numeric",
-//     // });
-
-//     setCurrentReviews([...currentReviews, { ...newReview }]);
-//     createReview({ ...newReview }, id, dispatch);
-//     setNewReview({
-//       name: "",
-//       rating: 0,
-//       comment: "",
-//       createdAt: "",
-//       updatedAt: "",
-//     });
-//   };
-
-//   const sortReviews = () => {
-//     let sortedReviews = [...currentReviews];
-//     if (sortOption === "highest") {
-//       sortedReviews = sortedReviews.sort((a, b) => b.rating - a.rating);
-//     } else if (sortOption === "lowest") {
-//       sortedReviews = sortedReviews.sort((a, b) => a.rating - b.rating);
-//     } else if (sortOption === "latest") {
-//       sortedReviews = sortedReviews.sort(
-//         (a, b) =>
-//           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-//       );
-//     } else if (sortOption === "oldest") {
-//       sortedReviews = sortedReviews.sort(
-//         (a, b) =>
-//           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-//       );
+//   const paginate = (pageNumber: number) => {
+//     if (pageNumber >= 1 && pageNumber <= totalPages) {
+//       setCurrentPage(pageNumber);
 //     }
-//     return sortedReviews;
+//   };
+
+//   const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     if (category.includes(e.target.value)) {
+//       setCategory((prev) => prev.filter((item) => item !== e.target.value));
+//     } else {
+//       setCategory((prev) => [...prev, e.target.value]);
+//     }
+//   };
+
+//   const toggleSizeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     if (sizeCategory.includes(e.target.value)) {
+//       setSizeCategory((prev) => prev.filter((item) => item !== e.target.value));
+//     } else {
+//       setSizeCategory((prev) => [...prev, e.target.value]);
+//     }
+//   };
+
+//   const toggleColorCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     if (colorCategory.includes(e.target.value)) {
+//       setColorCategory((prev) =>
+//         prev.filter((item) => item !== e.target.value)
+//       );
+//     } else {
+//       setColorCategory((prev) => [...prev, e.target.value]);
+//     }
+//   };
+
+//   const applyFilter = () => {
+//     let productsCopy = [...(products || [])];
+
+//     if (category.length)
+//       productsCopy = productsCopy.filter((item) =>
+//         category.includes(item.category)
+//       );
+//     if (sizeCategory.length)
+//       productsCopy = productsCopy.filter((item) =>
+//         item.size.some((s: string) => sizeCategory.includes(s))
+//       );
+//     if (colorCategory.length)
+//       productsCopy = productsCopy.filter((item) =>
+//         colorCategory.includes(item.color)
+//       );
+
+//     setFilteredProducts(productsCopy);
+//   };
+
+//   const sortProducts = () => {
+//     let spCopy = [...filteredProducts];
+//     spCopy.sort((a, b) =>
+//       sortType === "Low - High" ? a.price - b.price : b.price - a.price
+//     );
+//     setFilteredProducts(spCopy);
+//   };
+
+//   useEffect(() => {
+//     applyFilter();
+//   }, [category, sizeCategory, colorCategory, products]);
+
+//   useEffect(() => {
+//     sortProducts();
+//   }, [sortType]);
+
+//   useEffect(() => {
+//     window.scrollTo(0, 0);
+//   }, [currentPage]);
+
+//   const checkboxesRef = useRef<HTMLInputElement[]>([]);
+
+//   const clearFilters = () => {
+//     setCategory([]);
+//     setSizeCategory([]);
+//     setColorCategory([]);
+//     checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
 //   };
 
 //   return (
-//     <>
-//       <div className="flex gap-2">
-//         <h3
-//           className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
-//           onClick={() => setChange(false)}
-//         >
-//           Write your Reviews
-//         </h3>
-//         <p
-//           className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
-//           onClick={() => setChange(true)}
-//         >
-//           All Reviews ({currentReviews && currentReviews?.length})
-//         </p>
-//       </div>
-
-//       {change ? (
-//         <div className="mx-auto shadow-md rounded-lg mt-10">
-//           {currentReviews && currentReviews.length > 0 ? (
-//             <>
-//               <div className="mb-4">
-//                 <h2 className="text-2xl font-bold mb-4">All Reviews</h2>
-//                 {/* <select
-//                   value={sortOption}
-//                   onChange={(e) => setSortOption(e.target.value)}
-//                   className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-//                 >
-//                   <option value="all">All</option>
-//                   <option value="highest">Highest Rating</option>
-//                   <option value="lowest">Lowest Rating</option>
-//                   <option value="latest">Latest</option>
-//                   <option value="oldest">Oldest</option>
-//                 </select> */}
-
-//                 <div className="w-full md:w-1/2 mt-1">
-//                   <Select onValueChange={setSortOption}>
-//                     <SelectTrigger className="rounded-md">
-//                       <SelectValue placeholder="Sort Reviews" />
-//                     </SelectTrigger>
-//                     <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-//                       <SelectItem
-//                         value="all"
-//                         className=" cursor-pointer hover:text-text-secondary
-//                       "
-//                       >
-//                         All
-//                       </SelectItem>
-//                       <SelectItem
-//                         value="highest"
-//                         className=" cursor-pointer  hover:text-text-secondary"
-//                       >
-//                         Highest Rating
-//                       </SelectItem>
-//                       <SelectItem
-//                         value="lowest"
-//                         className=" cursor-pointer  hover:text-text-secondary"
-//                       >
-//                         Lowest Rating
-//                       </SelectItem>
-//                       <SelectItem
-//                         value="latest"
-//                         className=" cursor-pointer  hover:text-text-secondary"
-//                       >
-//                         Latest
-//                       </SelectItem>
-//                       <SelectItem
-//                         value="oldest"
-//                         className=" cursor-pointer  hover:text-text-secondary"
-//                       >
-//                         Oldest
-//                       </SelectItem>
-//                     </SelectContent>
-//                   </Select>
+//     <section className="px-[5%] py-24 md:py-30">
+//       <div className="container">
+//         <div className="rb-12 mb-12 md:mb-5">
+//           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+//             Shop All
+//           </h2>
+//           <p className="md:text-md">
+//             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+//           </p>
+//         </div>
+//         <div className="w-full">
+//           <div
+//             className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
+//               isActive && "opacity-0 transition-opacity"
+//             }`}
+//           >
+//             {/* Left Side */}
+//             <div className="min-w-60">
+//               <div
+//                 className="flex items-center gap-2"
+//                 onClick={() => setShowFilter(!showFilter)}
+//               >
+//                 <p className="my-2 text-xl flex items-center cursor-pointer gap-2">
+//                   Filters
+//                 </p>
+//                 <RxChevronDown
+//                   className={`text-2xl lg:hidden ${
+//                     showFilter ? "" : "rotate-180"
+//                   }`}
+//                 />
+//               </div>
+//               {/* category Filter */}
+//               <div
+//                 className={`border border-border-secondary pl-5 py-3 mt-2 ${
+//                   showFilter ? "" : "hidden"
+//                 } lg:block shadow-medium rounded`}
+//               >
+//                 <p className="text-base md:text-md pb-3">Product Type</p>
+//                 <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
+//                   {["Active Wear", "Fitness Accessories"].map((wear, index) => (
+//                     <p className="flex gap-2" key={index}>
+//                       <input
+//                         type="checkbox"
+//                         className="w-3 my"
+//                         value={wear}
+//                         onChange={toggleCategory}
+//                         ref={(el) => {
+//                           if (el) checkboxesRef.current.push(el);
+//                         }}
+//                       />
+//                       {wear}
+//                     </p>
+//                   ))}
 //                 </div>
 //               </div>
 
-//               <ul>
-//                 {sortReviews().map((review, index) => (
-//                   <li
-//                     key={index}
-//                     className="mb-6 border-b border-border-secondary pb-4"
+//               {/* Size Filter */}
+//               <div
+//                 className={`border border-border-secondary pl-5 py-3 mt-2 ${
+//                   showFilter ? "" : "hidden"
+//                 } lg:block shadow-medium rounded`}
+//               >
+//                 <p className="text-base md:text-md pb-3">Size</p>
+//                 <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
+//                   {[
+//                     "XXS",
+//                     "XS",
+//                     "S",
+//                     "M",
+//                     "L",
+//                     "XL",
+//                     "2XL",
+//                     "3XL",
+//                     "4XL",
+//                     "5XL",
+//                   ].map((size, index) => (
+//                     <p className="flex gap-2" key={index}>
+//                       <input
+//                         type="checkbox"
+//                         className="w-3"
+//                         value={size}
+//                         onChange={toggleSizeCategory}
+//                         ref={(el) => {
+//                           if (el) checkboxesRef.current.push(el);
+//                         }}
+//                       />
+//                       {size}
+//                     </p>
+//                   ))}
+//                 </div>
+//               </div>
+
+//               {/* Color Filter */}
+//               <div
+//                 className={`border border-border-secondary pl-5 py-3 mt-2 ${
+//                   showFilter ? "" : "hidden"
+//                 } lg:block shadow-medium rounded`}
+//               >
+//                 <p className="text-base md:text-md pb-3">Colour</p>
+//                 <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
+//                   {[
+//                     "Black",
+//                     "Blue",
+//                     "Brown",
+//                     "Cream",
+//                     "Green",
+//                     "Grey",
+//                     "Pink",
+//                     "Purple",
+//                     "Red",
+//                     "White",
+//                   ].map((color, index) => (
+//                     <p className="flex gap-2 items-center" key={index}>
+//                       <input
+//                         type="checkbox"
+//                         className="w-3"
+//                         value={color}
+//                         onChange={toggleColorCategory}
+//                         ref={(el) => {
+//                           if (el) checkboxesRef.current.push(el);
+//                         }}
+//                       />
+//                       <div
+//                         style={{ background: color }}
+//                         className={`h-3 w-3 rounded-full ${
+//                           color === "WHITE" || "CREAM"
+//                             ? "border border-border-primary"
+//                             : ""
+//                         }`}
+//                       ></div>
+//                       {color}
+//                     </p>
+//                   ))}
+//                 </div>
+//               </div>
+//               <Button
+//                 className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
+//                   showFilter ? "" : "hidden"
+//                 } lg:block`}
+//                 variant="primary"
+//                 onClick={() => {
+//                   clearFilters();
+//                 }}
+//               >
+//                 Clear filter
+//               </Button>
+//             </div>
+//             {/* Right Side */}
+//             <div className="w-full">
+//               <div className="flex-1 flex flex-col gap-5 w-full">
+//                 <div className="flex justify-between text-base items-center">
+//                   <h3 className="text-base md:text-md">All Collections</h3>
+//                   {/* {Product Sort} */}
+
+//                   <p className="info-text hidden xl:flex">
+//                     Showing 1 . {filteredProducts.length} of 31 Products
+//                   </p>
+
+//                   <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
+//                     <Select onValueChange={setSortType}>
+//                       <SelectTrigger className="rounded-md">
+//                         <SelectValue placeholder="Sort by price" />
+//                       </SelectTrigger>
+//                       <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+//                         <SelectItem
+//                           value="relevant"
+//                           className=" cursor-pointer hover:text-text-secondary"
+//                         >
+//                           Sort by: Relevance
+//                         </SelectItem>
+//                         <SelectItem
+//                           value="Low - High"
+//                           className=" cursor-pointer  hover:text-text-secondary"
+//                         >
+//                           Sort by: Low to High
+//                         </SelectItem>
+//                         <SelectItem
+//                           value="High - Low"
+//                           className=" cursor-pointer  hover:text-text-secondary"
+//                         >
+//                           Sort by: High to Low
+//                         </SelectItem>
+//                       </SelectContent>
+//                     </Select>
+//                   </div>
+//                   <div className=" max-w-[200px] w-full flex lg:hidden">
+//                     <select
+//                       className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
+//                       onChange={(e) => setSortType(e.target.value)}
+//                     >
+//                       <option value="relevant">Sort by: Relevance</option>
+//                       <option value="Low - High">Sort by: Low to High</option>
+//                       <option value="High - Low">Sort by: High to Low</option>
+//                     </select>
+//                   </div>
+//                 </div>
+//                 {/* {Map Products} */}
+//                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
+//                   {products &&
+//                     currentProducts?.map((product, index) => (
+//                       <ProductItem product={product} key={index} />
+//                     ))}
+//                 </div>
+//               </div>
+//               <div className="w-full flex justify-center mt-10">
+//                 {isFetching && <Spinner />}
+//                 {/* {!isFetching && filteredProducts.length < 1 ? (
+//                   <ProductUnavailable />
+//                 ) : null} */}
+//               </div>
+//               {currentProducts.length > 0 && (
+//                 <div className="flex justify-center mt-4 poppins">
+//                   <button
+//                     onClick={() => paginate(currentPage - 1)}
+//                     disabled={currentPage === 1}
+//                     className={`px-4 py-2 mr-2 ${
+//                       currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
+//                     } text-white rounded-lg`}
 //                   >
-//                     <div className="flex justify-between">
-//                       <h3 className="font-semibold text-lg">{review.name}</h3>
-//                       <div className="flex gap-2">
-//                         <p className="text-sm text-gray-500 ">
-//                           {review.createdAt.split("T")[0]}
-//                         </p>
-//                         <p className="text-sm text-gray-500 ">
-//                           {review.createdAt.split("T")[1]}
-//                         </p>
-//                       </div>
-//                     </div>
-//                     <div className="flex items-center mt-2">
-//                       <span className="text-yellow-500 text-xl mr-2">
-//                         {"★".repeat(review.rating)}
-//                       </span>
-//                       <span className="text-gray-400 text-xl">
-//                         {"★".repeat(5 - review.rating)}
-//                       </span>
-//                     </div>
-//                     <p className="mt-2 text-gray-700">{review.comment}</p>
-//                   </li>
-//                 ))}
-//               </ul>
-//             </>
-//           ) : (
-//             <p className="text-gray-500">
-//               No reviews yet. Be the first to write one!
-//             </p>
-//           )}
+//                     Previous
+//                   </button>
+
+//                   {currentPage > 3 && (
+//                     <>
+//                       <button
+//                         onClick={() => paginate(1)}
+//                         className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
+//                       >
+//                         1
+//                       </button>
+//                       <span className="px-4 py-2">...</span>
+//                     </>
+//                   )}
+
+//                   {Array.from({ length: totalPages }, (_, i) => i + 1)
+//                     .filter(
+//                       (pageNumber) =>
+//                         pageNumber === 1 ||
+//                         pageNumber === totalPages ||
+//                         (pageNumber >= currentPage - 2 &&
+//                           pageNumber <= currentPage + 2)
+//                     )
+//                     .map((pageNumber) => (
+//                       <button
+//                         key={pageNumber}
+//                         onClick={() => paginate(pageNumber)}
+//                         className={`px-4 py-2 ${
+//                           currentPage === pageNumber
+//                             ? "bg-brand-neutral text-white"
+//                             : "bg-white border border-border-primary text-text-primary"
+//                         } mx-1 rounded-lg`}
+//                       >
+//                         {pageNumber}
+//                       </button>
+//                     ))}
+
+//                   {currentPage < totalPages - 2 && (
+//                     <>
+//                       <span className="px-4 py-2">...</span>
+//                       <button
+//                         onClick={() => paginate(totalPages)}
+//                         className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
+//                       >
+//                         {totalPages}
+//                       </button>
+//                     </>
+//                   )}
+
+//                   <button
+//                     onClick={() => paginate(currentPage + 1)}
+//                     disabled={currentPage === totalPages}
+//                     className={`px-4 py-2 ml-2 ${
+//                       currentPage === totalPages
+//                         ? "bg-gray-300"
+//                         : "bg-brand-neutral"
+//                     } text-white rounded-lg`}
+//                   >
+//                     Next
+//                   </button>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
 //         </div>
-//       ) : (
-//         <div className="mx-auto shadow-md rounded-lg mt-10">
-//           <h2 className="text-2xl font-bold mb-4">Customer Review</h2>
-
-//           {/* Review Form */}
-//           <form onSubmit={handleSubmit} className="mb-8">
-//             <div className="mb-4">
-//               <label className="block text-sm font-medium text-gray-700">
-//                 Name
-//               </label>
-//               <input
-//                 type="text"
-//                 name="name"
-//                 value={newReview.name}
-//                 onChange={handleInputChange}
-//                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-//                 required
-//               />
-//             </div>
-
-//             <div className="mb-4">
-//               <label className="block text-sm font-medium text-gray-700">
-//                 Rating
-//               </label>
-//               <input
-//                 type="number"
-//                 name="rating"
-//                 value={newReview.rating}
-//                 onChange={handleInputChange}
-//                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-//                 required
-//                 min="1"
-//                 max="5"
-//               />
-//             </div>
-
-//             <div className="mb-4">
-//               <label className="block text-sm font-medium text-gray-700">
-//                 Comment
-//               </label>
-//               <textarea
-//                 name="comment"
-//                 value={newReview.comment}
-//                 onChange={handleInputChange}
-//                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-//                 rows={4}
-//                 required
-//               ></textarea>
-//             </div>
-
-//             <Button className="rounded-md bg-brand-neutral border-none poppins text-white">
-//               Submit Review
-//             </Button>
-//           </form>
-//         </div>
-//       )}
-//     </>
+//       </div>
+//     </section>
 //   );
 // };
 
-// export default Reviews;
+// const ProductUnavailable = () => {
+//   return (
+//     <p className="text-2xl w-full text-center">Product is not available...</p>
+//   );
+// };
+
+// export default ShopAll;

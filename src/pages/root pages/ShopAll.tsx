@@ -10,9 +10,9 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
-import { useProducts } from "../../context/ProductContext/ProductContext";
 import { Product } from "../../lib/types";
 import Spinner from "../../components/Spinner";
+import { useProducts } from "../../context/ProductContext/ProductContext";
 import { getProducts } from "../../context/ProductContext/ProductApiCalls";
 
 const ShopAll: React.FC = () => {
@@ -21,30 +21,12 @@ const ShopAll: React.FC = () => {
   useEffect(() => {
     getProducts(dispatch);
   }, []);
-
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
   const [sortType, setSortType] = useState<string>("Relevance");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = filteredProducts.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-
-  const paginate = (pageNumber: number) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
-    }
-  };
 
   const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (category.includes(e.target.value)) {
@@ -73,30 +55,44 @@ const ShopAll: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = [...(products || [])];
+    let productsCopy = products?.slice();
 
-    if (category.length)
+    if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
         category.includes(item.category)
       );
-    if (sizeCategory.length)
+    }
+
+    if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
         item.size.some((s: string) => sizeCategory.includes(s))
       );
-    if (colorCategory.length)
+    }
+
+    if (colorCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
         colorCategory.includes(item.color)
       );
+    }
 
     setFilteredProducts(productsCopy);
   };
 
   const sortProducts = () => {
-    let spCopy = [...filteredProducts];
-    spCopy.sort((a, b) =>
-      sortType === "Low - High" ? a.price - b.price : b.price - a.price
-    );
-    setFilteredProducts(spCopy);
+    let spCopy = filteredProducts.slice();
+
+    switch (sortType) {
+      case "Low - High":
+        setFilteredProducts(spCopy.sort((a, b) => a.price - b.price));
+        break;
+      case "High - Low":
+        setFilteredProducts(spCopy.sort((a, b) => b.price - a.price));
+        break;
+      default: {
+        applyFilter();
+        break;
+      }
+    }
   };
 
   useEffect(() => {
@@ -106,10 +102,6 @@ const ShopAll: React.FC = () => {
   useEffect(() => {
     sortProducts();
   }, [sortType]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentPage]);
 
   const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
@@ -131,7 +123,7 @@ const ShopAll: React.FC = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           </p>
         </div>
-        <div className="w-full">
+        <div>
           <div
             className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
               isActive && "opacity-0 transition-opacity"
@@ -276,7 +268,8 @@ const ShopAll: React.FC = () => {
                   {/* {Product Sort} */}
 
                   <p className="info-text hidden xl:flex">
-                    Showing 1 . {filteredProducts.length} of 31 Products
+                    Showing 1 . {filteredProducts.length} of {products?.length}
+                    Products
                   </p>
 
                   <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
@@ -318,9 +311,10 @@ const ShopAll: React.FC = () => {
                   </div>
                 </div>
                 {/* {Map Products} */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
+
+                <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
                   {products &&
-                    currentProducts?.map((product, index) => (
+                    filteredProducts?.map((product, index) => (
                       <ProductItem product={product} key={index} />
                     ))}
                 </div>
@@ -331,77 +325,6 @@ const ShopAll: React.FC = () => {
                   <ProductUnavailable />
                 ) : null} */}
               </div>
-              {currentProducts.length > 0 && (
-                <div className="flex justify-center mt-4 poppins">
-                  <button
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 mr-2 ${
-                      currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
-                    } text-white rounded-lg`}
-                  >
-                    Previous
-                  </button>
-
-                  {currentPage > 3 && (
-                    <>
-                      <button
-                        onClick={() => paginate(1)}
-                        className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
-                      >
-                        1
-                      </button>
-                      <span className="px-4 py-2">...</span>
-                    </>
-                  )}
-
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(
-                      (pageNumber) =>
-                        pageNumber === 1 ||
-                        pageNumber === totalPages ||
-                        (pageNumber >= currentPage - 2 &&
-                          pageNumber <= currentPage + 2)
-                    )
-                    .map((pageNumber) => (
-                      <button
-                        key={pageNumber}
-                        onClick={() => paginate(pageNumber)}
-                        className={`px-4 py-2 ${
-                          currentPage === pageNumber
-                            ? "bg-brand-neutral text-white"
-                            : "bg-white border border-border-primary text-text-primary"
-                        } mx-1 rounded-lg`}
-                      >
-                        {pageNumber}
-                      </button>
-                    ))}
-
-                  {currentPage < totalPages - 2 && (
-                    <>
-                      <span className="px-4 py-2">...</span>
-                      <button
-                        onClick={() => paginate(totalPages)}
-                        className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
-                      >
-                        {totalPages}
-                      </button>
-                    </>
-                  )}
-
-                  <button
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`px-4 py-2 ml-2 ${
-                      currentPage === totalPages
-                        ? "bg-gray-300"
-                        : "bg-brand-neutral"
-                    } text-white rounded-lg`}
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -411,9 +334,7 @@ const ShopAll: React.FC = () => {
 };
 
 // const ProductUnavailable = () => {
-//   return (
-//     <p className="text-2xl w-full text-center">Product is not available...</p>
-//   );
+//   return <p className="text-xl text-center">Product is not available...</p>;
 // };
 
 export default ShopAll;

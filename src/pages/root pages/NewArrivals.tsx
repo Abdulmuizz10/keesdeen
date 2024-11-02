@@ -55,7 +55,7 @@ const NewArrivals: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products?.slice();
+    let productsCopy = products?.filter((p) => p.newArrival === true);
 
     if (category.length > 0) {
       productsCopy = productsCopy.filter((item) =>
@@ -152,7 +152,7 @@ const NewArrivals: React.FC = () => {
               >
                 <p className="text-base md:text-md pb-3">Product Type</p>
                 <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                  {["Active wear", "Fitness accessories"].map((wear, index) => (
+                  {["Active Wear", "Fitness Accessories"].map((wear, index) => (
                     <p className="flex gap-2" key={index}>
                       <input
                         type="checkbox"
@@ -264,11 +264,13 @@ const NewArrivals: React.FC = () => {
             <div className="w-full">
               <div className="flex-1 flex flex-col gap-5 w-full">
                 <div className="flex justify-between text-base items-center">
-                  <h3 className="text-base md:text-md">All Collections</h3>
+                  <h3 className="text-base md:text-md">All Arrivals</h3>
                   {/* {Product Sort} */}
 
                   <p className="info-text hidden xl:flex">
-                    Showing 1 . {filteredProducts.length} of 31 Products
+                    Showing 1 . {filteredProducts.length} of{" "}
+                    {products?.filter((p) => p.newArrival === true)?.length}
+                    Products
                   </p>
 
                   <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
