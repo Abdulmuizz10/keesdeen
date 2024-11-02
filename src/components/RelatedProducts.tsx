@@ -18,7 +18,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
     getProducts(dispatch);
     const relatedProducts = products
       .filter((p) => p.category === category)
-      .filter((p) => p._id === id);
+      .filter((p) => p._id !== id);
     setRelated(relatedProducts);
   }, [products, dispatch]);
 
