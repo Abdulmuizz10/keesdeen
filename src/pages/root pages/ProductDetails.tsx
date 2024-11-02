@@ -43,7 +43,7 @@ const ProductDetails: React.FC = ({}) => {
     product && (
       <section id="relume" className="px-[5%] py-24 md:py-30">
         {isFetching && (
-          <div className="h-full w-full flex items-center justify-center">
+          <div className="h-full w-full flex items-center justify-center bg-white">
             <Spinner />
           </div>
         )}
