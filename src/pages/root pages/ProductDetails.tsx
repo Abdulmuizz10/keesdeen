@@ -37,6 +37,12 @@ const ProductDetails: React.FC = ({}) => {
   }, [id, location.pathname]);
 
   useEffect(() => {
+    setTimeout(() => {
+      setAnimation(false);
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
     if (product && product.imageUrls?.length > 0) {
       setImage(product.imageUrls[0]);
     }
@@ -128,10 +134,7 @@ const ProductDetails: React.FC = ({}) => {
           {/* Related products */}
           <div className="mt-20">
             {products && product && (
-              <RelatedProducts
-                category={product.category}
-                products={products}
-              />
+              <RelatedProducts category={product.category} id={product._id} />
             )}
           </div>
         </div>
