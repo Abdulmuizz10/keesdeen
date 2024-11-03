@@ -33,13 +33,13 @@ const ProductDetails: React.FC = ({}) => {
     getProduct(id, dispatch);
     setTimeout(() => {
       setAnimation(false);
-    }, 1000);
+    }, 2000);
   }, [id, location.pathname]);
 
   useEffect(() => {
     setTimeout(() => {
       setAnimation(false);
-    }, 1000);
+    }, 2000);
   }, []);
 
   useEffect(() => {
