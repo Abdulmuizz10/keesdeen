@@ -13,11 +13,13 @@ import { Product } from "../lib/types";
 // Define the context type
 interface ShopContextType {
   cartItems: any;
+  setCartItems: any;
   addToCart: any;
   getCartCount: any;
   updateQuantity: any;
   getCartAmount: any;
   wishLists: any;
+  setWishLists: any;
   manageWishLists: any;
   isActive: any;
   setIsActive: any;
@@ -152,11 +154,13 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     <ShopContext.Provider
       value={{
         cartItems,
+        setCartItems,
         addToCart,
         getCartCount,
         updateQuantity,
         getCartAmount,
         wishLists,
+        setWishLists,
         manageWishLists,
         isActive,
         setIsActive,
