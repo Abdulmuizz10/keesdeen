@@ -85,7 +85,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
             className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
             onClick={() => setChange(false)}
           >
-            Write your Reviews
+            Click to Write your Reviews
           </h3>
           <p
             className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"

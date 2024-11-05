@@ -163,9 +163,9 @@ const Profile: React.FC = () => {
             ))}
           </div>
 
-          <div className="w-full flex justify-end sm:mt-10 lg:mt-14">
+          <div className="w-full flex justify-end mt-10 lg:mt-14">
             <Button
-              className="bg-brand-neutral text-white rounded-md py-3 px-10"
+              className="bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full"
               onClick={() => handleLogout()}
             >
               Log out
