@@ -34,7 +34,7 @@ export const appear = {
   },
   open: {
     opacity: 1,
-    transition: { duration: 0.35 },
+    transition: { duration: 0.15 },
   },
   closed: {
     opacity: 0,

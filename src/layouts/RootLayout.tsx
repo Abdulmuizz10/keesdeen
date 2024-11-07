@@ -7,9 +7,10 @@ import { useShop } from "../context/ShopContext";
 
 interface RootLayoutProps {
   children?: React.ReactNode;
+  animation: Boolean;
 }
 
-const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
+const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
   const { isActive, setIsActive } = useShop();
   const location = useLocation();
 
@@ -23,11 +24,11 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <main>
       <SearchModal />
-      <div className={isActive && "hidden transition-[1s]"}>
-        <Navbar7 />
-        {children}
-        <Outlet />
-        <Footer1 />
+      <div className={`${isActive && "hidden transition-[1s]"}`}>
+        {!animation && <Navbar7 />}
+        {!animation && children}
+        {!animation && <Outlet />}
+        {!animation && <Footer1 />}
       </div>
     </main>
   );

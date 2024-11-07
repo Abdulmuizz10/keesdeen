@@ -35,9 +35,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { products, dispatch } = useProducts();
   const [cartItems, setCartItems] = useState<any>(() => {
-    // Retrieve cart data from localStorage on initial render
     const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : {}; // Use stored cart or an empty object
+    return storedCart ? JSON.parse(storedCart) : {};
   });
   const [isActive, setIsActive] = useState(false);
   const [wishLists, setWishLists] = useState(() => {

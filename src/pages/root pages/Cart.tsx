@@ -29,9 +29,11 @@ const Cart: React.FC<ProductListProps> = ({ products }) => {
       }
     }
     setCartData(tempData);
-  }, [cartItems, products]);
+  }, [cartItems]);
 
   const navigate = useNavigate();
+
+  console.log(cartItems);
 
   return (
     <section id="relume" className="px-[5%] py-24 md:py-30">

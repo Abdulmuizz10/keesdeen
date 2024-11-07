@@ -76,7 +76,7 @@ const Profile: React.FC = () => {
   const handleLogout = () => {
     dispatch(Logout());
     setWishLists([]);
-    setCartItems([]);
+    setCartItems({});
     navigate("/");
   };
 

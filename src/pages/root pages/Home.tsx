@@ -7,16 +7,24 @@ import { Testimonial21 } from "../../components/Testimonials";
 import { Gallery5 } from "../../components/CollectionSection";
 import { Gallery19 } from "../../components/BestSellerSection";
 
-const Home: React.FC = () => {
+interface HomeProps {
+  animation: Boolean;
+}
+
+const Home: React.FC<HomeProps> = ({ animation }) => {
   return (
     <>
-      <Header76 />
-      <Gallery19 />
-      <Banner13 />
-      <Gallery5 />
-      <Cta3 />
-      <Gallery21 />
-      <Testimonial21 />
+      {!animation && (
+        <>
+          <Header76 />
+          <Gallery19 />
+          <Banner13 />
+          <Gallery5 />
+          <Cta3 />
+          <Gallery21 />
+          <Testimonial21 />
+        </>
+      )}
     </>
   );
 };

@@ -1,9 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 // Libraries
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Layouts
 import RootLayouts from "./layouts/RootLayout";
@@ -45,10 +46,13 @@ import { AuthContext } from "./context/AuthContext/AuthContext";
 import FitnessAccessories from "./pages/root pages/FitnessAccessories";
 import { useProducts } from "./context/ProductContext/ProductContext";
 import { getProducts } from "./context/ProductContext/ProductApiCalls";
+import { mainLogo } from "./assets";
+import { appear } from "./lib/anim";
 
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
+  const [animation, setAnimation] = useState<Boolean>(true);
   useEffect(() => {
     const lenis = new Lenis();
 
@@ -59,11 +63,14 @@ const App: React.FC = () => {
     requestAnimationFrame(raf);
   });
 
-  const { user } = useContext(AuthContext);
-
   useEffect(() => {
-    window.scrollTo(0, 0);
+    setTimeout(() => {
+      setAnimation(false);
+      window.scrollTo(0, 0);
+    }, 7000);
   }, []);
+
+  const { user } = useContext(AuthContext);
 
   const { products, dispatch } = useProducts();
 
@@ -74,11 +81,15 @@ const App: React.FC = () => {
   return (
     <div className="overflow-x-hidden ">
       <ToastContainer />
+
+      <AnimatePresence mode="wait">
+        {animation && <Animation />}
+      </AnimatePresence>
       <Router>
         <Routes>
           {/* Root Layout with common pages */}
-          <Route element={<RootLayouts />}>
-            <Route path="/" element={<Home />} />
+          <Route element={<RootLayouts animation={animation} />}>
+            <Route path="/" element={<Home animation={animation} />} />
             <Route path="/collections/shop_all" element={<ShopAll />} />
             <Route path="/collections/new_in" element={<NewArrivals />} />
             <Route path="/collections/Active_wear" element={<ActiveWear />} />
@@ -90,7 +101,10 @@ const App: React.FC = () => {
               path="/collections/:name"
               element={<Collections products={products} />}
             />
-            <Route path="/product_details/:id" element={<ProductDetails />} />
+            <Route
+              path="/product_details/:id"
+              element={<ProductDetails products={products} />}
+            />
             <Route path="/cart" element={<Cart products={products} />} />
             <Route
               path="/wishlists"
@@ -143,6 +157,25 @@ const App: React.FC = () => {
         </Routes>
       </Router>
     </div>
+  );
+};
+
+const Animation = () => {
+  return (
+    <motion.div
+      variants={appear}
+      initial="open"
+      exit="closed"
+      className="h-screen w-screen flex items-center justify-center fixed top-0 left-0 right-0 bottom-0 bg-white z-[10000px] transition-opacity"
+    >
+      <div>
+        <img
+          src={mainLogo}
+          alt="Animation logo"
+          className="inline-block w-[300px] md:w-[350px]"
+        />
+      </div>
+    </motion.div>
   );
 };
 
