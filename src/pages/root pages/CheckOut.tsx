@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@relume_io/relume-ui";
-import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { useShop } from "../../context/ShopContext";
 import { formatAmount } from "../../lib/utils";
+import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 
 const CheckOut: React.FC = () => {
   const { getCartAmount, delivery_fee } = useShop();
@@ -29,7 +29,7 @@ const CheckOut: React.FC = () => {
       total: finalTotal,
       coupon,
       discount,
-      paymentMethod: "CreditCard", // Or other method based on user choice
+      // paymentMethod: "CreditCard", // Or other method based on user choice
       paymentToken, // Attach the token from PaymentForm
     };
 
@@ -47,7 +47,9 @@ const CheckOut: React.FC = () => {
     console.log("Payment Token:", token);
 
     // Trigger form submission only after successful payment
-    handleSubmit(onSubmit)();
+    if (token) {
+      handleSubmit(onSubmit)();
+    }
   };
 
   useEffect(() => {
@@ -183,7 +185,7 @@ const CheckOut: React.FC = () => {
                   console.error("Payment Error:", tokenResult.errors);
                   alert("Payment failed. Please try again.");
                 } else {
-                  onPaymentSuccess(tokenResult.token);
+                  onPaymentSuccess(tokenResult);
                 }
               }}
             >

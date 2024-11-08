@@ -5,13 +5,10 @@ import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
 import { Product } from "../lib/types";
-import { useNavigate } from "react-router-dom";
 
 const ProductItem = ({ product }: { product: Product }) => {
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
-
-  const navigate = useNavigate();
 
   return (
     <div
@@ -38,7 +35,6 @@ const ProductItem = ({ product }: { product: Product }) => {
             src={image ? product.imageUrls[1] : product.imageUrls[0]}
             alt="Product"
             className="w-full h-auto"
-            onClick={() => navigate(`/product_details/${product._id}`)}
           />
         </Link>
       </div>

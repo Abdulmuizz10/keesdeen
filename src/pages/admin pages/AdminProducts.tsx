@@ -470,361 +470,15 @@
 
 import React, { useState } from "react";
 import { formatAmount } from "../../lib/utils";
+import { Product } from "../../lib/types";
 
-const AdminProducts: React.FC = () => {
+interface ProductListProps {
+  items: Product[];
+}
+
+const AdminProducts: React.FC<ProductListProps> = ({ items }) => {
   // Sample data for products with initial availability state
-  const [products, setProducts] = useState([
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-    {
-      name: "Men's T-Shirt",
-      category: "Clothing",
-      price: 25.99,
-      isAvailable: true,
-      date: "01.01.2024",
-    },
-    {
-      name: "Women's Jacket",
-      category: "Clothing",
-      price: 49.99,
-      isAvailable: false,
-      date: "12.12.2023",
-    },
-    {
-      name: "Sneakers",
-      category: "Footwear",
-      price: 79.99,
-      isAvailable: true,
-      date: "15.11.2023",
-    },
-    {
-      name: "Leather Handbag",
-      category: "Accessories",
-      price: 120.0,
-      isAvailable: true,
-      date: "18.10.2023",
-    },
-    {
-      name: "Wool Scarf",
-      category: "Accessories",
-      price: 19.99,
-      isAvailable: false,
-      date: "25.09.2023",
-    },
-  ]);
+  const [products, setProducts] = useState(items);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -860,7 +514,7 @@ const AdminProducts: React.FC = () => {
             <thead>
               <tr className="bg-gray-100 rounded-t-xl font-extrabold bricolage-grotesque">
                 <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
-                  Product
+                  Product name
                 </th>
                 <th className="text-left p-4 font-semibold">Category</th>
                 <th className="text-left p-4 font-semibold">Price</th>
@@ -877,7 +531,13 @@ const AdminProducts: React.FC = () => {
                   className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
                 >
                   <td className="flex items-center space-x-4 p-4">
-                    <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
+                    {/* <div className="h-10 w-10 bg-gray-300 rounded-full">
+                      <img
+                        src={product.imageUrls[0]}
+                        alt="product image"
+                        className=" object-cover"
+                      />
+                    </div> */}
                     <p className="font-semibold">{product.name}</p>
                   </td>
                   <td className="p-4 text-sm">{product.category}</td>
@@ -895,7 +555,8 @@ const AdminProducts: React.FC = () => {
                     </select>
                   </td>
                   <td className="p-4 text-base font-semibold">
-                    {product.date}
+                    {product.createdAt?.split("").slice(0, 10)}
+                    {/* {product.createdAt?.split("").slice(12, 16)} */}
                   </td>
                 </tr>
               ))}

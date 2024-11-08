@@ -32,16 +32,14 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
 
   useEffect(() => {
     setAnimation(true);
-    window.scrollTo(0, 0);
     const fetchData = async () => {
       await getProduct(id, dispatch);
       const productResult = await products.find((p) => p._id === id);
       setResult(productResult);
-      // setAnimation(false);
       setTimeout(() => setAnimation(false), 3000);
     };
     fetchData();
-    setTimeout(() => setAnimation(false), 4000);
+    setTimeout(() => setAnimation(false), 3000);
   }, [id, dispatch]);
 
   useEffect(() => {
@@ -49,6 +47,10 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
       setImage(product.imageUrls[0]);
     }
   }, [product]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     result && (

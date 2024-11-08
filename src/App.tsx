@@ -119,7 +119,10 @@ const App: React.FC = () => {
             <Route element={<AdminLayout />}>
               <Route path="/admin" element={<AdminHome />} />
               <Route path="/admin/customers" element={<AdminCustomers />} />
-              <Route path="/admin/products" element={<AdminProducts />} />
+              <Route
+                path="/admin/products"
+                element={<AdminProducts items={products} />}
+              />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/admin/add_product" element={<AddProducts />} />
               <Route
@@ -133,7 +136,7 @@ const App: React.FC = () => {
             </Route>
           ) : null}
 
-          <Route element={<AdminLayout />}>
+          {/* <Route element={<AdminLayout />}>
             <Route path="/admin" element={<AdminHome />} />
             <Route path="/admin/customers" element={<AdminCustomers />} />
             <Route path="/admin/products" element={<AdminProducts />} />
@@ -147,7 +150,7 @@ const App: React.FC = () => {
               path="/admin/dashboard/orders"
               element={<AdminDashBoardOrders />}
             />
-          </Route>
+          </Route> */}
 
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>

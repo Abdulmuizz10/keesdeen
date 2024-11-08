@@ -42,6 +42,8 @@ export interface Product {
   gender?: string; // Optional in case it's not always specified
   imageUrls: string[]; // Array of image URLs
   description?: string; // Optional description of the product
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ProductState {
