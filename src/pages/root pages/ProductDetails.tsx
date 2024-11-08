@@ -50,9 +50,9 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
   }, [product]);
 
   return (
-    result && (
-      <section id="relume" className="px-[5%] py-24 md:py-30">
-        {animation && <Animation />}
+    <section id="relume" className="px-[5%] py-24 md:py-30">
+      {animation && <Animation />}
+      {result && (
         <div className="container">
           <div className="flex gap-5 md:gap-10 flex-col lg:flex-row">
             {/* Product images */}
@@ -138,8 +138,8 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
             )}
           </div>
         </div>
-      </section>
-    )
+      )}
+    </section>
   );
 };
 
