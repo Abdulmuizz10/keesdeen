@@ -31,6 +31,7 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setAnimation(true);
     const fetchData = async () => {
       await getProduct(id, dispatch);
@@ -47,10 +48,6 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
       setImage(product.imageUrls[0]);
     }
   }, [product]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
     result && (
