@@ -1,60 +1,96 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@relume_io/relume-ui";
 import { useShop } from "../../context/ShopContext";
 import { formatAmount } from "../../lib/utils";
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
+import { toast } from "react-toastify";
+import { Product } from "../../lib/types";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
+import { AuthContext } from "../../context/AuthContext/AuthContext";
 
-const CheckOut: React.FC = () => {
-  const { getCartAmount, delivery_fee } = useShop();
+interface ProductListProps {
+  products: Product[];
+}
+
+const CheckOut: React.FC<ProductListProps> = ({}) => {
+  const { user } = useContext(AuthContext);
+  const { getCartAmount, delivery_fee, orderHistory, setOrderHistory } =
+    useShop();
   const subtotal = getCartAmount();
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
-  const [paymentToken, setPaymentToken] = useState<string | null>(null);
-  const { register, handleSubmit, reset } = useForm();
+  const [_, setPaymentToken] = useState<string | null>(null);
+  const [hasPaid, setHasPaid] = useState<boolean>(false);
+  const { getCartDetailsForOrder } = useShop();
 
-  const handleCouponApply = () => {
-    if (coupon === "SAVE10") {
-      setDiscount(10); // 10% discount
-    } else {
-      alert("Invalid Coupon Code");
-    }
-  };
-
-  const finalTotal = subtotal - (subtotal * discount) / 100;
-
-  const onSubmit = async (data: any) => {
-    const orderData = {
-      ...data,
-      total: finalTotal,
-      coupon,
-      discount,
-      // paymentMethod: "CreditCard", // Or other method based on user choice
-      paymentToken, // Attach the token from PaymentForm
-    };
-
-    // Send orderData to your backend API
-    console.log("Order Data:", orderData);
-
-    // Reset form and token
-    reset();
-    setPaymentToken(null);
-    alert("Order placed successfully!");
-  };
-
-  const onPaymentSuccess = (token: string) => {
-    setPaymentToken(token);
-    console.log("Payment Token:", token);
-
-    // Trigger form submission only after successful payment
-    if (token) {
-      handleSubmit(onSubmit)();
-    }
-  };
+  const orderedItems = getCartDetailsForOrder();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    formState: { errors, isValid },
+  } = useForm({ mode: "onChange" });
+
+  const finalTotal = subtotal - (subtotal * discount) / 100;
+
+  const applyCoupon = () => {
+    if (coupon === "SAVE10") {
+      setDiscount(10);
+    } else {
+      toast.error("Invalid Coupon Code");
+    }
+  };
+
+  const handleOrderSubmission = async (data: any, token: string | null) => {
+    const today = new Date().toISOString();
+
+    let orderData = {
+      ...data,
+      user: user.id,
+      totalPrice: finalTotal + delivery_fee,
+      coupon,
+      currency: "GBP",
+      discount,
+      sourceId: token,
+      orderedItems,
+      paidAt: today,
+      shippingPrice: delivery_fee,
+      paymentMethod: "Card",
+    };
+
+    setOrderHistory([...orderHistory, orderData]);
+
+    if (token) {
+      try {
+        const res = await Axios.post(`${URL}/orders`, orderData);
+        console.log(res.data);
+        setOrderHistory([...orderHistory, res.data]);
+        toast("Order placed successfully!");
+      } catch (error) {
+        console.error("Order submission failed:", error);
+        toast.error("Order submission failed. Please try again.");
+      }
+    }
+
+    setPaymentToken(null);
+    setHasPaid(false); // Reset payment state for the next order
+    // toast("Order placed successfully!");
+    trigger(); // Revalidate form to ensure button behaves as expected
+  };
+
+  const onPaymentSuccess = (token: string) => {
+    setHasPaid(true);
+    if (isValid && token) {
+      handleSubmit((data) => handleOrderSubmission(data, token))();
+    }
+  };
 
   const APP_ID = import.meta.env.VITE_SQUARE_APP_ID;
   const LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID;
@@ -67,67 +103,141 @@ const CheckOut: React.FC = () => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
             <form className="grid grid-cols-2 gap-6">
-              <input
-                {...register("firstName")}
-                type="text"
-                placeholder="First name"
-                className="border border-border-secondary px-2 py-3 w-full rounded-md"
-              />
-              <input
-                {...register("lastName")}
-                type="text"
-                placeholder="Last name"
-                className="border border-border-secondary px-2 py-3 w-full rounded-md"
-              />
-              <input
-                {...register("email")}
-                type="email"
-                placeholder="Email address"
-                className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-              />
-              <input
-                {...register("street")}
-                type="text"
-                placeholder="Street"
-                className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-              />
-              <input
-                {...register("city")}
-                type="text"
-                placeholder="City"
-                className="border border-border-secondary px-2 py-3 w-full rounded-md"
-              />
-              <input
-                {...register("state")}
-                type="text"
-                placeholder="State"
-                className="border border-border-secondary px-2 py-3 w-full rounded-md"
-              />
-              <input
-                {...register("zipcode")}
-                type="text"
-                placeholder="Zipcode"
-                className="border border-border-secondary px-2 py-3 w-full rounded-md"
-              />
-              <input
-                {...register("country")}
-                type="text"
-                placeholder="Country"
-                className="border border-border-secondary px-2 py-3 w-full rounded-md"
-              />
-              <input
-                {...register("phone")}
-                type="text"
-                placeholder="Phone"
-                className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-              />
+              {/* Form Fields */}
+              <div className="relative w-full">
+                <input
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  type="text"
+                  placeholder="First name"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.firstName && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.firstName.message)}
+                  </p>
+                )}
+              </div>
+              <div className="relative w-full">
+                <input
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  type="text"
+                  placeholder="Last name"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.lastName && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.lastName.message)}
+                  </p>
+                )}
+              </div>
+              <div className="relative w-full col-span-2">
+                <input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value:
+                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      message: "Invalid email address",
+                    },
+                  })}
+                  type="email"
+                  placeholder="Email address"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.email && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.email.message)}
+                  </p>
+                )}
+              </div>
+
+              {/* address */}
+              <div className="relative w-full col-span-2">
+                <input
+                  {...register("address", { required: "Address is required" })}
+                  type="text"
+                  placeholder="Address"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.address && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.address.message)}
+                  </p>
+                )}
+              </div>
+              {/* City */}
+              <div className="relative w-full">
+                <input
+                  {...register("city", { required: "City is required" })}
+                  type="text"
+                  placeholder="City"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.city && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.city.message)}
+                  </p>
+                )}
+              </div>
+              {/* State */}
+              <div className="relative w-full">
+                <input
+                  {...register("state", { required: "State is required" })}
+                  type="text"
+                  placeholder="State"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.state && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.state.message)}
+                  </p>
+                )}
+              </div>
+              {/* Zipcode */}
+              <div className="relative w-full">
+                <input
+                  {...register("zipCode", {
+                    required: "Zipcode is required",
+                    pattern: {
+                      value: /^[0-9]{5}$/,
+                      message: "Invalid zipcode format",
+                    },
+                  })}
+                  type="text"
+                  placeholder="Zipcode"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.zipcode && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.zipcode.message)}
+                  </p>
+                )}
+              </div>
+              {/* Country */}
+              <div className="relative w-full">
+                <input
+                  {...register("country", { required: "Country is required" })}
+                  type="text"
+                  placeholder="Country"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                />
+                {errors.country && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.country.message)}
+                  </p>
+                )}
+              </div>
             </form>
           </div>
 
-          {/* Right Section: Order Summary, Payment Methods, and Square Payment Form */}
+          {/* Right Section: Order Summary, Coupon, and Payment */}
           <div>
-            <h2 className="text-xl font-semibold mb-4">Payment</h2>
-            <div className="mb-8 flex flex-col gap-[15px]">
+            <h2 className="text-xl font-semibold mb-3">Payment</h2>
+            <div className="mb-[18px] flex flex-col gap-[15px]">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
                 <p>
@@ -151,7 +261,7 @@ const CheckOut: React.FC = () => {
             </div>
 
             {/* Coupon Section */}
-            <div className="mb-6">
+            <div className="mb-3">
               <label
                 htmlFor="coupon"
                 className="block text-sm font-medium poppins my-1"
@@ -168,7 +278,7 @@ const CheckOut: React.FC = () => {
                   placeholder="Enter coupon code"
                 />
                 <Button
-                  onClick={handleCouponApply}
+                  onClick={applyCoupon}
                   className="w-full bg-brand-neutral text-text-light px-2 py-2 rounded-md poppins border-none"
                 >
                   Apply
@@ -182,23 +292,25 @@ const CheckOut: React.FC = () => {
               locationId={LOCATION_ID}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 if (tokenResult.errors) {
-                  console.error("Payment Error:", tokenResult.errors);
-                  alert("Payment failed. Please try again.");
+                  toast.error("Payment failed. Please try again.");
                 } else {
-                  onPaymentSuccess(tokenResult);
+                  onPaymentSuccess(tokenResult.token);
                 }
               }}
             >
               <CreditCard
                 buttonProps={{
                   css: {
-                    backgroundColor: "#3d3d3d",
+                    backgroundColor:
+                      isValid && !hasPaid ? "#3d3d3d" : "#d1d5db",
                     fontSize: "18px",
-                    color: "#fff",
+                    color: isValid && !hasPaid ? "#fff" : "#9ca3af",
                     "&:hover": {
-                      backgroundColor: "#374151",
+                      backgroundColor:
+                        isValid && !hasPaid ? "#374151" : "#d1d5db",
                     },
                   },
+                  disabled: !isValid || hasPaid,
                 }}
               >
                 <p className="poppins">
@@ -217,241 +329,3 @@ const CheckOut: React.FC = () => {
 };
 
 export default CheckOut;
-
-// import React, { useEffect, useState } from "react";
-// import { useForm } from "react-hook-form";
-// import { Button } from "@relume_io/relume-ui";
-// import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
-// import { useShop } from "../../context/ShopContext";
-// import { formatAmount } from "../../lib/utils";
-
-// const CheckOut: React.FC = () => {
-//   const { getCartAmount, delivery_fee } = useShop();
-//   const subtotal = getCartAmount();
-//   const [coupon, setCoupon] = useState<string>("");
-//   const [discount, setDiscount] = useState<number>(0);
-//   const [paymentToken, setPaymentToken] = useState<string | null>(null);
-//   const { register, handleSubmit, reset } = useForm();
-
-//   const handleCouponApply = () => {
-//     if (coupon === "SAVE10") {
-//       setDiscount(10); // 10% discount
-//     } else {
-//       alert("Invalid Coupon Code");
-//     }
-//   };
-
-//   const finalTotal = subtotal - (subtotal * discount) / 100;
-
-//   const onSubmit = async (data: any) => {
-//     if (!paymentToken) {
-//       alert("Please complete payment before submitting the order.");
-//       return;
-//     }
-
-//     const orderData = {
-//       ...data,
-//       total: finalTotal,
-//       coupon,
-//       discount,
-//       paymentMethod: "CreditCard", // Or other method based on user choice
-//       paymentToken, // Attach the token from PaymentForm
-//     };
-
-//     // Send orderData to your backend API
-//     console.log("Order Data:", orderData);
-
-//     // Reset form and token
-//     reset();
-//     setPaymentToken(null);
-//     alert("Order placed successfully!");
-//   };
-
-//   const onPaymentSuccess = (token: string) => {
-//     setPaymentToken(token);
-//     console.log("Payment Token:", token);
-//   };
-
-//   useEffect(() => {
-//     window.scrollTo(0, 0);
-//   }, []);
-
-//   const APP_ID = "sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A";
-//   const LOCATION_ID = "LNS0B6E8H9C06";
-
-//   return (
-//     <section className="px-[5%] py-24 md:py-30">
-//       <div className="container">
-//         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-//           {/* Left Section: Delivery Information */}
-//           <div>
-//             <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-//             <form
-//               className="grid grid-cols-2 gap-6"
-//               onSubmit={handleSubmit(onSubmit)}
-//             >
-//               <input
-//                 {...register("firstName")}
-//                 type="text"
-//                 placeholder="First name"
-//                 className="border border-border-secondary px-2 py-3 w-full rounded-md"
-//               />
-//               <input
-//                 {...register("lastName")}
-//                 type="text"
-//                 placeholder="Last name"
-//                 className="border border-border-secondary px-2 py-3 w-full rounded-md"
-//               />
-//               <input
-//                 {...register("email")}
-//                 type="email"
-//                 placeholder="Email address"
-//                 className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-//               />
-//               <input
-//                 {...register("street")}
-//                 type="text"
-//                 placeholder="Street"
-//                 className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-//               />
-//               <input
-//                 {...register("city")}
-//                 type="text"
-//                 placeholder="City"
-//                 className="border border-border-secondary px-2 py-3 w-full rounded-md"
-//               />
-//               <input
-//                 {...register("state")}
-//                 type="text"
-//                 placeholder="State"
-//                 className="border border-border-secondary px-2 py-3 w-full rounded-md"
-//               />
-//               <input
-//                 {...register("zipcode")}
-//                 type="text"
-//                 placeholder="Zipcode"
-//                 className="border border-border-secondary px-2 py-3 w-full rounded-md"
-//               />
-//               <input
-//                 {...register("country")}
-//                 type="text"
-//                 placeholder="Country"
-//                 className="border border-border-secondary px-2 py-3 w-full rounded-md"
-//               />
-//               <input
-//                 {...register("phone")}
-//                 type="text"
-//                 placeholder="Phone"
-//                 className="border border-border-secondary px-2 py-3 w-full col-span-2 rounded-md"
-//               />
-//               {/* <Button
-//                 type="submit"
-//                 className="w-full bg-brand-neutral text-text-light py-3 rounded-md poppins border-none"
-//               >
-//                 Place order {formatAmount(finalTotal)}
-//               </Button> */}
-//             </form>
-//           </div>
-
-//           {/* Right Section: Order Summary, Payment Methods, and Stripe Payment Form */}
-//           <div>
-//             <h2 className="text-xl font-semibold mb-4">Payment</h2>
-//             <div className="mb-8 flex flex-col gap-[15px]">
-//               <div className="flex justify-between">
-//                 <p>Subtotal:</p>
-//                 <p>
-//                   {finalTotal === 0
-//                     ? "$0"
-//                     : formatAmount(finalTotal + delivery_fee)}
-//                 </p>
-//               </div>
-//               <div className="flex justify-between">
-//                 <p>Discount:</p>
-//                 <p>{discount}%</p>
-//               </div>
-//               <div className="flex justify-between font-bold">
-//                 <p>Total:</p>
-//                 <p>
-//                   {finalTotal === 0
-//                     ? "$0"
-//                     : formatAmount(finalTotal + delivery_fee)}
-//                 </p>
-//               </div>
-//             </div>
-
-//             {/* Coupon Section */}
-//             <div className="mb-6">
-//               <label
-//                 htmlFor="coupon"
-//                 className="block text-sm font-medium poppins my-1"
-//               >
-//                 Coupon Code
-//               </label>
-//               <div className="flex space-x-2 mt-3">
-//                 <input
-//                   type="text"
-//                   id="coupon"
-//                   value={coupon}
-//                   onChange={(e) => setCoupon(e.target.value)}
-//                   className="border border-border-secondary p-2 w-full rounded-md"
-//                   placeholder="Enter coupon code"
-//                 />
-//                 <Button
-//                   onClick={handleCouponApply}
-//                   className="w-full bg-brand-neutral text-text-light px-2 py-2 rounded-md poppins border-none"
-//                 >
-//                   Apply
-//                 </Button>
-//               </div>
-//             </div>
-
-//             {/* Payment Form */}
-//             <PaymentForm
-//               applicationId={APP_ID}
-//               locationId={LOCATION_ID}
-//               cardTokenizeResponseReceived={(tokenResult: any) => {
-//                 if (tokenResult.errors) {
-//                   console.error("Payment Error:", tokenResult.errors);
-//                   alert("Payment failed. Please try again.");
-//                 } else {
-//                   onPaymentSuccess(tokenResult.token);
-//                 }
-//               }}
-//             >
-//               <CreditCard
-//                 // style={{
-//                 //   input: {
-//                 //     fontSize: "14px",
-//                 //   },
-//                 //   "input::placeholder": {
-//                 //     color: "#771520",
-//                 //   },
-//                 // }}
-//                 buttonProps={{
-//                   css: {
-//                     backgroundColor: "#3d3d3d",
-//                     fontSize: "18px",
-//                     color: "#fff",
-//                     "&:hover": {
-//                       backgroundColor: "#374151",
-//                     },
-//                     marginTop: "-20px",
-//                   },
-//                 }}
-//               >
-//                 <p className="poppins">
-//                   Place order{"    "}
-//                   {finalTotal === 0
-//                     ? "$0"
-//                     : formatAmount(finalTotal + delivery_fee)}
-//                 </p>
-//               </CreditCard>
-//             </PaymentForm>
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default CheckOut;

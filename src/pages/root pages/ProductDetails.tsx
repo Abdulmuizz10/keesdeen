@@ -50,7 +50,10 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
   }, [product]);
 
   return (
-    <section id="relume" className="px-[5%] py-24 md:py-30">
+    <section
+      id="relume"
+      className={`px-[5%] py-24 md:py-30 ${animation && "h-screen"}`}
+    >
       {animation && <Animation />}
       {result && (
         <div className="container">
@@ -117,7 +120,15 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
               </div>
               <Button
                 className="active:bg-gray-700 rounded-md bg-brand-neutral text-text-light border-none"
-                onClick={() => addToCart(result._id, size)}
+                onClick={() =>
+                  addToCart(
+                    result._id,
+                    size,
+                    result.name,
+                    result.price,
+                    result.imageUrls[0]
+                  )
+                }
               >
                 ADD TO CART
               </Button>
@@ -144,7 +155,7 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
 };
 
 const Animation = () => (
-  <div className="w-screen h-[110vh] flex items-center justify-center bg-white fixed top-0 left-0 right-0 bottom-0">
+  <div className="w-screen h-[100vh] flex items-center justify-center bg-white fixed top-0 left-0 right-0 bottom-0">
     <Spinner />
   </div>
 );

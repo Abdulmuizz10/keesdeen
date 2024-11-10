@@ -67,7 +67,8 @@ const App: React.FC = () => {
     setTimeout(() => {
       setAnimation(false);
       window.scrollTo(0, 0);
-    }, 7000);
+      window.scrollTo(0, 0);
+    }, 9000);
   }, []);
 
   const { user } = useContext(AuthContext);
@@ -105,13 +106,16 @@ const App: React.FC = () => {
               path="/product_details/:id"
               element={<ProductDetails products={products} />}
             />
-            <Route path="/cart" element={<Cart products={products} />} />
+            <Route path="/cart" element={<Cart />} />
             <Route
               path="/wishlists"
               element={<WishLists products={products} />}
             />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/check_out" element={<Checkout />} />
+            <Route
+              path="/check_out"
+              element={<Checkout products={products} />}
+            />
           </Route>
 
           {/* Admin Routes (Only accessible to admins) */}

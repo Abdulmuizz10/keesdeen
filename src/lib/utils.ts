@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 export function formatAmount(amount: number): string {
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "GBP",
     minimumFractionDigits: 2,
   });
-
   return formatter.format(amount);
 }
 
