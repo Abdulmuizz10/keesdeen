@@ -92,8 +92,8 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
     }
   };
 
-  const APP_ID = import.meta.env.VITE_SQUARE_APP_ID;
-  const LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID;
+  // const APP_ID = import.meta.env.VITE_SQUARE_APP_ID;
+  // const LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID;
 
   return (
     <section className="px-[5%] py-24 md:py-30">
@@ -288,8 +288,8 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
 
             {/* Payment Form */}
             <PaymentForm
-              applicationId={APP_ID}
-              locationId={LOCATION_ID}
+              applicationId={import.meta.env.VITE_SQUARE_APP_ID}
+              locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 if (tokenResult.errors) {
                   toast.error("Payment failed. Please try again.");
