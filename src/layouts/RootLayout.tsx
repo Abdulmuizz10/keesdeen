@@ -25,7 +25,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
     <main>
       <SearchModal />
       <div className={`${isActive && "hidden transition-[1s]"}`}>
-        <div className={`${animation ? "hidden" : "block"}`}>
+        <div className={`${animation ? "opacity-0" : " opacity-100"}`}>
           <Navbar7 />
           {children}
           <Outlet />

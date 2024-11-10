@@ -92,52 +92,6 @@ const Profile: React.FC = () => {
           </div>
 
           {/* Order History Section */}
-          {/* <div className="mt-12 border-t border-border-secondary">
-            <h3 className="text-3xl font-semibold mt-8 mb-4 text-text-primary">
-              Order History
-            </h3>
-            <div className="space-y-4">
-              {orderHistory && (
-                <>
-                  {orderHistory?.length > 0 ? (
-                    orderHistory.orderedItems.map((order: any) => (
-                      <div
-                        key={order._id}
-                        className="py-4 border-b border-border-secondary grid grid-cols-[4fr_1fr] items-center"
-                      >
-                        <div>
-                          <p className="text-text-primary font-medium">
-                            Order ID: #{order._id}
-                          </p>
-                          <p className="text-gray-500">Date: {order.paidAt}</p>
-                          <p className="text-gray-500">Item: {order.name}</p>
-                        </div>
-                        <div className="text-end">
-                          <p className="font-semibold text-text-primary">
-                            Total: {formatAmount(order.totalPrice)}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="w-full flex justify-center">
-                      <Spinner />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            <div className="w-full flex justify-end mt-10 lg:mt-14">
-              <Button
-                className="bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full"
-                onClick={() => handleLogout()}
-              >
-                Log out
-              </Button>
-            </div>
-          </div> */}
-          {/* Order History Section */}
           <div className="mt-12 border-t border-border-secondary">
             <h3 className="text-3xl font-semibold mt-8 mb-4 text-text-primary">
               Order History
@@ -148,9 +102,9 @@ const Profile: React.FC = () => {
                   orderHistory.map((order: any) => (
                     <div
                       key={order.id}
-                      className="py-4 border-b border-border-secondary grid grid-cols-[4fr_1fr] items-center"
+                      className="py-4 border-b border-border-secondary sm:grid sm:grid-cols-[4fr_1fr] flex flex-col sm:items-center "
                     >
-                      <div>
+                      <div className="flex flex-col gap-2">
                         <p className="text-text-primary font-medium">
                           Order ID: #{order._id}
                         </p>
@@ -164,7 +118,7 @@ const Profile: React.FC = () => {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="hidden sm:flex items-center gap-2">
                           <p className="text-text-primary font-medium">
                             Items:
                           </p>
@@ -177,10 +131,25 @@ const Profile: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="text-end">
-                        <p className="font-semibold text-text-primary">
-                          Total: {formatAmount(order.totalPrice)}
-                        </p>
+                      <div className="sm:text-end text-start max-sm:mt-3">
+                        <div className="flex items-center sm:justify-end justify-start gap-2">
+                          <p className="font-semibold text-text-primary">
+                            Total:
+                          </p>
+                          <p className="font-semibold text-gray-500">
+                            {formatAmount(order.totalPrice)}
+                          </p>
+                        </div>
+                        <div className="flex items-center sm:justify-end justify-start gap-2">
+                          <p className="font-semibold text-text-primary">
+                            Status:
+                          </p>
+                          <p className="font-semibold text-gray-500">
+                            {order.isDelivered === false
+                              ? "Pending"
+                              : "Processed"}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))

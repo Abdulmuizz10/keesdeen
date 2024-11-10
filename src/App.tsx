@@ -68,7 +68,7 @@ const App: React.FC = () => {
       setAnimation(false);
       window.scrollTo(0, 0);
       window.scrollTo(0, 0);
-    }, 9000);
+    }, 10000);
   }, []);
 
   const { user } = useContext(AuthContext);
