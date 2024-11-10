@@ -288,8 +288,8 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
 
             {/* Payment Form */}
             <PaymentForm
-              applicationId={import.meta.env.VITE_SQUARE_APP_ID}
-              locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
+              applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
+              locationId={"LNS0B6E8H9C06"}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 if (tokenResult.errors) {
                   toast.error("Payment failed. Please try again.");
