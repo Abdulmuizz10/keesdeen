@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
+import { CiDeliveryTruck } from "react-icons/ci";
 import { Navbar7 } from "../components/Navbar";
 import { Footer1 } from "../components/Footer";
 import SearchModal from "../components/SearchModal";
 import { useShop } from "../context/ShopContext";
+import { Link } from "react-router-dom";
 
 interface RootLayoutProps {
   children?: React.ReactNode;
@@ -11,7 +13,7 @@ interface RootLayoutProps {
 }
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
-  const { isActive, setIsActive } = useShop();
+  const { isActive, setIsActive, noUserOrderHistory, orderHistory } = useShop();
   const location = useLocation();
 
   useEffect(() => {
@@ -29,6 +31,18 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
           <Navbar7 />
           {children}
           <Outlet />
+          <Link
+            to="order_history"
+            className="fixed bottom-[6%] sm:bottom-[8%] right-[5%] sm:right-[1%] flex items-center justify-center bg-brand-primary p-3 rounded-full"
+          >
+            <CiDeliveryTruck className="text-white text-2xl cursor-pointer" />
+            {noUserOrderHistory ||
+              (orderHistory > 0 && (
+                <div className="absolute right-[-4px] top-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
+                  {noUserOrderHistory?.length + orderHistory?.length}
+                </div>
+              ))}
+          </Link>
           <Footer1 />
         </div>
       </div>

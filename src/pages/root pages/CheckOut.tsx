@@ -9,23 +9,68 @@ import { Product } from "../../lib/types";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
+import { Country, State, City } from "country-state-city";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const zipCodePatterns: { [key: string]: RegExp } = {
+  US: /^[0-9]{5}(-[0-9]{4})?$/,
+  CA: /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/,
+  UK: /^[A-Za-z]{1,2}\d[A-Za-z\d]? \d[A-Za-z]{2}$/,
+  AU: /^\d{4}$/,
+  IN: /^\d{6}$/,
+};
 
 interface ProductListProps {
   products: Product[];
 }
 
+const MySwal = withReactContent(Swal);
+
+const showOrderSummary = (orderData: any) => {
+  const itemsList = orderData.orderedItems
+    .map(
+      (item: any) =>
+        `<li>${item.qty} x ${item.name} (${item.size}) - £${item.price}</li>`
+    )
+    .join("");
+  MySwal.fire({
+    title: "Order Summary",
+    html: `
+      <strong>Name:</strong> ${orderData.firstName} ${orderData.lastName} <br/>
+      <strong>Email:</strong> ${orderData.email} <br/>
+      <strong>Shipping Address:</strong> ${orderData.address}, ${
+      orderData.city
+    }, ${orderData.state}, ${orderData.country} - ${orderData.zipCode}<br/>
+      <strong>Ordered Items:</strong>
+      <ul>${itemsList}</ul>
+      <strong>Total Price:</strong> £${orderData.totalPrice} <br/>
+      <strong>Paid At:</strong> ${new Date(
+        orderData.paidAt
+      ).toLocaleString()} <br/>
+      <strong>Payment Status:</strong> ${
+        orderData.paymentResult.payment.status
+      } <br/>
+    `,
+    icon: "success",
+    confirmButtonText: "Close",
+    confirmButtonColor: "#04BB6E",
+  });
+};
+
 const CheckOut: React.FC<ProductListProps> = ({}) => {
   const { user } = useContext(AuthContext);
-  const { getCartAmount, delivery_fee, orderHistory, setOrderHistory } =
+  const { getCartAmount, delivery_fee, setOrderHistory, setCartItems } =
     useShop();
   const subtotal = getCartAmount();
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
-  const [_, setPaymentToken] = useState<string | null>(null);
-  const [hasPaid, setHasPaid] = useState<boolean>(false);
   const { getCartDetailsForOrder } = useShop();
-
   const orderedItems = getCartDetailsForOrder();
+
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -34,8 +79,8 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
   const {
     register,
     handleSubmit,
-    trigger,
-    formState: { errors, isValid },
+    formState: { errors },
+    reset,
   } = useForm({ mode: "onChange" });
 
   const finalTotal = subtotal - (subtotal * discount) / 100;
@@ -43,68 +88,82 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
   const applyCoupon = () => {
     if (coupon === "SAVE10") {
       setDiscount(10);
+      toast.success("Coupon applied successfully!");
     } else {
       toast.error("Invalid Coupon Code");
     }
   };
 
-  const handleOrderSubmission = async (data: any, token: string | null) => {
+  const handleOrderSubmission = async (data: any, token: string) => {
     const today = new Date().toISOString();
+
+    // if (
+    //   !data.firstName ||
+    //   !data.email ||
+    //   !data.lastName ||
+    //   !data.address ||
+    //   !data.zipCode
+    // ) {
+    //   toast.error(
+    //     "Please fill in all required fields before placing your order."
+    //   );
+    // }
 
     let orderData = {
       ...data,
-      user: user.id,
-      totalPrice: finalTotal + delivery_fee,
+      user: user?.id,
+      totalPrice: Number(finalTotal + delivery_fee),
       coupon,
       currency: "GBP",
       discount,
       sourceId: token,
       orderedItems,
       paidAt: today,
-      shippingPrice: delivery_fee,
-      paymentMethod: "Card",
+      shippingPrice: Number(delivery_fee),
     };
 
-    setOrderHistory([...orderHistory, orderData]);
-
-    if (token) {
-      try {
-        const res = await Axios.post(`${URL}/orders`, orderData);
-        console.log(res.data);
-        setOrderHistory([...orderHistory, res.data]);
-        toast("Order placed successfully!");
-      } catch (error) {
-        console.error("Order submission failed:", error);
-        toast.error("Order submission failed. Please try again.");
-      }
+    try {
+      const res = await Axios.post(`${URL}/orders`, orderData);
+      showOrderSummary(res.data);
+      setOrderHistory((prevHistory: any) => [...prevHistory, res.data]);
+      // setNoUserOrderHistory((prevHistory: any) => [...prevHistory, res.data]);
+      setCartItems({});
+      reset();
+      toast.success("Order placed successfully!");
+    } catch (error) {
+      toast.error("Order submission failed. Please try again.");
     }
-
-    setPaymentToken(null);
-    setHasPaid(false); // Reset payment state for the next order
-    // toast("Order placed successfully!");
-    trigger(); // Revalidate form to ensure button behaves as expected
   };
 
   const onPaymentSuccess = (token: string) => {
-    setHasPaid(true);
-    if (isValid && token) {
+    if (token) {
       handleSubmit((data) => handleOrderSubmission(data, token))();
     }
   };
 
-  // const APP_ID = import.meta.env.VITE_SQUARE_APP_ID;
-  // const LOCATION_ID = import.meta.env.VITE_SQUARE_LOCATION_ID;
+  const validateZipCode = (zip: string) => {
+    const pattern = zipCodePatterns[selectedCountry] || /^[A-Za-z0-9 -]{3,10}$/;
+    return pattern.test(zip) || "Invalid postal code format";
+  };
 
   return (
     <section className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Section: Delivery Information */}
+        <div className="rb-12 mb-12 md:mb-5 border-b border-border-secondary ">
+          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+            Check out
+          </h2>
+          <p className="md:text-md pb-5">
+            Please make sure to fill the input fields before checking out.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-5">
           <div>
             <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-            <form className="grid grid-cols-2 gap-6">
-              {/* Form Fields */}
-              <div className="relative w-full">
+            <form className="grid grid-cols-2 gap-3">
+              {/* Form fields with proper validation */}
+              <div className="relative w-full mb-1">
+                <label>First Name</label>
                 <input
                   {...register("firstName", {
                     required: "First name is required",
@@ -119,7 +178,9 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   </p>
                 )}
               </div>
-              <div className="relative w-full">
+              {/* Other fields follow similar structure */}
+              <div className="relative w-full mb-1">
+                <label>Last Name</label>
                 <input
                   {...register("lastName", {
                     required: "Last name is required",
@@ -134,7 +195,8 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   </p>
                 )}
               </div>
-              <div className="relative w-full col-span-2">
+              <div className="relative w-full col-span-2 mb-1">
+                <label>Email</label>
                 <input
                   {...register("email", {
                     required: "Email is required",
@@ -154,9 +216,60 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   </p>
                 )}
               </div>
+              <div className="relative w-full col-span-2 mb-1">
+                <label>Country</label>
+                <select
+                  {...register("country", { required: "Country is required" })}
+                  value={selectedCountry}
+                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                >
+                  <option value="">Select Country</option>
+                  {Country.getAllCountries().map((country) => (
+                    <option key={country.isoCode} value={country.isoCode}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="relative w-full mb-1">
+                <label>State</label>
+                <select
+                  {...register("state", { required: "State is required" })}
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                >
+                  <option value="">Select State</option>
+                  {State.getStatesOfCountry(selectedCountry).map((state) => (
+                    <option key={state.isoCode} value={state.isoCode}>
+                      {state.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="relative w-full mb-1">
+                <label>City</label>
+                <select
+                  {...register("city", { required: "City is required" })}
+                  value={selectedCity}
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                >
+                  <option value="">Select City</option>
+                  {City.getCitiesOfState(selectedCountry, selectedState).map(
+                    (city) => (
+                      <option key={city.name} value={city.name}>
+                        {city.name}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
 
               {/* address */}
-              <div className="relative w-full col-span-2">
+              <div className="relative w-full mb-1">
+                <label>Address</label>
                 <input
                   {...register("address", { required: "Address is required" })}
                   type="text"
@@ -169,80 +282,36 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   </p>
                 )}
               </div>
-              {/* City */}
-              <div className="relative w-full">
-                <input
-                  {...register("city", { required: "City is required" })}
-                  type="text"
-                  placeholder="City"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                />
-                {errors.city && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.city.message)}
-                  </p>
-                )}
-              </div>
-              {/* State */}
-              <div className="relative w-full">
-                <input
-                  {...register("state", { required: "State is required" })}
-                  type="text"
-                  placeholder="State"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                />
-                {errors.state && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.state.message)}
-                  </p>
-                )}
-              </div>
-              {/* Zipcode */}
-              <div className="relative w-full">
+
+              {/* Zip Code */}
+              <div className="relative w-full mb-1">
+                <label>Zip Code</label>
                 <input
                   {...register("zipCode", {
-                    required: "Zipcode is required",
-                    pattern: {
-                      value: /^[0-9]{5}$/,
-                      message: "Invalid zipcode format",
-                    },
+                    required: "Zip code is required",
+                    validate: validateZipCode,
                   })}
                   type="text"
-                  placeholder="Zipcode"
+                  placeholder="Zip code"
                   className="border border-border-secondary px-2 py-3 w-full rounded-md"
                 />
-                {errors.zipcode && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.zipcode.message)}
-                  </p>
-                )}
-              </div>
-              {/* Country */}
-              <div className="relative w-full">
-                <input
-                  {...register("country", { required: "Country is required" })}
-                  type="text"
-                  placeholder="Country"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                />
-                {errors.country && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.country.message)}
+                {errors.zipCode && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.zipCode.message)}
                   </p>
                 )}
               </div>
             </form>
           </div>
 
-          {/* Right Section: Order Summary, Coupon, and Payment */}
           <div>
-            <h2 className="text-xl font-semibold mb-3">Payment</h2>
+            <h2 className="text-xl font-semibold mb-6">Payment</h2>
             <div className="mb-[18px] flex flex-col gap-[15px]">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
                 <p>
                   {finalTotal === 0
-                    ? "$0"
+                    ? "£0"
                     : formatAmount(finalTotal + delivery_fee)}
                 </p>
               </div>
@@ -254,13 +323,12 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                 <p>Total:</p>
                 <p>
                   {finalTotal === 0
-                    ? "$0"
+                    ? "£0"
                     : formatAmount(finalTotal + delivery_fee)}
                 </p>
               </div>
             </div>
 
-            {/* Coupon Section */}
             <div className="mb-3">
               <label
                 htmlFor="coupon"
@@ -286,7 +354,6 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
               </div>
             </div>
 
-            {/* Payment Form */}
             <PaymentForm
               applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
               locationId={"LNS0B6E8H9C06"}
@@ -301,24 +368,19 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
               <CreditCard
                 buttonProps={{
                   css: {
-                    backgroundColor:
-                      isValid && !hasPaid ? "#3d3d3d" : "#d1d5db",
+                    backgroundColor: "#3d3d3d",
                     fontSize: "18px",
-                    color: isValid && !hasPaid ? "#fff" : "#9ca3af",
+                    color: "#fff",
                     "&:hover": {
-                      backgroundColor:
-                        isValid && !hasPaid ? "#374151" : "#d1d5db",
+                      backgroundColor: "#374151",
                     },
                   },
-                  disabled: !isValid || hasPaid,
                 }}
               >
-                <p className="poppins">
-                  Place order{" "}
-                  {finalTotal === 0
-                    ? "$0"
-                    : formatAmount(finalTotal + delivery_fee)}
-                </p>
+                Place order{" "}
+                {finalTotal === 0
+                  ? "£0"
+                  : formatAmount(finalTotal + delivery_fee)}
               </CreditCard>
             </PaymentForm>
           </div>
@@ -329,3 +391,104 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
 };
 
 export default CheckOut;
+
+// {
+//     "user": "66dedaef81577d2dec786e94",
+//     "firstName": "Muizz",
+//     "lastName": "Muizz",
+//     "email": "muizz@gmail.com",
+//     "sourceId": "cnon:CA4SEK69FSpHbaS3MF781U3Qnb0YASgC",
+//     "currency": "GBP",
+//     "coupon": "",
+//     "orderedItems": [
+//         {
+//             "name": "Pink T-shirt",
+//             "qty": 1,
+//             "image": "https://res.cloudinary.com/dx2alxgiq/image/upload/v1730377838/product_images/djzdd3n6hxvw4j4wzyh0.png",
+//             "price": 10.99,
+//             "product": "672378ef27f78174ac01aa3c",
+//             "size": "M",
+//             "_id": "6734cb8772fc5fc34c4b5062"
+//         },
+//         {
+//             "name": "Pink T-shirt",
+//             "qty": 1,
+//             "image": "https://res.cloudinary.com/dx2alxgiq/image/upload/v1730377838/product_images/djzdd3n6hxvw4j4wzyh0.png",
+//             "price": 10.99,
+//             "product": "672378ef27f78174ac01aa3c",
+//             "size": "2XL",
+//             "_id": "6734cb8772fc5fc34c4b5063"
+//         }
+//     ],
+//     "address": "No 21A, Idoji, Okene",
+//     "city": "Kuje",
+//     "state": "FC",
+//     "zipCode": 905101,
+//     "country": "NG",
+//     "shippingPrice": 100,
+//     "totalPrice": 121.98,
+//     "paidAt": "2024-11-13T15:53:41.539Z",
+//     "isDelivered": false,
+//     "_id": "6734cb8772fc5fc34c4b5061",
+//     "createdAt": "2024-11-13T15:53:43.528Z",
+//     "updatedAt": "2024-11-13T15:53:43.528Z",
+//     "__v": 0,
+//     "paymentResult": {
+//         "payment": {
+//             "id": "bJIDTWlENfCLSxhEfvnCZuSVLcVZY",
+//             "createdAt": "2024-11-13T15:53:56.559Z",
+//             "updatedAt": "2024-11-13T15:53:56.796Z",
+//             "amountMoney": {
+//                 "amount": "12198",
+//                 "currency": "GBP"
+//             },
+//             "totalMoney": {
+//                 "amount": "12198",
+//                 "currency": "GBP"
+//             },
+//             "approvedMoney": {
+//                 "amount": "12198",
+//                 "currency": "GBP"
+//             },
+//             "status": "COMPLETED",
+//             "delayDuration": "PT168H",
+//             "delayAction": "CANCEL",
+//             "delayedUntil": "2024-11-20T15:53:56.559Z",
+//             "sourceType": "CARD",
+//             "cardDetails": {
+//                 "status": "CAPTURED",
+//                 "card": {
+//                     "cardBrand": "VISA",
+//                     "last4": "1111",
+//                     "expMonth": "11",
+//                     "expYear": "2024",
+//                     "fingerprint": "sq-1-9QI3c6XiavYctLcKqqQgOQgB8PprRp9AWXEAVoXK5FnFhUcpTueuxpAY72n_evNbIw",
+//                     "cardType": "CREDIT",
+//                     "prepaidType": "NOT_PREPAID",
+//                     "bin": "411111"
+//                 },
+//                 "entryMethod": "KEYED",
+//                 "cvvStatus": "CVV_ACCEPTED",
+//                 "avsStatus": "AVS_ACCEPTED",
+//                 "statementDescription": "SQ *DEFAULT TEST ACCOUNT",
+//                 "cardPaymentTimeline": {
+//                     "authorizedAt": "2024-11-13T15:53:56.696Z",
+//                     "capturedAt": "2024-11-13T15:53:56.796Z"
+//                 }
+//             },
+//             "locationId": "LNS0B6E8H9C06",
+//             "orderId": "xvFVjrT9P5ueqVXs4hZCSdVnClQZY",
+//             "riskEvaluation": {
+//                 "createdAt": "2024-11-13T15:53:56.696Z",
+//                 "riskLevel": "NORMAL"
+//             },
+//             "receiptNumber": "bJID",
+//             "receiptUrl": "https://squareupsandbox.com/receipt/preview/bJIDTWlENfCLSxhEfvnCZuSVLcVZY",
+//             "applicationDetails": {
+//                 "squareProduct": "ECOMMERCE_API",
+//                 "applicationId": "sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"
+//             },
+//             "versionToken": "hO4gkmRpOCXu8K9tTHlk1cKubHOad5pXe66XxeRrKOn6o"
+//         }
+//     }
+// }

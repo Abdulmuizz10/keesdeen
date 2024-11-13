@@ -130,13 +130,13 @@ const SearchModal: React.FC = () => {
                               />
                             ))}
                       </div>
-                      {filteredProducts && filteredProducts.length < 1 && (
-                        <div className="w-full flex justify-center">
+                      {/* {filteredProducts && filteredProducts.length < 1 && (
+                        <div className="w-full flex lg:hidden justify-center">
                           <p className="text-xl text-center">
                             Product is not available...
                           </p>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </div>

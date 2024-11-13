@@ -19,6 +19,7 @@
     "@tremor/react": "^3.18.1",
     "axios": "^0.19.2",
     "chart.js": "^4.4.4",
+    "country-state-city": "^3.2.1",
     "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
     "framer-motion": "^10.12.17",
@@ -31,6 +32,8 @@
     "react-square-web-payments-sdk": "^3.2.1",
     "react-table": "^7.8.0",
     "react-toastify": "^10.0.5",
+    "sweetalert2": "^11.14.5",
+    "sweetalert2-react-content": "^5.0.7",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {

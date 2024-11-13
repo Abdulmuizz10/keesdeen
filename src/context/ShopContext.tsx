@@ -10,6 +10,7 @@ import { getProducts } from "./ProductContext/ProductApiCalls";
 import { useProducts } from "./ProductContext/ProductContext";
 import Axios from "axios";
 import { URL } from "../lib/constants";
+import { AuthContext } from "./AuthContext/AuthContext";
 
 // Define the context type
 interface ShopContextType {
@@ -24,6 +25,8 @@ interface ShopContextType {
   getCartDetailsForOrder: any;
   wishLists: any;
   setWishLists: any;
+  noUserOrderHistory: any;
+  setNoUserOrderHistory: any;
   manageWishLists: any;
   isActive: any;
   setIsActive: any;
@@ -37,16 +40,24 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { user } = useContext(AuthContext);
   const { dispatch } = useProducts();
-  const [orderHistory, setOrderHistory] = useState<any>();
+  const [isActive, setIsActive] = useState(false);
+  const [orderHistory, setOrderHistory] = useState<any>([]);
+
   const [cartItems, setCartItems] = useState<any>(() => {
     const storedCart = localStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : {};
   });
-  const [isActive, setIsActive] = useState(false);
+
   const [wishLists, setWishLists] = useState(() => {
     const storedWishLists = localStorage.getItem("wishLists");
     return storedWishLists ? JSON.parse(storedWishLists) : [];
+  });
+
+  const [noUserOrderHistory, setNoUserOrderHistory] = useState(() => {
+    const storedNoUserOrderHistory = localStorage.getItem("noUserOrderHistory");
+    return storedNoUserOrderHistory ? JSON.parse(storedNoUserOrderHistory) : [];
   });
 
   const delivery_fee = 100;
@@ -64,6 +75,13 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   }, [wishLists]);
 
   useEffect(() => {
+    localStorage.setItem(
+      "noUserOrderHistory",
+      JSON.stringify(noUserOrderHistory)
+    );
+  }, [noUserOrderHistory]);
+
+  useEffect(() => {
     const fetchOrderHistory = async () => {
       const response = await Axios.get(`${URL}/orders/profile/orders`, {
         headers: {
@@ -74,7 +92,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
       setOrderHistory(response.data);
     };
     fetchOrderHistory();
-  }, []);
+  }, [user, location.pathname]);
 
   const addToCart = async (
     itemId: string,
@@ -221,6 +239,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         wishLists,
         setWishLists,
         manageWishLists,
+        noUserOrderHistory,
+        setNoUserOrderHistory,
         isActive,
         setIsActive,
         delivery_fee,

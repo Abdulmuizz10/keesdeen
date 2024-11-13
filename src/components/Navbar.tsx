@@ -94,7 +94,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                 {/* <div className="h-4 w-4 p-2 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full text-sm">
                   {getCartCount()}
                 </div> */}
-                {Number(getCartCount()) > 0 && (
+                {getCartCount() > 0 && (
                   <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
                     {getCartCount()}
                   </div>
@@ -160,7 +160,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             {/* <div className="h-4 w-4 p-1 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full flex items-center justify-center text-sm">
               {getCartCount()}
             </div> */}
-            {Number(getCartCount()) > 0 && (
+            {getCartCount() > 0 && (
               <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
                 {getCartCount()}
               </div>

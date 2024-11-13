@@ -26,6 +26,7 @@ import Checkout from "./pages/root pages/CheckOut";
 import WishLists from "./pages/root pages/WishLists";
 import NewArrivals from "./pages/root pages/NewArrivals";
 import Profile from "./pages/root pages/Profile";
+import OrderHistory from "./pages/root pages/OrderHistory";
 
 // Auth Pages
 import { Login7 } from "./pages/auth pages/Login";
@@ -116,6 +117,7 @@ const App: React.FC = () => {
               path="/check_out"
               element={<Checkout products={products} />}
             />
+            <Route path="/order_history" element={<OrderHistory />} />
           </Route>
 
           {/* Admin Routes (Only accessible to admins) */}
