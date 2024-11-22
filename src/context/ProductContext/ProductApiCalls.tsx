@@ -22,6 +22,7 @@ import {
 import { Dispatch } from "react";
 import { Product } from "../../lib/types";
 import { URL } from "../../lib/constants";
+import { toast } from "react-toastify";
 
 type ProductAction =
   | ReturnType<typeof getProductsStart>
@@ -47,7 +48,7 @@ type ProductAction =
 export const getProducts = async (dispatch: Dispatch<ProductAction>) => {
   dispatch(getProductsStart());
   try {
-    const res = await axios.get<Product[]>(`${URL}/products`, {});
+    const res = await axios.get<Product[]>(`${URL}/products`);
     dispatch(getProductsSuccess(res.data));
   } catch (err) {
     dispatch(getProductsFailure());
@@ -121,6 +122,7 @@ export const createReview = async (
       reviewInfo
     );
     dispatch(createReviewSuccess(res.data));
+    toast.success("Thanks for the review");
   } catch (err) {
     dispatch(createReviewFailure());
   }

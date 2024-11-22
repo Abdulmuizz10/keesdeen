@@ -1,6 +1,9 @@
 import mainLogo from "./Main logo.png";
 import mainLogoWhite from "./Main logo white.png";
 import smallLogo from "./Fvaicon.png";
+import tracking from "./images/tracking.jpg";
+import card from "./images/card.jpg";
+
 export { mainLogo, smallLogo, mainLogoWhite };
 
 import img_1 from "./product-images/p_img1.png";
@@ -99,4 +102,6 @@ export const Images = {
   img_43,
   img_44,
   img_45,
+  card,
+  tracking,
 };

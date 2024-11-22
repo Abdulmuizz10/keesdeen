@@ -51,7 +51,7 @@ const SearchModal: React.FC = () => {
                 <CiSearch className="text-3xl cursor-pointer text-text-primary my-2" />
                 <input
                   type="text"
-                  className="w-full bg-transparent focus:outline-none  py-2"
+                  className="w-full bg-transparent focus:outline-none py-2 poppins"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   placeholder="Search product..."

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ChangeEvent, FormEvent } from "react";
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   getProduct,
 } from "../context/ProductContext/ProductApiCalls";
 import { useProducts } from "../context/ProductContext/ProductContext";
+import { AuthContext } from "../context/AuthContext/AuthContext";
 
 interface ReviewsProps {
   // currentReviews: Review[];
@@ -21,14 +22,19 @@ interface ReviewsProps {
 }
 
 const Reviews: React.FC<ReviewsProps> = ({ id }) => {
+  const { user } = useContext(AuthContext);
   const [change, setChange] = useState<boolean>(true);
   const [sortOption, setSortOption] = useState<string>("oldest");
   const [reviews, setReviews] = useState<Review[]>([]);
   const { product, dispatch } = useProducts();
 
   useEffect(() => {
-    getProduct(id, dispatch);
-    setReviews(product.reviews);
+    const fetchData = async () => {
+      await getProduct(id, dispatch);
+      setReviews(product.reviews);
+    };
+
+    fetchData();
   }, [id]);
 
   const [newReview, setNewReview] = useState<Review>({
@@ -50,7 +56,11 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
     const today = new Date().toISOString();
 
     setReviews([...reviews, { ...newReview, date: today }]);
-    createReview({ ...newReview, date: today }, id, dispatch);
+    createReview(
+      { ...newReview, date: today, user: user ? user.id : null },
+      id,
+      dispatch
+    );
     setNewReview({
       name: "",
       rating: 0,

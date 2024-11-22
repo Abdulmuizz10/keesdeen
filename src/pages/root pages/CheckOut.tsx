@@ -5,13 +5,22 @@ import { useShop } from "../../context/ShopContext";
 import { formatAmount } from "../../lib/utils";
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { toast } from "react-toastify";
-import { Product } from "../../lib/types";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
+
 import { AuthContext } from "../../context/AuthContext/AuthContext";
-import { Country, State, City } from "country-state-city";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import { Country, State } from "country-state-city";
+
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { useOrders } from "../../context/OrderContext/OrderContext";
+import { createOrder } from "../../context/OrderContext/OrderApiCalls";
+import Spinner from "../../components/Spinner";
+
+import {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+} from "@relume_io/relume-ui";
 
 const zipCodePatterns: { [key: string]: RegExp } = {
   US: /^[0-9]{5}(-[0-9]{4})?$/,
@@ -21,56 +30,22 @@ const zipCodePatterns: { [key: string]: RegExp } = {
   IN: /^\d{6}$/,
 };
 
-interface ProductListProps {
-  products: Product[];
-}
-
-const MySwal = withReactContent(Swal);
-
-const showOrderSummary = (orderData: any) => {
-  const itemsList = orderData.orderedItems
-    .map(
-      (item: any) =>
-        `<li>${item.qty} x ${item.name} (${item.size}) - £${item.price}</li>`
-    )
-    .join("");
-  MySwal.fire({
-    title: "Order Summary",
-    html: `
-      <strong>Name:</strong> ${orderData.firstName} ${orderData.lastName} <br/>
-      <strong>Email:</strong> ${orderData.email} <br/>
-      <strong>Shipping Address:</strong> ${orderData.address}, ${
-      orderData.city
-    }, ${orderData.state}, ${orderData.country} - ${orderData.zipCode}<br/>
-      <strong>Ordered Items:</strong>
-      <ul>${itemsList}</ul>
-      <strong>Total Price:</strong> £${orderData.totalPrice} <br/>
-      <strong>Paid At:</strong> ${new Date(
-        orderData.paidAt
-      ).toLocaleString()} <br/>
-      <strong>Payment Status:</strong> ${
-        orderData.paymentResult.payment.status
-      } <br/>
-    `,
-    icon: "success",
-    confirmButtonText: "Close",
-    confirmButtonColor: "#04BB6E",
-  });
-};
-
-const CheckOut: React.FC<ProductListProps> = ({}) => {
+const CheckOut: React.FC = ({}) => {
   const { user } = useContext(AuthContext);
-  const { getCartAmount, delivery_fee, setOrderHistory, setCartItems } =
-    useShop();
-  const subtotal = getCartAmount();
+  const { getCartAmount, delivery_fee, setCartItems, guestEmail } = useShop();
+  const { orderDispatch } = useOrders();
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
-  const { getCartDetailsForOrder } = useShop();
+  const { getCartDetailsForOrder, paymentLoader, setPaymentLoader } = useShop();
   const orderedItems = getCartDetailsForOrder();
 
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedCity, setSelectedCity] = useState<string>("");
+
+  const subtotal = getCartAmount();
+
+  // Calculate the final total
+  const finalTotal = subtotal - (subtotal * discount) / 100 + delivery_fee;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -81,9 +56,9 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch,
   } = useForm({ mode: "onChange" });
-
-  const finalTotal = subtotal - (subtotal * discount) / 100;
 
   const applyCoupon = () => {
     if (coupon === "SAVE10") {
@@ -111,25 +86,24 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
 
     let orderData = {
       ...data,
-      user: user?.id,
-      totalPrice: Number(finalTotal + delivery_fee),
+      ...(guestEmail ? { email: guestEmail } : {}),
+      user: user ? user.id : null,
+      totalPrice: finalTotal,
       coupon,
       currency: "GBP",
       discount,
       sourceId: token,
       orderedItems,
       paidAt: today,
-      shippingPrice: Number(delivery_fee),
+      shippingPrice: delivery_fee,
     };
 
     try {
-      const res = await Axios.post(`${URL}/orders`, orderData);
-      showOrderSummary(res.data);
-      setOrderHistory((prevHistory: any) => [...prevHistory, res.data]);
-      // setNoUserOrderHistory((prevHistory: any) => [...prevHistory, res.data]);
+      createOrder(orderData, orderDispatch, setPaymentLoader);
       setCartItems({});
+      setSelectedCountry("");
+      setSelectedState("");
       reset();
-      toast.success("Order placed successfully!");
     } catch (error) {
       toast.error("Order submission failed. Please try again.");
     }
@@ -137,7 +111,7 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
 
   const onPaymentSuccess = (token: string) => {
     if (token) {
-      handleSubmit((data) => handleOrderSubmission(data, token))();
+      handleSubmit((data: any) => handleOrderSubmission(data, token))();
     }
   };
 
@@ -146,12 +120,34 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
     return pattern.test(zip) || "Invalid postal code format";
   };
 
+  const phoneValidation = {
+    required: "Phone number is required",
+    validate: {
+      isValid: (value: string) =>
+        (value && value.length >= 10) || "Invalid phone number",
+    },
+  };
+
+  React.useEffect(() => {
+    register("phoneNumber", phoneValidation);
+  }, [register]);
+
   return (
     <section className="px-[5%] py-24 md:py-30">
+      {paymentLoader && (
+        <Dialog open={true}>
+          <DialogPortal>
+            <DialogOverlay className="bg-black/50" autoFocus={true} />
+            <DialogContent className="w-full h-full flex items-center justify-center fixed">
+              <Spinner />
+            </DialogContent>
+          </DialogPortal>
+        </Dialog>
+      )}
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5 border-b border-border-secondary ">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            Check out
+            Checkout
           </h2>
           <p className="md:text-md pb-5">
             Please make sure to fill the input fields before checking out.
@@ -170,7 +166,7 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   })}
                   type="text"
                   placeholder="First name"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
                 />
                 {errors.firstName && (
                   <p className="absolute text-red-500 text-sm mt-1">
@@ -187,7 +183,7 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   })}
                   type="text"
                   placeholder="Last name"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
                 />
                 {errors.lastName && (
                   <p className="absolute text-red-500 text-sm mt-1">
@@ -195,36 +191,40 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   </p>
                 )}
               </div>
-              <div className="relative w-full col-span-2 mb-1">
-                <label>Email</label>
-                <input
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value:
-                        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                      message: "Invalid email address",
-                    },
-                  })}
-                  type="email"
-                  placeholder="Email address"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                />
-                {errors.email && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.email.message)}
-                  </p>
-                )}
-              </div>
-              <div className="relative w-full col-span-2 mb-1">
+
+              {!guestEmail && (
+                <div className="relative w-full col-span-2 mb-1">
+                  <label>Email</label>
+                  <input
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value:
+                          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    type="email"
+                    placeholder="Email address"
+                    className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
+                  />
+                  {errors.email && (
+                    <p className="absolute text-red-500 text-sm mt-1">
+                      {String(errors.email.message)}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="relative w-full mb-1">
                 <label>Country</label>
                 <select
                   {...register("country", { required: "Country is required" })}
                   value={selectedCountry}
                   onChange={(e) => setSelectedCountry(e.target.value)}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
                 >
-                  <option value="">Select Country</option>
+                  <option value="">Select country</option>
                   {Country.getAllCountries().map((country) => (
                     <option key={country.isoCode} value={country.isoCode}>
                       {country.name}
@@ -233,14 +233,16 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                 </select>
               </div>
               <div className="relative w-full mb-1">
-                <label>State</label>
+                <label>Select City/Region</label>
                 <select
-                  {...register("state", { required: "State is required" })}
+                  {...register("cityAndRegion", {
+                    required: "City or Region is required",
+                  })}
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
                 >
-                  <option value="">Select State</option>
+                  <option value="">Select city/region</option>
                   {State.getStatesOfCountry(selectedCountry).map((state) => (
                     <option key={state.isoCode} value={state.isoCode}>
                       {state.name}
@@ -248,37 +250,59 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   ))}
                 </select>
               </div>
-              <div className="relative w-full mb-1">
-                <label>City</label>
-                <select
-                  {...register("city", { required: "City is required" })}
-                  value={selectedCity}
-                  onChange={(e) => setSelectedCity(e.target.value)}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                >
-                  <option value="">Select City</option>
-                  {City.getCitiesOfState(selectedCountry, selectedState).map(
-                    (city) => (
-                      <option key={city.name} value={city.name}>
-                        {city.name}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
 
               {/* address */}
               <div className="relative w-full mb-1">
-                <label>Address</label>
+                <label>Address Line one</label>
                 <input
-                  {...register("address", { required: "Address is required" })}
+                  {...register("addressLineOne", {
+                    required: "Address is required",
+                  })}
                   type="text"
-                  placeholder="Address"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  placeholder="Address line one"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
                 />
-                {errors.address && (
+                {errors.addressLineOne && (
                   <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.address.message)}
+                    {String(errors.addressLineOne.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="relative w-full mb-1">
+                <label>
+                  Address Line two{" "}
+                  <span className="hidden md:flex">(optional)</span>
+                </label>
+                <input
+                  {...register("addressLineTwo")}
+                  type="text"
+                  placeholder="Address line two optional"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
+                />
+                {/* {errors.addressLineTwo && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.addressLineTwo.message)}
+                  </p>
+                )} */}
+              </div>
+
+              {/* Phone Number */}
+              <div className="relative w-full mb-1">
+                <label>Phone Number</label>
+                <PhoneInput
+                  country="us"
+                  value={watch("phoneNumber")}
+                  onChange={(phone) =>
+                    setValue("phoneNumber", phone, { shouldValidate: true })
+                  }
+                  inputClass="w-full border border-border-secondary px-2 py-6 rounded-md poppins"
+                  containerClass="w-full"
+                  placeholder=""
+                />
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.phoneNumber.message)}
                   </p>
                 )}
               </div>
@@ -293,7 +317,7 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   })}
                   type="text"
                   placeholder="Zip code"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md poppins"
                 />
                 {errors.zipCode && (
                   <p className="text-red-500 text-sm mt-1">
@@ -309,23 +333,18 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
             <div className="mb-[18px] flex flex-col gap-[15px]">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
-                <p>
-                  {finalTotal === 0
-                    ? "£0"
-                    : formatAmount(finalTotal + delivery_fee)}
-                </p>
+                <p>{formatAmount(subtotal)}</p>
               </div>
               <div className="flex justify-between">
                 <p>Discount:</p>
-                <p>{discount}%</p>
+                <p>
+                  {discount}% -{" "}
+                  {discount > 0 && ((finalTotal * discount) / 100).toFixed(1)}%
+                </p>
               </div>
               <div className="flex justify-between font-bold">
                 <p>Total:</p>
-                <p>
-                  {finalTotal === 0
-                    ? "£0"
-                    : formatAmount(finalTotal + delivery_fee)}
-                </p>
+                <p>{formatAmount(finalTotal)}</p>
               </div>
             </div>
 
@@ -361,6 +380,7 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                 if (tokenResult.errors) {
                   toast.error("Payment failed. Please try again.");
                 } else {
+                  setPaymentLoader(true);
                   onPaymentSuccess(tokenResult.token);
                 }
               }}
@@ -377,10 +397,7 @@ const CheckOut: React.FC<ProductListProps> = ({}) => {
                   },
                 }}
               >
-                Place order{" "}
-                {finalTotal === 0
-                  ? "£0"
-                  : formatAmount(finalTotal + delivery_fee)}
+                {formatAmount(finalTotal)}
               </CreditCard>
             </PaymentForm>
           </div>

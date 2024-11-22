@@ -111,7 +111,7 @@ export const Login7: React.FC = (props: Login7Props) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-neutral-300 rounded"
+                  className="border-neutral-300 rounded poppins"
                 />
               </div>
               <div className="grid w-full items-center">
@@ -124,7 +124,7 @@ export const Login7: React.FC = (props: Login7Props) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="border-neutral-300 rounded"
+                  className="border-neutral-300 rounded poppins"
                 />
               </div>
               <div className="grid-col-1 grid gap-4">
@@ -133,6 +133,7 @@ export const Login7: React.FC = (props: Login7Props) => {
                   size={logInButton.size}
                   iconLeft={logInButton.iconLeft}
                   iconRight={logInButton.iconRight}
+                  className="poppins"
                 >
                   {logInButton.title}
                 </Button>
@@ -143,7 +144,7 @@ export const Login7: React.FC = (props: Login7Props) => {
               size={logInWithGoogleButton.size}
               iconLeft={logInWithGoogleButton.iconLeft}
               iconRight={logInWithGoogleButton.iconRight}
-              className="bg-gray-300 hover:bg-gray-400 text-black rounded flex items-center gap-x-3 w-full mt-3"
+              className="bg-gray-300 hover:bg-gray-400 text-black rounded flex items-center gap-x-3 w-full mt-3 poppins"
               onClick={() => googleLogin()}
             >
               {logInWithGoogleButton.title}

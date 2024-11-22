@@ -1,20 +1,12 @@
 export interface AuthState {
-  user: any | User;
+  user: any;
   isFetching: boolean;
   error: boolean;
 }
 
-export interface User {
-  id: string;
-  username: string;
-  email: string;
-  isAdmin: string;
-  token: string;
-}
-
 export type AuthAction =
   | { type: "ACCESS_START" }
-  | { type: "ACCESS_SUCCESS"; payload: User }
+  | { type: "ACCESS_SUCCESS"; payload: any }
   | { type: "ACCESS_FAILURE" }
   | { type: "LOGOUT" };
 
@@ -72,6 +64,37 @@ export type ProductAction =
   | { type: "DELETE_PRODUCT_START" }
   | { type: "DELETE_PRODUCT_SUCCESS"; payload: string } // Assuming payload is a product ID (string)
   | { type: "DELETE_PRODUCT_FAILURE" };
+
+export interface OrderState {
+  orders: any;
+  order: any;
+  isFetching: boolean;
+  error: boolean;
+}
+
+export type OrderAction =
+  | { type: "GET_ORDERS_START" }
+  | { type: "GET_ORDERS_SUCCESS"; payload: any[] } // Replace `any[]` with a specific product array type if available
+  | { type: "GET_ORDERS_FAILURE" }
+  | { type: "GET_ORDER_START" }
+  | { type: "GET_ORDER_SUCCESS"; payload: any } // Replace `any[]` with a specific product array type if available
+  | { type: "GET_ORDER_FAILURE" }
+  | { type: "CREATE_ORDER_START" }
+  | { type: "CREATE_ORDER_SUCCESS"; payload: any } // Replace `any` with specific product type if available
+  | { type: "CREATE_ORDER_FAILURE" }
+  | { type: "UPDATE_ORDER_TO_DELIVERED_START" }
+  | { type: "UPDATE_ORDER_TO_DELIVERED_SUCCESS"; payload: any } // Replace `any` with specific product type if available
+  | { type: "UPDATE_ORDER_TO_DELIVERED_FAILURE" }
+  | { type: "LINK_GUEST_ORDERS_START" }
+  | { type: "LINK_GUEST_ORDERS_SUCCESS"; payload: any } // Replace `any` with specific product type if available
+  | { type: "LINK_GUEST_ORDERS_FAILURE" }
+  | { type: "GET_PROFILE_ORDERS_START" }
+  | { type: "GET_PROFILE_ORDERS_SUCCESS"; payload: any[] }
+  | { type: "GET_PROFILE_ORDERS_FAILURE" }
+  | { type: "GET_ORDERS_BY_GUEST_START" }
+  | { type: "GET_ORDERS_BY_GUEST_SUCCESS"; payload: any[] } // Assuming payload is a product ID (string)
+  | { type: "GET_ORDERS_BY_GUEST_FAILURE" }
+  | { type: "LOGOUT_ORDER" };
 
 export interface Review {
   name: string;

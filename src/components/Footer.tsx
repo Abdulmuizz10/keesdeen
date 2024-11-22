@@ -3,6 +3,7 @@ import { Button, Input } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { BiLogoFacebookCircle, BiLogoInstagram } from "react-icons/bi";
+import { FaTiktok } from "react-icons/fa";
 
 type ImageProps = {
   url?: string;
@@ -171,7 +172,16 @@ export const Footer1Defaults: Footer1Props = {
           url: "https://www.instagram.com/keesdeen_active?igsh=MWhvcnhqcjZra2ZlZw%3D%3D&utm_source=qr",
           icon: <BiLogoInstagram className="size-6" />,
         },
-        { title: "X", url: "#", icon: <FaXTwitter className="size-6 p-0.5" /> },
+        {
+          title: "X",
+          url: "https://x.com/keesdeenactive?s=11",
+          icon: <FaXTwitter className="size-6 p-0.5" />,
+        },
+        {
+          title: "Tiktok",
+          url: "https://www.tiktok.com/@keesdeen.active?_t=8qrPZMS37vE&_r=1",
+          icon: <FaTiktok className="size-6" />,
+        },
         // {
         //   title: "Youtube",
         //   url: "#",

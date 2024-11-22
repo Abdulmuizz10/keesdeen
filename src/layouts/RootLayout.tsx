@@ -13,7 +13,7 @@ interface RootLayoutProps {
 }
 
 const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
-  const { isActive, setIsActive, noUserOrderHistory, orderHistory } = useShop();
+  const { isActive, setIsActive, orderHistory } = useShop();
   const location = useLocation();
 
   useEffect(() => {
@@ -36,12 +36,11 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
             className="fixed bottom-[6%] sm:bottom-[8%] right-[5%] sm:right-[1%] flex items-center justify-center bg-brand-primary p-3 rounded-full"
           >
             <CiDeliveryTruck className="text-white text-2xl cursor-pointer" />
-            {noUserOrderHistory ||
-              (orderHistory > 0 && (
-                <div className="absolute right-[-4px] top-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
-                  {noUserOrderHistory?.length + orderHistory?.length}
-                </div>
-              ))}
+            {orderHistory > 0 && (
+              <div className="absolute right-[-4px] top-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
+                {orderHistory?.length}
+              </div>
+            )}
           </Link>
           <Footer1 />
         </div>

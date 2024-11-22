@@ -1,10 +1,28 @@
-import React from "react";
-import { useShop } from "../../context/ShopContext";
+import React, { useEffect } from "react";
 import Spinner from "../../components/Spinner";
 import { formatAmount } from "../../lib/utils";
+import { useOrders } from "../../context/OrderContext/OrderContext";
+import { useShop } from "../../context/ShopContext";
+import {
+  getGuestOrders,
+  getProfileOrders,
+} from "../../context/OrderContext/OrderApiCalls";
 
 const OrderHistory: React.FC = () => {
-  const { noUserOrderHistory, orderHistory } = useShop();
+  const { guestEmail } = useShop();
+  const { orders, orderDispatch } = useOrders();
+
+  useEffect(() => {
+    const fetchOrderHistory = async () => {
+      if (guestEmail) {
+        getGuestOrders(guestEmail, orderDispatch);
+      } else {
+        getProfileOrders(orderDispatch);
+      }
+    };
+    fetchOrderHistory();
+  }, [orderDispatch, guestEmail]);
+
   return (
     <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">
@@ -17,153 +35,78 @@ const OrderHistory: React.FC = () => {
             {/* <h3 className="text-3xl font-semibold mt-8 mb-4 text-text-primary">
               Order History
             </h3> */}
-            <div className="space-y-4 mt-8">
-              {noUserOrderHistory ? (
-                noUserOrderHistory.length > 0 ? (
-                  noUserOrderHistory.map((order: any) => (
+            <div className="space-y-6 mt-8">
+              {orders ? (
+                orders.length > 0 ? (
+                  orders.map((order: any) => (
                     <div
                       key={order.id}
-                      className="py-4 border-b border-border-secondary sm:grid sm:grid-cols-[4fr_1fr] flex flex-col sm:items-center "
+                      className="md:py-26 py-16 px-6 bg-white  border border-gray-200 rounded-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-transform cursor-pointer"
                     >
-                      <div className="flex flex-col gap-2">
-                        <p className="text-text-primary font-medium">
-                          Order ID: #{order._id}
+                      {/* Left Section: Order Info */}
+                      <div className="flex flex-col gap-8">
+                        <p className="text-lg font-semibold text-gray-800">
+                          Order ID:{" "}
+                          <span className="font-normal text-gray-600">
+                            #{order._id}
+                          </span>
                         </p>
-                        <div className="text-gray-500 text-end">
-                          <div className="flex gap-2 items-center">
-                            <p className="text-sm text-gray-500 ">
-                              {order?.paidAt?.split("").slice(0, 10)}
-                            </p>
-                            <p className="text-sm text-gray-500 ">
-                              {order?.paidAt?.split("").slice(11, 19)}
-                            </p>
-                          </div>
+                        <div className="text-sm text-gray-500 flex gap-1">
+                          <p>{order?.paidAt?.slice(0, 10)}</p>
+                          <p>{order?.paidAt?.slice(11, 19)}</p>
                         </div>
-                        <div className="hidden sm:flex items-center gap-2">
-                          <p className="text-text-primary font-medium">
+                        <div className="hidden sm:flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-medium text-gray-700">
                             Items:
                           </p>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             {order.orderedItems.map((i: any, index: number) => (
-                              <p className="text-brand-neutral" key={index}>
-                                {i.name},
-                              </p>
+                              <span
+                                key={index}
+                                className="px-3 py-2 bg-gray-100 text-gray-600 rounded-sm text-sm"
+                              >
+                                {i.name}
+                              </span>
                             ))}
                           </div>
                         </div>
                       </div>
-                      <div className="sm:text-end text-start max-md:mt-3">
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
+                      {/* Right Section: Order Summary */}
+                      <div className="flex flex-col gap-3 text-start sm:text-end">
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">
                             Total:
                           </p>
-                          <p className="font-semibold text-gray-500">
+                          <p className="text-xl font-bold text-green-600">
                             {formatAmount(order.totalPrice)}
                           </p>
                         </div>
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">
                             Status:
                           </p>
-                          <p className="font-semibold text-gray-500">
-                            {order.isDelivered === false
-                              ? "Pending"
-                              : "Processed"}
+                          <p
+                            className={`text-sm font-semibold ${
+                              order.isDelivered
+                                ? "text-brand-primary"
+                                : "text-brand-secondary"
+                            }`}
+                          >
+                            {order.isDelivered ? "Processed" : "Pending"}
                           </p>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <></>
-                )
-              ) : (
-                <div className="w-full flex justify-center">
-                  <Spinner />
-                </div>
-              )}
-              {orderHistory ? (
-                orderHistory.length > 0 ? (
-                  orderHistory.map((order: any) => (
-                    <div
-                      key={order.id}
-                      className="py-4 border-b border-border-secondary sm:grid sm:grid-cols-[4fr_1fr] flex flex-col sm:items-center "
-                    >
-                      <div className="flex flex-col gap-2">
-                        <p className="text-text-primary font-medium">
-                          Order ID: #{order._id}
-                        </p>
-                        <div className="text-gray-500 text-end">
-                          <div className="flex gap-2 items-center">
-                            <p className="text-sm text-gray-500 ">
-                              {order?.paidAt?.split("").slice(0, 10)}
-                            </p>
-                            <p className="text-sm text-gray-500 ">
-                              {order?.paidAt?.split("").slice(11, 19)}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="hidden sm:flex items-center gap-2">
-                          <p className="text-text-primary font-medium">
-                            Items:
-                          </p>
-                          <div className="flex items-center gap-2">
-                            {order.orderedItems.map((i: any, index: number) => (
-                              <p className="text-brand-neutral" key={index}>
-                                {i.name},
-                              </p>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="sm:text-end text-start max-md:mt-3">
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
-                            Total:
-                          </p>
-                          <p className="font-semibold text-gray-500">
-                            {formatAmount(order.totalPrice)}
-                          </p>
-                        </div>
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
-                            Status:
-                          </p>
-                          <p className="font-semibold text-gray-500">
-                            {order.isDelivered === false
-                              ? "Pending"
-                              : "Processed"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <></>
-                )
-              ) : (
-                <div className="w-full flex justify-center">
-                  <Spinner />
-                </div>
-              )}
-              {/* {noUserOrderHistory?.length === 0 &&
-              orderHistory?.length === 0 ? (
-                <p className="text-center text-gray-500">
-                  No order history available.
-                </p>
-              ) : (
-                <></>
-              )} */}
-              {orderHistory && noUserOrderHistory ? (
-                orderHistory.length === 0 && noUserOrderHistory.length === 0 ? (
                   <p className="text-center text-gray-500">
                     No order history available.
                   </p>
-                ) : (
-                  <></>
                 )
               ) : (
-                <></>
+                <div className="w-full flex justify-center">
+                  <Spinner />
+                </div>
               )}
             </div>
           </div>

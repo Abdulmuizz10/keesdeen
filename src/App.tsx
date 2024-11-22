@@ -31,6 +31,7 @@ import OrderHistory from "./pages/root pages/OrderHistory";
 // Auth Pages
 import { Login7 } from "./pages/auth pages/Login";
 import { Signup7 } from "./pages/auth pages/SignUp";
+import { GuestSignUp } from "./pages/auth pages/GuestSignUp";
 
 // Admin Pages
 
@@ -68,8 +69,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       setAnimation(false);
       window.scrollTo(0, 0);
-      window.scrollTo(0, 0);
-    }, 10000);
+    }, 5000);
   }, []);
 
   const { user } = useContext(AuthContext);
@@ -113,10 +113,7 @@ const App: React.FC = () => {
               element={<WishLists products={products} />}
             />
             <Route path="/profile" element={<Profile />} />
-            <Route
-              path="/check_out"
-              element={<Checkout products={products} />}
-            />
+            <Route path="/check_out" element={<Checkout />} />
             <Route path="/order_history" element={<OrderHistory />} />
           </Route>
 
@@ -159,9 +156,10 @@ const App: React.FC = () => {
           </Route> */}
 
           {/* Auth Routes */}
-          <Route element={<AuthLayout />}>
+          <Route element={<AuthLayout animation={animation} />}>
             <Route path="/register/login" element={<Login7 />} />
             <Route path="/register/signUp" element={<Signup7 />} />
+            <Route path="/register/guest-signUp" element={<GuestSignUp />} />
           </Route>
         </Routes>
       </Router>

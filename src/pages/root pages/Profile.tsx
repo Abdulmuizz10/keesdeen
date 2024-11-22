@@ -1,11 +1,13 @@
 import { Button } from "@relume_io/relume-ui";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
-import { Logout } from "../../context/AuthContext/AuthActions";
-import { useShop } from "../../context/ShopContext";
-import { useNavigate } from "react-router-dom";
-import Spinner from "../../components/Spinner";
-import { formatAmount } from "../../lib/utils";
+// import Spinner from "../../components/Spinner";
+// import { formatAmount } from "../../lib/utils";
+import { useOrders } from "../../context/OrderContext/OrderContext";
+import { getProfileOrders } from "../../context/OrderContext/OrderApiCalls";
+import LogOutButton from "../../components/LogOutButton";
+import { Link } from "react-router-dom";
+import { profileLinks } from "../../lib/constants";
 
 export interface UserProfile {
   id: string;
@@ -15,9 +17,8 @@ export interface UserProfile {
 }
 
 const Profile: React.FC = () => {
-  const { user, dispatch } = useContext(AuthContext);
-  const { setWishLists, setCartItems, orderHistory, noUserOrderHistory } =
-    useShop();
+  const { user } = useContext(AuthContext);
+  const { orderDispatch } = useOrders();
 
   const sampleUser: UserProfile = {
     id: user.id,
@@ -29,18 +30,15 @@ const Profile: React.FC = () => {
   const [updatedUser, setUpdatedUser] = useState<UserProfile>(sampleUser);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editedName, setEditedName] = useState<string>(updatedUser.name);
-  const navigate = useNavigate();
+
   const handleSave = () => {
     setUpdatedUser({ ...updatedUser, name: editedName });
     setIsEditing(false);
   };
 
-  const handleLogout = () => {
-    dispatch(Logout());
-    setWishLists([]);
-    setCartItems({});
-    navigate("/");
-  };
+  useEffect(() => {
+    getProfileOrders(orderDispatch);
+  }, [orderDispatch, user]);
 
   return (
     <section id="profile" className="px-[5%] py-24 md:py-30">
@@ -92,156 +90,49 @@ const Profile: React.FC = () => {
             </div>
           </div>
 
-          {/* Order History Section */}
-          <div className="mt-12 border-t border-border-secondary">
-            <h3 className="text-3xl font-semibold mt-8 mb-4 text-text-primary">
-              Order History
-            </h3>
-            <div className="space-y-4">
-              {noUserOrderHistory ? (
-                noUserOrderHistory.length > 0 ? (
-                  noUserOrderHistory.map((order: any) => (
-                    <div
-                      key={order.name}
-                      className="py-4 border-b border-border-secondary sm:grid sm:grid-cols-[4fr_1fr] flex flex-col sm:items-center "
+          <div className=" space-y-10 mt-20">
+            {profileLinks.map((item, index) => (
+              <div key={index} className="focus-visible:outline-none">
+                <div className="flex flex-col gap-y-6 md:gap-y-8">
+                  <div className="grid auto-cols-fr items-center border border-gray-200 rounded-md lg:grid-cols-2">
+                    <Link
+                      to={item.route}
+                      className="relative block aspect-video size-full lg:aspect-auto"
                     >
-                      <div className="flex flex-col gap-2">
-                        <p className="text-text-primary font-medium">
-                          Order ID: #{order._id}
-                        </p>
-                        <div className="text-gray-500 text-end">
-                          {order?.paidAt ? (
-                            <div className="flex gap-2 items-center ">
-                              <p className="text-sm text-gray-500 ">
-                                {order.paidAt.slice(0, 10)}
-                              </p>
-                              <p className="text-sm text-gray-500 ">
-                                {order.paidAt.slice(11, 19)}
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-sm text-gray-500">
-                              No date available
-                            </p>
-                          )}
-                        </div>
-                        <div className="hidden sm:flex items-center gap-2">
-                          <p className="text-text-primary font-medium">
-                            Items:
-                          </p>
-                          <div className="flex items-center gap-2">
-                            {order.orderedItems.map((i: any, index: number) => (
-                              <p className="text-brand-neutral" key={index}>
-                                {i.name},
-                              </p>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="sm:text-end text-start max-md:mt-3">
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
-                            Total:
-                          </p>
-                          <p className="text-gray-500">
-                            {formatAmount(order.totalPrice)}
-                          </p>
-                        </div>
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
-                            Status:
-                          </p>
-                          <p className="text-gray-500">
-                            {order.isDelivered === false
-                              ? "Pending"
-                              : "Processed"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <></>
-                )
-              ) : (
-                <></>
-              )}
-              {orderHistory ? (
-                orderHistory.length > 0 ? (
-                  orderHistory.map((order: any) => (
-                    <div
-                      key={order.id}
-                      className="py-4 border-b border-border-secondary sm:grid sm:grid-cols-[4fr_1fr] flex flex-col sm:items-center "
-                    >
-                      <div className="flex flex-col gap-2">
-                        <p className="text-text-primary font-medium">
-                          Order ID: #{order._id}
-                        </p>
-                        <div className="text-gray-500 text-end">
-                          <div className="flex gap-2 items-center">
-                            <p className="text-sm text-gray-500 ">
-                              {order?.paidAt?.split("").slice(0, 10)}
-                            </p>
-                            <p className="text-sm text-gray-500 ">
-                              {order?.paidAt?.split("").slice(11, 19)}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="hidden sm:flex items-center gap-2">
-                          <p className="text-text-primary font-medium">
-                            Items:
-                          </p>
-                          <div className="flex items-center gap-2">
-                            {order.orderedItems.map((i: any, index: number) => (
-                              <p className="text-brand-neutral" key={index}>
-                                {i.name},
-                              </p>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="sm:text-end text-start max-md:mt-3">
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
-                            Total:
-                          </p>
-                          <p className="font-semibold text-gray-500">
-                            {formatAmount(order.totalPrice)}
-                          </p>
-                        </div>
-                        <div className="flex items-center sm:justify-end justify-start gap-2">
-                          <p className="font-semibold text-text-primary">
-                            Status:
-                          </p>
-                          <p className="font-semibold text-gray-500">
-                            {order.isDelivered === false
-                              ? "Pending"
-                              : "Processed"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500">
-                    No order history available.
-                  </p>
-                )
-              ) : (
-                <div className="w-full flex justify-center">
-                  <Spinner />
-                </div>
-              )}
-            </div>
+                      <img
+                        src={item.image}
+                        alt="Relume placeholder image 1"
+                        className="absolute size-full object-cover"
+                      />
+                      <div className="absolute left-6 top-6 flex items-center bg-background-secondary px-2 py-1 text-sm font-semibold md:left-8 md:top-8"></div>
+                    </Link>
+                    <div className="p-6 md:p-8">
+                      <h2 className="mt-5 text-2xl font-bold md:mt-6 md:text-6xl">
+                        {item.title}
+                      </h2>
 
-            <div className="w-full flex justify-end mt-10 lg:mt-14">
-              <Button
-                className="bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full"
-                onClick={() => handleLogout()}
-              >
-                Log out
-              </Button>
-            </div>
+                      <div className="my-5 md:my-7">
+                        <p className="mt-2">{item.text}</p>
+                      </div>
+                      <Link to={item.route}>
+                        <Button
+                          // className="focus-visible:ring-border-primary inline-flex gap-3 items-center justify-center whitespace-nowrap ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-border-primary text-text-primary bg-background-primary px-6 py-3 mt-5 md:mt-6 w-full"
+
+                          className="bg-brand-neutral text-white rounded-md py-3 px-10 w-full"
+                        >
+                          View details
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                  {/* Additional sections follow the same structure */}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="w-full flex justify-end mt-10 lg:mt-14">
+            <LogOutButton />
           </div>
         </div>
       )}

@@ -8,15 +8,14 @@ import React, {
 import { toast } from "react-toastify";
 import { getProducts } from "./ProductContext/ProductApiCalls";
 import { useProducts } from "./ProductContext/ProductContext";
-import Axios from "axios";
-import { URL } from "../lib/constants";
-import { AuthContext } from "./AuthContext/AuthContext";
 
 // Define the context type
 interface ShopContextType {
   cartItems: any;
   orderHistory: any;
   setOrderHistory: any;
+  guestEmail: any;
+  setGuestEmail: any;
   setCartItems: any;
   addToCart: any;
   getCartCount: any;
@@ -25,11 +24,11 @@ interface ShopContextType {
   getCartDetailsForOrder: any;
   wishLists: any;
   setWishLists: any;
-  noUserOrderHistory: any;
-  setNoUserOrderHistory: any;
   manageWishLists: any;
   isActive: any;
   setIsActive: any;
+  paymentLoader: any;
+  setPaymentLoader: any;
   delivery_fee: number;
 }
 
@@ -40,10 +39,15 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { user } = useContext(AuthContext);
   const { dispatch } = useProducts();
   const [isActive, setIsActive] = useState(false);
+  const [paymentLoader, setPaymentLoader] = useState(false);
   const [orderHistory, setOrderHistory] = useState<any>([]);
+
+  const [guestEmail, setGuestEmail] = useState<String>(() => {
+    const storedGuestEmail = localStorage.getItem("guestEmail");
+    return storedGuestEmail ? JSON.parse(storedGuestEmail) : "";
+  });
 
   const [cartItems, setCartItems] = useState<any>(() => {
     const storedCart = localStorage.getItem("cart");
@@ -55,16 +59,15 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     return storedWishLists ? JSON.parse(storedWishLists) : [];
   });
 
-  const [noUserOrderHistory, setNoUserOrderHistory] = useState(() => {
-    const storedNoUserOrderHistory = localStorage.getItem("noUserOrderHistory");
-    return storedNoUserOrderHistory ? JSON.parse(storedNoUserOrderHistory) : [];
-  });
-
   const delivery_fee = 100;
 
   useEffect(() => {
     getProducts(dispatch);
   }, [dispatch]);
+
+  useEffect(() => {
+    localStorage.setItem("guestEmail", JSON.stringify(guestEmail));
+  }, [guestEmail]);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
@@ -73,26 +76,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     localStorage.setItem("wishLists", JSON.stringify(wishLists));
   }, [wishLists]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      "noUserOrderHistory",
-      JSON.stringify(noUserOrderHistory)
-    );
-  }, [noUserOrderHistory]);
-
-  useEffect(() => {
-    const fetchOrderHistory = async () => {
-      const response = await Axios.get(`${URL}/orders/profile/orders`, {
-        headers: {
-          token:
-            "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
-        },
-      });
-      setOrderHistory(response.data);
-    };
-    fetchOrderHistory();
-  }, [user, location.pathname]);
 
   const addToCart = async (
     itemId: string,
@@ -229,6 +212,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         orderHistory,
         setOrderHistory,
+        guestEmail,
+        setGuestEmail,
         cartItems,
         setCartItems,
         addToCart,
@@ -239,10 +224,10 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         wishLists,
         setWishLists,
         manageWishLists,
-        noUserOrderHistory,
-        setNoUserOrderHistory,
         isActive,
         setIsActive,
+        paymentLoader,
+        setPaymentLoader,
         delivery_fee,
       }}
     >

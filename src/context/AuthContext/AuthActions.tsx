@@ -1,4 +1,4 @@
-import { AuthAction, User } from "../../lib/types";
+import { AuthAction } from "../../lib/types";
 
 // Action for login start
 export const AccessStart = (): AuthAction => ({
@@ -6,7 +6,7 @@ export const AccessStart = (): AuthAction => ({
 });
 
 // Action for login success with a typed user parameter
-export const AccessSuccess = (user: User): AuthAction => ({
+export const AccessSuccess = (user: any): AuthAction => ({
   type: "ACCESS_SUCCESS",
   payload: user,
 });

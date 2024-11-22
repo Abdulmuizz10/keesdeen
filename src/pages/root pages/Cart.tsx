@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useShop } from "../../context/ShopContext";
 import { formatAmount } from "../../lib/utils";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
-import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext/AuthContext";
+import { Link } from "react-router-dom";
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity } = useShop();
+  const { cartItems, updateQuantity, guestEmail } = useShop();
   const [cartData, setCartData] = useState<any[]>([]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     // Convert cartItems object structure into an array for easier rendering
@@ -31,8 +33,6 @@ const Cart: React.FC = () => {
     }
     setCartData(tempData);
   }, [cartItems]);
-
-  const navigate = useNavigate();
 
   return (
     <section id="relume" className="px-[5%] py-24 md:py-30">
@@ -93,12 +93,19 @@ const Cart: React.FC = () => {
           <div className="w-full sm:w-[450px] border p-5 rounded-md border-border-secondary shadow-xxlarge">
             <CartTotal />
             <div className="w-full text-end mt-5">
-              <Button
-                className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light"
-                onClick={() => navigate("/check_out")}
-              >
-                PROCEED TO CHECKOUT
-              </Button>
+              {!user && !guestEmail ? (
+                <Link to="/register/guest-signUp">
+                  <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
+                    PROCEED TO CHECKOUT
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/check_out">
+                  <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
+                    PROCEED TO CHECKOUT
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

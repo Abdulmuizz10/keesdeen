@@ -20,7 +20,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
       .filter((p) => p.category === category)
       .filter((p) => p._id !== id);
     setRelated(relatedProducts);
-  }, [products, dispatch]);
+  }, [dispatch]);
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });

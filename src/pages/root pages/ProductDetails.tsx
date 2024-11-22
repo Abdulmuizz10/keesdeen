@@ -41,7 +41,7 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
     };
     fetchData();
     setTimeout(() => setAnimation(false), 3000);
-  }, [id, dispatch]);
+  }, [id]);
 
   useEffect(() => {
     if (product?.imageUrls?.length) {
@@ -144,9 +144,7 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
           </div>
           {/* Related products */}
           <div className="mt-20">
-            {products && (
-              <RelatedProducts category={result.category} id={result._id} />
-            )}
+            <RelatedProducts category={result.category} id={result._id} />
           </div>
         </div>
       )}
