@@ -1,8 +1,9 @@
 import mainLogo from "./Main logo.png";
 import mainLogoWhite from "./Main logo white.png";
 import smallLogo from "./Fvaicon.png";
-import tracking from "./images/tracking.jpg";
-import card from "./images/card.jpg";
+import profile from "./images/profile.png";
+import orders from "./images/orders.png";
+import card from "./images/creditcard.png";
 
 export { mainLogo, smallLogo, mainLogoWhite };
 
@@ -102,6 +103,7 @@ export const Images = {
   img_43,
   img_44,
   img_45,
+  profile,
+  orders,
   card,
-  tracking,
 };

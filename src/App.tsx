@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 // Libraries
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Lenis from "@studio-freight/lenis";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
@@ -55,15 +54,6 @@ import { appear } from "./lib/anim";
 
 const App: React.FC = () => {
   const [animation, setAnimation] = useState<Boolean>(true);
-  useEffect(() => {
-    const lenis = new Lenis();
-
-    function raf(time: any) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-  });
 
   useEffect(() => {
     setTimeout(() => {

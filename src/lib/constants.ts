@@ -6,9 +6,15 @@ import { Images } from "../assets";
 
 export const profileLinks = [
   {
+    title: "Profile Info",
+    route: "",
+    image: Images.profile,
+    text: "Your order details include all the items you purchased, their prices, and any discounts. You can also see the total amount you paid and your payment method. Check the current status of your order, like whether it’s being prepared or shipped.",
+  },
+  {
     title: "Order History",
     route: "",
-    image: Images.tracking,
+    image: Images.orders,
     text: "Your order details include all the items you purchased, their prices, and any discounts. You can also see the total amount you paid and your payment method. Check the current status of your order, like whether it’s being prepared or shipped.",
   },
   {

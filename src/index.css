@@ -56,13 +56,14 @@ strong {
   font-style: normal;
 }
 p,
-label {
+label,
+span {
   font-family: "poppins", sans-serif;
   font-weight: 300;
   font-style: normal;
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 10px;
   background: #d4d4d4;
 }
@@ -70,7 +71,7 @@ label {
 ::-webkit-scrollbar-thumb {
   background: #3c3c3c;
   border-radius: 10px;
-}
+} */
 
 .loader {
   width: 100px;

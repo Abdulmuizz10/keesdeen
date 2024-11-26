@@ -42,7 +42,8 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
   } as Props;
 
   const { guestEmail, setGuestEmail } = useShop();
-  const [userName, setUserName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { dispatch } = useContext(AuthContext);
@@ -51,7 +52,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     SignUp(
-      { username: userName, email, password },
+      { firstName, lastName, email, password },
       dispatch,
       navigate,
       guestEmail,
@@ -80,23 +81,39 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
               </h1>
               <p className="text-neutral-600 md:text-md">{description}</p>
             </div>
-            <form className="grid grid-cols-1 gap-2" onSubmit={handleSubmit}>
+            <form
+              className="grid grid-cols-1 gap-2 poppins"
+              onSubmit={handleSubmit}
+            >
               <div className="grid w-full items-center">
                 <Label htmlFor="name" className="mb-2 text-neutral-700">
-                  Username*
+                  First Name
                 </Label>
                 <Input
                   type="text"
                   id="name"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="border-neutral-300 rounded poppins"
+                  className="border-neutral-300 rounded"
+                />
+              </div>
+              <div className="grid w-full items-center">
+                <Label htmlFor="name" className="mb-2 text-neutral-700">
+                  Last Name
+                </Label>
+                <Input
+                  type="text"
+                  id="name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className="border-neutral-300 rounded"
                 />
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="email" className="mb-2 text-neutral-700">
-                  Email*
+                  Email
                 </Label>
                 <Input
                   type="email"
@@ -104,12 +121,12 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-neutral-300 rounded poppins"
+                  className="border-neutral-300 rounded"
                 />
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="password" className="mb-2 text-neutral-700">
-                  Password*
+                  Password
                 </Label>
                 <Input
                   type="password"
@@ -117,20 +134,19 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="border-neutral-300 rounded poppins"
+                  className="border-neutral-300 rounded"
                 />
               </div>
-              <div className="grid-col-1 grid gap-4">
-                <Button
-                  variant={signUpButton.variant}
-                  size={signUpButton.size}
-                  iconLeft={signUpButton.iconLeft}
-                  iconRight={signUpButton.iconRight}
-                  className="poppins"
-                >
-                  {signUpButton.title}
-                </Button>
-              </div>
+
+              <Button
+                variant={signUpButton.variant}
+                size={signUpButton.size}
+                iconLeft={signUpButton.iconLeft}
+                iconRight={signUpButton.iconRight}
+                className="poppins rounded mt-2"
+              >
+                {signUpButton.title}
+              </Button>
             </form>
 
             <Dialog>

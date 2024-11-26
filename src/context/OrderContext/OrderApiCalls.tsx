@@ -84,16 +84,23 @@ export const getOrder = async (
 export const createOrder = async (
   order: any,
   orderDispatch: Dispatch<OrderAction>,
-  setPaymentLoader: any
+  setPaymentLoader: any,
+  setCartItems: any,
+  setSelectedCountry: any,
+  setSelectedState: any
 ) => {
   orderDispatch(createOrderStart());
   try {
     const res = await axios.post<Product>(`${URL}/orders`, order);
     orderDispatch(createOrderSuccess(res.data));
     setPaymentLoader(false);
+    setCartItems({});
+    setSelectedCountry("");
+    setSelectedState("");
     toast.success("Order placed successfully!");
     showOrderSummary(res.data);
   } catch (err) {
+    setPaymentLoader(false);
     orderDispatch(createOrderFailure());
     toast.error("Order cannot be placed");
   }

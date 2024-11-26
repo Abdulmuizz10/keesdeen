@@ -23,6 +23,7 @@ const OrderHistory: React.FC = () => {
     fetchOrderHistory();
   }, [orderDispatch, guestEmail]);
 
+  console.log(orders);
   return (
     <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">

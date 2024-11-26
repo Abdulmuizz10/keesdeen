@@ -43,7 +43,6 @@ export const Login7: React.FC = (props: Login7Props) => {
   const {
     logo,
     title,
-    description,
     logInButton,
     logInWithGoogleButton,
     image,
@@ -98,12 +97,14 @@ export const Login7: React.FC = (props: Login7Props) => {
               <h1 className="mb-5 text-5xl font-bold md:mb-1 md:text-7xl lg:text-8xl bricolage-grotesque">
                 {title}
               </h1>
-              <p className="md:text-md">{description}</p>
             </div>
-            <form className="grid grid-cols-1 gap-6" onSubmit={handleSubmit}>
+            <form
+              className="grid grid-cols-1 gap-6 poppins"
+              onSubmit={handleSubmit}
+            >
               <div className="grid w-full items-center">
                 <Label htmlFor="email" className="mb-2">
-                  Email*
+                  Email
                 </Label>
                 <Input
                   type="email"
@@ -111,12 +112,12 @@ export const Login7: React.FC = (props: Login7Props) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-neutral-300 rounded poppins"
+                  className="border-neutral-300 rounded"
                 />
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="password" className="mb-2">
-                  Password*
+                  Password
                 </Label>
                 <Input
                   type="password"
@@ -124,7 +125,7 @@ export const Login7: React.FC = (props: Login7Props) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="border-neutral-300 rounded poppins"
+                  className="border-neutral-300 rounded"
                 />
               </div>
               <div className="grid-col-1 grid gap-4">
@@ -176,7 +177,6 @@ export const Login7Defaults: Login7Props = {
     alt: "Logo text",
   },
   title: "Log in",
-  description: "Lorem ipsum dolor sit amet adipiscing elit.",
   logInButton: {
     title: "Log in",
   },
