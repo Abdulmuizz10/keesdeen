@@ -9,18 +9,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
-import ProductItem from "../../components/ProductItem";
+import { RiHeartLine } from "react-icons/ri";
+import { RiHeartFill } from "react-icons/ri";
 import { Product } from "../../lib/types";
-import Spinner from "../../components/Spinner";
+import { formatAmount } from "../../lib/utils";
+import { Link } from "react-router-dom";
 import { useProducts } from "../../context/ProductContext/ProductContext";
 import { getProducts } from "../../context/ProductContext/ProductApiCalls";
 
 const ShopAll: React.FC = () => {
   const { isActive } = useShop();
-  const { products, dispatch, isFetching } = useProducts();
+  const [loading, setLoading] = useState(true);
+
+  const { products, dispatch } = useProducts();
   useEffect(() => {
-    getProducts(dispatch);
+    const fetchData = async () => {
+      setLoading(true);
+      await getProducts(dispatch);
+      setLoading(false);
+    };
+    fetchData();
   }, []);
+
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [category, setCategory] = useState<string[]>([]);
@@ -313,17 +323,24 @@ const ShopAll: React.FC = () => {
                 {/* {Map Products} */}
 
                 <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
-                  {products &&
-                    filteredProducts?.map((product, index) => (
-                      <ProductItem product={product} key={index} />
-                    ))}
+                  {loading
+                    ? Array(21)
+                        .fill(null)
+                        .map((product: Product, index) => (
+                          <ProductItem
+                            key={index}
+                            product={product}
+                            loading={loading}
+                          />
+                        ))
+                    : filteredProducts.map((product: Product, index) => (
+                        <ProductItem
+                          key={index}
+                          product={product}
+                          loading={loading}
+                        />
+                      ))}
                 </div>
-              </div>
-              <div className="w-full flex justify-center mt-10">
-                {isFetching && <Spinner />}
-                {/* {!isFetching && filteredProducts.length < 1 ? (
-                  <ProductUnavailable />
-                ) : null} */}
               </div>
             </div>
           </div>
@@ -333,8 +350,103 @@ const ShopAll: React.FC = () => {
   );
 };
 
-// const ProductUnavailable = () => {
-//   return <p className="text-xl text-center">Product is not available...</p>;
-// };
+interface ProductProps {
+  product: Product;
+  loading: Boolean;
+}
+
+const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
+  const [image, setImage] = useState<boolean>(false);
+  const { manageWishLists, wishLists } = useShop();
+
+  if (loading) {
+    return (
+      <div className="max-w-xs mx-auto bg-white shadow-large overflow-hidden relative z-[1]">
+        <div className="relative">
+          <div className="w-full h-[350px] bg-gray-200 animate-pulse" />
+        </div>
+        <div className="p-4 text-center">
+          <div className="h-3 rounded bg-gray-200 animate-pulse" />
+          <div className="h-3 rounded bg-gray-200 animate-pulse" />
+          <div className="mt-2">
+            <div className="flex flex-wrap gap-1 items-center justify-center">
+              {[
+                "XXS",
+                "XS",
+                "S",
+                "M",
+                "L",
+                "XL",
+                "2XL",
+                "3XL",
+                "4XL",
+                "5XL",
+              ].map((size) => (
+                <button
+                  key={size}
+                  className="rounded-sm px-1 py-1 h-6 w-8 bg-gray-200 animate-pulse"
+                ></button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px]"
+      onMouseOver={() => setImage(true)}
+      onMouseLeave={() => setImage(false)}
+    >
+      <div className="absolute top-3 right-3 z-50 cursor-pointer">
+        {wishLists.includes(product._id) ? (
+          <RiHeartFill
+            onClick={() => manageWishLists(product._id)}
+            className="text-xl text-text-primary"
+          />
+        ) : (
+          <RiHeartLine
+            onClick={() => manageWishLists(product._id)}
+            className="text-xl text-text-primary"
+          />
+        )}
+      </div>
+      <div className="relative">
+        <Link to={`/product_details/${product._id}`}>
+          <img
+            src={image ? product.imageUrls[1] : product.imageUrls[0]}
+            alt="Product"
+            className="w-full h-auto"
+          />
+        </Link>
+      </div>
+      <div className="p-4 text-center">
+        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
+          {product.name}
+        </h3>
+        <p className="text-gray-500">{formatAmount(product.price)}</p>
+
+        <div className="mt-2">
+          <div className="flex flex-wrap gap-1 items-center justify-center">
+            {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
+              (size) => (
+                <button
+                  key={size}
+                  className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                    product.size.includes(size) ? "" : "opacity-[0.3]"
+                  }`}
+                >
+                  {size}
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ShopAll;

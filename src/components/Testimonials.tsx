@@ -31,7 +31,7 @@ export const Testimonial21 = (props: Testimonial21Props) => {
   return (
     <section id="relume" className="overflow-hidden py-16 md:py-24 lg:py-28">
       <div className="container mb-12 max-w-lg px-[5%] text-center md:mb-18 lg:mb-20">
-        <h1 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque bricolage-grotesque">
+        <h1 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
           {heading}
         </h1>
         <p className="md:text-md">{description}</p>

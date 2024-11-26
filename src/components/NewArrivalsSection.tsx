@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import { Product } from "../lib/types";
 import { getProducts } from "../context/ProductContext/ProductApiCalls";
 import { useProducts } from "../context/ProductContext/ProductContext";
-import Spinner from "./Spinner";
 
 type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -61,72 +60,76 @@ export const Gallery21 = ({
     >
       <div className="container">
         <div className="rb-12 mb-12 text-center md:mb-18 lg:mb-20">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+          <h2 className="rb-5 mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
             {heading}
           </h2>
           <p className="md:text-md">{description}</p>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center">
-            <Spinner />
-          </div>
-        ) : (
-          <Carousel
-            setApi={setApi}
-            opts={{
-              loop: true,
-              align: "start",
-            }}
-          >
-            <CarouselContent className="ml-0">
-              {newArrivalProducts?.map((product) => (
-                <CarouselItem
-                  key={product._id}
-                  className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
-                >
-                  <Link to={`/product_details/${product._id}`}>
-                    <img
-                      src={product.imageUrls[0]}
-                      alt={`${product.name} - New Arrival`}
-                      className="aspect-square size-full object-cover"
-                    />
-                  </Link>
-                </CarouselItem>
+        <Carousel
+          setApi={setApi}
+          opts={{
+            loop: true,
+            align: "start",
+          }}
+        >
+          <CarouselContent className="ml-0">
+            {loading
+              ? Array(6)
+                  .fill(null)
+                  .map((_, index) => (
+                    <CarouselItem
+                      key={index}
+                      className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
+                    >
+                      <div className="aspect-square h-[600px] bg-gray-200 object-cover animate-pulse" />
+                    </CarouselItem>
+                  ))
+              : newArrivalProducts
+                  ?.filter((product: Product) => product.bestSeller === true)
+                  .map((product: Product, index) => (
+                    <CarouselItem
+                      key={index}
+                      className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
+                    >
+                      <Link to={`/product_details/${product._id}`}>
+                        <img
+                          src={product?.imageUrls[0]}
+                          alt={`${product.name} - New Arrival`}
+                          className="aspect-square size-full object-cover"
+                        />
+                      </Link>
+                    </CarouselItem>
+                  ))}
+          </CarouselContent>
+          <div className="rt-8 mt-8 flex items-center justify-between">
+            {/* Dot indicators for carousel */}
+            <div className="mt-5 flex w-full items-start justify-start">
+              {newArrivalProducts?.map((_, index) => (
+                <button
+                  key={`dot-${index}`}
+                  onClick={() => api?.scrollTo(index)}
+                  aria-label={`Slide ${index + 1}`}
+                  className={clsx("mx-[3px] inline-block size-2 rounded-full", {
+                    "bg-black": current === index + 1,
+                    "bg-neutral-400": current !== index + 1,
+                  })}
+                />
               ))}
-            </CarouselContent>
-            <div className="rt-8 mt-8 flex items-center justify-between">
-              {/* Dot indicators for carousel */}
-              <div className="mt-5 flex w-full items-start justify-start">
-                {newArrivalProducts?.map((_, index) => (
-                  <button
-                    key={`dot-${index}`}
-                    onClick={() => api?.scrollTo(index)}
-                    aria-label={`Slide ${index + 1}`}
-                    className={clsx(
-                      "mx-[3px] inline-block size-2 rounded-full",
-                      {
-                        "bg-black": current === index + 1,
-                        "bg-neutral-400": current !== index + 1,
-                      }
-                    )}
-                  />
-                ))}
-              </div>
-              {/* Carousel navigation buttons */}
-              <div className="flex items-end justify-end gap-2 md:gap-4">
-                <CarouselPrevious
-                  aria-label="Previous slide"
-                  className="static right-0 top-0 size-12 -translate-y-0"
-                />
-                <CarouselNext
-                  aria-label="Next slide"
-                  className="static right-0 top-0 size-12 -translate-y-0"
-                />
-              </div>
             </div>
-          </Carousel>
-        )}
+            {/* Carousel navigation buttons */}
+            <div className="flex items-end justify-end gap-2 md:gap-4">
+              <CarouselPrevious
+                aria-label="Previous slide"
+                className="static right-0 top-0 size-12 -translate-y-0"
+              />
+              <CarouselNext
+                aria-label="Next slide"
+                className="static right-0 top-0 size-12 -translate-y-0"
+              />
+            </div>
+          </div>
+        </Carousel>
       </div>
     </section>
   );

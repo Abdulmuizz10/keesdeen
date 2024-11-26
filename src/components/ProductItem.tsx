@@ -6,7 +6,11 @@ import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
 import { Product } from "../lib/types";
 
-const ProductItem = ({ product }: { product: Product }) => {
+interface ProductProps {
+  product: Product;
+}
+
+const ProductItem: React.FC<ProductProps> = ({ product }) => {
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
 
