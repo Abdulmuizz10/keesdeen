@@ -365,8 +365,10 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
           <div className="w-full h-[350px] bg-gray-200 animate-pulse" />
         </div>
         <div className="p-4 text-center">
-          <div className="h-3 rounded bg-gray-200 animate-pulse" />
-          <div className="h-3 rounded bg-gray-200 animate-pulse" />
+          <div className="flex flex-col gap-2 items-center">
+            <div className="h-6 w-full rounded bg-gray-200 animate-pulse" />
+            <div className="h-6 w-3/5 rounded bg-gray-200 animate-pulse" />
+          </div>
           <div className="mt-2">
             <div className="flex flex-wrap gap-1 items-center justify-center">
               {[

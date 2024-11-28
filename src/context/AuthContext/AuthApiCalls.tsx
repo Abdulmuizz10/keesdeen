@@ -20,7 +20,7 @@ export const Login = async (
     const res: Response = await axios.post(`${URL}/auth/sign-in`, user);
     dispatch(AccessSuccess(res.data));
     navigate("/");
-  } catch (err) {
+  } catch (error) {
     dispatch(AccessFailure());
   }
 };

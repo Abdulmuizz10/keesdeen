@@ -5,15 +5,15 @@ import { Images } from "../assets";
 // export const URL = "http://localhost:5000";
 
 export const profileLinks = [
-  {
-    title: "Profile Info",
-    route: "",
-    image: Images.profile,
-    text: "Your order details include all the items you purchased, their prices, and any discounts. You can also see the total amount you paid and your payment method. Check the current status of your order, like whether it’s being prepared or shipped.",
-  },
+  // {
+  //   title: "Profile Info",
+  //   route: "",
+  //   image: Images.profile,
+  //   text: "Access your personal information, including your name and email. Ensure your details are accurate to enjoy a smooth shopping experience and stay updated with the latest offers and notifications.",
+  // },
   {
     title: "Order History",
-    route: "",
+    route: "/order_history",
     image: Images.orders,
     text: "Your order details include all the items you purchased, their prices, and any discounts. You can also see the total amount you paid and your payment method. Check the current status of your order, like whether it’s being prepared or shipped.",
   },

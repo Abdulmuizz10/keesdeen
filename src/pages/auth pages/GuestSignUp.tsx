@@ -52,7 +52,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     SignUp(
-      { firstName, lastName, email, password },
+      { firstName, lastName, email, password, isGuest: false },
       dispatch,
       navigate,
       guestEmail,
