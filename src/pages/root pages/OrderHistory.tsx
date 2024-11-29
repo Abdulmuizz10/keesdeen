@@ -77,7 +77,7 @@ const OrderHistory: React.FC = () => {
 
         {/* Filter Dropdown */}
         <div className="mt-5 border-t border-border-secondary">
-          <div className="sm:flex-row flex-col items-start sm:items-center justify-between my-8">
+          <div className="flex max-md:flex-col max-md:items-start items-center justify-between my-8">
             <h2 className="text-2xl font-bold mb-4">All Orders</h2>
             <div className="w-full md:w-1/2">
               <Select onValueChange={setSortType}>

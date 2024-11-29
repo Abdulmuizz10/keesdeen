@@ -14,6 +14,26 @@ export const getProductsSuccess = (
 export const getProductFailure = (): { type: "GET_PRODUCT_FAILURE" } => ({
   type: "GET_PRODUCT_FAILURE",
 });
+
+export const getProductsByPageStart = (): {
+  type: "GET_PRODUCTS_BY_PAGE_START";
+} => ({
+  type: "GET_PRODUCTS_BY_PAGE_START",
+});
+
+export const getProductsByPageSuccess = (
+  products: any
+): { type: "GET_PRODUCTS_BY_PAGE_SUCCESS"; payload: any } => ({
+  type: "GET_PRODUCTS_BY_PAGE_SUCCESS",
+  payload: products,
+});
+
+export const getProductsByPageFailure = (): {
+  type: "GET_PRODUCTS_BY_PAGE_FAILURE";
+} => ({
+  type: "GET_PRODUCTS_BY_PAGE_FAILURE",
+});
+
 export const getProductStart = (): { type: "GET_PRODUCT_START" } => ({
   type: "GET_PRODUCT_START",
 });
@@ -51,8 +71,8 @@ export const updateProductStart = (): { type: "UPDATE_PRODUCT_START" } => ({
 });
 
 export const updateProductSuccess = (
-  product: Product
-): { type: "UPDATE_PRODUCT_SUCCESS"; payload: Product } => ({
+  product: any
+): { type: "UPDATE_PRODUCT_SUCCESS"; payload: any } => ({
   type: "UPDATE_PRODUCT_SUCCESS",
   payload: product,
 });
@@ -85,8 +105,8 @@ export const deleteProductStart = (): { type: "DELETE_PRODUCT_START" } => ({
 });
 
 export const deleteProductSuccess = (
-  id: string
-): { type: "DELETE_PRODUCT_SUCCESS"; payload: string } => ({
+  id: any
+): { type: "DELETE_PRODUCT_SUCCESS"; payload: any } => ({
   type: "DELETE_PRODUCT_SUCCESS",
   payload: id,
 });

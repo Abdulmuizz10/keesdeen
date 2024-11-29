@@ -36,7 +36,8 @@ import { GuestSignUp } from "./pages/auth pages/GuestSignUp";
 
 import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
-import AddProducts from "./pages/admin pages/AddProducts";
+import AdminAddProduct from "./pages/admin pages/AdminAddProduct";
+import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
 import AdminDashBoardSales from "./pages/admin pages/AdminDashBoardSales";
 import AdminDashBoardOrders from "./pages/admin pages/AdminDashBoardOrders";
 import AdminProducts from "./pages/admin pages/AdminProducts";
@@ -93,10 +94,7 @@ const App: React.FC = () => {
               path="/collections/:name"
               element={<Collections products={products} />}
             />
-            <Route
-              path="/product_details/:id"
-              element={<ProductDetails products={products} />}
-            />
+            <Route path="/product_details/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route
               path="/wishlists"
@@ -112,12 +110,13 @@ const App: React.FC = () => {
             <Route element={<AdminLayout />}>
               <Route path="/admin" element={<AdminHome />} />
               <Route path="/admin/customers" element={<AdminCustomers />} />
-              <Route
-                path="/admin/products"
-                element={<AdminProducts items={products} />}
-              />
+              <Route path="/admin/products" element={<AdminProducts />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
-              <Route path="/admin/add_product" element={<AddProducts />} />
+              <Route path="/admin/add_product" element={<AdminAddProduct />} />
+              <Route
+                path="/admin/update_product/:id"
+                element={<AdminUpdateProduct />}
+              />
               <Route
                 path="/admin/dashboard/sales"
                 element={<AdminDashBoardSales />}

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
 
 Chart.register(ArcElement);
 
@@ -53,401 +55,35 @@ const Dashboard = () => {
     },
   };
 
-  const transactions = [
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-    {
-      name: "Josephine Zimmerman",
-      status: "pending",
-      date: "14.01.2024",
-      amount: 3200,
-    },
-    {
-      name: "Cecilia Harriet",
-      status: "done",
-      date: "13.01.2024",
-      amount: 2800,
-    },
-    {
-      name: "Dennis Thomas",
-      status: "canceled",
-      date: "12.01.2024",
-      amount: 2600,
-    },
-  ];
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState<Boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const transactionsPerPage = 10; // Adjust this number as needed
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    try {
+      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
+      const response = await Axios.get(
+        `${URL}/orders/page/orders?page=${page}`,
+        {
+          headers: {
+            token: "Bearer " + userToken,
+          },
+        }
+      );
+      setLoading(false);
+      setTransactions(response.data.orders);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setLoading(false);
+    }
+  };
 
-  // Calculate total pages
-  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
-
-  // Get the transactions for the current page
-  const currentTransactions = transactions.slice(
-    (currentPage - 1) * transactionsPerPage,
-    currentPage * transactionsPerPage
-  );
-
-  // Function to change page
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
 
   return (
     <div className="">
@@ -471,7 +107,7 @@ const Dashboard = () => {
             <Doughnut data={stockData} options={chartOptions} />
           </div>
           <div>
-            <h3 className="text-lg md:text-xl font-semibold">Stock</h3>
+            <h3 className="text-lg md:text-xl font-semibold">Products</h3>
             <p className="text-2xl md:text-4xl font-bold mt-2">8,236</p>
             <p className="text-red-600 text-sm md:text-base mt-1">
               1% less than previous week
@@ -494,121 +130,89 @@ const Dashboard = () => {
       </div>
 
       <div className="w-full">
-        {/* Latest Transactions */}
+        {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
           <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
 
           <div className="overflow-x-auto">
-            <table className="w-full bg-white">
-              <thead>
-                <tr className="bg-gray-100 rounded-t-xl bricolage-grotesque font-extrabold">
-                  <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl ">
-                    Customer
+            <table className="w-full bg-white poppins">
+              <thead className="text-sm">
+                <tr className="bg-gray-100 rounded-t-xl font-extrabold">
+                  <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
+                    Customer name
                   </th>
+                  <th className="text-left p-4 font-semibold">Email address</th>
                   <th className="text-left p-4 font-semibold">Status</th>
-                  <th className="text-left p-4 font-semibold">Date</th>
+                  <th className="text-left p-4 font-semibold">Amount</th>
                   <th className="text-left p-4 font-semibold rounded-tr-xl">
-                    Amount
+                    Date
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {currentTransactions.map((transaction, index) => (
-                  <tr
-                    key={index}
-                    className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
-                  >
-                    <td className="flex items-center space-x-4 p-4">
-                      <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-                      <span className="font-semibold">{transaction.name}</span>
-                    </td>
-                    <td className="p-4 poppins">
-                      <span
-                        className={`px-4 py-1 rounded-full text-sm ${
-                          transaction.status === "done"
-                            ? "bg-green-200 text-green-800"
-                            : transaction.status === "canceled"
-                            ? "bg-red-200 text-red-800"
-                            : "bg-yellow-200 text-yellow-800"
-                        }`}
+                {loading
+                  ? Array.from({ length: 20 }).map((_, index) => (
+                      <tr key={index} className="border-b">
+                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      </tr>
+                    ))
+                  : transactions?.map((transaction: any, index: number) => (
+                      <tr
+                        key={index}
+                        className="border-b hover:bg-gray-50 transition-colors duration-150"
                       >
-                        {transaction.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-sm">{transaction.date}</td>
-                    <td className="p-4 font-semibold text-md">
-                      {formatAmount(transaction.amount)}
-                    </td>
-                  </tr>
-                ))}
+                        <td className="p-5">{`${transaction.firstName} ${transaction.lastName}`}</td>
+                        <td className="p-5">{transaction.email}</td>
+                        <td className="p-5">
+                          {transaction.isDelivered ? (
+                            <span className="text-green-500 font-semibold">
+                              Delivered
+                            </span>
+                          ) : (
+                            <span className="text-brand-secondary font-semibold">
+                              Pending
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-5">
+                          {formatAmount(transaction.totalPrice)}
+                        </td>
+                        <td className="p-5">
+                          {new Date(transaction.paidAt).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
               </tbody>
             </table>
           </div>
 
           {/* Pagination controls */}
-          <div className="flex justify-end mt-4 poppins">
+
+          <div className="flex justify-end mt-4 gap-3">
             <button
-              onClick={() => paginate(currentPage - 1)}
+              className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
               disabled={currentPage === 1}
-              className={`px-4 py-2 mr-2 ${
-                currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
-              } text-white rounded-lg`}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             >
               Previous
             </button>
 
-            {currentPage > 3 && (
-              <>
-                <button
-                  onClick={() => paginate(1)}
-                  className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg mx-1"
-                >
-                  1
-                </button>
-                <span className="px-4 py-2">...</span>
-              </>
-            )}
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter(
-                (pageNumber) =>
-                  pageNumber === 1 ||
-                  pageNumber === totalPages ||
-                  (pageNumber >= currentPage - 2 &&
-                    pageNumber <= currentPage + 2)
-              )
-              .map((pageNumber) => (
-                <button
-                  key={pageNumber}
-                  onClick={() => paginate(pageNumber)}
-                  className={`px-4 py-2 ${
-                    currentPage === pageNumber
-                      ? "bg-brand-neutral text-white"
-                      : "px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
-                  }  rounded-lg mx-1`}
-                >
-                  {pageNumber}
-                </button>
-              ))}
-
-            {currentPage < totalPages - 2 && (
-              <>
-                <span className="px-4 py-2">...</span>
-                <button
-                  onClick={() => paginate(totalPages)}
-                  className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg mx-1"
-                >
-                  {totalPages}
-                </button>
-              </>
-            )}
-
             <button
-              onClick={() => paginate(currentPage + 1)}
+              className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+                currentPage === totalPages
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+              }`}
               disabled={currentPage === totalPages}
-              className={`px-4 py-2 ml-2 ${
-                currentPage === totalPages ? "bg-gray-300" : "bg-brand-neutral"
-              } text-white rounded-lg`}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
             >
               Next
             </button>
@@ -620,3 +224,86 @@ const Dashboard = () => {
 };
 
 export default AdminHome;
+
+// <div className="w-full">
+//   {/* Latest Orders */}
+//   <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+//     <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
+
+//     <div className="overflow-x-auto">
+//       <table className="w-full bg-white">
+//         <thead>
+//           <tr className="bg-gray-100 rounded-t-xl bricolage-grotesque font-extrabold">
+//             <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
+//               Customer
+//             </th>
+//             <th className="text-left p-4 font-semibold">Email</th>
+//             <th className="text-left p-4 font-semibold">Status</th>
+//             <th className="text-left p-4 font-semibold">Date</th>
+//             <th className="text-left p-4 font-semibold rounded-tr-xl">
+//               Amount
+//             </th>
+//           </tr>
+//         </thead>
+//         <tbody className="poppins">
+//           {loading
+//             ? transactions?.map((_: any, index: number) => (
+//                 <tr key={index} className="border-b">
+//                   {/* Combine firstName and lastName */}
+//                   <td className="p-6 h-6 w-full  bg-gray-200 animate-pulse" />
+
+//                   {/* Display email */}
+
+//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
+
+//                   {/* Show delivery status */}
+//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
+
+//                   {/* Show paid date */}
+//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
+
+//                   {/* Show total price */}
+//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
+//                 </tr>
+//               ))
+//             : transactions?.map((transaction: any, index: number) => (
+//                 <tr key={index} className="border-b">
+//                   {/* Combine firstName and lastName */}
+//                   <td className="p-4">
+//                     {`${transaction.firstName} ${transaction.lastName}`}
+//                   </td>
+
+//                   {/* Display email */}
+//                   <td className="p-4">{transaction.email}</td>
+
+//                   {/* Show delivery status */}
+//                   <td className="p-4">
+//                     {transaction.isDelivered ? (
+//                       <span className="text-green-500 font-semibold">
+//                         Delivered
+//                       </span>
+//                     ) : (
+//                       <span className="text-brand-secondary font-semibold">
+//                         Pending
+//                       </span>
+//                     )}
+//                   </td>
+
+//                   {/* Show paid date */}
+//                   <td className="p-4">
+//                     {new Date(transaction.paidAt).toLocaleDateString()}
+//                   </td>
+
+//                   {/* Show total price */}
+//                   <td className="p-4">
+//                     {formatAmount(transaction.totalPrice)}
+//                   </td>
+//                 </tr>
+//               ))}
+//         </tbody>
+//       </table>
+//     </div>
+
+//     {/* Pagination controls */}
+//   </div>
+// </div>;

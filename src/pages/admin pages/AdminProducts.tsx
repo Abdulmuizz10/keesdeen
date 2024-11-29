@@ -1,508 +1,61 @@
-// import React, { useState } from "react";
-
-// const AdminProducts: React.FC = () => {
-//   // Sample data for products
-//   const products = [
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     {
-//       name: "Men's T-Shirt",
-//       category: "Clothing",
-//       price: 25.99,
-//       isAvailable: true,
-//       date: "01.01.2024",
-//     },
-//     {
-//       name: "Women's Jacket",
-//       category: "Clothing",
-//       price: 49.99,
-//       isAvailable: false,
-//       date: "12.12.2023",
-//     },
-//     {
-//       name: "Sneakers",
-//       category: "Footwear",
-//       price: 79.99,
-//       isAvailable: true,
-//       date: "15.11.2023",
-//     },
-//     {
-//       name: "Leather Handbag",
-//       category: "Accessories",
-//       price: 120.0,
-//       isAvailable: true,
-//       date: "18.10.2023",
-//     },
-//     {
-//       name: "Wool Scarf",
-//       category: "Accessories",
-//       price: 19.99,
-//       isAvailable: false,
-//       date: "25.09.2023",
-//     },
-//     // You can add more products here for better pagination testing
-//   ];
-
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const itemsPerPage = 10; // Change this to however many items you want per page
-
-//   // Calculate the total number of pages
-//   const totalPages = Math.ceil(products.length / itemsPerPage);
-
-//   // Calculate the index of the first and last items on the current page
-//   const indexOfLastProduct = currentPage * itemsPerPage;
-//   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-
-//   // Get the products for the current page
-//   const currentProducts = products.slice(
-//     indexOfFirstProduct,
-//     indexOfLastProduct
-//   );
-
-//   // Pagination function
-//   const paginate = (pageNumber: number) => {
-//     if (pageNumber >= 1 && pageNumber <= totalPages) {
-//       setCurrentPage(pageNumber);
-//     }
-//   };
-
-//   return (
-//     <div className="w-full">
-//       {/* Product List */}
-//       <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-//         <h3 className="text-xl font-semibold mb-4">Product List</h3>
-
-//         <div className="overflow-x-auto">
-//           <table className="w-full bg-white">
-//             <thead>
-//               <tr className="bg-gray-100 rounded-t-xl font-extrabold bricolage-grotesque">
-//                 <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
-//                   Product
-//                 </th>
-//                 <th className="text-left p-4 font-semibold">Category</th>
-//                 <th className="text-left p-4 font-semibold">Price</th>
-//                 <th className="text-left p-4 font-semibold">Availability</th>
-//                 <th className="text-left p-4 font-semibold rounded-tr-xl">
-//                   Date Added
-//                 </th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {currentProducts.map((product, index) => (
-//                 <tr
-//                   key={index}
-//                   className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
-//                 >
-//                   <td className="flex items-center space-x-4 p-4">
-//                     <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-//                     <p className="font-semibold">{product.name}</p>
-//                   </td>
-//                   <td className="p-4 text-sm">{product.category}</td>
-//                   <td className="p-4 text-sm">${product.price.toFixed(2)}</td>
-//                   <td className="p-4">
-//                     <span
-//                       className={`px-4 py-1 rounded-full text-sm ${
-//                         product.isAvailable
-//                           ? "bg-green-200 text-green-800"
-//                           : "bg-red-200 text-red-800"
-//                       }`}
-//                     >
-//                       {product.isAvailable ? "Available" : "Out of Stock"}
-//                     </span>
-//                   </td>
-//                   <td className="p-4 text-base font-semibold">
-//                     {product.date}
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-
-//         {/* Pagination Controls */}
-//         <div className="flex justify-end mt-4 poppins">
-//           <button
-//             onClick={() => paginate(currentPage - 1)}
-//             disabled={currentPage === 1}
-//             className={`px-4 py-2 mr-2 ${
-//               currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
-//             } text-white rounded-lg`}
-//           >
-//             Previous
-//           </button>
-
-//           {currentPage > 3 && (
-//             <>
-//               <button className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg">
-//                 1
-//               </button>
-//               <span className="px-4 py-2">...</span>
-//             </>
-//           )}
-
-//           {Array.from({ length: totalPages }, (_, i) => i + 1)
-//             .filter(
-//               (pageNumber) =>
-//                 pageNumber === 1 ||
-//                 pageNumber === totalPages ||
-//                 (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-//             )
-//             .map((pageNumber) => (
-//               <button
-//                 key={pageNumber}
-//                 onClick={() => paginate(pageNumber)}
-//                 className={`px-4 py-2 ${
-//                   currentPage === pageNumber
-//                     ? "bg-brand-neutral text-white"
-//                     : "bg-white border border-border-primary text-text-primary"
-//                 } mx-1 rounded-lg`}
-//               >
-//                 {pageNumber}
-//               </button>
-//             ))}
-
-//           {currentPage < totalPages - 2 && (
-//             <>
-//               <span className="px-4 py-2">...</span>
-//               <button
-//                 onClick={() => paginate(totalPages)}
-//                 className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
-//               >
-//                 {totalPages}
-//               </button>
-//             </>
-//           )}
-
-//           <button
-//             onClick={() => paginate(currentPage + 1)}
-//             disabled={currentPage === totalPages}
-//             className={`px-4 py-2 ml-2 ${
-//               currentPage === totalPages ? "bg-gray-300" : "bg-brand-neutral"
-//             } text-white rounded-lg`}
-//           >
-//             Next
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminProducts;
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { FaRegPenToSquare } from "react-icons/fa6";
 import { formatAmount } from "../../lib/utils";
+import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
+import { useProducts } from "../../context/ProductContext/ProductContext";
 import { Product } from "../../lib/types";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
+import { Link } from "react-router-dom";
 
-interface ProductListProps {
-  items: Product[];
-}
+const AdminProducts: React.FC = () => {
+  const [items, setItems] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const { dispatch } = useProducts();
 
-const AdminProducts: React.FC<ProductListProps> = ({ items }) => {
-  // Sample data for products with initial availability state
-  const [products, setProducts] = useState(items);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  // Pagination logic
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const indexOfLastProduct = currentPage * itemsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = products.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
-
-  const paginate = (pageNumber: number) => {
-    if (pageNumber >= 1 && pageNumber <= totalPages) {
-      setCurrentPage(pageNumber);
+  // Fetch data from backend
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    try {
+      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
+      const response = await Axios.get(
+        `${URL}/products/page/products?page=${page}`,
+        {
+          headers: {
+            token: "Bearer " + userToken,
+          },
+        }
+      );
+      setLoading(false);
+      setItems(response.data.products);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setLoading(false);
     }
   };
 
-  // Function to handle availability toggle
-  const handleAvailabilityChange = (index: number, value: string) => {
-    const updatedProducts = [...products];
-    updatedProducts[index].isAvailable = value === "In Stock";
-    setProducts(updatedProducts);
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
+
+  const handleDelete = async (productId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+
+    if (confirmDelete) {
+      try {
+        await deleteProduct(productId, dispatch); // Deleting product
+        // Re-fetch products after deletion to ensure consistency
+        fetchData(currentPage);
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
+    }
   };
 
   return (
@@ -510,120 +63,89 @@ const AdminProducts: React.FC<ProductListProps> = ({ items }) => {
       <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
         <h3 className="text-xl font-semibold mb-4">Product List</h3>
         <div className="overflow-x-auto">
-          <table className="w-full bg-white">
-            <thead>
-              <tr className="bg-gray-100 rounded-t-xl font-extrabold bricolage-grotesque">
-                <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
+          <table className="w-full bg-white poppins">
+            <thead className="text-sm">
+              <tr className="bg-gray-100 rounded-t-xl font-extrabold">
+                <th className="text-left p-4 font-semibold rounded-tl-xl">
                   Product name
                 </th>
                 <th className="text-left p-4 font-semibold">Category</th>
+                <th className="text-left p-4 font-semibold">Sub-Category</th>
                 <th className="text-left p-4 font-semibold">Price</th>
-                <th className="text-left p-4 font-semibold">Availability</th>
+                <th className="text-left p-4 font-semibold">Date Added</th>
+                <th className="text-left p-4 font-semibold">Update</th>
                 <th className="text-left p-4 font-semibold rounded-tr-xl">
-                  Date Added
+                  Delete
                 </th>
               </tr>
             </thead>
             <tbody>
-              {currentProducts.map((product, index) => (
-                <tr
-                  key={index}
-                  className="border-b hover:bg-gray-50 transition-colors duration-150 poppins"
-                >
-                  <td className="flex items-center space-x-4 p-4">
-                    {/* <div className="h-10 w-10 bg-gray-300 rounded-full">
-                      <img
-                        src={product.imageUrls[0]}
-                        alt="product image"
-                        className=" object-cover"
-                      />
-                    </div> */}
-                    <p className="font-semibold">{product.name}</p>
-                  </td>
-                  <td className="p-4 text-sm">{product.category}</td>
-                  <td className="p-4 text-sm">{formatAmount(product.price)}</td>
-                  <td className="p-4">
-                    <select
-                      value={product.isAvailable ? "In Stock" : "Out of Stock"}
-                      onChange={(e) =>
-                        handleAvailabilityChange(index, e.target.value)
-                      }
-                      className="border border-gray-300  p-1 focus:ring-none"
+              {loading
+                ? Array.from({ length: 20 }).map((_, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    </tr>
+                  ))
+                : items?.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors duration-150"
                     >
-                      <option value="In Stock">In Stock</option>
-                      <option value="Out of Stock">Out of Stock</option>
-                    </select>
-                  </td>
-                  <td className="p-4 text-base font-semibold">
-                    {product.createdAt?.split("").slice(0, 10)}
-                    {/* {product.createdAt?.split("").slice(12, 16)} */}
-                  </td>
-                </tr>
-              ))}
+                      <td className="p-4 text-[15px] line-clamp-1">
+                        {item.name}
+                      </td>
+                      <td className="p-4 text-sm">{item.category}</td>
+                      <td className="p-4 text-sm">{item.subcategory}</td>
+                      <td className="p-4 text-sm">
+                        {formatAmount(item.price)}
+                      </td>
+                      <td className="p-4 text-base font-medium">
+                        {item.createdAt?.split("").slice(0, 10)}
+                      </td>
+                      <td className="py-2 px-8">
+                        <Link to={`/admin/update_product/${item._id}`}>
+                          <FaRegPenToSquare className="text-xl cursor-pointer" />
+                        </Link>
+                      </td>
+                      <td className="py-2 px-8">
+                        <RiDeleteBin5Line
+                          className="text-2xl cursor-pointer"
+                          onClick={() => handleDelete(item._id)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>
 
         {/* Pagination Controls */}
-        <div className="flex justify-end mt-4 poppins">
+        <div className="flex justify-end mt-4 gap-3">
           <button
-            onClick={() => paginate(currentPage - 1)}
+            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={currentPage === 1}
-            className={`px-4 py-2 mr-2 ${
-              currentPage === 1 ? "bg-gray-300" : "bg-brand-neutral"
-            } text-white rounded-lg`}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           >
             Previous
           </button>
 
-          {currentPage > 3 && (
-            <>
-              <button className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg">
-                1
-              </button>
-              <span className="px-4 py-2">...</span>
-            </>
-          )}
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(
-              (pageNumber) =>
-                pageNumber === 1 ||
-                pageNumber === totalPages ||
-                (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-            )
-            .map((pageNumber) => (
-              <button
-                key={pageNumber}
-                onClick={() => paginate(pageNumber)}
-                className={`px-4 py-2 ${
-                  currentPage === pageNumber
-                    ? "bg-brand-neutral text-white"
-                    : "bg-white border border-border-primary text-text-primary"
-                } mx-1 rounded-lg`}
-              >
-                {pageNumber}
-              </button>
-            ))}
-
-          {currentPage < totalPages - 2 && (
-            <>
-              <span className="px-4 py-2">...</span>
-              <button
-                onClick={() => paginate(totalPages)}
-                className="px-4 py-2 bg-white border border-border-primary text-text-primary rounded-lg"
-              >
-                {totalPages}
-              </button>
-            </>
-          )}
-
           <button
-            onClick={() => paginate(currentPage + 1)}
+            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+              currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={currentPage === totalPages}
-            className={`px-4 py-2 ml-2 ${
-              currentPage === totalPages ? "bg-gray-300" : "bg-brand-neutral"
-            } text-white rounded-lg`}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
           >
             Next
           </button>

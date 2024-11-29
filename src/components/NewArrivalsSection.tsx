@@ -85,22 +85,20 @@ export const Gallery21 = ({
                       <div className="aspect-square h-[600px] bg-gray-200 object-cover animate-pulse" />
                     </CarouselItem>
                   ))
-              : newArrivalProducts
-                  ?.filter((product: Product) => product.bestSeller === true)
-                  .map((product: Product, index) => (
-                    <CarouselItem
-                      key={index}
-                      className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
-                    >
-                      <Link to={`/product_details/${product._id}`}>
-                        <img
-                          src={product?.imageUrls[0]}
-                          alt={`${product.name} - New Arrival`}
-                          className="aspect-square size-full object-cover"
-                        />
-                      </Link>
-                    </CarouselItem>
-                  ))}
+              : newArrivalProducts?.map((product: Product, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
+                  >
+                    <Link to={`/product_details/${product._id}`}>
+                      <img
+                        src={product?.imageUrls[0]}
+                        alt={`${product.name} - New Arrival`}
+                        className="aspect-square size-full object-cover"
+                      />
+                    </Link>
+                  </CarouselItem>
+                ))}
           </CarouselContent>
           <div className="rt-8 mt-8 flex items-center justify-between">
             {/* Dot indicators for carousel */}

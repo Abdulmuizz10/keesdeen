@@ -29,7 +29,7 @@ interface ProductContextProps extends ProductState {
 }
 
 // Create the context with a default value of the initial state and a dispatch placeholder
-const ProductContext = createContext<ProductContextProps>({
+const ProductContext = createContext<ProductContextProps | undefined>({
   ...INITIAL_STATE,
   dispatch: () => null,
 });

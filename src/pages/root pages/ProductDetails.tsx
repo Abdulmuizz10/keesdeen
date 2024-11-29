@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
@@ -6,18 +6,13 @@ import { formatAmount } from "../../lib/utils";
 import { Button } from "@relume_io/relume-ui";
 import RelatedProducts from "../../components/RelatedProducts";
 import Reviews from "../../components/Reviews";
-import { useProducts } from "../../context/ProductContext/ProductContext";
-import { getProduct } from "../../context/ProductContext/ProductApiCalls";
 import Spinner from "../../components/Spinner";
 import { Product } from "../../lib/types";
+import { URL } from "../../lib/constants";
+import Axios from "axios";
 
-interface ProductListProps {
-  products: Product[];
-}
-
-const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
+const ProductDetails = () => {
   const { id } = useParams();
-  const { product, dispatch } = useProducts();
   const [animation, setAnimation] = useState<boolean>(true);
   const [result, setResult] = useState<Product>();
   const navigate = useNavigate();
@@ -31,12 +26,10 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
   }
 
   useEffect(() => {
-    window.scrollTo(0, 0);
     setAnimation(true);
     const fetchData = async () => {
-      await getProduct(id, dispatch);
-      const productResult = await products.find((p) => p._id === id);
-      setResult(productResult);
+      const response = await Axios.get(`${URL}/products/${id}`);
+      setResult(response.data);
       setTimeout(() => setAnimation(false), 3000);
     };
     fetchData();
@@ -44,10 +37,10 @@ const ProductDetails: React.FC<ProductListProps> = ({ products }) => {
   }, [id]);
 
   useEffect(() => {
-    if (product?.imageUrls?.length) {
-      setImage(product.imageUrls[0]);
+    if (result?.imageUrls?.length) {
+      setImage(result.imageUrls[0]);
     }
-  }, [product]);
+  }, [result]);
 
   return (
     <section

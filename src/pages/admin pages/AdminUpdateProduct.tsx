@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useProducts } from "../../context/ProductContext/ProductContext";
-import { createProduct } from "../../context/ProductContext/ProductApiCalls";
+import { updateProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const AddProducts: React.FC = () => {
+const AdminUpdateProduct: React.FC = () => {
+  const { id } = useParams();
   const [productName, setProductName] = useState<string>("");
   const [productBrand, setProductBrand] = useState<string>("");
   const [productDescription, setProductDescription] = useState<string>("");
@@ -20,6 +23,7 @@ const AddProducts: React.FC = () => {
   const [newArrival, setNewArrival] = useState<boolean>(false);
 
   const { dispatch } = useProducts();
+  const navigate = useNavigate();
 
   const handleSizeToggle = (size: string) => {
     if (productSize.includes(size)) {
@@ -60,7 +64,7 @@ const AddProducts: React.FC = () => {
       if (data.secure_url) {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
-        toast("image uploaded");
+        toast("Image uploaded!");
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
@@ -71,30 +75,30 @@ const AddProducts: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (productImages.length < 5) {
-      alert("Please upload all product images.");
-      return;
-    }
+    // Dynamically create formData with only non-empty fields
+    const formData: Record<string, any> = { _id: id };
 
-    const formData = {
-      name: productName,
-      brand: productBrand,
-      description: productDescription,
-      category: productCategory,
-      subcategory: productSubCategory,
-      type: productType,
-      gender: productSex,
-      color: productColor,
-      price: productPrice,
-      bestSeller: bestSeller,
-      newArrival: newArrival,
-      size: productSize,
-      imageUrls: productImages, // Store URLs in product data
-    };
+    if (productName) formData.name = productName;
+    if (productBrand) formData.brand = productBrand;
+    if (productDescription) formData.description = productDescription;
+    if (productCategory) formData.category = productCategory;
+    if (productSubCategory) formData.subcategory = productSubCategory;
+    if (productType) formData.type = productType;
+    if (productSex) formData.gender = productSex;
+    if (productColor) formData.color = productColor;
+    if (productPrice) formData.price = productPrice;
+    if (productSize.length > 0) formData.size = productSize;
+    if (productImages.length > 0) formData.imageUrls = productImages;
+    if (bestSeller) formData.bestSeller = bestSeller;
+    if (newArrival) formData.newArrival = newArrival;
 
-    createProduct(formData, dispatch);
+    // Dispatch the update request
+    await updateProduct(formData, dispatch);
 
-    // Clear form after submission
+    // Navigate back to the products list
+    navigate("/admin/products");
+
+    // Clear form fields after submission
     setProductName("");
     setProductBrand("");
     setProductDescription("");
@@ -110,14 +114,14 @@ const AddProducts: React.FC = () => {
     setBestSeller(false);
     setNewArrival(false);
   };
+
   return (
     <section className="w-full pb-6">
-      {/* <div className="mb-12 md:mb-10">
-        <h2 className="text-4xl font-semibold mb-5">Add Product</h2>
-        <p className="md:text-md">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </p>
-      </div> */}
+      <div className="mb-12 md:mb-10">
+        <h2 className="text-4xl font-semibold mb-5 text-gray-500">
+          Update Product
+        </h2>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-8 poppins">
         {/* Image Upload */}
@@ -172,7 +176,6 @@ const AddProducts: React.FC = () => {
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg transition-all"
-              required
             />
 
             <input
@@ -191,7 +194,6 @@ const AddProducts: React.FC = () => {
               onChange={(e) => setProductDescription(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg transition-all"
               rows={3}
-              required
             />
           </div>
 
@@ -201,7 +203,6 @@ const AddProducts: React.FC = () => {
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
                 className="w-full p-3 border border-gray-300  transition-all"
-                required
               >
                 <option value=" ">Select Category</option>
                 <option value="Active Wear">Active Wear</option>
@@ -215,7 +216,6 @@ const AddProducts: React.FC = () => {
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
                   className="w-full p-3 border border-gray-300 transition-all"
-                  required
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Modest Workout Tops">
@@ -240,7 +240,6 @@ const AddProducts: React.FC = () => {
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
                   className="w-full p-3 border border-gray-300 transition-all"
-                  required
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Gym Essentials Kit">Gym Essentials Kit</option>
@@ -257,7 +256,6 @@ const AddProducts: React.FC = () => {
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all"
-                required
               >
                 <option value="">Select Product Type</option>
                 <option value="Top wear">Top Wear</option>
@@ -271,7 +269,6 @@ const AddProducts: React.FC = () => {
                 value={productSex}
                 onChange={(e) => setProductSex(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all"
-                required
               >
                 <option value="">Select Product Sex</option>
                 <option value="Female">Female</option>
@@ -285,7 +282,6 @@ const AddProducts: React.FC = () => {
                 value={productColor}
                 onChange={(e) => setProductColor(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all"
-                required
               >
                 <option value="">Select Product Color</option>
                 <option value="Black">Black</option>
@@ -308,7 +304,6 @@ const AddProducts: React.FC = () => {
                 value={productPrice}
                 onChange={(e) => setProductPrice(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all"
-                required
               />
             </div>
           </div>
@@ -362,13 +357,13 @@ const AddProducts: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-brand-neutral text-white py-3 rounded-lg hover:bg-gray-500 transition-all poppins"
+          className="w-full bg-brand-neutral text-white py-3 rounded-lg hover:bg-gray-700 transition-all poppins"
         >
-          Add Product
+          Update Product
         </button>
       </form>
     </section>
   );
 };
 
-export default AddProducts;
+export default AdminUpdateProduct;

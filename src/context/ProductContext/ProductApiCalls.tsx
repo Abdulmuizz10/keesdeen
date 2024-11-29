@@ -81,6 +81,7 @@ export const createProduct = async (
           "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
       },
     });
+    toast.success("Product created!");
     dispatch(createProductSuccess(res.data));
   } catch (err) {
     dispatch(createProductFailure());
@@ -89,7 +90,7 @@ export const createProduct = async (
 
 // Update a product
 export const updateProduct = async (
-  product: Product,
+  product: any,
   dispatch: Dispatch<ProductAction>
 ) => {
   dispatch(updateProductStart());
@@ -105,6 +106,7 @@ export const updateProduct = async (
       }
     );
     dispatch(updateProductSuccess(res.data));
+    toast.success("Product updated!");
   } catch (err) {
     dispatch(updateProductFailure());
   }
@@ -122,7 +124,7 @@ export const createReview = async (
       reviewInfo
     );
     dispatch(createReviewSuccess(res.data));
-    toast.success("Thanks for the review");
+    toast.success("Thanks for the review!");
   } catch (err) {
     dispatch(createReviewFailure());
   }
@@ -130,7 +132,7 @@ export const createReview = async (
 
 // Delete a product
 export const deleteProduct = async (
-  id: string,
+  id: any,
   dispatch: Dispatch<ProductAction>
 ) => {
   dispatch(deleteProductStart());
@@ -142,6 +144,7 @@ export const deleteProduct = async (
       },
     });
     dispatch(deleteProductSuccess(id));
+    toast.success("Product has been deleted!");
   } catch (err) {
     dispatch(deleteProductFailure());
   }

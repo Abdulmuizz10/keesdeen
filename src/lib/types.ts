@@ -18,7 +18,7 @@ export interface Review {
 }
 
 export interface Product {
-  _id: string;
+  _id: any;
   name: string;
   brand: string;
   category: string;

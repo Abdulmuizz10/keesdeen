@@ -26,6 +26,7 @@ const ShopAll: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       await getProducts(dispatch);
+      console.log(products);
       setLoading(false);
     };
     fetchData();

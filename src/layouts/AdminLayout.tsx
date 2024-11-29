@@ -61,7 +61,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const isMobile = useMediaQuery("(max-width: 991px)");
   return (
     <main className="flex min-h-screen flex-col lg:flex-row bg-white">
-      <div className="absolute top-0 z-10 flex min-h-16 flex-col px-6 md:min-h-18 md:px-8 lg:sticky lg:h-screen lg:min-h-[auto] lg:w-[17.5rem] lg:min-w-[17.5rem]  lg:px-0 lg:py-6">
+      <div className="absolute top-0 z-10 flex min-h-16 flex-col px-6 md:min-h-18 md:px-8 lg:sticky lg:h-screen lg:min-h-[auto] lg:w-[15.5rem] lg:min-w-[15.5rem]  lg:px-0 lg:py-6">
         <div className="flex flex-1 flex-row items-center lg:flex-col lg:items-stretch">
           <Link
             to="/"
@@ -92,7 +92,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           )}
         </div>
       </div>
-      <main className="flex-1 py-20 px-8 w-full bg-background-primary lg:p-10 min-h-screen h-screen overflow-y-auto">
+      <main className="flex-1 py-20 px-4 w-full bg-background-primary lg:p-5 min-h-screen h-screen overflow-y-auto">
         {children}
         <Outlet />
       </main>

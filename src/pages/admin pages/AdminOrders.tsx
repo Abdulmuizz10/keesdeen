@@ -275,7 +275,7 @@ const AdminOrders: React.FC = () => {
           <table className="w-full bg-white">
             <thead>
               <tr className="bg-gray-100 rounded-t-xl font-extrabold bricolage-grotesque">
-                <th className="text-left p-4">Order ID</th>
+                <th className="text-left p-4 rounded-tl-xl">Order ID</th>
                 <th className="text-left p-4">Customer Name</th>
                 <th className="text-left p-4">Total Amount</th>
                 <th className="text-left p-4">Status</th>
@@ -300,10 +300,10 @@ const AdminOrders: React.FC = () => {
                       className="border border-gray-300  p-1 focus:ring-none"
                     >
                       <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
+                      {/* <option value="Processing">Processing</option> */}
                       <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled</option>
+                      {/* <option value="Delivered">Delivered</option> */}
+                      {/* <option value="Cancelled">Cancelled</option> */}
                     </select>
                   </td>
                   <td className="p-4 text-base font-semibold">{order.date}</td>
