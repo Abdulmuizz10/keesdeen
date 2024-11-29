@@ -133,11 +133,11 @@ const ProductDetails = () => {
           </div>
           {/* Description and Review Section */}
           <div className="mt-20">
-            <Reviews id={result._id} />
+            <Reviews id={id} />
           </div>
           {/* Related products */}
           <div className="mt-20">
-            <RelatedProducts category={result.category} id={result._id} />
+            <RelatedProducts category={result.category} id={id} />
           </div>
         </div>
       )}

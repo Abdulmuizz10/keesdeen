@@ -9,12 +9,11 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import { Review } from "../lib/types";
-import {
-  createReview,
-  getProduct,
-} from "../context/ProductContext/ProductApiCalls";
+import { createReview } from "../context/ProductContext/ProductApiCalls";
 import { useProducts } from "../context/ProductContext/ProductContext";
 import { AuthContext } from "../context/AuthContext/AuthContext";
+import Axios from "axios";
+import { URL } from "../lib/constants";
 
 interface ReviewsProps {
   // currentReviews: Review[];
@@ -26,14 +25,13 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
   const [change, setChange] = useState<boolean>(true);
   const [sortOption, setSortOption] = useState<string>("oldest");
   const [reviews, setReviews] = useState<Review[]>([]);
-  const { product, dispatch } = useProducts();
+  const { dispatch } = useProducts();
 
   useEffect(() => {
     const fetchData = async () => {
-      await getProduct(id, dispatch);
-      setReviews(product.reviews);
+      const response = await Axios.get(`${URL}/products/${id}`);
+      setReviews(response.data.reviews);
     };
-
     fetchData();
   }, [id]);
 
