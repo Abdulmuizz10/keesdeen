@@ -7,13 +7,13 @@ import { Button } from "@relume_io/relume-ui";
 import { toast } from "react-toastify";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 
-const zipCodePatterns: { [key: string]: RegExp } = {
-  US: /^[0-9]{5}(-[0-9]{4})?$/,
-  CA: /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/,
-  UK: /^[A-Za-z]{1,2}\d[A-Za-z\d]? \d[A-Za-z]{2}$/,
-  AU: /^\d{4}$/,
-  IN: /^\d{6}$/,
-};
+// const zipCodePatterns: { [key: string]: RegExp } = {
+//   US: /^[0-9]{5}(-[0-9]{4})?$/,
+//   CA: /^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/,
+//   UK: /^[A-Za-z]{1,2}\d[A-Za-z\d]? \d[A-Za-z]{2}$/,
+//   AU: /^\d{4}$/,
+//   IN: /^\d{6}$/,
+// };
 
 interface DeliveryFormProps {
   selectedCountry: string;
@@ -41,8 +41,10 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
   const { user } = useContext(AuthContext);
 
   const validateZipCode = (zip: string) => {
-    const pattern = zipCodePatterns[selectedCountry] || /^[A-Za-z0-9 -]{3,10}$/;
-    return pattern.test(zip) || "Invalid postal code format";
+    // Regex for postal codes (3–12 characters, alphanumeric, spaces, and hyphens allowed)
+    const universalPattern = /^[A-Za-z0-9 -]{3,12}$/;
+    if (!zip.trim()) return "Zip code is required";
+    return universalPattern.test(zip.trim()) || "Invalid postal code format";
   };
 
   React.useEffect(() => {
@@ -141,7 +143,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 
         {/* address */}
         <div className="relative w-full mb-1 max-md:col-span-2">
-          <label>Address Line one</label>
+          <label>Address Line One</label>
           <input
             {...register("addressLineOne", {
               required: "Address is required",
@@ -159,7 +161,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
 
         <div className="relative w-full mb-1 max-md:col-span-2">
           <div className="flex items-center gap-1">
-            <label>Address Line two </label>
+            <label>Address Line Two </label>
             <span className="hidden md:flex">(optional)</span>
           </div>
           <input
@@ -196,11 +198,12 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
           <input
             {...register("zipCode", {
               required: "Zip code is required",
-              validate: validateZipCode,
+              validate: validateZipCode, // Hooking the custom validation
             })}
             type="text"
             placeholder="Zip code / Postal code"
-            className="border border-border-secondary px-2 py-3 w-full rounded-md "
+            maxLength={12} // Preventing user input beyond 12 characters
+            className="border border-border-secondary px-2 py-3 w-full rounded-md"
           />
           {errors.zipCode && (
             <p className="text-red-500 text-sm mt-1">

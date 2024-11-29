@@ -162,7 +162,7 @@ const CheckOut: React.FC = () => {
             <div className="mb-[18px] flex flex-col gap-[15px]">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
-                <p>{formatAmount(subtotal)}</p>
+                <p>{formatAmount(subtotal + delivery_fee)}</p>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between">
