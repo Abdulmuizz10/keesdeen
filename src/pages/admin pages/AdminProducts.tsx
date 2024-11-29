@@ -90,7 +90,6 @@ const AdminProducts: React.FC = () => {
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                     </tr>
                   ))
                 : items?.map((item, index) => (

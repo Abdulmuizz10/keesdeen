@@ -37,7 +37,7 @@ const AdminCustomers: React.FC = () => {
         <h3 className="text-xl font-semibold mb-4">Customer List</h3>
         <div className="overflow-x-auto">
           <table className="w-full bg-white poppins">
-            <thead>
+            <thead className="text-sm">
               <tr className="bg-gray-100 font-extrabold">
                 <th className="text-left p-4 font-semibold rounded-tl-xl">
                   User ID
@@ -55,9 +55,6 @@ const AdminCustomers: React.FC = () => {
                 ? Array.from({ length: 20 }).map((_, index) => (
                     <tr key={index} className="border-b">
                       <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
