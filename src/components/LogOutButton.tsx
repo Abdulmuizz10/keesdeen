@@ -22,7 +22,7 @@ const LogOutButton: React.FC = () => {
 
   return (
     <Button
-      className="bg-brand-neutral text-white rounded-md py-3 px-20 max-sm:w-full text-xl poppins"
+      className="bg-brand-neutral text-white rounded-md py-3 px-18 max-sm:w-full text-md poppins"
       onClick={() => handleLogout()}
     >
       Log out

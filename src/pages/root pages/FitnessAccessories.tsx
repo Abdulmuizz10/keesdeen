@@ -283,7 +283,13 @@ const FitnessAccessories: React.FC = () => {
                 {/* {Product Sort} */}
 
                 <p className="info-text hidden xl:flex">
-                  Showing 1 . {filteredProducts.length} of 14 Products
+                  Showing 1 . {filteredProducts.length} of{" "}
+                  {
+                    products?.filter(
+                      (i) => i.category === "Fitness Accessories"
+                    ).length
+                  }
+                  Products
                 </p>
 
                 <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">

@@ -221,12 +221,12 @@ const CheckOut: React.FC = () => {
                 buttonProps={{
                   css: {
                     backgroundColor: "#3d3d3d",
-                    fontSize: "18px",
+                    fontSize: "16px",
                     color: "#fff",
-                    "&:hover": {
-                      backgroundColor: "#374151",
-                    },
-                    fontStyle: "poppins",
+                    // "&:hover": {
+                    //   backgroundColor: "#374151",
+                    // },
+                    fontFamily: "poppins",
                   },
                 }}
               >

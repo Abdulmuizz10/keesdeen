@@ -283,7 +283,12 @@ const ActiveWear: React.FC = () => {
                   {/* {Product Sort} */}
 
                   <p className="info-text hidden xl:flex">
-                    Showing 1 . {filteredProducts.length} of 16 Products
+                    Showing 1 . {filteredProducts.length} of{" "}
+                    {
+                      products?.filter((i) => i.category === "Active Wear")
+                        .length
+                    }
+                    Products
                   </p>
 
                   <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">

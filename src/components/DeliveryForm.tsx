@@ -172,8 +172,7 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
           />
         </div>
 
-        {/* Add more fields as required */}
-
+        {/* Phone Number */}
         <div className="relative w-full mb-1 max-md:col-span-2">
           <label>Phone Number</label>
           <PhoneInput
@@ -182,8 +181,18 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
             onChange={(phone) =>
               setValue("phoneNumber", phone, { shouldValidate: true })
             }
-            inputClass="w-full border border-border-secondary px-2 py-6 rounded-md"
-            containerClass="w-full"
+            // inputClass="w-full border border-border-secondary px-2 py-6 rounded-md"
+            // containerClass="!w-[100px]"
+            containerStyle={{
+              width: "100%", // Tailwind's `w-full`
+              borderRadius: "0.375rem", // Tailwind's `rounded-md`
+            }}
+            inputStyle={{
+              width: "100%", // Tailwind's `w-full`
+              border: "1px solid #afafaf", // Tailwind's `border-border-secondary` (replace with your custom color)
+              padding: "1.5rem 2.9rem", // Tailwind's `px-2 py-6`
+              borderRadius: "0.375rem", // Tailwind's `rounded-md`
+            }}
           />
           {errors.phoneNumber && (
             <p className="text-red-500 text-sm mt-1">
@@ -213,10 +222,10 @@ const DeliveryForm: React.FC<DeliveryFormProps> = ({
         </div>
       </form>
       <Button
-        className="bg-brand-neutral text-white text-xl rounded-md py-3 px-10 w-full mt-4"
+        className="bg-brand-neutral text-white text-base rounded-md py-3 px-10 w-full mt-4 poppins"
         onClick={handleSubmit(onSubmit)}
       >
-        Submit
+        Submit Order Details
       </Button>
     </>
   );
