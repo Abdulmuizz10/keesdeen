@@ -87,18 +87,20 @@ export const createOrder = async (
   setPaymentLoader: any,
   setCartItems: any,
   setSelectedCountry: any,
-  setSelectedState: any
+  setSelectedState: any,
+  navigate: any
 ) => {
   orderDispatch(createOrderStart());
   try {
     const res = await axios.post<Product>(`${URL}/orders`, order);
     orderDispatch(createOrderSuccess(res.data));
     setPaymentLoader(false);
+    toast.success("Order placed successfully!");
+    showOrderSummary(res.data);
     setCartItems({});
     setSelectedCountry("");
     setSelectedState("");
-    toast.success("Order placed successfully!");
-    showOrderSummary(res.data);
+    navigate("/collections/shop_all");
   } catch (err) {
     setPaymentLoader(false);
     orderDispatch(createOrderFailure());

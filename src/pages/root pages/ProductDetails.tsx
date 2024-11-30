@@ -30,10 +30,10 @@ const ProductDetails = () => {
     const fetchData = async () => {
       const response = await Axios.get(`${URL}/products/${id}`);
       setResult(response.data);
-      setTimeout(() => setAnimation(false), 3000);
+      setTimeout(() => setAnimation(false), 4000);
     };
     fetchData();
-    setTimeout(() => setAnimation(false), 3000);
+    setTimeout(() => setAnimation(false), 4000);
   }, [id]);
 
   useEffect(() => {
@@ -43,10 +43,7 @@ const ProductDetails = () => {
   }, [result]);
 
   return (
-    <section
-      id="relume"
-      className={`px-[5%] py-24 md:py-30 ${animation && "h-screen"}`}
-    >
+    <section className={`px-[5%] py-24 md:py-30 ${animation && "h-screen"}`}>
       {animation && <Animation />}
       {result && (
         <div className="container">
@@ -100,7 +97,7 @@ const ProductDetails = () => {
                 <div className="flex gap-2">
                   {result?.size?.map((item: any, index: number) => (
                     <div
-                      className={`p-2 h-[40px] w-[40px] bg-gray-300 flex items-center justify-center cursor-pointer text-sm ${
+                      className={`p-2 h-[40px] w-[40px] bg-gray-300 flex items-center justify-center cursor-pointer text-sm poppins ${
                         item === size && "border-2 border-border-primary"
                       }`}
                       key={index}

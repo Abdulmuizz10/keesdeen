@@ -52,51 +52,54 @@ import { Link } from "react-router-dom";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
+  animation: Boolean;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children, animation }) => {
   // const [isSearchIconClicked, setIsSearchIconClicked] =
   //   useState<boolean>(false);
   // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const isMobile = useMediaQuery("(max-width: 991px)");
   return (
-    <main className="flex min-h-screen flex-col lg:flex-row bg-white">
-      <div className="absolute top-0 z-10 flex min-h-16 flex-col px-6 md:min-h-18 md:px-8 lg:sticky lg:h-screen lg:min-h-[auto] lg:w-[15.5rem] lg:min-w-[15.5rem]  lg:px-0 lg:py-6">
-        <div className="flex flex-1 flex-row items-center lg:flex-col lg:items-stretch">
-          <Link
-            to="/"
-            className="order-1 ml-6 flex justify-start lg:order-none lg:mb-6 lg:ml-6 lg:block lg:self-start"
-          >
-            <img src={mainLogo} alt="Relume logo" className="w-full h-7" />
-          </Link>
-          {isMobile ? (
-            <Sheet>
-              <SheetTrigger>
-                <RxHamburgerMenu className="size-8" />
-              </SheetTrigger>
-              <SheetPortal>
-                <SheetOverlay className="bg-black/60" />
-                <SheetClose className="right-5 top-5 text-white">
-                  <RxCross2 className="size-6" />
-                </SheetClose>
-                <SheetContent
-                  side="left"
-                  className="w-[80vw] overflow-hidden md:w-full md:max-w-[19.5rem]"
-                >
-                  <Navigation />
-                </SheetContent>
-              </SheetPortal>
-            </Sheet>
-          ) : (
-            <Navigation />
-          )}
+    <div className={`${animation ? "opacity-0" : " opacity-100"}`}>
+      <main className="flex min-h-screen flex-col lg:flex-row bg-white">
+        <div className="absolute top-0 z-10 flex min-h-16 flex-col px-6 md:min-h-18 md:px-8 lg:sticky lg:h-screen lg:min-h-[auto] lg:w-[15.5rem] lg:min-w-[15.5rem]  lg:px-0 lg:py-6">
+          <div className="flex flex-1 flex-row items-center lg:flex-col lg:items-stretch">
+            <Link
+              to="/"
+              className="order-1 ml-6 flex justify-start lg:order-none lg:mb-6 lg:ml-6 lg:block lg:self-start"
+            >
+              <img src={mainLogo} alt="Relume logo" className="w-full h-7" />
+            </Link>
+            {isMobile ? (
+              <Sheet>
+                <SheetTrigger>
+                  <RxHamburgerMenu className="size-8" />
+                </SheetTrigger>
+                <SheetPortal>
+                  <SheetOverlay className="bg-black/60" />
+                  <SheetClose className="right-5 top-5 text-white">
+                    <RxCross2 className="size-6" />
+                  </SheetClose>
+                  <SheetContent
+                    side="left"
+                    className="w-[80vw] overflow-hidden md:w-full md:max-w-[19.5rem]"
+                  >
+                    <Navigation />
+                  </SheetContent>
+                </SheetPortal>
+              </Sheet>
+            ) : (
+              <Navigation />
+            )}
+          </div>
         </div>
-      </div>
-      <main className="flex-1 py-20 px-4 w-full bg-background-primary lg:p-5 min-h-screen h-screen overflow-y-auto">
-        {children}
-        <Outlet />
+        <main className="flex-1 py-20 px-4 w-full bg-background-primary lg:p-5 min-h-screen h-screen overflow-y-auto">
+          {children}
+          <Outlet />
+        </main>
       </main>
-    </main>
+    </div>
   );
 };
 

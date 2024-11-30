@@ -15,11 +15,13 @@ import {
   DialogOverlay,
   DialogContent,
 } from "@relume_io/relume-ui";
+import { useNavigate } from "react-router-dom";
 
 const CheckOut: React.FC = () => {
   const { user } = useContext(AuthContext);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
+  const navigate = useNavigate();
   const {
     getCartDetailsForOrder,
     setCartItems,
@@ -85,7 +87,8 @@ const CheckOut: React.FC = () => {
           setPaymentLoader,
           setCartItems,
           setSelectedCountry,
-          setSelectedState
+          setSelectedState,
+          navigate
         );
         setSelectedCountry("");
         setSelectedState("");
@@ -114,7 +117,8 @@ const CheckOut: React.FC = () => {
           setPaymentLoader,
           setCartItems,
           setSelectedCountry,
-          setSelectedState
+          setSelectedState,
+          navigate
         );
         setSelectedCountry("");
         setSelectedState("");

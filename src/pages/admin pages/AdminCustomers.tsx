@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 const AdminCustomers: React.FC = () => {
   const [customers, setCustomers] = useState<any>([]);
@@ -22,7 +24,7 @@ const AdminCustomers: React.FC = () => {
       setCustomers(response.data.users);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      toast.error("Error fetching products!");
       setLoading(false);
     }
   };
@@ -30,6 +32,28 @@ const AdminCustomers: React.FC = () => {
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
+
+  const handleDelete = async (productId: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
+
+    if (confirmDelete) {
+      try {
+        await Axios.delete(`${URL}/users/${productId}`, {
+          headers: {
+            token:
+              "Bearer " +
+              JSON.parse(localStorage.getItem("user") || "{}").token,
+          },
+        });
+        toast.success("User deleted successfully!");
+        fetchData(currentPage);
+      } catch (error) {
+        toast.error("Error while deleting the user!");
+      }
+    }
+  };
 
   return (
     <div className="w-full">
@@ -45,8 +69,9 @@ const AdminCustomers: React.FC = () => {
                 <th className="text-left p-4 font-semibold">Username</th>
                 <th className="text-left p-4 font-semibold">Email</th>
                 <th className="text-left p-4 font-semibold">Admin</th>
+                <th className="text-left p-4 font-semibold">Date Added</th>
                 <th className="text-left p-4 font-semibold rounded-tr-xl">
-                  Date Added
+                  Delete
                 </th>
               </tr>
             </thead>
@@ -55,6 +80,7 @@ const AdminCustomers: React.FC = () => {
                 ? Array.from({ length: 20 }).map((_, index) => (
                     <tr key={index} className="border-b">
                       <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
@@ -78,6 +104,12 @@ const AdminCustomers: React.FC = () => {
                       </td>
                       <td className="p-4 text-base font-medium">
                         {new Date(item.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="py-2 px-8">
+                        <RiDeleteBin5Line
+                          className="text-2xl cursor-pointer"
+                          onClick={() => handleDelete(item._id)}
+                        />
                       </td>
                     </tr>
                   ))}
