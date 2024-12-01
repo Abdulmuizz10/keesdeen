@@ -29,7 +29,6 @@ export const SignUp = async (
   user: any,
   dispatch: Dispatch<any>,
   navigate: any,
-  guestEmail: any,
   setGuestEmail: any
 ): Promise<void> => {
   dispatch(AccessStart());
@@ -37,18 +36,16 @@ export const SignUp = async (
     const res: Response = await axios.post(`${URL}/auth/sign-up`, user);
     dispatch(AccessSuccess(res.data));
     if (res.data) {
-      if (guestEmail) {
-        const user = res.data.id;
-        const email = guestEmail;
-        const userInfo = { user, email };
-        const expect = await axios.post(
-          `${URL}/orders/linkguest/orders`,
-          userInfo
-        );
-        if (expect) {
-          setGuestEmail("");
-          toast(expect.data.message);
-        }
+      const user = res.data.id;
+      const email = res.data.email;
+      const userInfo = { user, email };
+      const expect = await axios.post(
+        `${URL}/orders/linkguest/orders`,
+        userInfo
+      );
+      if (expect) {
+        setGuestEmail("");
+        toast(expect.data.message);
       }
     }
     navigate("/");

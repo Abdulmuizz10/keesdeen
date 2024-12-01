@@ -52,10 +52,9 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     SignUp(
-      { firstName, lastName, email, password, isGuest: false },
+      { firstName, lastName, email, password },
       dispatch,
       navigate,
-      guestEmail,
       setGuestEmail
     );
   };
@@ -70,7 +69,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
       <div className="relative min-h-screen justify-center">
         <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
           <Link to={logo.url}>
-            <img src={logo.src} alt={logo.alt} className="w-full h-[25px]" />
+            <img src={logo.src} alt={logo.alt} className="w-[150px] h-[30px]" />
           </Link>
         </div>
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">

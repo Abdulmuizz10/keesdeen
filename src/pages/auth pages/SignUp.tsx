@@ -54,7 +54,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
     ...props,
   } as Props;
 
-  const { guestEmail, setGuestEmail } = useShop();
+  const { setGuestEmail } = useShop();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,10 +65,9 @@ export const Signup7: React.FC = (props: Signup7Props) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     SignUp(
-      { firstName, lastName, email, password, isGuest: false },
+      { firstName, lastName, email, password },
       dispatch,
       navigate,
-      guestEmail,
       setGuestEmail
     );
   };
@@ -77,10 +76,9 @@ export const Signup7: React.FC = (props: Signup7Props) => {
     onSuccess: async (tokenResponse) => {
       try {
         // Send the access token (googleToken) to get user info and authenticate
-        const res = await Axios.post(`${URL}auth/google-sign-in`, {
+        const res = await Axios.post(`${URL}/auth/google-sign-in`, {
           googleToken: tokenResponse.access_token,
         });
-
         dispatch(AccessSuccess(res.data));
         navigate("/");
       } catch (error) {
@@ -97,7 +95,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
       <div className="relative grid min-h-screen grid-cols-1 items-stretch justify-center overflow-auto lg:grid-cols-2 overflow-x-hidden">
         <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
           <Link to={logo.url}>
-            <img src={logo.src} alt={logo.alt} className="w-full h-[25px]" />
+            <img src={logo.src} alt={logo.alt} className="w-[150px] h-[30px]" />
           </Link>
         </div>
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
