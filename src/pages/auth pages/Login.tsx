@@ -55,6 +55,7 @@ export const Login7: React.FC = (props: Login7Props) => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
   const { dispatch } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -128,6 +129,11 @@ export const Login7: React.FC = (props: Login7Props) => {
                   className="border-neutral-300 rounded"
                 />
               </div>
+
+              <Link to="/auth/forget_password" className="text-end">
+                <p className="text-blue-900 cursor-pointer">Forget password?</p>
+              </Link>
+
               <div className="grid-col-1 grid gap-4">
                 <Button
                   variant={logInButton.variant}
@@ -192,6 +198,6 @@ export const Login7Defaults: Login7Props = {
   signUpText: "Don't have an account?",
   signUpLink: {
     text: "Sign up",
-    url: "/register/signUp",
+    url: "/auth/signUp",
   },
 };

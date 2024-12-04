@@ -5,10 +5,6 @@ import { URL } from "../../lib/constants";
 
 import { toast } from "react-toastify";
 
-interface Response {
-  data: any; // Replace `any` with the actual data structure if known
-}
-
 // Type definition for the login function
 export const Login = async (
   user: any,
@@ -17,11 +13,20 @@ export const Login = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res: Response = await axios.post(`${URL}/auth/sign-in`, user);
-    dispatch(AccessSuccess(res.data));
-    navigate("/");
+    const res = await axios.post(`${URL}/auth/sign-in`, user, {
+      validateStatus: (status) => status < 500,
+    });
+
+    if (res.status === 200) {
+      dispatch(AccessSuccess(res.data));
+      navigate("/");
+    } else {
+      dispatch(AccessFailure());
+      toast.error(res.data.message || "Something went wrong");
+    }
   } catch (error) {
     dispatch(AccessFailure());
+    toast.error("An unexpected error occurred. Please try again.");
   }
 };
 
@@ -33,23 +38,30 @@ export const SignUp = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res: Response = await axios.post(`${URL}/auth/sign-up`, user);
-    dispatch(AccessSuccess(res.data));
-    if (res.data) {
-      const user = res.data.id;
-      const email = res.data.email;
-      const userInfo = { user, email };
-      const expect = await axios.post(
-        `${URL}/orders/linkguest/orders`,
-        userInfo
-      );
-      if (expect) {
-        setGuestEmail("");
-        toast(expect.data.message);
+    const res = await axios.post(`${URL}/auth/sign-up`, user, {
+      validateStatus: (status) => status < 500,
+    });
+    if (res.status === 200) {
+      dispatch(AccessSuccess(res.data));
+      if (res.data) {
+        const user = res.data.id;
+        const email = res.data.email;
+        const userInfo = { user, email };
+        const expect = await axios.post(
+          `${URL}/orders/linkguest/orders`,
+          userInfo
+        );
+        if (expect) {
+          setGuestEmail("");
+        }
       }
+      navigate("/");
+    } else {
+      dispatch(AccessFailure());
+      toast.error(res.data.message || "Something went wrong");
     }
-    navigate("/");
   } catch (err) {
     dispatch(AccessFailure());
+    toast.error("An unexpected error occurred. Please try again.");
   }
 };

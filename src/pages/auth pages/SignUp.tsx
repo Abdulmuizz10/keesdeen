@@ -227,6 +227,6 @@ export const Signup7Defaults: Signup7Props = {
   logInText: "Already have an account?",
   logInLink: {
     text: "Log in",
-    url: "/register/login",
+    url: "/auth/login",
   },
 };

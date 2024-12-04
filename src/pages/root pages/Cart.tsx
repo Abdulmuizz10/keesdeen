@@ -94,7 +94,7 @@ const Cart: React.FC = () => {
             <CartTotal />
             <div className="w-full text-end mt-5">
               {!user && !guestEmail ? (
-                <Link to="/register/guest-signUp">
+                <Link to="/auth/guest-signUp">
                   <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
                     PROCEED TO CHECKOUT
                   </Button>

@@ -31,6 +31,8 @@ import OrderHistory from "./pages/root pages/OrderHistory";
 import { Login7 } from "./pages/auth pages/Login";
 import { Signup7 } from "./pages/auth pages/SignUp";
 import { GuestSignUp } from "./pages/auth pages/GuestSignUp";
+import { ForgetPassword } from "./pages/auth pages/ForgetPassword";
+import { ResetPassword } from "./pages/auth pages/ResetPassword";
 
 // Admin Pages
 
@@ -128,27 +130,16 @@ const App: React.FC = () => {
             </Route>
           ) : null}
 
-          {/* <Route element={<AdminLayout />}>
-            <Route path="/admin" element={<AdminHome />} />
-            <Route path="/admin/customers" element={<AdminCustomers />} />
-            <Route path="/admin/products" element={<AdminProducts />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-            <Route path="/admin/add_product" element={<AddProducts />} />
-            <Route
-              path="/admin/dashboard/sales"
-              element={<AdminDashBoardSales />}
-            />
-            <Route
-              path="/admin/dashboard/orders"
-              element={<AdminDashBoardOrders />}
-            />
-          </Route> */}
-
           {/* Auth Routes */}
           <Route element={<AuthLayout animation={animation} />}>
-            <Route path="/register/login" element={<Login7 />} />
-            <Route path="/register/signUp" element={<Signup7 />} />
-            <Route path="/register/guest-signUp" element={<GuestSignUp />} />
+            <Route path="/auth/login" element={<Login7 />} />
+            <Route path="/auth/signUp" element={<Signup7 />} />
+            <Route path="/auth/guest-signUp" element={<GuestSignUp />} />
+            <Route path="/auth/forget_password" element={<ForgetPassword />} />
+            <Route
+              path="/auth/reset_password/:token"
+              element={<ResetPassword />}
+            />
           </Route>
         </Routes>
       </Router>

@@ -166,13 +166,13 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
                     {/* <DialogTitle>Email</DialogTitle> */}
                     <DialogDescription>Enter your email</DialogDescription>
                     <form
-                      className="grid items-center gap-3 md:grid-cols-[1fr_max-content]"
+                      className="flex flex-col gap-3"
                       onSubmit={handleEmailSubmit}
                     >
                       <Input
                         type="email"
                         placeholder="Email"
-                        className="border-neutral-300 rounded poppins"
+                        className="border-neutral-300 rounded poppins w-full"
                         value={guestEmail}
                         onChange={(e) => setGuestEmail(e.target.value)}
                         required

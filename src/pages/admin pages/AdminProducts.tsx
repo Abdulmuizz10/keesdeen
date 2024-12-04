@@ -8,6 +8,7 @@ import { Product } from "../../lib/types";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AdminProducts: React.FC = () => {
   const [items, setItems] = useState<Product[]>([]);
@@ -33,7 +34,6 @@ const AdminProducts: React.FC = () => {
       setItems(response.data.products);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error("Error fetching products:", error);
       setLoading(false);
     }
   };
@@ -53,7 +53,7 @@ const AdminProducts: React.FC = () => {
         // Re-fetch products after deletion to ensure consistency
         fetchData(currentPage);
       } catch (error) {
-        console.error("Error deleting product:", error);
+        toast.error("Error deleting product");
       }
     }
   };

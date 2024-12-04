@@ -136,7 +136,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               </Link>
             ) : (
               <>
-                <Link to="/register/login">
+                <Link to="/auth/login">
                   <CiUser className="text-3xl text-text-primary hover:text-brand-primary" />
                 </Link>
               </>
@@ -190,7 +190,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             </Link>
           ) : (
             <>
-              <Link to="/register/login">
+              <Link to="/auth/login">
                 <CiUser className="text-3xl text-text-primary" />
               </Link>
             </>
