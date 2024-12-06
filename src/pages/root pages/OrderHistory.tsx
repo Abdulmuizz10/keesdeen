@@ -154,14 +154,14 @@ const OrderHistory: React.FC = () => {
                     <div className="w-full sm:w-1/3 flex flex-col items-start sm:items-end gap-6">
                       <div className="">
                         <p className="text-sm text-gray-500">Total</p>
-                        <p className="text-xl font-semibold text-green-600">
+                        <p className="text-xl px-1 font-semibold text-green-600">
                           {formatAmount(order.totalPrice)}
                         </p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Status</p>
                         <p
-                          className={`text-sm font-semibold px-4 py-2 rounded mt-1 ${
+                          className={`text-sm font-semibold px-2 py-2 rounded mt-1 ${
                             order.isDelivered
                               ? "bg-green-100 text-green-700"
                               : "bg-yellow-100 text-yellow-700"

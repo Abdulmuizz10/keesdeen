@@ -5,16 +5,17 @@ import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
-import { mainLogo } from "../../assets";
+import { Images, mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { Login } from "../../context/AuthContext/AuthApiCalls";
 import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
 import { URL } from "../../lib/constants";
+import Axios from "axios";
+import { toast } from "react-toastify";
 
 type ImageProps = {
   url?: string;
@@ -69,14 +70,25 @@ export const Login7: React.FC = (props: Login7Props) => {
     onSuccess: async (tokenResponse) => {
       try {
         // Send the access token (googleToken) to get user info and authenticate
-        const res = await axios.post(`${URL}/auth/google-sign-in`, {
-          googleToken: tokenResponse.access_token,
-        });
-
-        dispatch(AccessSuccess(res.data));
-        navigate("/");
+        const res = await Axios.post(
+          `${URL}/auth/google-sign-in`,
+          {
+            googleToken: tokenResponse.access_token,
+          },
+          {
+            validateStatus: (status) => status < 500,
+          }
+        );
+        if (res.status === 200) {
+          dispatch(AccessSuccess(res.data));
+          navigate("/");
+        } else {
+          dispatch(AccessFailure());
+          toast.error(res.data.message || "Something went wrong");
+        }
       } catch (error) {
         dispatch(AccessFailure());
+        toast.error("An unexpected error occurred. Please try again.");
       }
     },
     onError: (error) => {
@@ -131,7 +143,9 @@ export const Login7: React.FC = (props: Login7Props) => {
               </div>
 
               <Link to="/auth/forget_password" className="text-end">
-                <p className="text-blue-900 cursor-pointer">Forget password?</p>
+                <p className=" text-text-success cursor-pointer">
+                  Forget password?
+                </p>
               </Link>
 
               <div className="grid-col-1 grid gap-4">
@@ -191,8 +205,12 @@ export const Login7Defaults: Login7Props = {
     title: "Sign in with Google",
     iconLeft: <BiLogoGoogle className="size-6" />,
   },
+  // image: {
+  //   src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+  //   alt: "Placeholder image",
+  // },
   image: {
-    src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    src: Images.loginImg,
     alt: "Placeholder image",
   },
   signUpText: "Don't have an account?",

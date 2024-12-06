@@ -23,7 +23,6 @@ import {
   getOrdersByGuestFailure,
 } from "./OrderAction";
 import { Dispatch } from "react";
-import { Product } from "../../lib/types";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { showOrderSummary } from "../../components/SweatOrderPopUP";
@@ -55,7 +54,7 @@ type OrderAction =
 export const getOrders = async (orderDispatch: Dispatch<OrderAction>) => {
   orderDispatch(getOrderStart());
   try {
-    const res = await axios.get<Product[]>(`${URL}/orders`, {
+    const res = await axios.get(`${URL}/orders`, {
       headers: {
         token:
           "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
@@ -73,7 +72,7 @@ export const getOrder = async (
 ) => {
   orderDispatch(getOrderStart());
   try {
-    const res = await axios.get<Product>(`${URL}/orders/${orderId}`);
+    const res = await axios.get(`${URL}/orders/${orderId}`);
     orderDispatch(getOrderSuccess(res.data));
   } catch (err) {
     orderDispatch(getOrderFailure());
@@ -92,19 +91,27 @@ export const createOrder = async (
 ) => {
   orderDispatch(createOrderStart());
   try {
-    const res = await axios.post<Product>(`${URL}/orders`, order);
-    orderDispatch(createOrderSuccess(res.data));
-    setPaymentLoader(false);
-    toast.success("Order placed successfully!");
-    showOrderSummary(res.data);
-    setCartItems({});
-    setSelectedCountry("");
-    setSelectedState("");
-    navigate("/collections/shop_all");
+    const res = await axios.post(`${URL}/orders`, order, {
+      validateStatus: (status) => status < 500,
+    });
+    if (res.status === 200) {
+      orderDispatch(createOrderSuccess(res.data));
+      setPaymentLoader(false);
+      toast.success("Order placed successfully!");
+      showOrderSummary(res.data);
+      setCartItems({});
+      setSelectedCountry("");
+      setSelectedState("");
+      navigate("/collections/shop_all");
+    } else {
+      setPaymentLoader(false);
+      orderDispatch(createOrderFailure());
+      toast.error(res.data.message || "Something went wrong please try again");
+    }
   } catch (err) {
     setPaymentLoader(false);
     orderDispatch(createOrderFailure());
-    toast.error("Order cannot be placed");
+    toast.error("An unexpected error occurred. Please try again.");
   }
 };
 
@@ -115,16 +122,12 @@ export const updateOrderToDelivered = async (
 ) => {
   orderDispatch(updateOrderToDeliveredStart());
   try {
-    const res = await axios.put<Product>(
-      `${URL}/orders/${order._id}/deliver`,
-      order,
-      {
-        headers: {
-          token:
-            "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
-        },
-      }
-    );
+    const res = await axios.put(`${URL}/orders/${order._id}/deliver`, order, {
+      headers: {
+        token:
+          "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
+      },
+    });
     orderDispatch(updateOrderToDeliveredSuccess(res.data));
   } catch (err) {
     orderDispatch(updateOrderToDeliveredFailure());
@@ -137,16 +140,12 @@ export const linkGuestOrders = async (
 ) => {
   orderDispatch(linkGuestOrdersStart());
   try {
-    const res = await axios.post<any>(
-      `${URL}/orders/linkguest/orders`,
-      userInfo,
-      {
-        headers: {
-          token:
-            "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
-        },
-      }
-    );
+    const res = await axios.post(`${URL}/orders/linkguest/orders`, userInfo, {
+      headers: {
+        token:
+          "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
+      },
+    });
     orderDispatch(linkGuestOrdersSuccess());
     toast(res.data.message);
   } catch (err) {

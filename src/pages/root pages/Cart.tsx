@@ -90,7 +90,7 @@ const Cart: React.FC = () => {
         </div>
 
         <div className="flex justify-end my-20">
-          <div className="w-full sm:w-[450px] border p-5 rounded-md border-border-secondary shadow-xxlarge">
+          <div className="w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
             <CartTotal />
             <div className="w-full text-end mt-5">
               {!user && !guestEmail ? (

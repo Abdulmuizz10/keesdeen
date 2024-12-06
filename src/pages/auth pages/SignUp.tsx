@@ -5,17 +5,19 @@ import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
-import { mainLogo } from "../../assets";
+import { Images, mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { SignUp } from "../../context/AuthContext/AuthApiCalls";
 import { useGoogleLogin } from "@react-oauth/google";
 import Axios from "axios";
+
 import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
 import { URL } from "../../lib/constants";
 import { useShop } from "../../context/ShopContext";
+import { toast } from "react-toastify";
 
 type ImageProps = {
   url?: string;
@@ -76,13 +78,25 @@ export const Signup7: React.FC = (props: Signup7Props) => {
     onSuccess: async (tokenResponse) => {
       try {
         // Send the access token (googleToken) to get user info and authenticate
-        const res = await Axios.post(`${URL}/auth/google-sign-in`, {
-          googleToken: tokenResponse.access_token,
-        });
-        dispatch(AccessSuccess(res.data));
-        navigate("/");
+        const res = await Axios.post(
+          `${URL}/auth/google-sign-in`,
+          {
+            googleToken: tokenResponse.access_token,
+          },
+          {
+            validateStatus: (status) => status < 500,
+          }
+        );
+        if (res.status === 200) {
+          dispatch(AccessSuccess(res.data));
+          navigate("/");
+        } else {
+          dispatch(AccessFailure());
+          toast.error(res.data.message || "Something went wrong");
+        }
       } catch (error) {
         dispatch(AccessFailure());
+        toast.error("An unexpected error occurred. Please try again.");
       }
     },
     onError: (error) => {
@@ -220,8 +234,12 @@ export const Signup7Defaults: Signup7Props = {
     title: "Sign up with Google",
     iconLeft: <BiLogoGoogle className="size-6" />,
   },
+  // image: {
+  //   src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+  //   alt: "Placeholder image",
+  // },
   image: {
-    src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
+    src: Images.signupImg,
     alt: "Placeholder image",
   },
   logInText: "Already have an account?",

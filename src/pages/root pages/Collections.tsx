@@ -106,10 +106,10 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
       <div className="container">
         <div className="mb-12 md:mb-5">
           <div className="flex items-center mb-5 md:mb-6 gap-1">
-            <h2 className="text-4xl font-bold bricolage-grotesque">
-              Search for:
+            <h2 className="text-2xl font-bold bricolage-grotesque">
+              Search for :
             </h2>
-            <p className="poppins text-md text-text-secondary pt-1">{name}</p>
+            <p className="poppins text-md text-text-secondary">{name}</p>
           </div>
         </div>
         <div

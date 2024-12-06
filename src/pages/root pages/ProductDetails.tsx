@@ -42,9 +42,10 @@ const ProductDetails = () => {
     }
   }, [result]);
 
-  return (
+  return animation ? (
+    <Animation />
+  ) : (
     <section className={`px-[5%] py-24 md:py-30 ${animation && "h-screen"}`}>
-      {animation && <Animation />}
       {result && (
         <div className="container">
           <div className="flex gap-5 md:gap-10 flex-col lg:flex-row">
@@ -143,7 +144,7 @@ const ProductDetails = () => {
 };
 
 const Animation = () => (
-  <div className="w-screen h-[100vh] flex items-center justify-center bg-white fixed top-0 left-0 right-0 bottom-0">
+  <div className="w-screen h-screen flex items-center justify-center bg-white">
     <Spinner />
   </div>
 );

@@ -146,19 +146,24 @@ export const Footer1Defaults: Footer1Props = {
         { title: "Home", url: "/" },
         { title: "Shop All", url: "/collections/shop_all" },
         { title: "New In", url: "/collections/new_in" },
-      ],
-    },
-    {
-      title: "Default links",
-      links: [
         { title: "Active wear", url: "/collections/Active_wear" },
         {
           title: "Fitness Accessories",
           url: "/collections/Fitness_accessories",
         },
-        { title: "Link Six", url: "/profile" },
       ],
     },
+    // {
+    //   title: "Default links",
+    //   links: [
+    //     { title: "Active wear", url: "/collections/Active_wear" },
+    //     {
+    //       title: "Fitness Accessories",
+    //       url: "/collections/Fitness_accessories",
+    //     },
+    //     { title: "Link Six", url: "/profile" },
+    //   ],
+    // },
     {
       title: "Follow us",
       links: [

@@ -4,6 +4,8 @@ import smallLogo from "./Fvaicon.png";
 import profile from "./images/profile.png";
 import orders from "./images/orders.png";
 import card from "./images/creditcard.png";
+import loginImg from "./login image.jpg";
+import signupImg from "./signup image.jpg";
 
 export { mainLogo, smallLogo, mainLogoWhite };
 
@@ -106,4 +108,6 @@ export const Images = {
   profile,
   orders,
   card,
+  loginImg,
+  signupImg,
 };

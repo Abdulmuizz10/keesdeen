@@ -68,7 +68,7 @@ export const Gallery19: React.FC = () => {
                       .map((product: Product, index) => (
                         <CarouselItem
                           key={index}
-                          className="basis-2/2 md:basis-2/4 lg:basis-1/4"
+                          className="basis-full md:basis-2/4 lg:basis-1/4"
                         >
                           <ProductItem product={product} loading={loading} />
                         </CarouselItem>
@@ -80,7 +80,7 @@ export const Gallery19: React.FC = () => {
                       .map((product: Product, index) => (
                         <CarouselItem
                           key={index}
-                          className="basis-2/2 md:basis-2/4 lg:basis-1/4"
+                          className="basis-full md:basis-2/4 lg:basis-1/4"
                         >
                           <ProductItem product={product} loading={loading} />
                         </CarouselItem>

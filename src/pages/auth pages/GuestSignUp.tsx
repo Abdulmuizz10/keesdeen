@@ -1,10 +1,15 @@
 import React, { useContext, useState } from "react";
 import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
+import { BiLogoGoogle } from "react-icons/bi";
 import { Link, useNavigate } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { SignUp } from "../../context/AuthContext/AuthApiCalls";
+import { useGoogleLogin } from "@react-oauth/google";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
+
 import {
   Dialog,
   DialogTrigger,
@@ -16,6 +21,11 @@ import {
 } from "@relume_io/relume-ui";
 
 import { useShop } from "../../context/ShopContext";
+import {
+  AccessFailure,
+  AccessSuccess,
+} from "../../context/AuthContext/AuthActions";
+import { toast } from "react-toastify";
 
 type ImageProps = {
   url?: string;
@@ -28,6 +38,7 @@ type Props = {
   title: string;
   description: string;
   signUpButton: ButtonProps;
+  signUpWithGoogleButton: ButtonProps;
   checkOutAsGuest: ButtonProps;
   image: ImageProps;
 };
@@ -36,7 +47,14 @@ export type Signup7Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const GuestSignUp: React.FC = (props: Signup7Props) => {
-  const { logo, title, description, signUpButton, checkOutAsGuest } = {
+  const {
+    logo,
+    title,
+    description,
+    signUpButton,
+    signUpWithGoogleButton,
+    checkOutAsGuest,
+  } = {
     ...Signup7Defaults,
     ...props,
   } as Props;
@@ -63,6 +81,36 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
     event.preventDefault();
     navigate("/check_out");
   };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // Send the access token (googleToken) to get user info and authenticate
+        const res = await Axios.post(
+          `${URL}/auth/google-sign-in`,
+          {
+            googleToken: tokenResponse.access_token,
+          },
+          {
+            validateStatus: (status) => status < 500,
+          }
+        );
+        if (res.status === 200) {
+          dispatch(AccessSuccess(res.data));
+          navigate("/check_out");
+        } else {
+          dispatch(AccessFailure());
+          toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        dispatch(AccessFailure());
+        toast.error("An unexpected error occurred. Please try again.");
+      }
+    },
+    onError: (error) => {
+      console.error("Google login error:", error);
+    },
+  });
 
   return (
     <section className="bg-background-light">
@@ -148,6 +196,17 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
               </Button>
             </form>
 
+            <Button
+              variant={signUpWithGoogleButton.variant}
+              size={signUpWithGoogleButton.size}
+              iconLeft={signUpWithGoogleButton.iconLeft}
+              iconRight={signUpWithGoogleButton.iconRight}
+              className="bg-gray-300 hover:bg-gray-400 text-black rounded flex items-center gap-x-3 w-full mt-3 poppins"
+              onClick={() => googleLogin()}
+            >
+              {signUpWithGoogleButton.title}
+            </Button>
+
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -206,6 +265,11 @@ export const Signup7Defaults: Signup7Props = {
   description: "Join us to explore our exclusive collection.",
   signUpButton: {
     title: "Sign up",
+  },
+  signUpWithGoogleButton: {
+    variant: "secondary",
+    title: "Sign up with Google",
+    iconLeft: <BiLogoGoogle className="size-6" />,
   },
   checkOutAsGuest: {
     variant: "secondary",

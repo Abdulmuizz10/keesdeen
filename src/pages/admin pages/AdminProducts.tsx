@@ -95,17 +95,13 @@ const AdminProducts: React.FC = () => {
                 : items?.map((item, index) => (
                     <tr
                       key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-150"
+                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
-                      <td className="p-4 text-[15px] line-clamp-1">
-                        {item.name}
-                      </td>
-                      <td className="p-4 text-sm">{item.category}</td>
-                      <td className="p-4 text-sm">{item.subcategory}</td>
-                      <td className="p-4 text-sm">
-                        {formatAmount(item.price)}
-                      </td>
-                      <td className="p-4 text-base font-medium">
+                      <td className="p-4 line-clamp-1">{item.name}</td>
+                      <td className="p-4">{item.category}</td>
+                      <td className="p-4">{item.subcategory}</td>
+                      <td className="p-4">{formatAmount(item.price)}</td>
+                      <td className="p-4">
                         {item.createdAt?.split("").slice(0, 10)}
                       </td>
                       <td className="py-2 px-8">

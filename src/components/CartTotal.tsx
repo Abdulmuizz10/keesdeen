@@ -3,11 +3,11 @@ import { useShop } from "../context/ShopContext";
 import { formatAmount } from "../lib/utils";
 
 const CartTotal: React.FC = () => {
-  const { getCartAmount, delivery_fee } = useShop();
+  const { getCartAmount } = useShop();
   return (
     <div className="w-full">
       <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-        Cart Total:
+        Cart Subtotal:
       </h2>
 
       <div className="flex flex-col gap-2 mt-2 text-sm">
@@ -16,19 +16,6 @@ const CartTotal: React.FC = () => {
           <p>{formatAmount(getCartAmount())}</p>
         </div>
         <hr />
-        <div className="flex justify-between">
-          <p>Shipping Fee:</p>
-          <p>${delivery_fee}</p>
-        </div>
-        <hr />
-        <div className="flex justify-between">
-          <b>Total:</b>
-          <b>
-            {formatAmount(
-              getCartAmount() === 0 ? 0 : getCartAmount() + delivery_fee
-            )}
-          </b>
-        </div>
       </div>
     </div>
   );

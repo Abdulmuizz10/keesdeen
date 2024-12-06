@@ -68,7 +68,6 @@ const AdminCustomers: React.FC = () => {
                 </th>
                 <th className="text-left p-4 font-semibold">Username</th>
                 <th className="text-left p-4 font-semibold">Email</th>
-                <th className="text-left p-4 font-semibold">Admin</th>
                 <th className="text-left p-4 font-semibold">Date Added</th>
                 <th className="text-left p-4 font-semibold rounded-tr-xl">
                   Delete
@@ -84,25 +83,25 @@ const AdminCustomers: React.FC = () => {
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                     </tr>
                   ))
                 : customers?.map((item: any, index: number) => (
                     <tr
                       key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-150"
+                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
-                      <td className="p-4 text-[15px]">
+                      <td className="p-4">
                         {item._id.split("").slice(0, 10)}...
                       </td>
-                      <td className="p-4 text-[15px] line-clamp-1">
+                      <td className="p-4 line-clamp-1">
                         {`${item.firstName} ${item.lastName}`}
                       </td>
-                      <td className="p-4 text-sm">{item.email}</td>
-                      <td className="p-4 text-sm">
-                        {item.isAdmin === true ? "True" : "False"}
+                      <td className="p-4">
+                        {item.email.length > 20
+                          ? item.email.split("").slice(0, 15)
+                          : item.email}
                       </td>
-                      <td className="p-4 text-base font-medium">
+                      <td className="p-4">
                         {new Date(item.createdAt).toLocaleDateString()}
                       </td>
                       <td className="py-2 px-8">

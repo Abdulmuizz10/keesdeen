@@ -138,6 +138,9 @@ const Dashboard = () => {
             <table className="w-full bg-white poppins">
               <thead className="text-sm">
                 <tr className="bg-gray-100 rounded-t-xl font-extrabold">
+                  <th className="text-left p-4 font-semibold rounded-tl-xl">
+                    Order ID
+                  </th>
                   <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
                     Customer name
                   </th>
@@ -154,6 +157,7 @@ const Dashboard = () => {
                   ? Array.from({ length: 20 }).map((_, index) => (
                       <tr key={index} className="border-b">
                         <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
@@ -163,8 +167,11 @@ const Dashboard = () => {
                   : transactions?.map((transaction: any, index: number) => (
                       <tr
                         key={index}
-                        className="border-b hover:bg-gray-50 transition-colors duration-150"
+                        className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
+                        <td className="p-4">
+                          {transaction._id.split("").slice(0, 10)}...
+                        </td>
                         <td className="p-5">{`${transaction.firstName} ${transaction.lastName}`}</td>
                         <td className="p-5">{transaction.email}</td>
                         <td className="p-5">
