@@ -41,7 +41,7 @@ export const ForgetPassword: React.FC = (props: Signup7Props) => {
         `${URL}/auth/forget-password`,
         { email },
         {
-          validateStatus: (status: any) => status < 500,
+          validateStatus: (status: any) => status < 600,
         }
       );
       if (response.status === 200) {

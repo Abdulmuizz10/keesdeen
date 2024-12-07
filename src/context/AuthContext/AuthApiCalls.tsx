@@ -14,7 +14,7 @@ export const Login = async (
   dispatch(AccessStart());
   try {
     const res = await axios.post(`${URL}/auth/sign-in`, user, {
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status < 600,
     });
 
     if (res.status === 200) {
@@ -39,7 +39,7 @@ export const SignUp = async (
   dispatch(AccessStart());
   try {
     const res = await axios.post(`${URL}/auth/sign-up`, user, {
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status < 600,
     });
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));

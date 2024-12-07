@@ -45,7 +45,7 @@ const ProductDetails = () => {
   return animation ? (
     <Animation />
   ) : (
-    <section className={`px-[5%] py-24 md:py-30 ${animation && "h-screen"}`}>
+    <section className="px-[5%] py-24 md:py-30">
       {result && (
         <div className="container">
           <div className="flex gap-5 md:gap-10 flex-col lg:flex-row">

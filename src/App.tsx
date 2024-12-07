@@ -44,6 +44,7 @@ import AdminDashBoardSales from "./pages/admin pages/AdminDashBoardSales";
 import AdminDashBoardOrders from "./pages/admin pages/AdminDashBoardOrders";
 import AdminProducts from "./pages/admin pages/AdminProducts";
 import AdminCustomers from "./pages/admin pages/AdminCustomers";
+import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
 
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
@@ -113,6 +114,10 @@ const App: React.FC = () => {
               <Route path="/admin" element={<AdminHome />} />
               <Route path="/admin/customers" element={<AdminCustomers />} />
               <Route path="/admin/products" element={<AdminProducts />} />
+              <Route
+                path="/admin/product_details/:id"
+                element={<AdminProductDetails />}
+              />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route path="/admin/add_product" element={<AdminAddProduct />} />
               <Route

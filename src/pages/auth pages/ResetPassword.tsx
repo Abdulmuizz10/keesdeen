@@ -55,7 +55,7 @@ export const ResetPassword: React.FC = (props: Signup7Props) => {
           newPassword,
         },
         {
-          validateStatus: (status) => status < 500,
+          validateStatus: (status) => status < 600,
         }
       );
 

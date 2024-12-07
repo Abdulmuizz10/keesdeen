@@ -84,7 +84,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
             googleToken: tokenResponse.access_token,
           },
           {
-            validateStatus: (status) => status < 500,
+            validateStatus: (status) => status < 600,
           }
         );
         if (res.status === 200) {

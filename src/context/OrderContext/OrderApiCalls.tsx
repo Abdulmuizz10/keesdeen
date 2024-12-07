@@ -92,7 +92,7 @@ export const createOrder = async (
   orderDispatch(createOrderStart());
   try {
     const res = await axios.post(`${URL}/orders`, order, {
-      validateStatus: (status) => status < 500,
+      validateStatus: (status) => status < 600,
     });
     if (res.status === 200) {
       orderDispatch(createOrderSuccess(res.data));

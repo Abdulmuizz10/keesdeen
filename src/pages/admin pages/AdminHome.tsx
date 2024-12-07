@@ -4,6 +4,7 @@ import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
+import { toast } from "react-toastify";
 
 Chart.register(ArcElement);
 
@@ -76,7 +77,7 @@ const Dashboard = () => {
       setTransactions(response.data.orders);
       setTotalPages(response.data.totalPages);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      toast.error("Error while fetching transactions. Please refresh the page");
       setLoading(false);
     }
   };

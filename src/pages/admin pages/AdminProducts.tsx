@@ -97,7 +97,9 @@ const AdminProducts: React.FC = () => {
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
-                      <td className="p-4 line-clamp-1">{item.name}</td>
+                      <Link to={`/admin/product_details/${item._id}`}>
+                        <td className="p-4 line-clamp-1">{item.name}</td>
+                      </Link>
                       <td className="p-4">{item.category}</td>
                       <td className="p-4">{item.subcategory}</td>
                       <td className="p-4">{formatAmount(item.price)}</td>
