@@ -287,7 +287,7 @@ const ActiveWear: React.FC = () => {
                     {
                       products?.filter((i) => i.category === "Active Wear")
                         .length
-                    }
+                    }{" "}
                     Products
                   </p>
 

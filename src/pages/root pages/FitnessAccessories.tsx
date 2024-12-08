@@ -288,7 +288,7 @@ const FitnessAccessories: React.FC = () => {
                     products?.filter(
                       (i) => i.category === "Fitness Accessories"
                     ).length
-                  }
+                  }{" "}
                   Products
                 </p>
 

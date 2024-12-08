@@ -279,7 +279,8 @@ const ShopAll: React.FC = () => {
                   {/* {Product Sort} */}
 
                   <p className="info-text hidden xl:flex">
-                    Showing 1 . {filteredProducts.length} of {products?.length}
+                    Showing 1 . {filteredProducts.length} of {products?.length}{" "}
+                    {/*... */}
                     Products
                   </p>
 

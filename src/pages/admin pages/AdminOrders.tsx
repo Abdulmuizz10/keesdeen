@@ -40,7 +40,6 @@ const AdminOrders: React.FC = () => {
 
   const handleStatusChange = async (orderId: any, status: string) => {
     setLoading(true);
-
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.patch(
@@ -53,7 +52,6 @@ const AdminOrders: React.FC = () => {
           validateStatus: (status: any) => status < 600,
         }
       );
-
       if (response.status === 200) {
         setLoading(false);
         fetchData(currentPage);
@@ -73,7 +71,7 @@ const AdminOrders: React.FC = () => {
       <div className="w-full">
         {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
+          <h3 className="text-xl font-semibold mb-4">Orders</h3>
 
           <div className="overflow-x-auto">
             <table className="w-full bg-white poppins">

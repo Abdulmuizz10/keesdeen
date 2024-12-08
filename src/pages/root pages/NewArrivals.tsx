@@ -277,7 +277,7 @@ const NewArrivals: React.FC = () => {
 
                   <p className="info-text hidden xl:flex">
                     Showing 1 . {filteredProducts.length} of{" "}
-                    {products?.filter((p) => p.newArrival === true)?.length}
+                    {products?.filter((p) => p.newArrival === true)?.length}{" "}
                     Products
                   </p>
 

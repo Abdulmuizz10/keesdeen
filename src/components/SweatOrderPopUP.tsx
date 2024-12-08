@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { formatAmount } from "../lib/utils";
 
 const MySwal = withReactContent(Swal);
 
@@ -7,7 +8,9 @@ export const showOrderSummary = (orderData: any) => {
   const itemsList = orderData.orderedItems
     .map(
       (item: any) =>
-        `<li>${item.qty} x ${item.name} (${item.size}) - £${item.price}</li>`
+        `<li>${item.qty} x ${item.name} (${item.size}) - £${formatAmount(
+          item.price
+        )}</li>`
     )
     .join("");
   MySwal.fire({
