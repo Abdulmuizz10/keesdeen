@@ -62,7 +62,6 @@ const Dashboard = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
 
   const fetchData = async (page: number) => {
-    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
@@ -73,9 +72,9 @@ const Dashboard = () => {
           },
         }
       );
-      setLoading(false);
       setTransactions(response.data.orders);
       setTotalPages(response.data.totalPages);
+      setLoading(false);
     } catch (error) {
       toast.error("Error while fetching transactions. Please refresh the page");
       setLoading(false);
@@ -138,19 +137,13 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full bg-white poppins">
               <thead className="text-sm">
-                <tr className="bg-gray-100 rounded-t-xl font-extrabold">
-                  <th className="text-left p-4 font-semibold rounded-tl-xl">
-                    Order ID
-                  </th>
-                  <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
-                    Customer name
-                  </th>
+                <tr className="bg-gray-100 font-extrabold">
+                  <th className="text-left p-4 font-semibold">Order ID</th>
+                  <th className="text-left p-4 font-semibold">Username</th>
                   <th className="text-left p-4 font-semibold">Email address</th>
                   <th className="text-left p-4 font-semibold">Status</th>
                   <th className="text-left p-4 font-semibold">Amount</th>
-                  <th className="text-left p-4 font-semibold rounded-tr-xl">
-                    Date
-                  </th>
+                  <th className="text-left p-4 font-semibold">Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,7 +164,7 @@ const Dashboard = () => {
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
                         <td className="p-4">
-                          {transaction._id.split("").slice(0, 10)}...
+                          {transaction._id.split("").slice(0, 8)}....
                         </td>
                         <td className="p-5">{`${transaction.firstName} ${transaction.lastName}`}</td>
                         <td className="p-5">{transaction.email}</td>
@@ -190,7 +183,8 @@ const Dashboard = () => {
                           {formatAmount(transaction.totalPrice)}
                         </td>
                         <td className="p-5">
-                          {new Date(transaction.paidAt).toLocaleDateString()}
+                          {transaction.paidAt?.split("").slice(0, 10)} at{" "}
+                          {transaction.paidAt?.split("").slice(11, 19)}
                         </td>
                       </tr>
                     ))}
@@ -200,7 +194,7 @@ const Dashboard = () => {
 
           {/* Pagination controls */}
 
-          <div className="flex justify-end mt-4 gap-3">
+          <div className="flex justify-end mt-4 gap-3 poppins">
             <button
               className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
                 currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""

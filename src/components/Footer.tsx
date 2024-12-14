@@ -141,7 +141,7 @@ export const Footer1Defaults: Footer1Props = {
   `,
   columnLinks: [
     {
-      title: "Default links",
+      title: "Quick links",
       links: [
         { title: "Home", url: "/" },
         { title: "Shop All", url: "/collections/shop_all" },

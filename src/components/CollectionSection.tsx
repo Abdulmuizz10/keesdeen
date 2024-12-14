@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useProducts } from "../context/ProductContext/ProductContext";
-import { getProducts } from "../context/ProductContext/ProductApiCalls";
 import { Product } from "../lib/types";
 import ProductItem from "./ProductItem";
 import Spinner from "./Spinner";
+import Axios from "axios";
+import { URL } from "../lib/constants";
 
 type Gallery5Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -15,21 +16,32 @@ export const Gallery5 = ({
   heading = "Collections",
   description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 }: Gallery5Props) => {
-  const { products, dispatch } = useProducts();
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
+  const { dispatch } = useProducts();
   // Fetch products on component mount
   useEffect(() => {
     let isMounted = true;
-
     const fetchData = async () => {
-      setLoading(true);
-      await getProducts(dispatch);
-      if (isMounted) setLoading(false);
-    };
+      try {
+        const res = await Axios.get(`${URL}/products`, {
+          validateStatus: (status) => status < 600,
+        });
 
+        if (res.status === 200) {
+          setProducts(res.data);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+        }
+        if (isMounted) setLoading(false);
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
+      setLoading(false);
+    };
     fetchData();
 
     return () => {

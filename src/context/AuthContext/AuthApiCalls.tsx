@@ -20,6 +20,7 @@ export const Login = async (
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
       navigate("/");
+      //  setGuestEmail("");
     } else {
       dispatch(AccessFailure());
       toast.error(res.data.message || "Something went wrong");
@@ -48,7 +49,7 @@ export const SignUp = async (
         const email = res.data.email;
         const userInfo = { user, email };
         const expect = await axios.post(
-          `${URL}/orders/linkguest/orders`,
+          `${URL}/orders/link-guest/orders`,
           userInfo
         );
         if (expect) {

@@ -4,15 +4,14 @@ import { URL } from "../../lib/constants";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { toast } from "react-toastify";
 
-const AdminCustomers: React.FC = () => {
-  const [customers, setCustomers] = useState<any>([]);
+const AdminUsers: React.FC = () => {
+  const [users, setUsers] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
 
   // Fetch data from backend
   const fetchData = async (page: number) => {
-    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(`${URL}/users/page/users?page=${page}`, {
@@ -20,9 +19,9 @@ const AdminCustomers: React.FC = () => {
           token: "Bearer " + userToken,
         },
       });
-      setLoading(false);
-      setCustomers(response.data.users);
+      setUsers(response.data.users);
       setTotalPages(response.data.totalPages);
+      setLoading(false);
     } catch (error) {
       toast.error("Error fetching products!");
       setLoading(false);
@@ -31,6 +30,7 @@ const AdminCustomers: React.FC = () => {
 
   useEffect(() => {
     fetchData(currentPage);
+    window.scrollTo(0, 0);
   }, [currentPage]);
 
   const handleDelete = async (productId: string) => {
@@ -63,15 +63,12 @@ const AdminCustomers: React.FC = () => {
           <table className="w-full bg-white poppins">
             <thead className="text-sm">
               <tr className="bg-gray-100 font-extrabold">
-                <th className="text-left p-4 font-semibold rounded-tl-xl">
-                  User ID
-                </th>
+                <th className="text-left p-4 font-semibold">User ID</th>
                 <th className="text-left p-4 font-semibold">Username</th>
-                <th className="text-left p-4 font-semibold">Email</th>
-                <th className="text-left p-4 font-semibold">Date Added</th>
-                <th className="text-left p-4 font-semibold rounded-tr-xl">
-                  Delete
-                </th>
+                <th className="text-left p-4 font-semibold">Email address</th>
+                <th className="text-left p-4 font-semibold">Admin</th>
+                <th className="text-left p-4 font-semibold">Date added</th>
+                <th className="text-left p-4 font-semibold">Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -83,31 +80,40 @@ const AdminCustomers: React.FC = () => {
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                     </tr>
                   ))
-                : customers?.map((item: any, index: number) => (
+                : users?.map((user: any, index: number) => (
                     <tr
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
                       <td className="p-4">
-                        {item._id.split("").slice(0, 10)}...
+                        {user._id.split("").slice(0, 15)}...
                       </td>
                       <td className="p-4 line-clamp-1">
-                        {`${item.firstName} ${item.lastName}`}
+                        {`${user.firstName} ${user.lastName}`}
+                      </td>
+                      <td className="p-4">{user.email}</td>
+                      <td className="p-4">
+                        {user.isAdmin ? (
+                          <span className="text-green-500 font-semibold">
+                            True
+                          </span>
+                        ) : (
+                          <span className="text-brand-secondary font-semibold">
+                            False
+                          </span>
+                        )}
                       </td>
                       <td className="p-4">
-                        {item.email.length > 20
-                          ? item.email.split("").slice(0, 15)
-                          : item.email}
-                      </td>
-                      <td className="p-4">
-                        {new Date(item.createdAt).toLocaleDateString()}
+                        {user.createdAt?.split("").slice(0, 10)} at{" "}
+                        {user.createdAt?.split("").slice(11, 19)}
                       </td>
                       <td className="py-2 px-8">
                         <RiDeleteBin5Line
                           className="text-2xl cursor-pointer"
-                          onClick={() => handleDelete(item._id)}
+                          onClick={() => handleDelete(user._id)}
                         />
                       </td>
                     </tr>
@@ -117,7 +123,7 @@ const AdminCustomers: React.FC = () => {
         </div>
 
         {/* Pagination Controls */}
-        <div className="flex justify-end mt-4 gap-3">
+        <div className="flex justify-end mt-4 gap-3 poppins">
           <button
             className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
               currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
@@ -145,4 +151,4 @@ const AdminCustomers: React.FC = () => {
   );
 };
 
-export default AdminCustomers;
+export default AdminUsers;

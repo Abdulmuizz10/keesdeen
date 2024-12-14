@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
-import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { URL } from "../../lib/constants";
 
 Chart.register(ArcElement);
 
-const AdminOrders: React.FC = () => {
-  const [orders, setOrders] = useState([]);
+const AdminNewArrivals: React.FC = () => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -17,17 +18,18 @@ const AdminOrders: React.FC = () => {
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
-        `${URL}/orders/page/orders?page=${page}`,
+        `${URL}/products/page/products?page=${page}`,
         {
           headers: {
             token: "Bearer " + userToken,
           },
         }
       );
-      setOrders(response.data.orders);
+      setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
+      console.error("Error fetching products:", error);
       setLoading(false);
     }
   };
@@ -37,12 +39,12 @@ const AdminOrders: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  const handleStatusChange = async (orderId: any, status: string) => {
+  const handleStatusChange = async (productId: any, status: string) => {
     setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.patch(
-        `${URL}/orders/${orderId}/deliver`,
+        `${URL}/products/update/${productId}/new-arrival`,
         { status },
         {
           headers: {
@@ -70,26 +72,30 @@ const AdminOrders: React.FC = () => {
       <div className="w-full">
         {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <h3 className="text-xl font-semibold mb-4">Orders</h3>
+          <h3 className="text-xl font-semibold mb-4">
+            Update products to new arrival
+          </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full bg-white poppins">
               <thead className="text-sm">
                 <tr className="bg-gray-100 font-extrabold">
-                  <th className="text-left p-4 font-semibold">Order ID</th>
-                  <th className="text-left p-4 font-semibold">Customer name</th>
-                  <th className="text-left p-4 font-semibold">Email address</th>
-                  <th className="text-left p-4 font-semibold">Status</th>
-                  <th className="text-left p-4 font-semibold">Change status</th>
-                  <th className="text-left p-4 font-semibold">Amount</th>
-                  <th className="text-left p-4 font-semibold">Date ordered</th>
+                  <th className="text-left p-4 font-semibold">Product name</th>
+                  <th className="text-left p-4 font-semibold">Category</th>
+                  <th className="text-left p-4 font-semibold">Price</th>
+                  <th className="text-left p-4 font-semibold">New arrival</th>
+                  <th className="text-left p-4 font-semibold">
+                    Update to new arrival
+                  </th>
+                  <th className="text-left p-4 font-semibold pl-12">
+                    Date created
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading
                   ? Array.from({ length: 20 }).map((_, index) => (
                       <tr key={index} className="border-b">
-                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
@@ -98,45 +104,42 @@ const AdminOrders: React.FC = () => {
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       </tr>
                     ))
-                  : orders?.map((order: any, index: number) => (
+                  : products?.map((product: any, index: number) => (
                       <tr
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
+                        <Link to={`/admin/product_details/${product._id}`}>
+                          <td className="p-4 line-clamp-1">{product.name}</td>
+                        </Link>
+                        <td className="p-4">{product.category}</td>
+                        <td className="p-4">{formatAmount(product.price)}</td>
                         <td className="p-4">
-                          {order._id.split("").slice(0, 8)}...
-                        </td>
-                        <td className="py-2 px-1">{`${order.firstName} ${order.lastName}`}</td>
-                        <td className="p-5">{order.email}</td>
-                        <td className="p-5">
-                          {order.isDelivered ? (
-                            <span className="text-green-500 font-semibold">
-                              Delivered
-                            </span>
+                          {product.newArrival ? (
+                            <p className="text-green-500 font-semibold pl-4">
+                              True
+                            </p>
                           ) : (
-                            <span className="text-brand-secondary font-semibold">
-                              Pending
-                            </span>
+                            <p className="text-brand-secondary font-semibold pl-4">
+                              False
+                            </p>
                           )}
                         </td>
                         <td className="p-4">
                           <select
                             onChange={(e) =>
-                              handleStatusChange(order._id, e.target.value)
+                              handleStatusChange(product._id, e.target.value)
                             }
                             className="border border-gray-300  p-1 focus:ring-none"
                           >
                             <option value="">Select status</option>
-                            <option value={"false"}>Pending</option>
-                            <option value={"true"}>Shipped</option>
+                            <option value={"isNewArrival"}>Yes</option>
+                            <option value={"notNewArrival"}>No</option>
                           </select>
                         </td>
                         <td className="p-5">
-                          {formatAmount(order.totalPrice)}
-                        </td>
-                        <td className="p-5">
-                          {order.createdAt.split("").slice(0, 10)} at{" "}
-                          {order.createdAt.split("").slice(11, 19)}
+                          {product.createdAt.split("").slice(0, 10)} at{" "}
+                          {product.createdAt.split("").slice(11, 19)}
                         </td>
                       </tr>
                     ))}
@@ -177,4 +180,4 @@ const AdminOrders: React.FC = () => {
   );
 };
 
-export default AdminOrders;
+export default AdminNewArrivals;

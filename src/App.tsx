@@ -38,12 +38,16 @@ import { ResetPassword } from "./pages/auth pages/ResetPassword";
 
 import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
+import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
+import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
 import AdminAddProduct from "./pages/admin pages/AdminAddProduct";
+import AdminBestSellers from "./pages/admin pages/AdminBestSellers";
+import AdminNewArrivals from "./pages/admin pages/AdminNewArrivals";
 import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
 import AdminDashBoardSales from "./pages/admin pages/AdminDashBoardSales";
 import AdminDashBoardOrders from "./pages/admin pages/AdminDashBoardOrders";
 import AdminProducts from "./pages/admin pages/AdminProducts";
-import AdminCustomers from "./pages/admin pages/AdminCustomers";
+import AdminUsers from "./pages/admin pages/AdminUsers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
 
 // Context
@@ -112,14 +116,30 @@ const App: React.FC = () => {
           {user?.isAdmin ? (
             <Route element={<AdminLayout animation={animation} />}>
               <Route path="/admin" element={<AdminHome />} />
-              <Route path="/admin/customers" element={<AdminCustomers />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route
                 path="/admin/product_details/:id"
                 element={<AdminProductDetails />}
               />
               <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route
+                path="/admin/pending_orders"
+                element={<AdminPendingOrders />}
+              />
+              <Route
+                path="/admin/delivered_orders"
+                element={<AdminDeliveredOrders />}
+              />
               <Route path="/admin/add_product" element={<AdminAddProduct />} />
+              <Route
+                path="/admin/best_sellers"
+                element={<AdminBestSellers />}
+              />
+              <Route
+                path="/admin/new_arrivals"
+                element={<AdminNewArrivals />}
+              />
               <Route
                 path="/admin/update_product/:id"
                 element={<AdminUpdateProduct />}

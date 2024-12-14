@@ -39,17 +39,15 @@ const CheckOut: React.FC = ({}) => {
   const [discount, setDiscount] = useState<number>(0);
   const { getCartDetailsForOrder, paymentLoader, setPaymentLoader } = useShop();
   const orderedItems = getCartDetailsForOrder();
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedCountry, setSelectedCountry] = useState<any>();
+  const [selectedState, setSelectedState] = useState<any>();
 
   const subtotal = getCartAmount();
 
   const navigate = useNavigate();
   // Calculate the final total
   const finalTotal = discount
-    ? getCartAmount() +
-      delivery_fee -
-      ((getCartAmount() + delivery_fee) / 100) * discount
+    ? getCartAmount() - (getCartAmount() / 100) * discount + delivery_fee
     : getCartAmount() + delivery_fee;
 
   useEffect(() => {
@@ -69,6 +67,8 @@ const CheckOut: React.FC = ({}) => {
     if (coupon === "SAVE10") {
       setDiscount(10);
       toast.success("Coupon applied successfully!");
+    } else if (coupon === "") {
+      toast.error("The coupon field is empty please apply the coupon");
     } else {
       toast.error("Invalid Coupon Code");
     }
@@ -215,6 +215,7 @@ const CheckOut: React.FC = ({}) => {
                       type="text"
                       placeholder="First name"
                       className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
                     />
                     {errors.firstName && (
                       <p className="text-red-500 text-sm mt-1">
@@ -232,6 +233,7 @@ const CheckOut: React.FC = ({}) => {
                       type="text"
                       placeholder="Last name"
                       className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
                     />
                     {errors.lastName && (
                       <p className="absolute text-red-500 text-sm mt-1">
@@ -249,6 +251,7 @@ const CheckOut: React.FC = ({}) => {
                   value={selectedCountry}
                   onChange={(e) => setSelectedCountry(e.target.value)}
                   className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                  autoComplete="no"
                 >
                   <option value="">Select country</option>
                   {Country.getAllCountries().map((country) => (
@@ -273,6 +276,7 @@ const CheckOut: React.FC = ({}) => {
                   value={selectedState}
                   onChange={(e) => setSelectedState(e.target.value)}
                   className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                  autoComplete="no"
                 >
                   <option value="">Select city/region</option>
                   {State.getStatesOfCountry(selectedCountry).map((state) => (
@@ -298,6 +302,7 @@ const CheckOut: React.FC = ({}) => {
                   type="text"
                   placeholder="Address line one"
                   className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  autoComplete="no"
                 />
                 {errors.addressLineOne && (
                   <p className="absolute text-red-500 text-sm mt-1">
@@ -316,6 +321,7 @@ const CheckOut: React.FC = ({}) => {
                   type="text"
                   placeholder="Address line two optional"
                   className="border border-border-secondary px-2 py-3 w-full rounded-md "
+                  autoComplete="no"
                 />
               </div>
 
@@ -360,6 +366,7 @@ const CheckOut: React.FC = ({}) => {
                   placeholder="Zip code / Postal code"
                   maxLength={12} // Preventing user input beyond 12 characters
                   className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  autoComplete="no"
                 />
                 {errors.zipCode && (
                   <p className="text-red-500 text-sm mt-1">
@@ -378,23 +385,20 @@ const CheckOut: React.FC = ({}) => {
                 <p>Subtotal:</p>
                 <p>{formatAmount(subtotal)}</p>
               </div>
-              <div className="flex justify-between">
-                <p>Delivery Fee:</p>
-                <p>{formatAmount(delivery_fee)}</p>
-              </div>
               {discount > 0 && (
                 <div className="flex justify-between">
                   <p>Discount:</p>
                   <p>
                     -{discount}% (
-                    {(
-                      ((getCartAmount() + delivery_fee) / 100) *
-                      discount
-                    ).toFixed(3)}
-                    %)
+                    {formatAmount((getCartAmount() / 100) * discount)})
                   </p>
                 </div>
               )}
+              <div className="flex justify-between">
+                <p>Delivery Fee:</p>
+                <p>{formatAmount(delivery_fee)}</p>
+              </div>
+
               <div className="flex justify-between font-bold">
                 <p>Total:</p>
                 <p>{formatAmount(finalTotal)}</p>

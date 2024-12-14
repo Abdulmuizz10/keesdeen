@@ -20,7 +20,6 @@ const AdminProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true);
         const response = await Axios.get(`${URL}/products/${id}`);
         setProduct(response.data);
       } catch (error) {
@@ -34,7 +33,7 @@ const AdminProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-white rounded-lg">
         <Spinner />
       </div>
     );
@@ -42,22 +41,22 @@ const AdminProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-white rounded-lg">
         <p className="text-gray-600">Product not found.</p>
       </div>
     );
   }
 
   return (
-    <section className="container mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
+    <section className="w-full min-h-[130vh] bg-white rounded-md sm:rounded-lg">
+      <div className="rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
           Product Details
         </h1>
 
         <div className="flex flex-col gap-10">
           <div className="w-full">
-            <div className="hidden lg:grid lg:grid-cols-3 xl:grid-cols-5 w-full gap-2">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full gap-2">
               {product?.imageUrls.map((image, index) => (
                 <div className="h-[370px] w-full" key={index}>
                   <img
@@ -71,47 +70,73 @@ const AdminProductDetails = () => {
           </div>
 
           {/* Product Information */}
-          <div>
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-medium">Product Name:</span> {product.name}
-            </p>
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-medium">Price:</span>{" "}
-              {formatAmount(product.price)}
-            </p>
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-medium">Category:</span> {product.category}
-            </p>
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-medium">Sub-Category:</span>{" "}
-              {product.subcategory || "N/A"}
-            </p>
+          <div className="flex justify-around max-md:flex-col max-md:justify-between">
+            <div>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Product Name:</span>{" "}
+                {product.name}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Product Price:</span>{" "}
+                {formatAmount(product.price)}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Product Gender Type:</span>{" "}
+                {product.gender}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Product Type:</span>{" "}
+                {product.type}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Category:</span>{" "}
+                {product.category}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Sub-Category:</span>{" "}
+                {product.subcategory || "N/A"}
+              </p>
 
-            <div className="my-2">
-              <h3 className="text-lg font-medium text-gray-800 mb-2">
-                Available Sizes:
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {product.size.map((size, index) => (
-                  <span
-                    key={index}
-                    className="w-10 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border"
-                  >
-                    {size}
-                  </span>
-                ))}
-              </div>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Product Color:</span>{" "}
+                {product.color}
+              </p>
             </div>
 
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-medium">Best Seller:</span>{" "}
-              {product.bestSeller === true ? "True" : "False"}
-            </p>
-
-            <p className="text-lg text-gray-600 mb-2">
-              <span className="font-medium">New Arrival:</span>{" "}
-              {product.newArrival === true ? "True" : "False"}
-            </p>
+            <div>
+              <div className="mb-2">
+                <h3 className="text-lg font-medium text-gray-600 mb-2">
+                  Available Sizes:
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {product.size.map((size, index) => (
+                    <span
+                      key={index}
+                      className="w-10 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border"
+                    >
+                      {size}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Best Seller:</span>{" "}
+                {product.bestSeller === true ? "True" : "False"}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">New Arrival:</span>{" "}
+                {product.newArrival === true ? "True" : "False"}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Date Created:</span>{" "}
+                {product.createdAt?.split("").slice(0, 10)}{" "}
+                {product.createdAt?.split("").slice(11, 19)}
+              </p>
+              <p className="text-lg text-gray-600 mb-2">
+                <span className="font-medium">Number Of Reviews:</span>{" "}
+                {product.reviews.length}
+              </p>
+            </div>
           </div>
         </div>
       </div>

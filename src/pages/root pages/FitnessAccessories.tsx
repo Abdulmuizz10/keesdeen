@@ -11,26 +11,40 @@ import {
 } from "@relume_io/relume-ui";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
-import { Product } from "../../lib/types";
 import { formatAmount } from "../../lib/utils";
 import { Link } from "react-router-dom";
 import { useProducts } from "../../context/ProductContext/ProductContext";
-import { getProducts } from "../../context/ProductContext/ProductApiCalls";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
 
 const FitnessAccessories: React.FC = () => {
   const { isActive } = useShop();
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { products, dispatch } = useProducts();
+  const { dispatch } = useProducts();
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      await getProducts(dispatch);
+      try {
+        const res = await Axios.get(`${URL}/products/fitness-accessories`, {
+          validateStatus: (status) => status < 600,
+        });
+
+        if (res.status === 200) {
+          setProducts(res.data);
+          console.log(res.data);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
+
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -63,24 +77,22 @@ const FitnessAccessories: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products?.filter(
-      (i) => i.category === "Fitness Accessories"
-    );
+    let productsCopy = products;
 
     if (category.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
+      productsCopy = productsCopy.filter((item: any) =>
         category.includes(item.subcategory)
       );
     }
 
     if (sizeCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
+      productsCopy = productsCopy.filter((item: any) =>
         item.size.some((s: string) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
+      productsCopy = productsCopy.filter((item: any) =>
         colorCategory.includes(item.color)
       );
     }
@@ -93,10 +105,10 @@ const FitnessAccessories: React.FC = () => {
 
     switch (sortType) {
       case "Low - High":
-        setFilteredProducts(spCopy.sort((a, b) => a.price - b.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => a.price - b.price));
         break;
       case "High - Low":
-        setFilteredProducts(spCopy.sort((a, b) => b.price - a.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => b.price - a.price));
         break;
       default: {
         applyFilter();
@@ -283,12 +295,7 @@ const FitnessAccessories: React.FC = () => {
                 {/* {Product Sort} */}
 
                 <p className="info-text hidden xl:flex">
-                  Showing 1 . {filteredProducts.length} of{" "}
-                  {
-                    products?.filter(
-                      (i) => i.category === "Fitness Accessories"
-                    ).length
-                  }{" "}
+                  Showing 1 . {filteredProducts.length} of {products?.length}{" "}
                   Products
                 </p>
 
@@ -335,14 +342,14 @@ const FitnessAccessories: React.FC = () => {
                 {loading
                   ? Array(21)
                       .fill(null)
-                      .map((product: Product, index) => (
+                      .map((product, index) => (
                         <ProductItem
                           key={index}
                           product={product}
                           loading={loading}
                         />
                       ))
-                  : filteredProducts?.map((product: Product, index) => (
+                  : filteredProducts?.map((product: any, index: number) => (
                       <ProductItem
                         key={index}
                         product={product}
@@ -359,7 +366,7 @@ const FitnessAccessories: React.FC = () => {
 };
 
 interface ProductProps {
-  product: Product;
+  product: any;
   loading: Boolean;
 }
 

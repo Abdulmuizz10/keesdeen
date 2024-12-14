@@ -107,7 +107,7 @@ const Navigation = () => {
   return (
     <nav className="absolute left-0 right-auto top-0 float-right h-full w-[80vw] max-w-[none] md:w-full md:max-w-[19.5rem] lg:relative lg:inset-auto lg:w-auto lg:max-w-[auto]">
       <div className="absolute flex size-full flex-col gap-4 border-r border-border-primary bg-white py-6 lg:gap-6 lg:border-none lg:py-0">
-        <div className="flex size-full flex-col overflow-auto px-4 gap-6">
+        <div className="flex size-full flex-col overflow-auto px-4 gap-4 no-scrollbar text-[15px]">
           <Link
             to="/admin"
             className="flex items-center gap-x-2 p-2 text-center"
@@ -117,34 +117,105 @@ const Navigation = () => {
               <span>Home</span>
             </span>
           </Link>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger
+                className="p-2 font-normal"
+                icon={<RxChevronDown />}
+              >
+                <span className="flex items-center gap-3">
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Orders</p>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/orders"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>All Orders</p>
+                </Link>
+              </AccordionContent>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/pending_orders"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Pending orders</p>
+                </Link>
+              </AccordionContent>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/delivered_orders"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Delivered orders</p>
+                </Link>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
           <Link
-            to="/admin/orders"
-            className="flex items-center gap-x-2 p-2 text-center"
-          >
-            <span className="flex w-full items-center gap-3">
-              <FaRegPaperPlane />
-              <p>Orders</p>
-            </span>
-          </Link>
-          <Link
-            to="/admin/customers"
+            to="/admin/users"
             className="flex items-center gap-x-2 p-2 text-center"
           >
             <span className="flex w-full items-center gap-3">
               <FaRegUser className="size-5 shrink-0" />
-              <p>Customers</p>
+              <p>Users</p>
             </span>
           </Link>
 
-          <Link
-            to="/admin/products"
-            className="flex items-center gap-x-2 p-2 text-center"
-          >
-            <span className="flex w-full items-center gap-3">
-              <BiLayer className="size-6 shrink-0" />
-              <p>Products</p>
-            </span>
-          </Link>
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger
+                className="p-2 font-normal"
+                icon={<RxChevronDown />}
+              >
+                <span className="flex items-center gap-3">
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Products</p>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/products"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>All products</p>
+                </Link>
+              </AccordionContent>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/add_product"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Create product</p>
+                </Link>
+              </AccordionContent>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/best_sellers"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Add to best seller</p>
+                </Link>
+              </AccordionContent>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/new_arrivals"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p>Add to new arrival</p>
+                </Link>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="border-none">
@@ -179,15 +250,6 @@ const Navigation = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-          <Link
-            to="/admin/add_product"
-            className="flex items-center gap-x-2 p-2 text-center"
-          >
-            <span className="flex w-full items-center gap-3">
-              <BiLayer className="size-6 shrink-0" />
-              <p>Add Product</p>
-            </span>
-          </Link>
         </div>
         {/* <div className="flex flex-col gap-4 px-4 lg:gap-6">
           <div className="flex flex-col">

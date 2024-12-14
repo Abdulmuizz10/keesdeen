@@ -11,26 +11,39 @@ import {
 } from "@relume_io/relume-ui";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
-import { Product } from "../../lib/types";
 import { useProducts } from "../../context/ProductContext/ProductContext";
-import { getProducts } from "../../context/ProductContext/ProductApiCalls";
 import { formatAmount } from "../../lib/utils";
 import { Link } from "react-router-dom";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
 
 const NewArrivals: React.FC = () => {
   const { isActive } = useShop();
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { products, dispatch } = useProducts();
+  const { dispatch } = useProducts();
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      await getProducts(dispatch);
+      try {
+        const res = await Axios.get(`${URL}/products/new-arrivals`, {
+          validateStatus: (status) => status < 600,
+        });
+
+        if (res.status === 200) {
+          setProducts(res.data);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
+
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -63,23 +76,23 @@ const NewArrivals: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products?.filter((p) => p.newArrival === true);
+    let productsCopy = products;
 
     if (category.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        category.includes(item.category)
+      productsCopy = productsCopy.filter((item: any) =>
+        category.includes(item?.category)
       );
     }
 
     if (sizeCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        item.size.some((s: string) => sizeCategory.includes(s))
+      productsCopy = productsCopy.filter((item: any) =>
+        item?.size.some((s: string) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        colorCategory.includes(item.color)
+      productsCopy = productsCopy.filter((item: any) =>
+        colorCategory.includes(item?.color)
       );
     }
 
@@ -91,10 +104,10 @@ const NewArrivals: React.FC = () => {
 
     switch (sortType) {
       case "Low - High":
-        setFilteredProducts(spCopy.sort((a, b) => a.price - b.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => a.price - b.price));
         break;
       case "High - Low":
-        setFilteredProducts(spCopy.sort((a, b) => b.price - a.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => b.price - a.price));
         break;
       default: {
         applyFilter();
@@ -276,8 +289,7 @@ const NewArrivals: React.FC = () => {
                   {/* {Product Sort} */}
 
                   <p className="info-text hidden xl:flex">
-                    Showing 1 . {filteredProducts.length} of{" "}
-                    {products?.filter((p) => p.newArrival === true)?.length}{" "}
+                    Showing 1 . {filteredProducts.length} of {products?.length}{" "}
                     Products
                   </p>
 
@@ -325,14 +337,14 @@ const NewArrivals: React.FC = () => {
                   {loading
                     ? Array(21)
                         .fill(null)
-                        .map((product: Product, index) => (
+                        .map((product, index) => (
                           <ProductItem
                             key={index}
                             product={product}
                             loading={loading}
                           />
                         ))
-                    : filteredProducts?.map((product: Product, index) => (
+                    : filteredProducts?.map((product: any, index: number) => (
                         <ProductItem
                           key={index}
                           product={product}
@@ -350,7 +362,7 @@ const NewArrivals: React.FC = () => {
 };
 
 interface ProductProps {
-  product: Product;
+  product: any;
   loading: Boolean;
 }
 

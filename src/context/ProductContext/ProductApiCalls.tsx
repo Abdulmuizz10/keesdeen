@@ -20,7 +20,6 @@ import {
   createReviewFailure,
 } from "./ProductAction";
 import { Dispatch } from "react";
-import { Product } from "../../lib/types";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 
@@ -48,7 +47,7 @@ type ProductAction =
 export const getProducts = async (dispatch: Dispatch<ProductAction>) => {
   dispatch(getProductsStart());
   try {
-    const res = await axios.get<Product[]>(`${URL}/products`);
+    const res = await axios.get(`${URL}/products`);
     dispatch(getProductsSuccess(res.data));
   } catch (err) {
     dispatch(getProductsFailure());
@@ -61,7 +60,7 @@ export const getProduct = async (
 ) => {
   dispatch(getProductStart());
   try {
-    const res = await axios.get<Product>(`${URL}/products/${productId}`);
+    const res = await axios.get(`${URL}/products/${productId}`);
     dispatch(getProductSuccess(res.data));
   } catch (err) {
     dispatch(getProductFailure());
@@ -75,7 +74,7 @@ export const createProduct = async (
 ) => {
   dispatch(createProductStart());
   try {
-    const res = await axios.post<Product>(`${URL}/products`, product, {
+    const res = await axios.post(`${URL}/products`, product, {
       headers: {
         token:
           "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
@@ -95,16 +94,12 @@ export const updateProduct = async (
 ) => {
   dispatch(updateProductStart());
   try {
-    const res = await axios.put<Product>(
-      `${URL}/products/${product._id}`,
-      product,
-      {
-        headers: {
-          token:
-            "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
-        },
-      }
-    );
+    const res = await axios.put(`${URL}/products/${product._id}`, product, {
+      headers: {
+        token:
+          "Bearer " + JSON.parse(localStorage.getItem("user") || "{}").token,
+      },
+    });
     dispatch(updateProductSuccess(res.data));
     toast.success("Product updated!");
   } catch (err) {

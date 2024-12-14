@@ -1,8 +1,8 @@
-export const URL = "https://k-backend-vg9o.onrender.com";
+// export const URL = "https://k-backend-vg9o.onrender.com";
 
 import { Images } from "../assets";
 
-// export const URL = "http://localhost:5000";
+export const URL = "http://localhost:5000";
 
 export const profileLinks = [
   // {

@@ -123,7 +123,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="mb-6 text-center">
-              <h1 className="mb-5 text-5xl font-bold text-neutral-800 md:mb-1 md:text-7xl lg:text-8xl">
+              <h1 className="mb-5 text-5xl font-bold text-neutral-800 md:mb-1">
                 {title}
               </h1>
               <p className="text-neutral-600 md:text-md">{description}</p>
@@ -134,9 +134,10 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
             >
               <div className="grid w-full items-center">
                 <Label htmlFor="name" className="mb-2 text-neutral-700">
-                  First Name
+                  First name
                 </Label>
                 <Input
+                  placeholder="First name"
                   type="text"
                   id="name"
                   value={firstName}
@@ -147,9 +148,10 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="name" className="mb-2 text-neutral-700">
-                  Last Name
+                  Last name
                 </Label>
                 <Input
+                  placeholder="Last name"
                   type="text"
                   id="name"
                   value={lastName}
@@ -163,6 +165,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
                   Email
                 </Label>
                 <Input
+                  placeholder="example@gmail.com"
                   type="email"
                   id="email"
                   value={email}
@@ -176,6 +179,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
                   Password
                 </Label>
                 <Input
+                  placeholder="password"
                   type="password"
                   id="password"
                   value={password}
@@ -261,8 +265,8 @@ export const Signup7Defaults: Signup7Props = {
     src: mainLogo,
     alt: "Logo text",
   },
-  title: "Sign Up",
-  description: "Join us to explore our exclusive collection.",
+  title: "Sign up",
+  description: "Join us to explore our modest collection.",
   signUpButton: {
     title: "Sign up",
   },

@@ -1,37 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { FaRegPenToSquare } from "react-icons/fa6";
 import { formatAmount } from "../../lib/utils";
-import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
-import { useProducts } from "../../context/ProductContext/ProductContext";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const AdminProducts: React.FC = () => {
-  const [products, setProducts] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+const AdminDeliveredOrders: React.FC = () => {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const { dispatch } = useProducts();
 
-  // Fetch data from backend
   const fetchData = async (page: number) => {
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
-        `${URL}/products/page/products?page=${page}`,
+        `${URL}/orders/page/delivered-orders?page=${page}`,
         {
           headers: {
             token: "Bearer " + userToken,
           },
         }
       );
-      setProducts(response.data.products);
+      setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
+      toast.error("Error while fetching transactions. Please refresh the page");
       setLoading(false);
     }
   };
@@ -41,37 +35,22 @@ const AdminProducts: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  const handleDelete = async (productId: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-
-    if (confirmDelete) {
-      try {
-        await deleteProduct(productId, dispatch); // Deleting product
-        // Re-fetch products after deletion to ensure consistency
-        fetchData(currentPage);
-      } catch (error) {
-        toast.error("Error deleting product");
-      }
-    }
-  };
-
   return (
     <div className="w-full">
+      {/* Latest Orders */}
       <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-        <h3 className="text-xl font-semibold mb-4">Product List</h3>
+        <h3 className="text-xl font-semibold mb-4">Delivered orders</h3>
+
         <div className="overflow-x-auto">
           <table className="w-full bg-white poppins">
             <thead className="text-sm">
               <tr className="bg-gray-100 font-extrabold">
-                <th className="text-left p-4 font-semibold">Product name</th>
-                <th className="text-left p-4 font-semibold">Category</th>
-                <th className="text-left p-4 font-semibold">Sub-category</th>
-                <th className="text-left p-4 font-semibold">Price</th>
-                <th className="text-left p-4 font-semibold">Date created</th>
-                <th className="text-left p-4 font-semibold">Update</th>
-                <th className="text-left p-4 font-semibold">Delete</th>
+                <th className="text-left p-4 font-semibold">Order ID</th>
+                <th className="text-left p-4 font-semibold">Username</th>
+                <th className="text-left p-4 font-semibold">Email address</th>
+                <th className="text-left p-4 font-semibold">Status</th>
+                <th className="text-left p-4 font-semibold">Amount</th>
+                <th className="text-left p-4 font-semibold">Date ordered</th>
               </tr>
             </thead>
             <tbody>
@@ -79,39 +58,38 @@ const AdminProducts: React.FC = () => {
                 ? Array.from({ length: 20 }).map((_, index) => (
                     <tr key={index} className="border-b">
                       <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                     </tr>
                   ))
-                : products?.map((product: any, index: number) => (
+                : orders?.map((order: any, index: number) => (
                     <tr
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
-                      <Link to={`/admin/product_details/${product._id}`}>
-                        <td className="p-4 line-clamp-1">{product.name}</td>
-                      </Link>
-                      <td className="p-4">{product.category}</td>
-                      <td className="p-4">{product.subcategory}</td>
-                      <td className="p-4">{formatAmount(product.price)}</td>
                       <td className="p-4">
-                        {product.createdAt.split("").slice(0, 10)} at{" "}
-                        {product.createdAt.split("").slice(11, 19)}
+                        {order._id.split("").slice(0, 10)}...
                       </td>
-                      <td className="py-2 px-8">
-                        <Link to={`/admin/update_product/${product._id}`}>
-                          <FaRegPenToSquare className="text-xl cursor-pointer" />
-                        </Link>
+                      <td className="py-2 px-1">{`${order.firstName} ${order.lastName}`}</td>
+                      <td className="p-5">{order.email}</td>
+                      <td className="p-5">
+                        {order.isDelivered ? (
+                          <span className="text-green-500 font-semibold">
+                            Delivered
+                          </span>
+                        ) : (
+                          <span className="text-brand-secondary font-semibold">
+                            Pending
+                          </span>
+                        )}
                       </td>
-                      <td className="py-2 px-8">
-                        <RiDeleteBin5Line
-                          className="text-2xl cursor-pointer"
-                          onClick={() => handleDelete(product._id)}
-                        />
+                      <td className="p-5">{formatAmount(order.totalPrice)}</td>
+                      <td className="p-5">
+                        {order.paidAt?.split("").slice(0, 10)} at{" "}
+                        {order.paidAt?.split("").slice(11, 19)}
                       </td>
                     </tr>
                   ))}
@@ -119,7 +97,8 @@ const AdminProducts: React.FC = () => {
           </table>
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination controls */}
+
         <div className="flex justify-end mt-4 gap-3 poppins">
           <button
             className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
@@ -148,4 +127,4 @@ const AdminProducts: React.FC = () => {
   );
 };
 
-export default AdminProducts;
+export default AdminDeliveredOrders;

@@ -107,7 +107,7 @@ export const Login7: React.FC = (props: Login7Props) => {
         <div className="relative mx-[5vw] flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="container mb-6 max-w-lg text-center md:mb-8">
-              <h1 className="mb-5 text-5xl font-bold md:mb-1 md:text-7xl lg:text-8xl bricolage-grotesque">
+              <h1 className="mb-5 text-5xl font-bold md:mb-1  bricolage-grotesque">
                 {title}
               </h1>
             </div>
@@ -120,6 +120,7 @@ export const Login7: React.FC = (props: Login7Props) => {
                   Email
                 </Label>
                 <Input
+                  placeholder="example@gmail.com"
                   type="email"
                   id="email"
                   value={email}
@@ -133,6 +134,7 @@ export const Login7: React.FC = (props: Login7Props) => {
                   Password
                 </Label>
                 <Input
+                  placeholder="password"
                   type="password"
                   id="password"
                   value={password}

@@ -9,9 +9,10 @@ import {
 import type { CarouselApi } from "@relume_io/relume-ui";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
-import { Product } from "../lib/types";
-import { getProducts } from "../context/ProductContext/ProductApiCalls";
+
 import { useProducts } from "../context/ProductContext/ProductContext";
+import { URL } from "../lib/constants";
+import Axios from "axios";
 
 type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -22,7 +23,8 @@ export const Gallery21 = ({
   heading = "New Arrivals",
   description = "Discover the latest additions to our collection.",
 }: Gallery21Props) => {
-  const { products, dispatch } = useProducts();
+  const { dispatch } = useProducts();
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
@@ -30,8 +32,19 @@ export const Gallery21 = ({
   // Fetch products on mount
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      await getProducts(dispatch);
+      try {
+        const res = await Axios.get(`${URL}/products/new-arrivals`, {
+          validateStatus: (status) => status < 600,
+        });
+
+        if (res.status === 200) {
+          setProducts(res.data);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
       setLoading(false);
     };
     fetchData();
@@ -49,9 +62,6 @@ export const Gallery21 = ({
   }, [api]);
 
   // Filter products for new arrivals with valid images
-  const newArrivalProducts = products?.filter(
-    (product: Product) => product.newArrival && product.imageUrls?.[0]
-  );
 
   return (
     <section
@@ -75,7 +85,7 @@ export const Gallery21 = ({
         >
           <CarouselContent className="ml-0">
             {loading
-              ? Array(6)
+              ? Array(10)
                   .fill(null)
                   .map((_, index) => (
                     <CarouselItem
@@ -85,7 +95,7 @@ export const Gallery21 = ({
                       <div className="aspect-square h-[600px] bg-gray-200 object-cover animate-pulse" />
                     </CarouselItem>
                   ))
-              : newArrivalProducts?.map((product: Product, index) => (
+              : products?.map((product: any, index) => (
                   <CarouselItem
                     key={index}
                     className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
@@ -103,7 +113,7 @@ export const Gallery21 = ({
           <div className="rt-8 mt-8 flex items-center justify-between">
             {/* Dot indicators for carousel */}
             <div className="mt-5 flex w-full items-start justify-start">
-              {newArrivalProducts?.map((_, index) => (
+              {products?.map((_, index) => (
                 <button
                   key={`dot-${index}`}
                   onClick={() => api?.scrollTo(index)}

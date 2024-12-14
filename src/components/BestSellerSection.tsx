@@ -7,26 +7,38 @@ import {
   CarouselPrevious,
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
-import { Product } from "../lib/types";
-import { getProducts } from "../context/ProductContext/ProductApiCalls";
 import { useProducts } from "../context/ProductContext/ProductContext";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
 import { formatAmount } from "../lib/utils";
+import Axios from "axios";
+import { URL } from "../lib/constants";
 
 export const Gallery19: React.FC = () => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [_, setCurrent] = useState(0);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
 
-  const { products, dispatch } = useProducts();
+  const { dispatch } = useProducts();
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      await getProducts(dispatch);
+      try {
+        const res = await Axios.get(`${URL}/products/best-sellers`, {
+          validateStatus: (status) => status < 600,
+        });
+
+        if (res.status === 200) {
+          setProducts(res.data);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
       setLoading(false);
     };
     fetchData();
@@ -41,7 +53,7 @@ export const Gallery19: React.FC = () => {
       const autoScroll = setInterval(() => api.scrollNext(), 6000);
       return () => clearInterval(autoScroll);
     }
-  }, [api, products]); // Add products to the dependency array
+  }, [api]); // Add products to the dependency array
 
   return (
     <section>
@@ -63,9 +75,9 @@ export const Gallery19: React.FC = () => {
             <div className="relative">
               <CarouselContent className="ml-0">
                 {loading
-                  ? Array(13)
+                  ? Array(10)
                       .fill(null)
-                      .map((product: Product, index) => (
+                      .map((product, index) => (
                         <CarouselItem
                           key={index}
                           className="basis-full md:basis-2/4 lg:basis-1/4"
@@ -73,18 +85,14 @@ export const Gallery19: React.FC = () => {
                           <ProductItem product={product} loading={loading} />
                         </CarouselItem>
                       ))
-                  : products
-                      ?.filter(
-                        (product: Product) => product.bestSeller === true
-                      )
-                      .map((product: Product, index) => (
-                        <CarouselItem
-                          key={index}
-                          className="basis-full md:basis-2/4 lg:basis-1/4"
-                        >
-                          <ProductItem product={product} loading={loading} />
-                        </CarouselItem>
-                      ))}
+                  : products?.map((product, index: number) => (
+                      <CarouselItem
+                        key={index}
+                        className="basis-full md:basis-2/4 lg:basis-1/4"
+                      >
+                        <ProductItem product={product} loading={loading} />
+                      </CarouselItem>
+                    ))}
               </CarouselContent>
               <CarouselPrevious className="hidden md:flex md:size-12 lg:size-14" />
               <CarouselNext className="hidden md:flex md:size-12 lg:size-14" />
@@ -97,7 +105,7 @@ export const Gallery19: React.FC = () => {
 };
 
 interface ProductProps {
-  product: Product;
+  product: any;
   loading: Boolean;
 }
 

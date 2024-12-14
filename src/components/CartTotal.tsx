@@ -6,7 +6,7 @@ const CartTotal: React.FC = () => {
   const { getCartAmount } = useShop();
   return (
     <div className="w-full">
-      <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+      <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6  bricolage-grotesque">
         Cart Subtotal:
       </h2>
 

@@ -119,7 +119,7 @@ const AdminUpdateProduct: React.FC = () => {
     <section className="w-full pb-6">
       <div className="mb-12 md:mb-10">
         <h2 className="text-4xl font-semibold mb-5 text-gray-500">
-          Update Product
+          Update product
         </h2>
       </div>
 
@@ -128,7 +128,7 @@ const AdminUpdateProduct: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {[0, 1, 2, 3, 4].map((index) => (
             <div key={index} className="w-full">
-              <label className="flex flex-col items-center justify-center h-36 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all">
+              <label className="flex flex-col items-center justify-center h-36 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-all">
                 <svg
                   className="w-8 h-8 mb-2 text-gray-500"
                   fill="none"
@@ -202,7 +202,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300  transition-all"
+                className="w-full p-3 border border-gray-300  transition-all  bg-white"
               >
                 <option value=" ">Select Category</option>
                 <option value="Active Wear">Active Wear</option>
@@ -215,7 +215,7 @@ const AdminUpdateProduct: React.FC = () => {
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all"
+                  className="w-full p-3 border border-gray-300 transition-all  bg-white"
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Modest Workout Tops">
@@ -239,7 +239,7 @@ const AdminUpdateProduct: React.FC = () => {
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all"
+                  className="w-full p-3 border border-gray-300 transition-all bg-white"
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Gym Essentials Kit">Gym Essentials Kit</option>
@@ -255,7 +255,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all"
+                className="w-full p-3 border border-gray-300 transition-all bg-white"
               >
                 <option value="">Select Product Type</option>
                 <option value="Top wear">Top Wear</option>
@@ -268,7 +268,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productSex}
                 onChange={(e) => setProductSex(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all"
+                className="w-full p-3 border border-gray-300 transition-all bg-white"
               >
                 <option value="">Select Product Sex</option>
                 <option value="Female">Female</option>
@@ -281,7 +281,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productColor}
                 onChange={(e) => setProductColor(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all"
+                className="w-full p-3 border border-gray-300 transition-all bg-white"
               >
                 <option value="">Select Product Color</option>
                 <option value="Black">Black</option>
@@ -312,7 +312,7 @@ const AdminUpdateProduct: React.FC = () => {
         {/* Sizes */}
         <div>
           <label className="text-sm font-medium">Sizes:</label>
-          <div className="mt-2 flex gap-4">
+          <div className="mt-2 flex gap-4 flex-wrap">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (item, index) => (
                 <div
@@ -359,7 +359,7 @@ const AdminUpdateProduct: React.FC = () => {
           type="submit"
           className="w-full bg-brand-neutral text-white py-3 rounded-lg hover:bg-gray-700 transition-all poppins"
         >
-          Update Product
+          Update product
         </button>
       </form>
     </section>
