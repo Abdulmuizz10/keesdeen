@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { formatAmount } from "../../lib/utils";
@@ -15,6 +15,11 @@ const AdminProducts: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const { dispatch } = useProducts();
+  const scrollRef = useRef<any>(null);
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
 
   // Fetch data from backend
   const fetchData = async (page: number) => {
@@ -28,6 +33,8 @@ const AdminProducts: React.FC = () => {
           },
         }
       );
+
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -35,11 +42,6 @@ const AdminProducts: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData(currentPage);
-    window.scrollTo(0, 0);
-  }, [currentPage]);
 
   const handleDelete = async (productId: string) => {
     const confirmDelete = window.confirm(
@@ -58,7 +60,7 @@ const AdminProducts: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
+    <section className="w-full" ref={scrollRef}>
       <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
         <h3 className="text-xl font-semibold mb-4">Product List</h3>
         <div className="overflow-x-auto">
@@ -144,7 +146,7 @@ const AdminProducts: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

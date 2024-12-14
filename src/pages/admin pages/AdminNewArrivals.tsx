@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
@@ -13,6 +13,7 @@ const AdminNewArrivals: React.FC = () => {
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const scrollRef = useRef<any>(null);
 
   const fetchData = async (page: number) => {
     try {
@@ -25,6 +26,7 @@ const AdminNewArrivals: React.FC = () => {
           },
         }
       );
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -68,7 +70,7 @@ const AdminNewArrivals: React.FC = () => {
   };
 
   return (
-    <section className="container ">
+    <section className="w-full" ref={scrollRef}>
       <div className="w-full">
         {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">

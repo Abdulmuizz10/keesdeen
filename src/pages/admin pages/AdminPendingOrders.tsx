@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
@@ -9,6 +9,12 @@ const AdminPendingOrders: React.FC = () => {
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const scrollRef = useRef<any>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchData(currentPage);
+  }, [currentPage]);
 
   const fetchData = async (page: number) => {
     try {
@@ -21,6 +27,7 @@ const AdminPendingOrders: React.FC = () => {
           },
         }
       );
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
       setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -30,13 +37,8 @@ const AdminPendingOrders: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData(currentPage);
-    window.scrollTo(0, 0);
-  }, [currentPage]);
-
   return (
-    <div className="w-full">
+    <section className="w-full" ref={scrollRef}>
       {/* Latest Orders */}
       <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
         <h3 className="text-xl font-semibold mb-4">Pending orders</h3>
@@ -73,7 +75,7 @@ const AdminPendingOrders: React.FC = () => {
                       <td className="p-4">
                         {order._id.split("").slice(0, 10)}...
                       </td>
-                      <td className="py-2 px-1">{`${order.firstName} ${order.lastName}`}</td>
+                      <td className="py-2">{`${order.firstName} ${order.lastName}`}</td>
                       <td className="p-5">{order.email}</td>
                       <td className="p-5">
                         {order.isDelivered ? (
@@ -123,7 +125,7 @@ const AdminPendingOrders: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

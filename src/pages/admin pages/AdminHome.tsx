@@ -95,10 +95,7 @@ const Dashboard = () => {
           </div>
           <div>
             <h3 className="text-lg md:text-xl font-semibold">Total Users</h3>
-            <p className="text-2xl md:text-4xl font-bold mt-2">10,928</p>
-            <p className="text-green-600 text-sm md:text-base mt-1">
-              12% more than previous week
-            </p>
+            <p className="text-2xl md:text-4xl font-bold">10,928</p>
           </div>
         </div>
 
@@ -108,10 +105,7 @@ const Dashboard = () => {
           </div>
           <div>
             <h3 className="text-lg md:text-xl font-semibold">Products</h3>
-            <p className="text-2xl md:text-4xl font-bold mt-2">8,236</p>
-            <p className="text-red-600 text-sm md:text-base mt-1">
-              1% less than previous week
-            </p>
+            <p className="text-2xl md:text-4xl font-bold">8,236</p>
           </div>
         </div>
 
@@ -121,10 +115,7 @@ const Dashboard = () => {
           </div>
           <div>
             <h3 className="text-lg md:text-xl font-semibold">Revenue</h3>
-            <p className="text-2xl md:text-4xl font-bold mt-2">$6,642</p>
-            <p className="text-green-600 text-sm md:text-base mt-1">
-              18% more than previous week
-            </p>
+            <p className="text-2xl md:text-4xl font-bold">$6,642</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
@@ -12,6 +12,11 @@ const AdminOrders: React.FC = () => {
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const scrollRef = useRef<any>(null);
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
 
   const fetchData = async (page: number) => {
     try {
@@ -24,6 +29,7 @@ const AdminOrders: React.FC = () => {
           },
         }
       );
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
       setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -31,11 +37,6 @@ const AdminOrders: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData(currentPage);
-    window.scrollTo(0, 0);
-  }, [currentPage]);
 
   const handleStatusChange = async (orderId: any, status: string) => {
     setLoading(true);
@@ -66,7 +67,7 @@ const AdminOrders: React.FC = () => {
   };
 
   return (
-    <section className="container ">
+    <section className="w-full" ref={scrollRef}>
       <div className="w-full">
         {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
@@ -106,7 +107,7 @@ const AdminOrders: React.FC = () => {
                         <td className="p-4">
                           {order._id.split("").slice(0, 8)}...
                         </td>
-                        <td className="py-2 px-1">{`${order.firstName} ${order.lastName}`}</td>
+                        <td className="py-2">{`${order.firstName} ${order.lastName}`}</td>
                         <td className="p-5">{order.email}</td>
                         <td className="p-5">
                           {order.isDelivered ? (
