@@ -8,7 +8,7 @@ export const showOrderSummary = (orderData: any) => {
   const itemsList = orderData.orderedItems
     .map(
       (item: any) =>
-        `<li>${item.qty} x ${item.name} (${item.size}) - £${formatAmount(
+        `<li>${item.qty} x ${item.name} (${item.size}) - ${formatAmount(
           item.price
         )}</li>`
     )
