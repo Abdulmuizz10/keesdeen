@@ -25,7 +25,7 @@ export const showOrderSummary = (orderData: any) => {
     }<br/>
       <strong>Ordered Items:</strong>
       <ul>${itemsList}</ul>
-      <strong>Total Price:</strong> £${orderData.totalPrice} <br/>
+      <strong>Total Price:</strong> ${formatAmount(orderData.totalPrice)} <br/>
       <strong>Paid At:</strong> ${new Date(
         orderData.paidAt
       ).toLocaleString()} <br/>
