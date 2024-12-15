@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { RiDeleteBin5Line } from "react-icons/ri";
@@ -9,6 +9,11 @@ const AdminUsers: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const scrollRef = useRef<any>(null);
+
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
 
   // Fetch data from backend
   const fetchData = async (page: number) => {
@@ -23,15 +28,10 @@ const AdminUsers: React.FC = () => {
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
-      toast.error("Error fetching products!");
+      toast.error("Error fetching users!");
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData(currentPage);
-    window.scrollTo(0, 0);
-  }, [currentPage]);
 
   const handleDelete = async (productId: string) => {
     const confirmDelete = window.confirm(
@@ -129,7 +129,10 @@ const AdminUsers: React.FC = () => {
               currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onClick={() => {
+              setCurrentPage((prev) => Math.max(prev - 1, 1));
+              scrollRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Previous
           </button>
@@ -139,9 +142,10 @@ const AdminUsers: React.FC = () => {
               currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={currentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => {
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+              scrollRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Next
           </button>

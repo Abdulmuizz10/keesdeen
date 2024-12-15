@@ -115,7 +115,10 @@ const App: React.FC = () => {
           {/* Admin Routes (Only accessible to admins) */}
           {user?.isAdmin ? (
             <Route element={<AdminLayout animation={animation} />}>
-              <Route path="/admin" element={<AdminHome />} />
+              <Route
+                path="/admin"
+                element={<AdminHome products={products} />}
+              />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route

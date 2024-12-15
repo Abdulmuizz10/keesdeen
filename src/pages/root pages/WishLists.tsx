@@ -2,18 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
 import ProductItem from "../../components/ProductItem";
-import { Product } from "../../lib/types";
 
 interface ProductListProps {
-  products: Product[];
+  products: any;
 }
 
 const WishLists: React.FC<ProductListProps> = ({ products }) => {
   const { wishLists, isActive } = useShop();
-  const [lists, setLists] = useState<Product[]>();
+  const [lists, setLists] = useState<any>();
 
   useEffect(() => {
-    const filteredProducts = products?.filter((product) =>
+    const filteredProducts = products?.filter((product: any) =>
       wishLists.includes(product._id)
     );
     setLists(filteredProducts);
@@ -43,7 +42,7 @@ const WishLists: React.FC<ProductListProps> = ({ products }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
               {lists &&
-                lists?.map((product, index) => (
+                lists?.map((product: any, index: number) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 50 }}

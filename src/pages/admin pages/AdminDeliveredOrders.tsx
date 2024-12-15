@@ -26,8 +26,6 @@ const AdminDeliveredOrders: React.FC = () => {
           },
         }
       );
-
-      scrollRef.current.scrollIntoView({ behavior: "smooth" });
       setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
       setLoading(false);
@@ -107,7 +105,10 @@ const AdminDeliveredOrders: React.FC = () => {
               currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onClick={() => {
+              setCurrentPage((prev) => Math.max(prev - 1, 1));
+              scrollRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Previous
           </button>
@@ -117,9 +118,10 @@ const AdminDeliveredOrders: React.FC = () => {
               currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={currentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            onClick={() => {
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+              scrollRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Next
           </button>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
@@ -8,58 +8,29 @@ import { toast } from "react-toastify";
 
 Chart.register(ArcElement);
 
-const AdminHome: React.FC = () => {
+interface ProductListProps {
+  products: any;
+}
+
+interface Products {
+  products: any;
+}
+
+const AdminHome: React.FC<ProductListProps> = ({ products }) => {
   return (
     <section className="container ">
-      <Dashboard />
+      <Dashboard products={products} />
     </section>
   );
 };
 
-const Dashboard = () => {
-  // Chart data
-  const userData = {
-    datasets: [
-      {
-        data: [75, 25], // 75% completion
-        backgroundColor: ["#13034bef", "#eee"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const stockData = {
-    datasets: [
-      {
-        data: [60, 40], // 60% completion
-        backgroundColor: ["#DA5B14", "#eee"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const revenueData = {
-    datasets: [
-      {
-        data: [85, 15], // 85% completion
-        backgroundColor: ["#04BB6E", "#eee"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  // Chart options
-  const chartOptions = {
-    cutout: "70%",
-    plugins: {
-      tooltip: { enabled: false },
-    },
-  };
-
-  const [transactions, setTransactions] = useState([]);
+const Dashboard: React.FC<Products> = ({ products }) => {
+  const [transactions, setTransactions] = useState<any>([]);
+  const [users, setUsers] = useState<any>([]);
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const scrollRef = useRef<any>(null);
 
   const fetchData = async (page: number) => {
     try {
@@ -81,12 +52,69 @@ const Dashboard = () => {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
+      const response = await Axios.get(`${URL}/users`, {
+        headers: {
+          token: "Bearer " + userToken,
+        },
+      });
+      setUsers(response.data);
+    } catch (error) {
+      toast.error("Error fetching users!");
+    }
+  };
+
   useEffect(() => {
     fetchData(currentPage);
+    fetchUsers();
   }, [currentPage]);
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+  // Chart data
+  const userData = {
+    datasets: [
+      {
+        data: [users?.length + 10, users?.length + 50], // 75% completion
+        backgroundColor: ["#13034bef", "#eee"],
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  const stockData = {
+    datasets: [
+      {
+        data: [products?.length + 10, products.length + 50], // 60% completion
+        backgroundColor: ["#DA5B14", "#eee"],
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  const revenueData = {
+    datasets: [
+      {
+        data: [transactions?.length + 10, transactions?.length + 50], // 85% completion
+        backgroundColor: ["#04BB6E", "#eee"],
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  // Chart options
+  const chartOptions = {
+    cutout: "65%",
+    plugins: {
+      tooltip: { enabled: false },
+    },
+  };
+
   return (
-    <div className="">
+    <section className="w-full">
       {/* Header stats with doughnut charts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
@@ -95,7 +123,7 @@ const Dashboard = () => {
           </div>
           <div>
             <h3 className="text-lg md:text-xl font-semibold">Total Users</h3>
-            <p className="text-2xl md:text-4xl font-bold">10,928</p>
+            <p className="text-2xl md:text-4xl font-bold">{users?.length}</p>
           </div>
         </div>
 
@@ -105,7 +133,7 @@ const Dashboard = () => {
           </div>
           <div>
             <h3 className="text-lg md:text-xl font-semibold">Products</h3>
-            <p className="text-2xl md:text-4xl font-bold">8,236</p>
+            <p className="text-2xl md:text-4xl font-bold">{products?.length}</p>
           </div>
         </div>
 
@@ -114,13 +142,15 @@ const Dashboard = () => {
             <Doughnut data={revenueData} options={chartOptions} />
           </div>
           <div>
-            <h3 className="text-lg md:text-xl font-semibold">Revenue</h3>
-            <p className="text-2xl md:text-4xl font-bold">$6,642</p>
+            <h3 className="text-lg md:text-xl font-semibold">Orders</h3>
+            <p className="text-2xl md:text-4xl font-bold">
+              {transactions?.length}
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="w-full">
+      <div className="w-full" ref={scrollRef}>
         {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
           <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
@@ -191,7 +221,10 @@ const Dashboard = () => {
                 currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => {
+                setCurrentPage((prev) => Math.max(prev - 1, 1));
+                scrollRef.current.scrollIntoView({ behavior: "smooth" });
+              }}
             >
               Previous
             </button>
@@ -203,100 +236,18 @@ const Dashboard = () => {
                   : ""
               }`}
               disabled={currentPage === totalPages}
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              onClick={() => {
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                scrollRef.current.scrollIntoView({ behavior: "smooth" });
+              }}
             >
               Next
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
 export default AdminHome;
-
-// <div className="w-full">
-//   {/* Latest Orders */}
-//   <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
-//     <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
-
-//     <div className="overflow-x-auto">
-//       <table className="w-full bg-white">
-//         <thead>
-//           <tr className="bg-gray-100 rounded-t-xl bricolage-grotesque font-extrabold">
-//             <th className="text-left p-4 font-semibold first:rounded-tl-xl last:rounded-tr-xl">
-//               Customer
-//             </th>
-//             <th className="text-left p-4 font-semibold">Email</th>
-//             <th className="text-left p-4 font-semibold">Status</th>
-//             <th className="text-left p-4 font-semibold">Date</th>
-//             <th className="text-left p-4 font-semibold rounded-tr-xl">
-//               Amount
-//             </th>
-//           </tr>
-//         </thead>
-//         <tbody className="poppins">
-//           {loading
-//             ? transactions?.map((_: any, index: number) => (
-//                 <tr key={index} className="border-b">
-//                   {/* Combine firstName and lastName */}
-//                   <td className="p-6 h-6 w-full  bg-gray-200 animate-pulse" />
-
-//                   {/* Display email */}
-
-//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
-
-//                   {/* Show delivery status */}
-//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
-
-//                   {/* Show paid date */}
-//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
-
-//                   {/* Show total price */}
-//                   <td className="p-4 h-6 w-full  bg-gray-200 animate-pulse" />
-//                 </tr>
-//               ))
-//             : transactions?.map((transaction: any, index: number) => (
-//                 <tr key={index} className="border-b">
-//                   {/* Combine firstName and lastName */}
-//                   <td className="p-4">
-//                     {`${transaction.firstName} ${transaction.lastName}`}
-//                   </td>
-
-//                   {/* Display email */}
-//                   <td className="p-4">{transaction.email}</td>
-
-//                   {/* Show delivery status */}
-//                   <td className="p-4">
-//                     {transaction.isDelivered ? (
-//                       <span className="text-green-500 font-semibold">
-//                         Delivered
-//                       </span>
-//                     ) : (
-//                       <span className="text-brand-secondary font-semibold">
-//                         Pending
-//                       </span>
-//                     )}
-//                   </td>
-
-//                   {/* Show paid date */}
-//                   <td className="p-4">
-//                     {new Date(transaction.paidAt).toLocaleDateString()}
-//                   </td>
-
-//                   {/* Show total price */}
-//                   <td className="p-4">
-//                     {formatAmount(transaction.totalPrice)}
-//                   </td>
-//                 </tr>
-//               ))}
-//         </tbody>
-//       </table>
-//     </div>
-
-//     {/* Pagination controls */}
-//   </div>
-// </div>;

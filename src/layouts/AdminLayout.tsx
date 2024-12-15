@@ -19,11 +19,11 @@ import {
   // BiHelpCircle,
   BiHome,
   BiLayer,
-  BiPieChartAlt2,
+  // BiPieChartAlt2,
   // BiSearch,
 } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa6";
-import { FaRegPaperPlane } from "react-icons/fa";
+// import { FaRegPaperPlane } from "react-icons/fa";
 import {
   Accordion,
   AccordionContent,
@@ -38,7 +38,7 @@ import {
   SheetTrigger,
   useMediaQuery,
 } from "@relume_io/relume-ui";
-import { MdTrendingUp } from "react-icons/md";
+// import { MdTrendingUp } from "react-icons/md";
 import {
   RxChevronDown,
   // RxChevronRight,
@@ -217,7 +217,7 @@ const Navigation = () => {
             </AccordionItem>
           </Accordion>
 
-          <Accordion type="single" collapsible>
+          {/* <Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="border-none">
               <AccordionTrigger
                 className="p-2 font-normal"
@@ -249,7 +249,7 @@ const Navigation = () => {
                 </Link>
               </AccordionContent>
             </AccordionItem>
-          </Accordion>
+          </Accordion> */}
         </div>
         {/* <div className="flex flex-col gap-4 px-4 lg:gap-6">
           <div className="flex flex-col">

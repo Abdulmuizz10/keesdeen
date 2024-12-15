@@ -11,12 +11,11 @@ import {
 } from "@relume_io/relume-ui";
 import ProductItem from "../../components/ProductItem";
 import { useParams } from "react-router-dom";
-import { Product } from "../../lib/types";
 import Spinner from "../../components/Spinner";
 import { useProducts } from "../../context/ProductContext/ProductContext";
 
 interface ProductListProps {
-  products: Product[];
+  products: any;
 }
 
 const Collections: React.FC<ProductListProps> = ({ products }) => {
@@ -24,7 +23,7 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
   const { isActive } = useShop();
   const { isFetching } = useProducts();
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
 
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -49,18 +48,18 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products.filter((product) =>
-      product.name.split(" ").some((p) => name?.split(" ").includes(p))
+    let productsCopy = products.filter((product: any) =>
+      product.name.split(" ").some((p: any) => name?.split(" ").includes(p))
     );
 
     if (sizeCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        item.size.some((s) => sizeCategory.includes(s))
+      productsCopy = productsCopy.filter((item: any) =>
+        item.size.some((s: any) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
+      productsCopy = productsCopy.filter((item: any) =>
         colorCategory.includes(item.color)
       );
     }
@@ -73,10 +72,10 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
 
     switch (sortType) {
       case "Low - High":
-        setFilteredProducts(spCopy.sort((a, b) => a.price - b.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => a.price - b.price));
         break;
       case "High - Low":
-        setFilteredProducts(spCopy.sort((a, b) => b.price - a.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => b.price - a.price));
         break;
       default: {
         applyFilter();
@@ -276,7 +275,7 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
               {/* {Map Products} */}
               <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
                 {filteredProducts.length > 0 &&
-                  filteredProducts.map((product, index) => (
+                  filteredProducts.map((product: any, index: number) => (
                     <ProductItem product={product} key={index} />
                   ))}
               </div>
