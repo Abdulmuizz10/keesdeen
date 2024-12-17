@@ -118,8 +118,8 @@ const AdminOrders: React.FC = () => {
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
-                        <td className="p-4 flex gap-2 items-center">
-                          {order._id.split("").slice(0, 8)}...
+                        <td className="py-4 px-2 flex gap-1 items-center">
+                          {order._id.split("").slice(0, 5)}...
                           <FaRegCopy
                             className="text-xl cursor-pointer"
                             onClick={() => copyId(order._id)}

@@ -200,8 +200,8 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
-                        <td className="p-4 flex gap-2 items-center">
-                          {transaction._id.split("").slice(0, 8)}....
+                        <td className="py-4 px-2 flex gap-2 items-center">
+                          {transaction._id.split("").slice(0, 6)}....
                           <FaRegCopy
                             className="text-xl cursor-pointer"
                             onClick={() => copyId(transaction._id)}
