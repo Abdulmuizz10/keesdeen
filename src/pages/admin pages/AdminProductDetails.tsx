@@ -55,10 +55,11 @@ const AdminProductDetails = () => {
         </h1>
 
         <div className="flex flex-col gap-10">
+          <div className="border-b" />
           <div className="w-full">
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full gap-2">
+            <div className="grid md:grid-cols-2 w-full gap-2">
               {product?.imageUrls.map((image: any, index: number) => (
-                <div className="h-[370px] w-full" key={index}>
+                <div className="h-full w-full" key={index}>
                   <img
                     src={image}
                     alt="product image"
@@ -70,7 +71,12 @@ const AdminProductDetails = () => {
           </div>
 
           {/* Product Information */}
-          <div className="flex justify-around max-md:flex-col max-md:justify-between">
+          <div className="py-2 border-b">
+            <h1 className="text-3xl font-semibold text-gray-800">
+              Product Information
+            </h1>
+          </div>
+          <div className="">
             <div>
               <p className="text-lg text-gray-600 mb-2">
                 <span className="font-medium">Product Name:</span>{" "}
@@ -112,7 +118,7 @@ const AdminProductDetails = () => {
                   {product.size.map((size: any, index: number) => (
                     <span
                       key={index}
-                      className="w-10 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border"
+                      className="w-14 h-14 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border poppins"
                     >
                       {size}
                     </span>

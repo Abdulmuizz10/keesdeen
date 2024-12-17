@@ -180,7 +180,7 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                   <th className="text-left p-4 font-semibold">Email address</th>
                   <th className="text-left p-4 font-semibold">Status</th>
                   <th className="text-left p-4 font-semibold">Amount</th>
-                  <th className="text-left p-4 font-semibold">Date</th>
+                  <th className="text-left p-4 font-semibold">Date ordered</th>
                 </tr>
               </thead>
               <tbody>

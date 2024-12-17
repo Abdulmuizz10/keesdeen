@@ -111,7 +111,8 @@ const AdminOrderDetails: React.FC = () => {
           Order Details - {_id}
         </h1>
         <p className="text-lg text-gray-600">
-          Placed on: {new Date(createdAt).toLocaleString()}
+          <span className="font-medium">Placed on:</span>{" "}
+          {new Date(createdAt).toLocaleString()}
         </p>
         <p
           className={`mt-2 text-base ${
@@ -136,18 +137,18 @@ const AdminOrderDetails: React.FC = () => {
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Customer Information
         </h2>
-        <p className="text-lg text-gray-600">
-          <strong>Name:</strong> {firstName} {lastName}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Name:</span> {firstName} {lastName}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Email:</strong> {email}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Email:</span> {email}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Phone:</strong> {phoneNumber}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Phone:</span> {phoneNumber}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Address:</strong> {addressLineOne}, {addressLineTwo || ""}{" "}
-          {cityAndRegion}, {zipCode}, {country}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Address:</span> {addressLineOne},{" "}
+          {addressLineTwo || ""} {cityAndRegion}, {zipCode}, {country}
         </p>
       </div>
 
@@ -162,11 +163,11 @@ const AdminOrderDetails: React.FC = () => {
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-16 h-16 rounded-md border"
+                className="w-28 h-28 rounded-md border"
               />
               <div>
                 <p className="text-xl font-medium text-gray-800">{item.name}</p>
-                <p className="text-lg text-gray-600">
+                <p className="text-lg text-gray-800">
                   Quantity: {item.qty} | Price: {currency} {item.price}
                 </p>
               </div>
@@ -180,17 +181,20 @@ const AdminOrderDetails: React.FC = () => {
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Payment Information
         </h2>
-        <p className="text-lg text-gray-600">
-          <strong>Total Price:</strong> {currency} {totalPrice}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Total Price:</span> {currency}{" "}
+          {totalPrice}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Shipping:</strong> {currency} {shippingPrice}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Shipping:</span> {currency}{" "}
+          {shippingPrice}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Paid At:</strong> {new Date(paidAt).toLocaleString()}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Paid At:</span>{" "}
+          {new Date(paidAt).toLocaleString()}
         </p>
-        <p className="text-lg text-gray-600">
-          <strong>Delivered At:</strong>{" "}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Delivered At:</span>{" "}
           {deliveredAt
             ? new Date(deliveredAt).toLocaleString()
             : "Not Delivered"}
