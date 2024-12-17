@@ -68,7 +68,7 @@ const AdminOrderDetails: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="flex items-center justify-center h-screen bg-white rounded-lg">
         <Spinner />
       </div>
     );
@@ -76,7 +76,7 @@ const AdminOrderDetails: React.FC = () => {
 
   if (!order) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="flex items-center justify-center h-screen bg-white rounded-lg">
         <p className="text-gray-600">Order not found.</p>
       </div>
     );
