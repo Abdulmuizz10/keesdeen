@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
-import { Product } from "../../lib/types";
 import { URL } from "../../lib/constants";
 import Axios from "axios";
 import { formatAmount } from "../../lib/utils";
+import { toast } from "react-toastify";
 
 const AdminProductDetails = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<any>();
   const navigate = useNavigate();
 
   if (!id) {
@@ -18,17 +18,17 @@ const AdminProductDetails = () => {
   }
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
         const response = await Axios.get(`${URL}/products/${id}`);
         setProduct(response.data);
       } catch (error) {
-        console.error("Error fetching product:", error);
+        toast.error("Error fetching product");
       } finally {
         setLoading(false);
       }
     };
-    fetchProduct();
+    fetchData();
   }, [id]);
 
   if (loading) {
@@ -57,7 +57,7 @@ const AdminProductDetails = () => {
         <div className="flex flex-col gap-10">
           <div className="w-full">
             <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 w-full gap-2">
-              {product?.imageUrls.map((image, index) => (
+              {product?.imageUrls.map((image: any, index: number) => (
                 <div className="h-[370px] w-full" key={index}>
                   <img
                     src={image}
@@ -89,11 +89,11 @@ const AdminProductDetails = () => {
                 {product.type}
               </p>
               <p className="text-lg text-gray-600 mb-2">
-                <span className="font-medium">Category:</span>{" "}
+                <span className="font-medium">Product Category:</span>{" "}
                 {product.category}
               </p>
               <p className="text-lg text-gray-600 mb-2">
-                <span className="font-medium">Sub-Category:</span>{" "}
+                <span className="font-medium">Product Sub-Category:</span>{" "}
                 {product.subcategory || "N/A"}
               </p>
 
@@ -109,7 +109,7 @@ const AdminProductDetails = () => {
                   Available Sizes:
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.size.map((size, index) => (
+                  {product.size.map((size: any, index: number) => (
                     <span
                       key={index}
                       className="w-10 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border"

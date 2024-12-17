@@ -68,7 +68,7 @@ const AdminUpdateProduct: React.FC = () => {
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
-      console.error("Cloudinary upload error:", error);
+      toast.error(`Cloudinary upload error: ${error}`);
     }
   };
 

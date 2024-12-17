@@ -17,6 +17,7 @@ const AdminUsers: React.FC = () => {
 
   // Fetch data from backend
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(`${URL}/users/page/users?page=${page}`, {
@@ -56,7 +57,7 @@ const AdminUsers: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full" ref={scrollRef}>
       <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
         <h3 className="text-xl font-semibold mb-4">Customer List</h3>
         <div className="overflow-x-auto">
@@ -107,8 +108,7 @@ const AdminUsers: React.FC = () => {
                         )}
                       </td>
                       <td className="p-4">
-                        {user.createdAt?.split("").slice(0, 10)} at{" "}
-                        {user.createdAt?.split("").slice(11, 19)}
+                        {new Date(user?.createdAt).toLocaleString()}
                       </td>
                       <td className="py-2 px-8">
                         <RiDeleteBin5Line

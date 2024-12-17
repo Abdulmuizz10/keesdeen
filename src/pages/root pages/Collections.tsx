@@ -24,7 +24,6 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
   const { isFetching } = useProducts();
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<any>([]);
-
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
   const [sortType, setSortType] = useState<string>("Relevance");

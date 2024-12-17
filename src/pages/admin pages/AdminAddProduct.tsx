@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useProducts } from "../../context/ProductContext/ProductContext";
 import { createProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState<string>("");
@@ -18,6 +19,7 @@ const AdminAddProduct: React.FC = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [bestSeller, setBestSeller] = useState<boolean>(false);
   const [newArrival, setNewArrival] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const { dispatch } = useProducts();
 
@@ -64,7 +66,7 @@ const AdminAddProduct: React.FC = () => {
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
-      console.error("Cloudinary upload error:", error);
+      toast.error(`Cloudinary upload error ${error}`);
     }
   };
 
@@ -92,7 +94,7 @@ const AdminAddProduct: React.FC = () => {
       imageUrls: productImages, // Store URLs in product data
     };
 
-    createProduct(formData, dispatch);
+    createProduct(formData, dispatch, navigate);
 
     // Clear form after submission
     setProductName("");

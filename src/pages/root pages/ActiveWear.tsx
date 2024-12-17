@@ -25,6 +25,7 @@ const ActiveWear: React.FC = () => {
   const { dispatch } = useProducts();
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await Axios.get(`${URL}/products/active-wears`, {
           validateStatus: (status) => status < 600,
@@ -32,14 +33,15 @@ const ActiveWear: React.FC = () => {
 
         if (res.status === 200) {
           setProducts(res.data);
-          console.log(res.data);
+          setLoading(false);
         } else {
           // toast.error(res.data.message || "Something went wrong");
+          setLoading(false);
         }
       } catch (error) {
         // toast.error("An unexpected error occurred. Please try again.");
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, [dispatch]);

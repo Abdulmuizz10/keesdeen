@@ -75,8 +75,6 @@ const CheckOut: React.FC = ({}) => {
   };
 
   const handleOrderSubmission = async (data: any, token: string) => {
-    console.log(data, token);
-
     if (data) {
       const today = new Date().toISOString();
 

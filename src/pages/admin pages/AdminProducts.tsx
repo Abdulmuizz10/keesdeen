@@ -23,6 +23,7 @@ const AdminProducts: React.FC = () => {
 
   // Fetch data from backend
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
@@ -99,8 +100,7 @@ const AdminProducts: React.FC = () => {
                       <td className="p-4">{product.subcategory}</td>
                       <td className="p-4">{formatAmount(product.price)}</td>
                       <td className="p-4">
-                        {product.createdAt.split("").slice(0, 10)} at{" "}
-                        {product.createdAt.split("").slice(11, 19)}
+                        {new Date(product.createdAt).toLocaleString()}
                       </td>
                       <td className="py-2 px-8">
                         <Link to={`/admin/update_product/${product._id}`}>

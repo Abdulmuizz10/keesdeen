@@ -92,7 +92,7 @@ export const Login7: React.FC = (props: Login7Props) => {
       }
     },
     onError: (error) => {
-      console.error("Google login error:", error);
+      toast.error(`Google login error: ${error}`);
     },
   });
 

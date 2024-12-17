@@ -100,7 +100,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
       }
     },
     onError: (error) => {
-      console.error("Google login error:", error);
+      toast.error(`Google login error: ${error}`);
     },
   });
 

@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatAmount } from "../../lib/utils";
+import { FaRegCopy } from "react-icons/fa";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const AdminPendingOrders: React.FC = () => {
   const [orders, setOrders] = useState([]);
@@ -17,6 +19,7 @@ const AdminPendingOrders: React.FC = () => {
   }, [currentPage]);
 
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
@@ -34,6 +37,17 @@ const AdminPendingOrders: React.FC = () => {
       toast.error("Error while fetching transactions. Please refresh the page");
       setLoading(false);
     }
+  };
+
+  const copyId = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast("Transaction ID copied to clipboard!");
+      })
+      .catch(() => {
+        toast("Failed to copy transaction ID.");
+      });
   };
 
   return (
@@ -71,10 +85,18 @@ const AdminPendingOrders: React.FC = () => {
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
-                      <td className="p-4">
+                      <td className="p-4 flex gap-2 items-center">
                         {order._id.split("").slice(0, 10)}...
+                        <FaRegCopy
+                          className="text-xl cursor-pointer"
+                          onClick={() => copyId(order._id)}
+                        />
                       </td>
-                      <td className="py-2">{`${order.firstName} ${order.lastName}`}</td>
+                      <td className="py-2 cursor-pointer">
+                        <Link
+                          to={`/admin/order_details/${order._id}`}
+                        >{`${order.firstName} ${order.lastName}`}</Link>
+                      </td>
                       <td className="p-5">{order.email}</td>
                       <td className="p-5">
                         {order.isDelivered ? (
@@ -89,8 +111,7 @@ const AdminPendingOrders: React.FC = () => {
                       </td>
                       <td className="p-5">{formatAmount(order.totalPrice)}</td>
                       <td className="p-5">
-                        {order.paidAt?.split("").slice(0, 10)} at{" "}
-                        {order.paidAt?.split("").slice(11, 19)}
+                        {new Date(order.paidAt).toLocaleString()}
                       </td>
                     </tr>
                   ))}

@@ -32,6 +32,7 @@ export const Gallery21 = ({
   // Fetch products on mount
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await Axios.get(`${URL}/products/new-arrivals`, {
           validateStatus: (status) => status < 600,
@@ -39,13 +40,15 @@ export const Gallery21 = ({
 
         if (res.status === 200) {
           setProducts(res.data);
+          setLoading(false);
         } else {
           // toast.error(res.data.message || "Something went wrong");
+          setLoading(false);
         }
       } catch (error) {
         // toast.error("An unexpected error occurred. Please try again.");
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
   }, [dispatch]);

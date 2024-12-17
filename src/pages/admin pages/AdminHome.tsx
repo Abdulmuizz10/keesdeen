@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
+import { FaRegCopy } from "react-icons/fa";
 import { Chart, ArcElement } from "chart.js";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 Chart.register(ArcElement);
 
@@ -32,7 +34,17 @@ const Dashboard: React.FC<Products> = ({ products }) => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const scrollRef = useRef<any>(null);
 
+  useEffect(() => {
+    fetchData(currentPage);
+    fetchUsers();
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
@@ -44,6 +56,7 @@ const Dashboard: React.FC<Products> = ({ products }) => {
         }
       );
       setTransactions(response.data.orders);
+      console.log(response.data.orders[0]);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -66,14 +79,17 @@ const Dashboard: React.FC<Products> = ({ products }) => {
     }
   };
 
-  useEffect(() => {
-    fetchData(currentPage);
-    fetchUsers();
-  }, [currentPage]);
+  const copyId = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast("Transaction ID copied to clipboard!");
+      })
+      .catch(() => {
+        toast("Failed to copy transaction ID.");
+      });
+  };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
   // Chart data
   const userData = {
     datasets: [
@@ -184,10 +200,19 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
-                        <td className="p-4">
+                        <td className="p-4 flex gap-2 items-center">
                           {transaction._id.split("").slice(0, 8)}....
+                          <FaRegCopy
+                            className="text-xl cursor-pointer"
+                            onClick={() => copyId(transaction._id)}
+                          />
                         </td>
-                        <td className="p-5">{`${transaction.firstName} ${transaction.lastName}`}</td>
+
+                        <td className="p-5 cursor-pointer">
+                          <Link
+                            to={`/admin/order_details/${transaction._id}`}
+                          >{`${transaction.firstName} ${transaction.lastName}`}</Link>
+                        </td>
                         <td className="p-5">{transaction.email}</td>
                         <td className="p-5">
                           {transaction.isDelivered ? (
@@ -204,8 +229,7 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                           {formatAmount(transaction.totalPrice)}
                         </td>
                         <td className="p-5">
-                          {transaction.paidAt?.split("").slice(0, 10)} at{" "}
-                          {transaction.paidAt?.split("").slice(11, 19)}
+                          {new Date(transaction.paidAt).toLocaleString()}
                         </td>
                       </tr>
                     ))}

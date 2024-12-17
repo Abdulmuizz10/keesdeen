@@ -40,6 +40,7 @@ import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
 import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
 import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
+import AdminOrderDetails from "./pages/admin pages/AdminOrderDetails";
 import AdminAddProduct from "./pages/admin pages/AdminAddProduct";
 import AdminBestSellers from "./pages/admin pages/AdminBestSellers";
 import AdminNewArrivals from "./pages/admin pages/AdminNewArrivals";
@@ -133,6 +134,10 @@ const App: React.FC = () => {
               <Route
                 path="/admin/delivered_orders"
                 element={<AdminDeliveredOrders />}
+              />
+              <Route
+                path="/admin/order_details/:id"
+                element={<AdminOrderDetails />}
               />
               <Route path="/admin/add_product" element={<AdminAddProduct />} />
               <Route

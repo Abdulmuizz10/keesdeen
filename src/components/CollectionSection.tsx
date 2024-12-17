@@ -26,6 +26,7 @@ export const Gallery5 = ({
   useEffect(() => {
     let isMounted = true;
     const fetchData = async () => {
+      setLoading(true);
       try {
         const res = await Axios.get(`${URL}/products`, {
           validateStatus: (status) => status < 600,
@@ -33,17 +34,18 @@ export const Gallery5 = ({
 
         if (res.status === 200) {
           setProducts(res.data);
+          setLoading(false);
         } else {
           // toast.error(res.data.message || "Something went wrong");
+          setLoading(false);
         }
         if (isMounted) setLoading(false);
       } catch (error) {
         // toast.error("An unexpected error occurred. Please try again.");
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
-
     return () => {
       isMounted = false;
     };

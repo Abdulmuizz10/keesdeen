@@ -107,14 +107,14 @@ const Navigation = () => {
   return (
     <nav className="absolute left-0 right-auto top-0 float-right h-full w-[80vw] max-w-[none] md:w-full md:max-w-[19.5rem] lg:relative lg:inset-auto lg:w-auto lg:max-w-[auto]">
       <div className="absolute flex size-full flex-col gap-4 border-r border-border-primary bg-white py-6 lg:gap-6 lg:border-none lg:py-0">
-        <div className="flex size-full flex-col overflow-auto px-4 gap-4 no-scrollbar text-[15px]">
+        <div className="flex size-full flex-col overflow-auto px-4 gap-4 no-scrollbar text-[15.5px]">
           <Link
             to="/admin"
             className="flex items-center gap-x-2 p-2 text-center"
           >
             <span className="flex w-full items-center gap-3">
               <BiHome className="size-6 shrink-0" />
-              <span>Home</span>
+              <p className="bricolage-grotesque">Home</p>
             </span>
           </Link>
           <Accordion type="single" collapsible>
@@ -125,7 +125,7 @@ const Navigation = () => {
               >
                 <span className="flex items-center gap-3">
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Orders</p>
+                  <p className="bricolage-grotesque">Orders</p>
                 </span>
               </AccordionTrigger>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -134,7 +134,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>All Orders</p>
+                  <p className="bricolage-grotesque">All Orders</p>
                 </Link>
               </AccordionContent>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -143,7 +143,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Pending orders</p>
+                  <p className="bricolage-grotesque">Pending orders</p>
                 </Link>
               </AccordionContent>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -152,7 +152,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Delivered orders</p>
+                  <p className="bricolage-grotesque">Delivered orders</p>
                 </Link>
               </AccordionContent>
             </AccordionItem>
@@ -163,7 +163,7 @@ const Navigation = () => {
           >
             <span className="flex w-full items-center gap-3">
               <FaRegUser className="size-5 shrink-0" />
-              <p>Users</p>
+              <p className="bricolage-grotesque">Users</p>
             </span>
           </Link>
 
@@ -175,7 +175,7 @@ const Navigation = () => {
               >
                 <span className="flex items-center gap-3">
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Products</p>
+                  <p className="bricolage-grotesque">Products</p>
                 </span>
               </AccordionTrigger>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -184,7 +184,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>All products</p>
+                  <p className="bricolage-grotesque">All products</p>
                 </Link>
               </AccordionContent>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -193,7 +193,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Create product</p>
+                  <p className="bricolage-grotesque">Create product</p>
                 </Link>
               </AccordionContent>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -202,7 +202,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Add to best seller</p>
+                  <p className="bricolage-grotesque">Add to best seller</p>
                 </Link>
               </AccordionContent>
               <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
@@ -211,7 +211,7 @@ const Navigation = () => {
                   className="flex w-full items-center gap-3"
                 >
                   <BiLayer className="size-6 shrink-0" />
-                  <p>Add to new arrival</p>
+                  <p className="bricolage-grotesque">Add to new arrival</p>
                 </Link>
               </AccordionContent>
             </AccordionItem>

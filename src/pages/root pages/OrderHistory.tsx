@@ -27,7 +27,6 @@ const OrderHistory: React.FC = () => {
         getGuestOrders(guestEmail, orderDispatch);
       } else {
         getProfileOrders(orderDispatch);
-        console.log(orders);
       }
     };
     fetchOrderHistory();

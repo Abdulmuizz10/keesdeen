@@ -22,15 +22,15 @@ const ShopAll: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const { products, dispatch } = useProducts();
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       await getProducts(dispatch);
-      console.log(products);
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);

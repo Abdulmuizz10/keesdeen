@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Chart, ArcElement } from "chart.js";
+import { FaRegCopy } from "react-icons/fa";
 import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 Chart.register(ArcElement);
 
@@ -19,6 +21,7 @@ const AdminOrders: React.FC = () => {
   }, [currentPage]);
 
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
@@ -66,6 +69,17 @@ const AdminOrders: React.FC = () => {
     }
   };
 
+  const copyId = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast("Transaction ID copied to clipboard!");
+      })
+      .catch(() => {
+        toast("Failed to copy transaction ID.");
+      });
+  };
+
   return (
     <section className="w-full" ref={scrollRef}>
       <div className="w-full">
@@ -104,10 +118,19 @@ const AdminOrders: React.FC = () => {
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
-                        <td className="p-4">
+                        <td className="p-4 flex gap-2 items-center">
                           {order._id.split("").slice(0, 8)}...
+                          <FaRegCopy
+                            className="text-xl cursor-pointer"
+                            onClick={() => copyId(order._id)}
+                          />
                         </td>
-                        <td className="py-2">{`${order.firstName} ${order.lastName}`}</td>
+                        <td className="py-2 cursor-pointer">
+                          <Link
+                            to={`/admin/order_details/${order._id}`}
+                          >{`${order.firstName} ${order.lastName}`}</Link>
+                        </td>
+
                         <td className="p-5">{order.email}</td>
                         <td className="p-5">
                           {order.isDelivered ? (
@@ -136,8 +159,7 @@ const AdminOrders: React.FC = () => {
                           {formatAmount(order.totalPrice)}
                         </td>
                         <td className="p-5">
-                          {order.createdAt.split("").slice(0, 10)} at{" "}
-                          {order.createdAt.split("").slice(11, 19)}
+                          {new Date(order.createdAt).toLocaleString()}
                         </td>
                       </tr>
                     ))}
@@ -155,6 +177,7 @@ const AdminOrders: React.FC = () => {
               disabled={currentPage === 1}
               onClick={() => {
                 setCurrentPage((prev) => Math.max(prev - 1, 1));
+                scrollRef.current.scrollIntoView({ behavior: "smooth" });
               }}
             >
               Previous

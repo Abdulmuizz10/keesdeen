@@ -16,6 +16,7 @@ const AdminBestSellers: React.FC = () => {
   const scrollRef = useRef<any>(null);
 
   const fetchData = async (page: number) => {
+    setLoading(true);
     try {
       const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
@@ -30,7 +31,7 @@ const AdminBestSellers: React.FC = () => {
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      toast.error("Error fetching products");
       setLoading(false);
     }
   };
@@ -139,8 +140,7 @@ const AdminBestSellers: React.FC = () => {
                           </select>
                         </td>
                         <td className="p-5">
-                          {product.createdAt.split("").slice(0, 10)} at{" "}
-                          {product.createdAt.split("").slice(11, 19)}
+                          {new Date(product.createdAt).toLocaleString()}
                         </td>
                       </tr>
                     ))}

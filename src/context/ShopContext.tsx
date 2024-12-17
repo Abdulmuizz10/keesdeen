@@ -125,7 +125,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
             totalCount += cartItems[items].sizes[size];
           }
         } catch (error) {
-          console.log(error);
+          toast.error(`${error}`);
         }
       }
     }
