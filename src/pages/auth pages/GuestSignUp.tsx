@@ -73,6 +73,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
       { firstName, lastName, email, password },
       dispatch,
       navigate,
+      guestEmail,
       setGuestEmail
     );
   };
@@ -272,7 +273,7 @@ export const Signup7Defaults: Signup7Props = {
   },
   signUpWithGoogleButton: {
     variant: "secondary",
-    title: "Sign up with Google",
+    title: "Sign in with Google",
     iconLeft: <BiLogoGoogle className="size-6" />,
   },
   checkOutAsGuest: {

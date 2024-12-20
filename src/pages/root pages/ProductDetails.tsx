@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
-import { FaStar, FaStarHalfAlt } from "react-icons/fa";
+import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { BiArrowBack } from "react-icons/bi";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { formatAmount } from "../../lib/utils";
-import { Button } from "@relume_io/relume-ui";
+import { Button, useMediaQuery } from "@relume_io/relume-ui";
 import RelatedProducts from "../../components/RelatedProducts";
 import Reviews from "../../components/Reviews";
 import Spinner from "../../components/Spinner";
-import { Product } from "../../lib/types";
 import { URL } from "../../lib/constants";
 import Axios from "axios";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const [animation, setAnimation] = useState<boolean>(true);
-  const [result, setResult] = useState<Product>();
+  const [result, setResult] = useState<any>();
   const navigate = useNavigate();
   const { addToCart } = useShop();
-  const [image, setImage] = useState<string>("");
   const [size, setSize] = useState<string>();
 
   if (!id) {
@@ -36,11 +38,18 @@ const ProductDetails = () => {
     setTimeout(() => setAnimation(false), 4000);
   }, [id]);
 
-  useEffect(() => {
-    if (result?.imageUrls?.length) {
-      setImage(result.imageUrls[0]);
-    }
-  }, [result]);
+  const isMobile = useMediaQuery("(min-width: 568px)");
+
+  const settings = {
+    dots: isMobile ? true : false,
+    infinite: true,
+    speed: 300,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+  };
 
   return animation ? (
     <Animation />
@@ -48,55 +57,56 @@ const ProductDetails = () => {
     <section className="px-[5%] py-24 md:py-30">
       {result && (
         <div className="container">
-          <div className="flex gap-5 md:gap-10 flex-col lg:flex-row">
+          <div className="flex gap-10 flex-col lg:flex-row">
             {/* Product images */}
-            <div className="flex-1 flex flex-col-reverse gap-3 sm:flex-row">
-              <div
-                className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll
-                justify-between sm:justify-normal no-scrollbar"
-              >
-                {result?.imageUrls
-                  ?.slice(1, 5)
-                  .map((item: string, index: number) => (
+            <div className="flex-1 w-full lg:w-1/2">
+              <Slider {...settings}>
+                {result?.product?.imageUrls.map(
+                  (item: string, index: number) => (
                     <img
                       src={item}
                       alt="product images"
                       key={index}
-                      className="w-[24%] max-lg:h-[25%] sm:w-[110px] sm:mb-3 cursor-pointer"
-                      onClick={() => setImage(item)}
+                      className="w-full h-full"
                     />
-                  ))}
-              </div>
-              <div className="w-full sm:w-[80%]">
-                <img
-                  src={image}
-                  alt="product image"
-                  className="w-full max-xl:h-full h-auto"
-                  onClick={() => setImage(result?.imageUrls[0])}
-                />
-              </div>
+                  )
+                )}
+              </Slider>
             </div>
+
             {/* Product Details */}
             <div className="flex-1">
               <h2 className="rb-5 mb-2 text-2xl font-bold md:mb-4 md:text-4xl lg:text-5xl bricolage-grotesque">
-                {result.name}
+                {result.product.name}
               </h2>
               <div className="flex items-center gap-1 mt-2">
-                <FaStar />
-                <FaStar />
-                <FaStar />
-                <FaStar />
-                <FaStarHalfAlt />
-                <p className="pl-2">({result?.reviews?.length})</p>
+                {[...Array(5)].map((_, index) => {
+                  const ratingValue = index + 1; // Ratings are 1-based
+                  if (ratingValue <= Math.floor(result?.averageRating)) {
+                    return <FaStar key={index} className="text-yellow-500" />; // Full star
+                  } else if (ratingValue <= result?.averageRating) {
+                    return (
+                      <FaStarHalfAlt key={index} className="text-yellow-500" />
+                    ); // Half star
+                  } else {
+                    return (
+                      <FaRegStar key={index} className="text-yellow-500" />
+                    ); // Empty star
+                  }
+                })}
+
+                <p className="pl-2">({result?.totalReviews})</p>
               </div>
               <p className="mt-5 text-3xl font-medium">
-                {formatAmount(result.price)}
+                {formatAmount(result?.product.price)}
               </p>
-              <p className="mt-5 text-gray-500">{result.description}</p>
+              <p className="mt-5 text-gray-500">
+                {result?.product?.description}
+              </p>
               <div className="flex flex-col gap-4 my-8">
                 <p className="mb-2">Select size</p>
                 <div className="flex gap-2">
-                  {result?.size?.map((item: any, index: number) => (
+                  {result?.product?.size?.map((item: any, index: number) => (
                     <div
                       className={`p-2 h-[40px] w-[40px] bg-gray-300 flex items-center justify-center cursor-pointer text-sm poppins ${
                         item === size && "border-2 border-border-primary"
@@ -113,11 +123,11 @@ const ProductDetails = () => {
                 className="active:bg-gray-700 rounded-md bg-brand-neutral text-text-light border-none"
                 onClick={() =>
                   addToCart(
-                    result._id,
+                    result?.product?._id,
                     size,
-                    result.name,
-                    result.price,
-                    result.imageUrls[0]
+                    result?.product?.name,
+                    result?.product?.price,
+                    result?.product?.imageUrls[0]
                   )
                 }
               >
@@ -135,7 +145,7 @@ const ProductDetails = () => {
           </div>
           {/* Related products */}
           <div className="mt-20">
-            <RelatedProducts category={result.category} id={id} />
+            <RelatedProducts category={result?.product?.category} id={id} />
           </div>
         </div>
       )}
@@ -143,6 +153,32 @@ const ProductDetails = () => {
   );
 };
 
+const SampleNextArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <div
+      className="bg-brand-neutral w-12 h-12 rounded-full flex items-center justify-center -right-3 sm:-right-6 top-[45%] absolute z-10 cursor-pointer"
+      onClick={onClick}
+    >
+      <button className="next rotate-180">
+        <BiArrowBack className="text-white" />
+      </button>
+    </div>
+  );
+};
+const SamplePrevArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <div
+      className="bg-brand-neutral w-12 h-12 rounded-full flex items-center justify-center -left-3 sm:-left-6 top-[45%] absolute z-10 cursor-pointer"
+      onClick={onClick}
+    >
+      <button className="prev">
+        <BiArrowBack className="text-white" />
+      </button>
+    </div>
+  );
+};
 const Animation = () => (
   <div className="w-screen h-screen flex items-center justify-center bg-white">
     <Spinner />

@@ -56,7 +56,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
     ...props,
   } as Props;
 
-  const { setGuestEmail } = useShop();
+  const { guestEmail, setGuestEmail } = useShop();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -70,6 +70,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
       { firstName, lastName, email, password },
       dispatch,
       navigate,
+      guestEmail,
       setGuestEmail
     );
   };
@@ -88,6 +89,9 @@ export const Signup7: React.FC = (props: Signup7Props) => {
           }
         );
         if (res.status === 200) {
+          if (guestEmail) {
+            setGuestEmail("");
+          }
           dispatch(AccessSuccess(res.data));
           navigate("/");
         } else {
@@ -235,7 +239,7 @@ export const Signup7Defaults: Signup7Props = {
   },
   signUpWithGoogleButton: {
     variant: "secondary",
-    title: "Sign up with Google",
+    title: "Sign in with Google",
     iconLeft: <BiLogoGoogle className="size-6" />,
   },
   // image: {

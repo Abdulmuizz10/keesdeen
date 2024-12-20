@@ -9,7 +9,9 @@ import { toast } from "react-toastify";
 export const Login = async (
   user: any,
   dispatch: Dispatch<any>,
-  navigate: any
+  navigate: any,
+  guestEmail: any,
+  setGuestEmail: any
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
@@ -19,8 +21,10 @@ export const Login = async (
 
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
+      if (guestEmail) {
+        setGuestEmail("");
+      }
       navigate("/");
-      //  setGuestEmail("");
     } else {
       dispatch(AccessFailure());
       toast.error(res.data.message || "Something went wrong");
@@ -35,6 +39,7 @@ export const SignUp = async (
   user: any,
   dispatch: Dispatch<any>,
   navigate: any,
+  guestEmail: any,
   setGuestEmail: any
 ): Promise<void> => {
   dispatch(AccessStart());
@@ -53,10 +58,12 @@ export const SignUp = async (
           userInfo
         );
         if (expect) {
-          setGuestEmail("");
+          if (guestEmail) {
+            setGuestEmail("");
+          }
         }
+        navigate("/");
       }
-      navigate("/");
     } else {
       dispatch(AccessFailure());
       toast.error(res.data.message || "Something went wrong");

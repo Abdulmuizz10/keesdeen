@@ -116,19 +116,20 @@ const AdminOrderDetails: React.FC = () => {
         </p>
         <p
           className={`mt-2 text-base ${
-            isDelivered ? "text-green-600" : "text-red-600"
+            isDelivered === "Delivered" ? "text-green-600" : "text-red-600"
           }`}
         >
-          Status: {isDelivered ? "Delivered" : "Pending"}
+          Status: {isDelivered}
         </p>
-
         <select
           onChange={(e) => handleStatusChange(order._id, e.target.value)}
           className="border border-gray-300  py-3 px-3 mt-3 focus:ring-none rounded-md poppins w-full sm:w-80 bg-white"
         >
           <option value="">Select status</option>
-          <option value={"false"}>Pending</option>
-          <option value={"true"}>Shipped</option>
+          <option value={"Pending"}>Pending</option>
+          <option value={"Processing"}>Processing</option>
+          <option value={"Shipped"}>Shipped</option>
+          <option value={"Delivered"}>Delivered</option>
         </select>
       </div>
 

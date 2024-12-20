@@ -31,7 +31,6 @@ export const Gallery5 = ({
         const res = await Axios.get(`${URL}/products`, {
           validateStatus: (status) => status < 600,
         });
-
         if (res.status === 200) {
           setProducts(res.data);
           setLoading(false);

@@ -30,7 +30,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await Axios.get(`${URL}/products/${id}`);
-      setReviews(response.data.reviews);
+      setReviews(response.data.product.reviews);
     };
     fetchData();
   }, [id]);

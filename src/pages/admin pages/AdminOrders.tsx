@@ -118,8 +118,8 @@ const AdminOrders: React.FC = () => {
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
-                        <td className="py-4 px-2 flex gap-1 items-center">
-                          {order._id.split("").slice(0, 5)}...
+                        <td className="py-4 px-1 flex gap-1 items-center">
+                          {order._id.split("").slice(0, 7)}...
                           <FaRegCopy
                             className="text-xl cursor-pointer"
                             onClick={() => copyId(order._id)}
@@ -133,13 +133,13 @@ const AdminOrders: React.FC = () => {
 
                         <td className="p-5">{order.email}</td>
                         <td className="p-5">
-                          {order.isDelivered ? (
+                          {order.isDelivered === "Delivered" ? (
                             <span className="text-green-500 font-semibold">
                               Delivered
                             </span>
                           ) : (
                             <span className="text-brand-secondary font-semibold">
-                              Pending
+                              {order.isDelivered}
                             </span>
                           )}
                         </td>
@@ -151,8 +151,10 @@ const AdminOrders: React.FC = () => {
                             className="border border-gray-300  p-1 focus:ring-none"
                           >
                             <option value="">Select status</option>
-                            <option value={"false"}>Pending</option>
-                            <option value={"true"}>Shipped</option>
+                            <option value={"Pending"}>Pending</option>
+                            <option value={"Processing"}>Processing</option>
+                            <option value={"Shipped"}>Shipped</option>
+                            <option value={"Delivered"}>Delivered</option>
                           </select>
                         </td>
                         <td className="p-5">

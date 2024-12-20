@@ -73,11 +73,6 @@ const AdminAddProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (productImages.length < 5) {
-      alert("Please upload all product images.");
-      return;
-    }
-
     const formData = {
       name: productName,
       brand: productBrand,

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { Product } from "../lib/types";
 import ProductItem from "./ProductItem";
 import { useProducts } from "../context/ProductContext/ProductContext";
 import { getProducts } from "../context/ProductContext/ProductApiCalls";
@@ -12,7 +11,7 @@ interface ProductListProps {
 
 const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
   const { products, dispatch } = useProducts();
-  const [related, setRelated] = useState<Product[]>();
+  const [related, setRelated] = useState<any>();
 
   useEffect(() => {
     getProducts(dispatch);
@@ -34,7 +33,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
       </div>
       <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-6">
         {related &&
-          related.slice(0, 8).map((product, index) => (
+          related.slice(0, 8).map((product: any, index: number) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}

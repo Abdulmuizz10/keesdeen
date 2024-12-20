@@ -215,13 +215,13 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                         </td>
                         <td className="p-5">{transaction.email}</td>
                         <td className="p-5">
-                          {transaction.isDelivered ? (
+                          {transaction.isDelivered === "Delivered" ? (
                             <span className="text-green-500 font-semibold">
                               Delivered
                             </span>
                           ) : (
                             <span className="text-brand-secondary font-semibold">
-                              Pending
+                              {transaction.isDelivered}
                             </span>
                           )}
                         </td>

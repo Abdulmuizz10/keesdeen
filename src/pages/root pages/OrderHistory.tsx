@@ -132,8 +132,7 @@ const OrderHistory: React.FC = () => {
                       <div className="mb-6">
                         <p className="text-sm text-gray-500">Order Date</p>
                         <p className="text-md font-medium text-gray-700">
-                          {order?.paidAt?.slice(0, 10)} at{" "}
-                          {order?.paidAt?.slice(11, 19)}
+                          {new Date(order?.paidAt).toLocaleString()}
                         </p>
                       </div>
                       <div className="flex flex-wrap gap-2 items-center">
@@ -161,12 +160,12 @@ const OrderHistory: React.FC = () => {
                         <p className="text-sm text-gray-500">Status</p>
                         <p
                           className={`text-sm font-semibold px-2 py-2 rounded mt-1 ${
-                            order.isDelivered
+                            order.isDelivered === "Delivered"
                               ? "bg-green-100 text-green-700"
                               : "bg-yellow-100 text-yellow-700"
                           }`}
                         >
-                          {order.isDelivered ? "Processed" : "Pending"}
+                          {order.isDelivered}
                         </p>
                       </div>
                     </div>

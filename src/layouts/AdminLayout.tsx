@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import {
   // Button,
@@ -49,7 +49,6 @@ import {
 // import clsx from "clsx";
 import { mainLogo } from "../assets";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -61,12 +60,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, animation }) => {
   //   useState<boolean>(false);
   // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const isMobile = useMediaQuery("(max-width: 991px)");
-  const location = useLocation();
-  const scrollRef = useRef<any>(null);
-
-  useEffect(() => {
-    scrollRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [location.pathname]);
 
   return (
     <div className={`${animation ? "opacity-0" : " opacity-100"}`}>
@@ -102,10 +95,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, animation }) => {
             )}
           </div>
         </div>
-        <main
-          className="flex-1 py-20 px-4 w-full bg-background-primary lg:p-5 min-h-screen h-screen overflow-y-auto"
-          ref={scrollRef}
-        >
+        <main className="flex-1 py-20 px-4 w-full bg-background-primary lg:p-5 min-h-screen h-screen overflow-y-auto">
           {children}
           <Outlet />
         </main>

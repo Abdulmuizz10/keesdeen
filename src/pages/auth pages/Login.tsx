@@ -16,6 +16,7 @@ import {
 import { URL } from "../../lib/constants";
 import Axios from "axios";
 import { toast } from "react-toastify";
+import { useShop } from "../../context/ShopContext";
 
 type ImageProps = {
   url?: string;
@@ -54,6 +55,7 @@ export const Login7: React.FC = (props: Login7Props) => {
     ...props,
   } as Props;
 
+  const { guestEmail, setGuestEmail } = useShop();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -63,7 +65,7 @@ export const Login7: React.FC = (props: Login7Props) => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    Login({ email, password }, dispatch, navigate);
+    Login({ email, password }, dispatch, navigate, guestEmail, setGuestEmail);
   };
 
   const googleLogin = useGoogleLogin({
@@ -80,6 +82,9 @@ export const Login7: React.FC = (props: Login7Props) => {
           }
         );
         if (res.status === 200) {
+          if (guestEmail) {
+            setGuestEmail("");
+          }
           dispatch(AccessSuccess(res.data));
           navigate("/");
         } else {

@@ -98,15 +98,9 @@ const AdminDeliveredOrders: React.FC = () => {
                       </td>
                       <td className="p-5">{order.email}</td>
                       <td className="p-5">
-                        {order.isDelivered ? (
-                          <span className="text-green-500 font-semibold">
-                            Delivered
-                          </span>
-                        ) : (
-                          <span className="text-brand-secondary font-semibold">
-                            Pending
-                          </span>
-                        )}
+                        <span className="text-brand-primary font-semibold">
+                          {order.isDelivered}
+                        </span>
                       </td>
                       <td className="p-5">{formatAmount(order.totalPrice)}</td>
                       <td className="p-5">

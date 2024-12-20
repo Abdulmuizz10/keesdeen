@@ -21,7 +21,7 @@ const AdminProductDetails = () => {
     const fetchData = async () => {
       try {
         const response = await Axios.get(`${URL}/products/${id}`);
-        setProduct(response.data);
+        setProduct(response.data.product);
       } catch (error) {
         toast.error("Error fetching product");
       } finally {
@@ -48,14 +48,13 @@ const AdminProductDetails = () => {
   }
 
   return (
-    <section className="w-full min-h-[130vh] bg-white rounded-md sm:rounded-lg">
+    <section className="w-full min-h-[130vh] bg-white rounded">
       <div className="rounded-lg shadow-md p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
           Product Details
         </h1>
 
         <div className="flex flex-col gap-10">
-          <div className="border-b" />
           <div className="w-full">
             <div className="grid md:grid-cols-2 w-full gap-2">
               {product?.imageUrls.map((image: any, index: number) => (
