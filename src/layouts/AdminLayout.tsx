@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import {
   // Button,
   // DropdownMenuGroup,
   // DropdownMenuLabel,
   // DropdownMenuSeparator,
-  // Input,
+  Input,
+  Dialog,
+  DialogTrigger,
+  DialogPortal,
+  DialogOverlay,
+  DialogContent,
+  DialogHeader,
+  DialogDescription,
+  Button,
   SheetClose,
   SheetOverlay,
   SheetPortal,
@@ -22,6 +30,7 @@ import {
   // BiPieChartAlt2,
   // BiSearch,
 } from "react-icons/bi";
+import { BiArrowBack } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa6";
 // import { FaRegPaperPlane } from "react-icons/fa";
 import {
@@ -49,6 +58,10 @@ import {
 // import clsx from "clsx";
 import { mainLogo } from "../assets";
 import { Link } from "react-router-dom";
+import Axios from "axios";
+import { toast } from "react-toastify";
+import { URL } from "../lib/constants";
+import { formatAmount } from "../lib/utils";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -105,6 +118,28 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, animation }) => {
 };
 
 const Navigation = () => {
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<any>("");
+  const [order, setOrder] = useState<any>("");
+
+  const handleQuerySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
+      const response = await Axios.get(`${URL}/orders/${searchQuery}`, {
+        headers: {
+          token: "Bearer " + userToken,
+        },
+      });
+      setOrder(response.data);
+    } catch (error) {
+      toast.error("Error fetching order:");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <nav className="absolute left-0 right-auto top-0 float-right h-full w-[80vw] max-w-[none] md:w-full md:max-w-[19.5rem] lg:relative lg:inset-auto lg:w-auto lg:max-w-[auto]">
       <div className="absolute flex size-full flex-col gap-4 border-r border-border-primary bg-white py-6 lg:gap-6 lg:border-none lg:py-0">
@@ -217,6 +252,103 @@ const Navigation = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+
+          <div className="hidden lg:flex">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-white hover:bg-gray-100 text-black border rounded-lg flex items-center gap-x-3 w-full mt-3 poppins py-[12px]">
+                  Click to search order
+                </Button>
+              </DialogTrigger>
+              <DialogPortal>
+                <DialogOverlay className="bg-black/50" />
+                <DialogContent className="w-full max-w-lg bg-white p-10 md:p-12 rounded-md">
+                  <DialogHeader>
+                    <DialogDescription className="text-lg font-medium mb-4">
+                      Enter order ID
+                    </DialogDescription>
+
+                    {/* Search Form */}
+                    <form className="flex gap-3" onSubmit={handleQuerySubmit}>
+                      <Input
+                        type="text"
+                        placeholder="Order ID"
+                        className="border-neutral-300 rounded poppins w-[400px] py-4"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        required
+                      />
+                      <Button
+                        variant="primary"
+                        className="w-full bg-brand-neutral text-text-light px-6 rounded-md poppins border-none"
+                      >
+                        Search
+                      </Button>
+                    </form>
+
+                    {/* Order Display */}
+                    <div className="w-full flex items-center justify-center pt-5">
+                      {loading ? (
+                        <p className="text-gray-500">Loading...</p>
+                      ) : order ? (
+                        <div className="w-full border p-5 rounded-md flex flex-col items-start gap-2 bg-gray-50">
+                          <p className=" text-gray-700">
+                            <span className="font-medium">Name:</span>{" "}
+                            {order.firstName} {order.lastName}
+                          </p>
+                          <p className="text-gray-700">
+                            <span className="font-medium">Email Address:</span>{" "}
+                            {order.email}
+                          </p>
+                          <p className="text-gray-700">
+                            <span className="font-medium">Total Amount:</span>{" "}
+                            {formatAmount(order.totalPrice)}
+                          </p>
+                          <p className="text-gray-700">
+                            <span className="font-medium">Date Ordered:</span>{" "}
+                            {new Date(order.createdAt).toLocaleString()}
+                          </p>
+                          <p className="text-gray-700">
+                            <span className="font-medium">Order Status:</span>{" "}
+                            {order.isDelivered === "Delivered" ? (
+                              <span className="text-green-500 font-semibold">
+                                Delivered
+                              </span>
+                            ) : (
+                              <span className="text-brand-secondary font-semibold">
+                                {order.isDelivered}
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-gray-700">
+                            <span className="font-medium">Delivered At:</span>{" "}
+                            {order.deliveredAt
+                              ? new Date(order.deliveredAt).toLocaleString()
+                              : "Not Delivered"}
+                          </p>
+
+                          <div className="w-full flex justify-end">
+                            <DialogTrigger asChild>
+                              <Link to={`/admin/order_details/${order._id}`}>
+                                <Button className="bg-brand-neutral text-text-light p-3 rounded-md poppins border-none">
+                                  more details
+                                  <BiArrowBack className="rotate-180" />
+                                </Button>
+                              </Link>
+                            </DialogTrigger>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center">
+                          No order found. Please try again.
+                        </p>
+                      )}
+                    </div>
+                  </DialogHeader>
+                </DialogContent>
+              </DialogPortal>
+            </Dialog>
+          </div>
 
           {/* <Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="border-none">

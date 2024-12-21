@@ -34,7 +34,7 @@ const AdminPendingOrders: React.FC = () => {
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
-      toast.error("Error while fetching transactions. Please refresh the page");
+      toast.error("Error while fetching orders. Please refresh the page");
       setLoading(false);
     }
   };
@@ -63,7 +63,7 @@ const AdminPendingOrders: React.FC = () => {
                 <th className="text-left p-4 font-semibold">Order ID</th>
                 <th className="text-left p-4 font-semibold">Username</th>
                 <th className="text-left p-4 font-semibold">Email address</th>
-                <th className="text-left p-4 font-semibold">Status</th>
+                <th className="text-left p-4 font-semibold">Order status</th>
                 <th className="text-left p-4 font-semibold">Amount</th>
                 <th className="text-left p-4 font-semibold">Date ordered</th>
               </tr>

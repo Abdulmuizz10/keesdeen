@@ -37,6 +37,7 @@ const AdminOrders: React.FC = () => {
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
+      toast.error("Error fetching orders. Please refresh the page");
       setLoading(false);
     }
   };
@@ -94,7 +95,7 @@ const AdminOrders: React.FC = () => {
                   <th className="text-left p-4 font-semibold">Order ID</th>
                   <th className="text-left p-4 font-semibold">Customer name</th>
                   <th className="text-left p-4 font-semibold">Email address</th>
-                  <th className="text-left p-4 font-semibold">Status</th>
+                  <th className="text-left p-4 font-semibold">Order status</th>
                   <th className="text-left p-4 font-semibold">Change status</th>
                   <th className="text-left p-4 font-semibold">Amount</th>
                   <th className="text-left p-4 font-semibold">Date ordered</th>

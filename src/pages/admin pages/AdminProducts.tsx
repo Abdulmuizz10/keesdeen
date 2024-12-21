@@ -38,6 +38,7 @@ const AdminProducts: React.FC = () => {
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
+      toast.error("Error fetching products. Please refresh the page");
       setLoading(false);
     }
   };

@@ -178,7 +178,7 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                   <th className="text-left p-4 font-semibold">Order ID</th>
                   <th className="text-left p-4 font-semibold">Username</th>
                   <th className="text-left p-4 font-semibold">Email address</th>
-                  <th className="text-left p-4 font-semibold">Status</th>
+                  <th className="text-left p-4 font-semibold">Order status</th>
                   <th className="text-left p-4 font-semibold">Amount</th>
                   <th className="text-left p-4 font-semibold">Date ordered</th>
                 </tr>

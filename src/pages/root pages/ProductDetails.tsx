@@ -7,7 +7,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { formatAmount } from "../../lib/utils";
-import { Button, useMediaQuery } from "@relume_io/relume-ui";
+import { Button } from "@relume_io/relume-ui";
 import RelatedProducts from "../../components/RelatedProducts";
 import Reviews from "../../components/Reviews";
 import Spinner from "../../components/Spinner";
@@ -38,10 +38,7 @@ const ProductDetails = () => {
     setTimeout(() => setAnimation(false), 4000);
   }, [id]);
 
-  const isMobile = useMediaQuery("(min-width: 568px)");
-
   const settings = {
-    dots: isMobile ? true : false,
     infinite: true,
     speed: 300,
     slidesToShow: 1,
@@ -157,11 +154,11 @@ const SampleNextArrow = (props: any) => {
   const { onClick } = props;
   return (
     <div
-      className="bg-brand-neutral w-12 h-12 rounded-full flex items-center justify-center -right-3 sm:-right-6 top-[45%] absolute z-10 cursor-pointer"
+      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -right-3 sm:-right-6 top-[45%] absolute z-10 cursor-pointer"
       onClick={onClick}
     >
       <button className="next rotate-180">
-        <BiArrowBack className="text-white" />
+        <BiArrowBack className="text-text-primary" />
       </button>
     </div>
   );
@@ -170,11 +167,11 @@ const SamplePrevArrow = (props: any) => {
   const { onClick } = props;
   return (
     <div
-      className="bg-brand-neutral w-12 h-12 rounded-full flex items-center justify-center -left-3 sm:-left-6 top-[45%] absolute z-10 cursor-pointer"
+      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -left-3 sm:-left-6 top-[45%] absolute z-10 cursor-pointer"
       onClick={onClick}
     >
       <button className="prev">
-        <BiArrowBack className="text-white" />
+        <BiArrowBack className="text-text-primary" />
       </button>
     </div>
   );

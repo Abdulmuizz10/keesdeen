@@ -33,7 +33,7 @@ const zipCodePatterns: { [key: string]: RegExp } = {
 
 const CheckOut: React.FC = ({}) => {
   const { user } = useContext(AuthContext);
-  const { getCartAmount, delivery_fee, setCartItems, guestEmail } = useShop();
+  const { getCartAmount, delivery_fee, setCartItems } = useShop();
   const { orderDispatch } = useOrders();
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
@@ -78,65 +78,30 @@ const CheckOut: React.FC = ({}) => {
     if (data) {
       const today = new Date().toISOString();
 
-      if (user) {
-        let orderData = {
-          ...data,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          user: user.id,
-          totalPrice: finalTotal,
-          coupon,
-          currency: "GBP",
-          discount,
-          sourceId: token,
-          orderedItems,
-          paidAt: today,
-          shippingPrice: delivery_fee,
-        };
-        try {
-          createOrder(
-            orderData,
-            orderDispatch,
-            setPaymentLoader,
-            setCartItems,
-            setSelectedCountry,
-            setSelectedState,
-            navigate
-          );
-          // reset();
-        } catch (error) {
-          toast.error("Order submission failed. Please try again.");
-        }
-      } else {
-        let orderData = {
-          ...data,
-          email: guestEmail,
-          user: null,
-          totalPrice: finalTotal,
-          coupon,
-          currency: "GBP",
-          discount,
-          sourceId: token,
-          orderedItems,
-          paidAt: today,
-          shippingPrice: delivery_fee,
-        };
-
-        try {
-          createOrder(
-            orderData,
-            orderDispatch,
-            setPaymentLoader,
-            setCartItems,
-            setSelectedCountry,
-            setSelectedState,
-            navigate
-          );
-          // reset();
-        } catch (error) {
-          toast.error("Order submission failed. Please try again.");
-        }
+      let orderData = {
+        ...data,
+        user: user ? user.id : null,
+        totalPrice: finalTotal,
+        coupon,
+        currency: "GBP",
+        discount,
+        sourceId: token,
+        orderedItems,
+        paidAt: today,
+        shippingPrice: delivery_fee,
+      };
+      try {
+        createOrder(
+          orderData,
+          orderDispatch,
+          setPaymentLoader,
+          setCartItems,
+          setSelectedCountry,
+          setSelectedState,
+          navigate
+        );
+      } catch (error) {
+        toast.error("Order submission failed. Please try again.");
       }
     } else {
       setPaymentLoader(false);
@@ -202,47 +167,61 @@ const CheckOut: React.FC = ({}) => {
           <div>
             <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
             <form className="grid grid-cols-2 gap-5 w-full poppins">
-              {!user && (
-                <>
-                  <div className="relative w-full mb-1 max-md:col-span-2">
-                    <label>First Name</label>
-                    <input
-                      {...register("firstName", {
-                        required: "First name is required",
-                      })}
-                      type="text"
-                      placeholder="First name"
-                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                      autoComplete="no"
-                    />
-                    {errors.firstName && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {String(errors.firstName.message)}
-                      </p>
-                    )}
-                  </div>
+              <div className="relative w-full mb-1 max-sm:col-span-2">
+                <label>First Name</label>
+                <input
+                  {...register("firstName", {
+                    required: "First name is required",
+                  })}
+                  type="text"
+                  placeholder="First name"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  autoComplete="no"
+                />
+                {errors.firstName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {String(errors.firstName.message)}
+                  </p>
+                )}
+              </div>
 
-                  <div className="relative w-full mb-1 max-md:col-span-2">
-                    <label>Last Name</label>
-                    <input
-                      {...register("lastName", {
-                        required: "Last name is required",
-                      })}
-                      type="text"
-                      placeholder="Last name"
-                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                      autoComplete="no"
-                    />
-                    {errors.lastName && (
-                      <p className="absolute text-red-500 text-sm mt-1">
-                        {String(errors.lastName.message)}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
+              <div className="relative w-full mb-1 max-sm:col-span-2">
+                <label>Last Name</label>
+                <input
+                  {...register("lastName", {
+                    required: "Last name is required",
+                  })}
+                  type="text"
+                  placeholder="Last name"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  autoComplete="no"
+                />
+                {errors.lastName && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.lastName.message)}
+                  </p>
+                )}
+              </div>
 
-              <div className="relative w-full mb-1 max-md:col-span-2">
+              <div className="relative w-full mb-1 col-span-2">
+                <label>Email Address</label>
+                <input
+                  {...register("email", {
+                    required: "Email is required",
+                  })}
+                  type="text"
+                  placeholder="example@gmail.com"
+                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                  autoComplete="no"
+                />
+                {errors.email && (
+                  <p className="absolute text-red-500 text-sm mt-1">
+                    {String(errors.email.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="relative w-full mb-1 max-sm:col-span-2">
                 <label>Country</label>
                 <select
                   {...register("country", { required: "Country is required" })}
@@ -265,7 +244,7 @@ const CheckOut: React.FC = ({}) => {
                 )}
               </div>
 
-              <div className="relative w-full mb-1 max-md:col-span-2">
+              <div className="relative w-full mb-1 max-sm:col-span-2">
                 <label>State / Region</label>
                 <select
                   {...register("cityAndRegion", {
@@ -403,7 +382,7 @@ const CheckOut: React.FC = ({}) => {
               </div>
             </div>
 
-            <div className="mb-3">
+            <div className="mb-5">
               <label
                 htmlFor="coupon"
                 className="block text-sm font-medium poppins my-1"
