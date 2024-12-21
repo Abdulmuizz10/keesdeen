@@ -32,6 +32,7 @@ import {
 } from "react-icons/bi";
 import { BiArrowBack } from "react-icons/bi";
 import { FaRegUser } from "react-icons/fa6";
+import { FiX } from "react-icons/fi";
 // import { FaRegPaperPlane } from "react-icons/fa";
 import {
   Accordion,
@@ -262,22 +263,34 @@ const Navigation = () => {
               </DialogTrigger>
               <DialogPortal>
                 <DialogOverlay className="bg-black/50" />
-                <DialogContent className="w-full max-w-lg bg-white p-10 md:p-12 rounded-md">
+                <DialogContent className="w-full flex items-center justify-center max-w-md bg-white py-6 px-8 rounded-lg">
                   <DialogHeader>
-                    <DialogDescription className="text-lg font-medium mb-4">
+                    <DialogDescription className="text-lg font-medium mb-2">
                       Enter order ID
                     </DialogDescription>
 
                     {/* Search Form */}
-                    <form className="flex gap-3" onSubmit={handleQuerySubmit}>
-                      <Input
-                        type="text"
-                        placeholder="Order ID"
-                        className="border-neutral-300 rounded poppins w-[400px] py-4"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        required
-                      />
+                    <form
+                      className="flex gap-3 poppins"
+                      onSubmit={handleQuerySubmit}
+                    >
+                      <div className="flex items-center border rounded border-neutral-300 bg-gray-50 px-2">
+                        <Input
+                          type="text"
+                          placeholder="Order ID"
+                          className="rounded poppins w-[330px] bg-gray-50 focus:outline-none border-none"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          required
+                        />
+                        <FiX
+                          className="text-xl cursor-pointer"
+                          onClick={() => {
+                            setSearchQuery("");
+                            setOrder("");
+                          }}
+                        />
+                      </div>
                       <Button
                         variant="primary"
                         className="w-full bg-brand-neutral text-text-light px-6 rounded-md poppins border-none"
@@ -288,61 +301,63 @@ const Navigation = () => {
 
                     {/* Order Display */}
                     <div className="w-full flex items-center justify-center pt-5">
-                      {loading ? (
-                        <p className="text-gray-500">Loading...</p>
-                      ) : order ? (
-                        <div className="w-full border p-5 rounded-md flex flex-col items-start gap-2 bg-gray-50">
-                          <p className=" text-gray-700">
-                            <span className="font-medium">Name:</span>{" "}
-                            {order.firstName} {order.lastName}
-                          </p>
-                          <p className="text-gray-700">
-                            <span className="font-medium">Email Address:</span>{" "}
-                            {order.email}
-                          </p>
-                          <p className="text-gray-700">
-                            <span className="font-medium">Total Amount:</span>{" "}
-                            {formatAmount(order.totalPrice)}
-                          </p>
-                          <p className="text-gray-700">
-                            <span className="font-medium">Date Ordered:</span>{" "}
-                            {new Date(order.createdAt).toLocaleString()}
-                          </p>
-                          <p className="text-gray-700">
-                            <span className="font-medium">Order Status:</span>{" "}
-                            {order.isDelivered === "Delivered" ? (
-                              <span className="text-green-500 font-semibold">
-                                Delivered
-                              </span>
-                            ) : (
-                              <span className="text-brand-secondary font-semibold">
-                                {order.isDelivered}
-                              </span>
-                            )}
-                          </p>
-                          <p className="text-gray-700">
-                            <span className="font-medium">Delivered At:</span>{" "}
-                            {order.deliveredAt
-                              ? new Date(order.deliveredAt).toLocaleString()
-                              : "Not Delivered"}
-                          </p>
-
-                          <div className="w-full flex justify-end">
-                            <DialogTrigger asChild>
-                              <Link to={`/admin/order_details/${order._id}`}>
-                                <Button className="bg-brand-neutral text-text-light p-3 rounded-md poppins border-none">
-                                  more details
-                                  <BiArrowBack className="rotate-180" />
-                                </Button>
-                              </Link>
-                            </DialogTrigger>
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-gray-500 text-center">
-                          No order found. Please try again.
-                        </p>
-                      )}
+                      {searchQuery.length > 1 &&
+                        (loading ? (
+                          <p className="text-gray-500">Loading...</p>
+                        ) : (
+                          order && (
+                            <div className="w-full border p-5 rounded-md flex flex-col items-start gap-2 bg-gray-50">
+                              <p className=" text-gray-700">
+                                <span className="font-medium">Name:</span>{" "}
+                                {order.firstName} {order.lastName}
+                              </p>
+                              <p className="text-gray-700">
+                                <span className="font-medium">
+                                  Email Address:
+                                </span>{" "}
+                                {order.email}
+                              </p>
+                              <p className="text-gray-700">
+                                <span className="font-medium">
+                                  Total Amount:
+                                </span>{" "}
+                                {formatAmount(order.totalPrice)}
+                              </p>
+                              <p className="text-gray-700">
+                                <span className="font-medium">
+                                  Date Ordered:
+                                </span>{" "}
+                                {new Date(order.createdAt).toLocaleString()}
+                              </p>
+                              <p className="text-gray-700">
+                                <span className="font-medium">
+                                  Order Status:
+                                </span>{" "}
+                                {order.isDelivered === "Delivered" ? (
+                                  <span className="text-green-500 font-semibold">
+                                    Delivered
+                                  </span>
+                                ) : (
+                                  <span className="text-brand-secondary font-semibold">
+                                    {order.isDelivered}
+                                  </span>
+                                )}
+                              </p>
+                              <div className="w-full flex justify-end">
+                                <DialogTrigger asChild>
+                                  <Link
+                                    to={`/admin/order_details/${order._id}`}
+                                  >
+                                    <Button className="bg-brand-neutral text-text-light p-3 rounded-md poppins border-none">
+                                      more details
+                                      <BiArrowBack className="rotate-180" />
+                                    </Button>
+                                  </Link>
+                                </DialogTrigger>
+                              </div>
+                            </div>
+                          )
+                        ))}
                     </div>
                   </DialogHeader>
                 </DialogContent>

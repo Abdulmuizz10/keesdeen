@@ -384,7 +384,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
     return (
       <div className="max-w-xs mx-auto bg-white shadow-large overflow-hidden relative z-[1]">
         <div className="relative">
-          <div className="w-full h-[350px] bg-gray-200 animate-pulse" />
+          <div className="w-full h-[360px] bg-gray-200 animate-pulse" />
         </div>
         <div className="p-4 text-center">
           <div className="flex flex-col gap-2 items-center">
@@ -419,7 +419,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
 
   return (
     <div
-      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px]"
+      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px] h-[500px]"
       onMouseOver={() => setImage(true)}
       onMouseLeave={() => setImage(false)}
     >

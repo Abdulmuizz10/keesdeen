@@ -107,6 +107,7 @@ const AdminAddProduct: React.FC = () => {
     setBestSeller(false);
     setNewArrival(false);
   };
+
   return (
     <section className="w-full pb-6">
       <div className="mb-12 md:mb-10">
@@ -196,7 +197,7 @@ const AdminAddProduct: React.FC = () => {
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300  transition-all bg-white"
+                className="w-full p-3 border border-gray-300  transition-all bg-white rounded-lg"
                 required
               >
                 <option value=" ">Select Category</option>
@@ -210,7 +211,7 @@ const AdminAddProduct: React.FC = () => {
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all  bg-white"
+                  className="w-full p-3 border border-gray-300 transition-all  bg-white rounded-lg"
                   required
                 >
                   <option value="">Select Sub-Category</option>
@@ -235,7 +236,7 @@ const AdminAddProduct: React.FC = () => {
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all  bg-white"
+                  className="w-full p-3 border border-gray-300 transition-all  bg-white rounded-lg"
                   required
                 >
                   <option value="">Select Sub-Category</option>
@@ -252,7 +253,7 @@ const AdminAddProduct: React.FC = () => {
               <select
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white"
+                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
                 required
               >
                 <option value="">Select Product Type</option>
@@ -266,7 +267,7 @@ const AdminAddProduct: React.FC = () => {
               <select
                 value={productSex}
                 onChange={(e) => setProductSex(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white"
+                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
                 required
               >
                 <option value="">Select Product Sex</option>
@@ -280,7 +281,7 @@ const AdminAddProduct: React.FC = () => {
               <select
                 value={productColor}
                 onChange={(e) => setProductColor(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white"
+                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
                 required
               >
                 <option value="">Select Product Color</option>
@@ -303,7 +304,7 @@ const AdminAddProduct: React.FC = () => {
                 placeholder="Product Price"
                 value={productPrice}
                 onChange={(e) => setProductPrice(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all"
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
                 required
               />
             </div>

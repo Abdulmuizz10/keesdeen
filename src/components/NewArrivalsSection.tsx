@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useProducts } from "../context/ProductContext/ProductContext";
 import { URL } from "../lib/constants";
 import Axios from "axios";
+import { formatAmount } from "../lib/utils";
 
 type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -109,11 +110,19 @@ export const Gallery21 = ({
                         alt={`${product.name} - New Arrival`}
                         className="aspect-square size-full object-cover"
                       />
+                      <div className="mt-2">
+                        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
+                          {product.name}
+                        </h3>
+                        <p className="text-gray-500">
+                          {formatAmount(product.price)}
+                        </p>
+                      </div>
                     </Link>
                   </CarouselItem>
                 ))}
           </CarouselContent>
-          <div className="rt-8 mt-8 flex items-center justify-between">
+          <div className="mt-20 flex items-center justify-between">
             {/* Dot indicators for carousel */}
             <div className="mt-5 flex w-full items-start justify-start">
               {products?.map((_, index) => (

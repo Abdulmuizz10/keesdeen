@@ -202,7 +202,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300  transition-all  bg-white"
+                className="w-full p-3 border border-gray-300  transition-all  bg-white rounded-lg"
               >
                 <option value=" ">Select Category</option>
                 <option value="Active Wear">Active Wear</option>
@@ -215,7 +215,7 @@ const AdminUpdateProduct: React.FC = () => {
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all  bg-white"
+                  className="w-full p-3 border border-gray-300 transition-all  bg-white rounded-lg"
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Modest Workout Tops">
@@ -239,7 +239,7 @@ const AdminUpdateProduct: React.FC = () => {
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all bg-white"
+                  className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Gym Essentials Kit">Gym Essentials Kit</option>
@@ -255,7 +255,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white"
+                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
               >
                 <option value="">Select Product Type</option>
                 <option value="Top wear">Top Wear</option>
@@ -268,7 +268,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productSex}
                 onChange={(e) => setProductSex(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white"
+                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
               >
                 <option value="">Select Product Sex</option>
                 <option value="Female">Female</option>
@@ -281,7 +281,7 @@ const AdminUpdateProduct: React.FC = () => {
               <select
                 value={productColor}
                 onChange={(e) => setProductColor(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white"
+                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
               >
                 <option value="">Select Product Color</option>
                 <option value="Black">Black</option>
@@ -303,7 +303,7 @@ const AdminUpdateProduct: React.FC = () => {
                 placeholder="Product Price"
                 value={productPrice}
                 onChange={(e) => setProductPrice(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all"
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
               />
             </div>
           </div>
