@@ -100,7 +100,7 @@ export const Header76Defaults: Header76Props = {
   // heading: "Medium length hero heading goes here",
   heading: "...be boundless",
   description:
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi qui.",
+    "Discover our thoughtfully curated collection of modest activewear and accessories, designed to empower your every move without compromising comfort or elegance.",
   images: [
     {
       src: Images.img_1,

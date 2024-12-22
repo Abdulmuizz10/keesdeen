@@ -38,10 +38,10 @@ const CheckOut: React.FC = ({}) => {
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
   const { getCartDetailsForOrder, paymentLoader, setPaymentLoader } = useShop();
-  const orderedItems = getCartDetailsForOrder();
   const [selectedCountry, setSelectedCountry] = useState<any>();
   const [selectedState, setSelectedState] = useState<any>();
 
+  const orderedItems = getCartDetailsForOrder();
   const subtotal = getCartAmount();
 
   const navigate = useNavigate();

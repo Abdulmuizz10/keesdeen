@@ -13,19 +13,20 @@ const Cart: React.FC = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    // Convert cartItems object structure into an array for easier rendering
     const tempData: any[] = [];
     for (const itemId in cartItems) {
       const item = cartItems[itemId];
-      for (const size in item.sizes) {
-        const quantity = item.sizes[size];
+      for (const variantKey in item.variants) {
+        const quantity = item.variants[variantKey];
         if (quantity > 0) {
+          const [size, color] = variantKey.split("-"); // Assuming size and color are separated by "-"
           tempData.push({
             id: itemId,
             name: item.name,
             price: item.price,
             image: item.image,
             size,
+            color,
             quantity,
           });
         }
@@ -64,33 +65,43 @@ const Cart: React.FC = () => {
                   <p className="text-xs sm:text-lg font-medium text-text-primary bricolage-grotesque">
                     {item.name}
                   </p>
-                  <div className="flex items-center gap-2 sm:gap-5 mt-1">
+                  <div className="flex items-center gap-2 sm:gap-3 mt-1 text-sm">
                     <p>{formatAmount(item.price)}</p>
-                    <p className="-2 h-[30px] w-[30px] md:h-[42px] md:w-[42px] bg-gray-300 flex items-center justify-center cursor-pointer text-text-primary rounded-sm">
+                    <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] bg-gray-100 font-semibold flex items-center justify-center cursor-pointer text-text-primary">
                       {item.size}
                     </p>
+                    {/* <p className="h-[30px] md:h-[40px] px-3 bg-gray-100 font-semibold flex items-center justify-center cursor-pointer text-text-primary">
+                      {item.color}
+                    </p> */}
                   </div>
                 </div>
               </div>
               <input
-                className="border border-border-secondary bg-background-primary max-w-[40px] sm:max-w-[80px] px-1 sm:px-2 sm:py-1 py-[2px] text-text-primary rounded-md"
+                className="border border-border-secondary bg-background-primary max-w-[90px] sm:max-w-[100px] px-1 py-[5px] sm:px-2 sm:py-1  text-text-primary rounded-md"
                 type="number"
                 min={1}
                 value={item.quantity}
                 onChange={(e) =>
-                  updateQuantity(item.id, item.size, Number(e.target.value))
+                  updateQuantity(
+                    item.id,
+                    item.size,
+                    item.color,
+                    Number(e.target.value)
+                  )
                 }
               />
               <RiDeleteBin5Line
                 className="text-text-primary h-[45px] w-[25px] cursor-pointer"
-                onClick={() => updateQuantity(item.id, item.size, 0)}
+                onClick={() =>
+                  updateQuantity(item.id, item.size, item.color, 0)
+                }
               />
             </div>
           ))}
         </div>
 
         <div className="flex justify-end my-20">
-          <div className="w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
+          <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
             <CartTotal />
             <div className="w-full text-end mt-5">
               {!user && !guestEmail ? (

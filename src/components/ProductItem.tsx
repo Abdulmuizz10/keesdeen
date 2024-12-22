@@ -4,10 +4,9 @@ import { useState } from "react";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
-import { Product } from "../lib/types";
 
 interface ProductProps {
-  product: Product;
+  product: any;
 }
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
@@ -55,7 +54,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
                 <button
                   key={size}
                   className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
-                    product.size.includes(size) ? "" : "opacity-[0.3]"
+                    product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >
                   {size}

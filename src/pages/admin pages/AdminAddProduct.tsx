@@ -4,6 +4,55 @@ import { createProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+const popularColors = [
+  { name: "Black", code: "#000000" },
+  { name: "White", code: "#FFFFFF" },
+  { name: "Gray", code: "#808080" },
+  { name: "Blue", code: "#0000FF" },
+  { name: "Red", code: "#FF0000" },
+  { name: "Green", code: "#008000" },
+  { name: "Yellow", code: "#FFFF00" },
+  { name: "Pink", code: "#FFC0CB" },
+  { name: "Purple", code: "#800080" },
+  { name: "Orange", code: "#FFA500" },
+  { name: "Brown", code: "#A52A2A" },
+  { name: "Beige", code: "#F5F5DC" },
+  { name: "Navy Blue", code: "#000080" },
+  { name: "Teal", code: "#008080" },
+  { name: "Mint Green", code: "#98FF98" },
+  { name: "Lavender", code: "#E6E6FA" },
+  { name: "Turquoise", code: "#40E0D0" },
+  { name: "Burgundy", code: "#800020" },
+  { name: "Olive", code: "#808000" },
+  { name: "Khaki", code: "#F0E68C" },
+  { name: "Charcoal", code: "#36454F" },
+  { name: "Coral", code: "#FF7F50" },
+  { name: "Peach", code: "#FFDAB9" },
+  { name: "Tan", code: "#D2B48C" },
+  { name: "Light Blue", code: "#ADD8E6" },
+  { name: "Light Pink", code: "#FFB6C1" },
+  { name: "Mustard", code: "#FFDB58" },
+  { name: "Copper", code: "#B87333" },
+  { name: "Silver", code: "#C0C0C0" },
+  { name: "Gold", code: "#FFD700" },
+  { name: "Emerald Green", code: "#50C878" },
+  { name: "Sky Blue", code: "#87CEEB" },
+  { name: "Indigo", code: "#4B0082" },
+  { name: "Plum", code: "#8E4585" },
+  { name: "Sage Green", code: "#B2AC88" },
+  { name: "Cream", code: "#FFFDD0" },
+  { name: "Fuchsia", code: "#FF00FF" },
+  { name: "Magenta", code: "#FF00FF" },
+  { name: "Cobalt Blue", code: "#0047AB" },
+  { name: "Ivory", code: "#FFFFF0" },
+  { name: "Rose Gold", code: "#B76E79" },
+  { name: "Sea Green", code: "#2E8B57" },
+  { name: "Lime Green", code: "#32CD32" },
+  { name: "Aqua", code: "#00FFFF" },
+  { name: "Chartreuse", code: "#7FFF00" },
+  { name: "Electric Blue", code: "#7DF9FF" },
+];
+
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState<string>("");
   const [productBrand, setProductBrand] = useState<string>("");
@@ -12,9 +61,9 @@ const AdminAddProduct: React.FC = () => {
   const [productSubCategory, setProductSubCategory] = useState<string>("");
   const [productType, setProductType] = useState<string>("");
   const [productSex, setProductSex] = useState<string>("");
-  const [productColor, setProductColor] = useState<string>("");
+  const [productColors, setProductColors] = useState<string[]>([]);
   const [productPrice, setProductPrice] = useState<string>("");
-  const [productSize, setProductSize] = useState<string[]>([]);
+  const [productSizes, setProductSizes] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<string[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [bestSeller, setBestSeller] = useState<boolean>(false);
@@ -23,11 +72,19 @@ const AdminAddProduct: React.FC = () => {
 
   const { dispatch } = useProducts();
 
-  const handleSizeToggle = (size: string) => {
-    if (productSize.includes(size)) {
-      setProductSize(productSize.filter((s) => s !== size));
+  const handleColorToggle = (color: string) => {
+    if (productColors.includes(color)) {
+      setProductColors(productColors.filter((s) => s !== color));
     } else {
-      setProductSize([...productSize, size]);
+      setProductColors([...productColors, color]);
+    }
+  };
+
+  const handleSizeToggle = (size: string) => {
+    if (productSizes.includes(size)) {
+      setProductSizes(productSizes.filter((s) => s !== size));
+    } else {
+      setProductSizes([...productSizes, size]);
     }
   };
 
@@ -81,11 +138,11 @@ const AdminAddProduct: React.FC = () => {
       subcategory: productSubCategory,
       type: productType,
       gender: productSex,
-      color: productColor,
+      colors: productColors,
       price: productPrice,
       bestSeller: bestSeller,
       newArrival: newArrival,
-      size: productSize,
+      sizes: productSizes,
       imageUrls: productImages, // Store URLs in product data
     };
 
@@ -99,9 +156,9 @@ const AdminAddProduct: React.FC = () => {
     setProductSubCategory("");
     setProductType("");
     setProductSex("");
-    setProductColor("");
+    setProductColors([]);
     setProductPrice("");
-    setProductSize([]);
+    setProductSizes([]);
     setProductImages([]);
     setImagePreviews([]);
     setBestSeller(false);
@@ -278,27 +335,6 @@ const AdminAddProduct: React.FC = () => {
             </div>
 
             <div>
-              <select
-                value={productColor}
-                onChange={(e) => setProductColor(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
-                required
-              >
-                <option value="">Select Product Color</option>
-                <option value="Black">Black</option>
-                <option value="Blue">Blue</option>
-                <option value="Brown">Brown</option>
-                <option value="Cream">Cream</option>
-                <option value="Green">Green</option>
-                <option value="Grey">Grey</option>
-                <option value="Pink">Pink</option>
-                <option value="Purple">Purple</option>
-                <option value="Red">Red</option>
-                <option value="White">White</option>
-              </select>
-            </div>
-
-            <div>
               <input
                 type="number"
                 placeholder="Product Price"
@@ -311,6 +347,28 @@ const AdminAddProduct: React.FC = () => {
           </div>
         </div>
 
+        {/* Colors */}
+        <div>
+          <label className="text-sm font-medium">Colors:</label>
+          <div className="mt-2 grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-5">
+            {popularColors.map((item, index) => (
+              <div className="flex flex-col justify-center items-center">
+                <p className="font-medium mb-1">{item.name}</p>
+                <div
+                  key={index}
+                  className={`p-2 h-[45px] w-[45px] rounded-full cursor-pointer flex items-center justify-center border-[3px] transition-all duration-300 ease-in-out ${
+                    productColors.includes(item.name)
+                      ? "border-white shadow-lg scale-110"
+                      : "border-black"
+                  }`}
+                  style={{ backgroundColor: item.code }}
+                  onClick={() => handleColorToggle(item.name)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Sizes */}
         <div>
           <label className="text-sm font-medium">Sizes:</label>
@@ -319,7 +377,7 @@ const AdminAddProduct: React.FC = () => {
               (item, index) => (
                 <div
                   className={`p-2 h-[45px] w-[45px] bg-gray-300 flex items-center justify-center cursor-pointer ${
-                    productSize.includes(item)
+                    productSizes.includes(item)
                       ? "border-2 border-border-primary"
                       : ""
                   }`}

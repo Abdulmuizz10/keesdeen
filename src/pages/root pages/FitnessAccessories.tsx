@@ -88,13 +88,13 @@ const FitnessAccessories: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item: any) =>
-        item.size.some((s: string) => sizeCategory.includes(s))
+        item.sizes.some((s: string) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
       productsCopy = productsCopy.filter((item: any) =>
-        colorCategory.includes(item.color)
+        item.colors.some((c: string) => colorCategory.includes(c))
       );
     }
 
@@ -453,7 +453,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
                 <button
                   key={size}
                   className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
-                    product.size.includes(size) ? "" : "opacity-[0.3]"
+                    product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >
                   {size}

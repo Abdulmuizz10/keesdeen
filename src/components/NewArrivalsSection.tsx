@@ -22,7 +22,7 @@ type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
 
 export const Gallery21 = ({
   heading = "New Arrivals",
-  description = "Discover the latest additions to our collection.",
+  description = "Discover the latest additions to our Arrivals.",
 }: Gallery21Props) => {
   const { dispatch } = useProducts();
   const [products, setProducts] = useState([]);

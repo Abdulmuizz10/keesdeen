@@ -53,13 +53,13 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item: any) =>
-        item.size.some((s: any) => sizeCategory.includes(s))
+        item.sizes.some((s: any) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
       productsCopy = productsCopy.filter((item: any) =>
-        colorCategory.includes(item.color)
+        item.colors.some((c: string) => colorCategory.includes(c))
       );
     }
 

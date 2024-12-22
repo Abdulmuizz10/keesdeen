@@ -102,9 +102,13 @@ const AdminProductDetails = () => {
                 {product.subcategory || "N/A"}
               </p>
 
-              <p className="text-lg text-gray-600 mb-2">
+              <p className="text-lg text-gray-600 mb-2 flex gap-2">
                 <span className="font-medium">Product Color:</span>{" "}
-                {product.color}
+                <div className="flex flex-wrap gap-1">
+                  {product.colors.map((color: any, index: any) => (
+                    <p key={index}>{color},</p>
+                  ))}
+                </div>
               </p>
             </div>
 
@@ -114,7 +118,7 @@ const AdminProductDetails = () => {
                   Available Sizes:
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.size.map((size: any, index: number) => (
+                  {product.sizes.map((size: any, index: number) => (
                     <span
                       key={index}
                       className="w-14 h-14 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border poppins"

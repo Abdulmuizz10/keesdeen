@@ -80,12 +80,13 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   const addToCart = async (
     itemId: string,
     size: string,
+    color: string,
     name: string,
     price: number,
     image: string
   ) => {
-    if (!size) {
-      toast.error("Select Product Size");
+    if (!size || !color) {
+      toast.error("Select Product Size and Color");
       return;
     }
 
@@ -94,61 +95,64 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 
     // Check if the cart already has this itemId
     if (!cartData[itemId]) {
-      // Initialize the item object with details if it doesn't exist
       cartData[itemId] = {
         name,
         price,
         image,
-        sizes: {},
+        variants: {}, // Stores sizes and colors
       };
     }
 
-    // Check if the specific size exists for this item
-    if (cartData[itemId].sizes[size]) {
-      // If the size exists, increment the quantity
-      cartData[itemId].sizes[size] += 1;
+    // Check if the specific size-color combination exists
+    const variantKey = `${size}-${color}`;
+    if (cartData[itemId].variants[variantKey]) {
+      cartData[itemId].variants[variantKey] += 1;
     } else {
-      // If the size doesn't exist, initialize it with 1
-      cartData[itemId].sizes[size] = 1;
+      cartData[itemId].variants[variantKey] = 1;
     }
 
     // Update the state with the new cart data
     setCartItems(cartData);
   };
 
+  const updateQuantity = async (
+    itemId: string,
+    size: string,
+    color: string,
+    quantity: number
+  ) => {
+    let cartData = structuredClone(cartItems || {});
+    const variantKey = `${size}-${color}`;
+
+    if (quantity > 0) {
+      cartData[itemId].variants[variantKey] = quantity;
+    } else {
+      delete cartData[itemId].variants[variantKey]; // Remove variant if quantity is 0
+      if (Object.keys(cartData[itemId].variants).length === 0) {
+        delete cartData[itemId]; // Remove item if no variants left
+      }
+    }
+
+    setCartItems(cartData);
+  };
+
   const getCartCount = () => {
     let totalCount = 0;
-    for (const items in cartItems) {
-      for (const size in cartItems[items].sizes) {
+
+    for (const itemId in cartItems) {
+      for (const variant in cartItems[itemId].variants) {
         try {
-          if (cartItems[items].sizes[size] > 0) {
-            totalCount += cartItems[items].sizes[size];
+          const quantity = cartItems[itemId].variants[variant];
+          if (quantity > 0) {
+            totalCount += quantity;
           }
         } catch (error) {
           toast.error(`${error}`);
         }
       }
     }
+
     return totalCount;
-  };
-
-  const updateQuantity = async (
-    itemId: string,
-    size: string,
-    quantity: number
-  ) => {
-    let cartData = structuredClone(cartItems || {});
-
-    if (quantity > 0) {
-      cartData[itemId].sizes[size] = quantity;
-    } else {
-      delete cartData[itemId].sizes[size]; // Remove size if quantity is 0
-      if (Object.keys(cartData[itemId].sizes).length === 0) {
-        delete cartData[itemId]; // Remove item if no sizes left
-      }
-    }
-
-    setCartItems(cartData);
   };
 
   const getCartAmount = () => {
@@ -156,9 +160,9 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 
     for (const itemId in cartItems) {
       const item = cartItems[itemId];
-      for (const size in item.sizes) {
+      for (const variant in item.variants) {
         try {
-          const quantity = item.sizes[size];
+          const quantity = item.variants[variant];
           if (quantity > 0) {
             totalAmount += item.price * quantity;
           }
@@ -176,8 +180,9 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 
     for (const itemId in cartItems) {
       const item = cartItems[itemId];
-      for (const size in item.sizes) {
-        const quantity = item.sizes[size];
+      for (const variant in item.variants) {
+        const quantity = item.variants[variant];
+        const [size, color] = variant.split("-");
 
         if (quantity > 0) {
           cartDetailsArray.push({
@@ -187,6 +192,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
             price: item.price,
             product: itemId, // Reference to the product ID
             size,
+            color,
           });
         }
       }

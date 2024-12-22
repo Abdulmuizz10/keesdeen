@@ -11,7 +11,6 @@ import {
 } from "@relume_io/relume-ui";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
-import { Product } from "../../lib/types";
 import { formatAmount } from "../../lib/utils";
 import { Link } from "react-router-dom";
 import { useProducts } from "../../context/ProductContext/ProductContext";
@@ -33,7 +32,7 @@ const ShopAll: React.FC = () => {
   }, [dispatch]);
 
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
@@ -76,13 +75,13 @@ const ShopAll: React.FC = () => {
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        item.size.some((s: string) => sizeCategory.includes(s))
+        item.sizes.some((s: string) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
       productsCopy = productsCopy.filter((item) =>
-        colorCategory.includes(item.color)
+        item.colors.some((c: string) => colorCategory.includes(c))
       );
     }
 
@@ -94,10 +93,10 @@ const ShopAll: React.FC = () => {
 
     switch (sortType) {
       case "Low - High":
-        setFilteredProducts(spCopy.sort((a, b) => a.price - b.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => a.price - b.price));
         break;
       case "High - Low":
-        setFilteredProducts(spCopy.sort((a, b) => b.price - a.price));
+        setFilteredProducts(spCopy.sort((a: any, b: any) => b.price - a.price));
         break;
       default: {
         applyFilter();
@@ -222,7 +221,7 @@ const ShopAll: React.FC = () => {
                   showFilter ? "" : "hidden"
                 } lg:block shadow-medium rounded`}
               >
-                <p className="text-base md:text-md pb-3">Colour</p>
+                <p className="text-base md:text-md pb-3">Color</p>
                 <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                   {[
                     "Black",
@@ -328,14 +327,14 @@ const ShopAll: React.FC = () => {
                   {loading
                     ? Array(21)
                         .fill(null)
-                        .map((product: Product, index) => (
+                        .map((product: any, index: number) => (
                           <ProductItem
                             key={index}
                             product={product}
                             loading={loading}
                           />
                         ))
-                    : filteredProducts.map((product: Product, index) => (
+                    : filteredProducts.map((product: any, index: number) => (
                         <ProductItem
                           key={index}
                           product={product}
@@ -353,7 +352,7 @@ const ShopAll: React.FC = () => {
 };
 
 interface ProductProps {
-  product: Product;
+  product: any;
   loading: Boolean;
 }
 
@@ -439,7 +438,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
                 <button
                   key={size}
                   className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
-                    product.size.includes(size) ? "" : "opacity-[0.3]"
+                    product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >
                   {size}

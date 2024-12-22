@@ -14,7 +14,7 @@ type Gallery5Props = React.ComponentPropsWithoutRef<"section"> & {
 
 export const Gallery5 = ({
   heading = "Collections",
-  description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  description = "Discover the latest additions to our collections.",
 }: Gallery5Props) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -9,12 +9,11 @@ import { FiX } from "react-icons/fi";
 import { useMediaQuery } from "@relume_io/relume-ui";
 import { getProducts } from "../context/ProductContext/ProductApiCalls";
 import { useProducts } from "../context/ProductContext/ProductContext";
-import { Product } from "../lib/types";
 
 const SearchModal: React.FC = () => {
   const { isActive, setIsActive } = useShop();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const { products, dispatch } = useProducts();
 
   useEffect(() => {
@@ -77,16 +76,18 @@ const SearchModal: React.FC = () => {
                     </div>
                     <ul className="flex flex-col gap-2">
                       {filteredProducts &&
-                        filteredProducts.slice(-7).map((product, index) => (
-                          <Link to={`/collections/${product.name}`}>
-                            <li
-                              key={index}
-                              className="poppins text-md md:text-xl text-gray-500"
-                            >
-                              {product.name}
-                            </li>
-                          </Link>
-                        ))}
+                        filteredProducts
+                          .slice(-7)
+                          .map((product: any, index: number) => (
+                            <Link to={`/collections/${product.name}`}>
+                              <li
+                                key={index}
+                                className="poppins text-md md:text-xl text-gray-500"
+                              >
+                                {product.name}
+                              </li>
+                            </Link>
+                          ))}
                     </ul>
                   </div>
                   <div className="w-full lg:w-4/5 max-md:mb-10">
@@ -102,7 +103,7 @@ const SearchModal: React.FC = () => {
                           filteredProducts.length > 0 &&
                           filteredProducts
                             .slice(0, isIpad ? 3 : 4)
-                            .map((product, index) => (
+                            .map((product: any, index: number) => (
                               <LargeScreenSearchItem
                                 product={product}
                                 key={index}
@@ -123,7 +124,7 @@ const SearchModal: React.FC = () => {
                           filteredProducts.length > 0 &&
                           filteredProducts
                             .slice(-5)
-                            .map((product, index) => (
+                            .map((product: any, index: number) => (
                               <SmallScreenSearchItem
                                 product={product}
                                 key={index}
@@ -149,7 +150,7 @@ const SearchModal: React.FC = () => {
   );
 };
 
-const LargeScreenSearchItem = ({ product }: { product: Product }) => {
+const LargeScreenSearchItem = ({ product }: { product: any }) => {
   const [image, setImage] = useState<boolean>(false);
   const { isActive, setIsActive } = useShop();
   return (
@@ -185,7 +186,7 @@ const LargeScreenSearchItem = ({ product }: { product: Product }) => {
               <button
                 key={size}
                 className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
-                  product.size.includes(size) ? "" : "opacity-[0.3]"
+                  product.sizes.includes(size) ? "" : "opacity-[0.3]"
                 }`}
               >
                 {size}
@@ -198,7 +199,7 @@ const LargeScreenSearchItem = ({ product }: { product: Product }) => {
   );
 };
 
-const SmallScreenSearchItem = ({ product }: { product: Product }) => {
+const SmallScreenSearchItem = ({ product }: { product: any }) => {
   return (
     <Link to={`/product_details/${product._id}`}>
       <div className="w-full flex gap-5 md:gap-2">

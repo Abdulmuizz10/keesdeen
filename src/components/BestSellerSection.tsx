@@ -66,6 +66,7 @@ export const Gallery19: React.FC = () => {
             <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
               Best Sellers
             </h2>
+            <p>Our Best Sellers: Where Modesty Meets Unmatched Style.</p>
           </div>
 
           <Carousel
@@ -194,7 +195,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
                 <button
                   key={size}
                   className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
-                    product.size.includes(size) ? "" : "opacity-[0.3]"
+                    product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >
                   {size}

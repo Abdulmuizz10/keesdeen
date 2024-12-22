@@ -8,9 +8,12 @@ export const showOrderSummary = (orderData: any) => {
   const itemsList = orderData.orderedItems
     .map(
       (item: any) =>
-        `<li>${item.qty} x ${item.name} (${item.size}) - ${formatAmount(
-          item.price
-        )}</li>`
+        `<li>
+      <span><strong>${item.qty} x</strong> ${item.name}</span> |
+      <span><strong>Size:</strong> ${item.size}</span> | 
+      <span><strong>Color:</strong> ${item.color}</span><br/>
+      <span><strong>Price:</strong> ${formatAmount(item.price)}</span>
+    </li>`
     )
     .join("");
   MySwal.fire({

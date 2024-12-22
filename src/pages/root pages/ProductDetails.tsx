@@ -21,6 +21,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { addToCart } = useShop();
   const [size, setSize] = useState<string>();
+  const [color, setColor] = useState<string>();
 
   if (!id) {
     navigate("/");
@@ -32,10 +33,10 @@ const ProductDetails = () => {
     const fetchData = async () => {
       const response = await Axios.get(`${URL}/products/${id}`);
       setResult(response.data);
+      console.log(response.data);
       setTimeout(() => setAnimation(false), 4000);
     };
     fetchData();
-    setTimeout(() => setAnimation(false), 4000);
   }, [id]);
 
   const settings = {
@@ -80,32 +81,78 @@ const ProductDetails = () => {
                 {[...Array(5)].map((_, index) => {
                   const ratingValue = index + 1; // Ratings are 1-based
                   if (ratingValue <= Math.floor(result?.averageRating)) {
-                    return <FaStar key={index} className="text-yellow-500" />; // Full star
+                    return (
+                      <FaStar
+                        key={index}
+                        className="text-yellow-500 text-base"
+                      />
+                    ); // Full star
                   } else if (ratingValue <= result?.averageRating) {
                     return (
-                      <FaStarHalfAlt key={index} className="text-yellow-500" />
+                      <FaStarHalfAlt
+                        key={index}
+                        className="text-yellow-500 text-base"
+                      />
                     ); // Half star
                   } else {
                     return (
-                      <FaRegStar key={index} className="text-yellow-500" />
+                      <FaRegStar
+                        key={index}
+                        className="text-yellow-500 text-base"
+                      />
                     ); // Empty star
                   }
                 })}
-
-                <p className="pl-2">({result?.totalReviews})</p>
+                <p className="pl-1 font-semibold text-xl">
+                  {result?.averageRating}
+                </p>
               </div>
               <p className="mt-5 text-3xl font-medium">
                 {formatAmount(result?.product.price)}
               </p>
-              <p className="mt-5 text-gray-500">
-                {result?.product?.description}
-              </p>
+
+              {/* Color selection */}
               <div className="flex flex-col gap-4 my-8">
-                <p className="mb-2">Select size</p>
-                <div className="flex gap-2">
-                  {result?.product?.size?.map((item: any, index: number) => (
+                <p className="mb-2">Select Color</p>
+                <div className="grid max-sm:grid-cols-3 gap-3 grid-cols-4 xl:grid-cols-5 ">
+                  {result?.product?.colors?.map(
+                    (option: any, index: number) => (
+                      <label
+                        key={index}
+                        className={`flex items-center gap-2 cursor-pointer ${
+                          color === option && "font-bold"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="color"
+                          value={option}
+                          checked={color === option}
+                          onChange={(e) => setColor(e.target.value)}
+                          className="hidden"
+                        />
+                        <span
+                          className={`block w-6 h-6 rounded-full border-2 ${
+                            color === option
+                              ? "border-black"
+                              : "border-gray-300"
+                          }`}
+                          style={{ backgroundColor: option.toLowerCase() }}
+                        ></span>
+                        {option}
+                      </label>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* Size selection */}
+              <div className="flex flex-col gap-4 my-8">
+                <p className="mb-2">Select Size</p>
+                <div className="flex flex-wrap gap-2">
+                  {result?.product?.sizes?.map((item: any, index: number) => (
                     <div
-                      className={`p-2 h-[40px] w-[40px] bg-gray-300 flex items-center justify-center cursor-pointer text-sm poppins ${
+                      className={`p-2 h-[45px] w-[45px] bg-gray-200 flex items-center justify-center cursor-pointer text-sm poppins ${
                         item === size && "border-2 border-border-primary"
                       }`}
                       key={index}
@@ -116,12 +163,14 @@ const ProductDetails = () => {
                   ))}
                 </div>
               </div>
+
               <Button
                 className="active:bg-gray-700 rounded-md bg-brand-neutral text-text-light border-none"
                 onClick={() =>
                   addToCart(
                     result?.product?._id,
                     size,
+                    color,
                     result?.product?.name,
                     result?.product?.price,
                     result?.product?.imageUrls[0]
@@ -133,9 +182,13 @@ const ProductDetails = () => {
               <hr className="mt-8 sm:w-4/5" />
               <div className="text-base text-text-secondary mt-5 flex flex-col gap-1">
                 <p>100% Original product.</p>
+                <p className="mt-5 text-gray-500">
+                  {result?.product?.description}
+                </p>
               </div>
             </div>
           </div>
+
           {/* Description and Review Section */}
           <div className="mt-20">
             <Reviews id={id} />
@@ -150,6 +203,7 @@ const ProductDetails = () => {
   );
 };
 
+// Rest of the component code remains the same...
 const SampleNextArrow = (props: any) => {
   const { onClick } = props;
   return (

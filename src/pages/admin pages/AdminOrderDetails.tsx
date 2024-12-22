@@ -169,7 +169,8 @@ const AdminOrderDetails: React.FC = () => {
               <div>
                 <p className="text-xl font-medium text-gray-800">{item.name}</p>
                 <p className="text-lg text-gray-800">
-                  Quantity: {item.qty} | Price: {currency} {item.price}
+                  Quantity: {item.qty} | Price: {currency} {item.price} | Color:{" "}
+                  {item.color}
                 </p>
               </div>
             </div>
