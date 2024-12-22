@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useProducts } from "../../context/ProductContext/ProductContext";
 import { createProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const popularColors = [
   { name: "Black", code: "#000000" },
@@ -68,7 +67,6 @@ const AdminAddProduct: React.FC = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [bestSeller, setBestSeller] = useState<boolean>(false);
   const [newArrival, setNewArrival] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   const { dispatch } = useProducts();
 
@@ -119,7 +117,9 @@ const AdminAddProduct: React.FC = () => {
       if (data.secure_url) {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
-        toast.success("Image uploaded!");
+        toast.success("Image uploaded!", {
+          position: "top-left", // Set position to top-left
+        });
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
@@ -146,7 +146,7 @@ const AdminAddProduct: React.FC = () => {
       imageUrls: productImages, // Store URLs in product data
     };
 
-    createProduct(formData, dispatch, navigate);
+    createProduct(formData, dispatch);
 
     // Clear form after submission
     setProductName("");

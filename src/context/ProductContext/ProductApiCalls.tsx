@@ -70,8 +70,7 @@ export const getProduct = async (
 // Create a new product
 export const createProduct = async (
   product: any,
-  dispatch: Dispatch<ProductAction>,
-  navigate: any
+  dispatch: Dispatch<ProductAction>
 ) => {
   dispatch(createProductStart());
   try {
@@ -83,7 +82,6 @@ export const createProduct = async (
     });
     dispatch(createProductSuccess(res.data));
     toast.success("Product created!");
-    navigate("/admin/products");
   } catch (err) {
     dispatch(createProductFailure());
   }

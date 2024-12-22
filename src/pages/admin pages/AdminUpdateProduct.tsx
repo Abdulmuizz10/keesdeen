@@ -121,7 +121,9 @@ const AdminUpdateProduct: React.FC = () => {
       if (data.secure_url) {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
-        toast("Image uploaded!");
+        toast("Image uploaded!", {
+          position: "top-left", // Set position to top-left
+        });
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
