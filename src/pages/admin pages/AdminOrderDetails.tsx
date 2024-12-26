@@ -22,6 +22,19 @@ const AdminOrderDetails: React.FC = () => {
       });
       const fetchedOrder = response.data;
 
+      // if (fetchedOrder.country && fetchedOrder.cityAndRegion) {
+      //   const country = Country.getCountryByCode(fetchedOrder.country);
+      //   fetchedOrder.country = country ? country.name : fetchedOrder.country;
+
+      //   const cityAndRegion = State.getStateByCodeAndCountry(
+      //     fetchedOrder.cityAndRegion,
+      //     fetchedOrder.country
+      //   );
+      //   fetchedOrder.cityAndRegion = cityAndRegion
+      //     ? cityAndRegion.name
+      //     : fetchedOrder.cityAndRegion;
+      // }
+
       if (fetchedOrder.country) {
         const country = Country.getCountryByCode(fetchedOrder.country);
         fetchedOrder.country = country ? country.name : fetchedOrder.country;
@@ -148,7 +161,8 @@ const AdminOrderDetails: React.FC = () => {
           <span className="font-medium">Email:</span> {email}
         </p>
         <p className="text-lg text-gray-800">
-          <span className="font-medium">Phone:</span> {phoneNumber}
+          <span className="font-medium">Phone:</span> +{phoneNumber.slice(0, 3)}{" "}
+          {phoneNumber.slice(3)}
         </p>
         <p className="text-lg text-gray-800">
           <span className="font-medium">Address:</span> {addressLineOne},{" "}
@@ -165,10 +179,6 @@ const AdminOrderDetails: React.FC = () => {
             </p>
           </>
         )}
-        <p className="text-lg text-gray-800">
-          <span className="font-medium">Address:</span> {addressLineOne},{" "}
-          {addressLineTwo || ""} {cityAndRegion}, {zipCode}, {country}
-        </p>
       </div>
 
       {/* Order Items */}
