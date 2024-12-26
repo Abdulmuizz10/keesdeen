@@ -37,7 +37,7 @@ const CheckOut: React.FC = ({}) => {
     delivery_fee,
     setCartItems,
     formatAmount,
-    currentCurrency,
+    // currentCurrency,
   } = useShop();
   const { orderDispatch } = useOrders();
   const [coupon, setCoupon] = useState<string>("");
@@ -95,7 +95,8 @@ const CheckOut: React.FC = ({}) => {
         guestOrder: guestEmail ? true : false,
         guestEmail: guestEmail ? guestEmail : null,
         coupon,
-        currency: currentCurrency,
+        currency: "GBP",
+        // currency: currentCurrency,
         discount,
         sourceId: token,
         orderedItems,
