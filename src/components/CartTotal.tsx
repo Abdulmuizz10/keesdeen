@@ -1,9 +1,8 @@
 import React from "react";
 import { useShop } from "../context/ShopContext";
-import { formatAmount } from "../lib/utils";
 
 const CartTotal: React.FC = () => {
-  const { getCartAmount } = useShop();
+  const { getCartAmount, formatAmount } = useShop();
   return (
     <div className="w-full">
       <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6  bricolage-grotesque">

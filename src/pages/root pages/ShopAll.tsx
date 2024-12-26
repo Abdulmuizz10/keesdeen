@@ -11,25 +11,36 @@ import {
 } from "@relume_io/relume-ui";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
-import { formatAmount } from "../../lib/utils";
 import { Link } from "react-router-dom";
-import { useProducts } from "../../context/ProductContext/ProductContext";
-import { getProducts } from "../../context/ProductContext/ProductApiCalls";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
 
 const ShopAll: React.FC = () => {
-  const { isActive } = useShop();
+  const { isActive, currentCurrency, formatAmount } = useShop();
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const { products, dispatch } = useProducts();
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await getProducts(dispatch);
-      setLoading(false);
+      try {
+        const res = await Axios.get(`${URL}/products`, {
+          validateStatus: (status) => status < 600,
+        });
+        if (res.status === 200) {
+          setProducts(res.data);
+          setFilteredProducts(res.data);
+          setLoading(false);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+          setLoading(false);
+        }
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
     };
     fetchData();
-  }, [dispatch]);
+  }, [currentCurrency]);
 
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<any>([]);
@@ -65,23 +76,23 @@ const ShopAll: React.FC = () => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products?.slice();
+    let productsCopy = products;
 
     if (category.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        category.includes(item.category)
+      productsCopy = productsCopy.filter((item: any) =>
+        category?.includes(item.category)
       );
     }
 
     if (sizeCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        item.sizes.some((s: string) => sizeCategory.includes(s))
+      productsCopy = productsCopy.filter((item: any) =>
+        item?.sizes.some((s: string) => sizeCategory.includes(s))
       );
     }
 
     if (colorCategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        item.colors.some((c: string) => colorCategory.includes(c))
+      productsCopy = productsCopy.filter((item: any) =>
+        item?.colors.some((c: string) => colorCategory.includes(c))
       );
     }
 
@@ -322,7 +333,6 @@ const ShopAll: React.FC = () => {
                   </div>
                 </div>
                 {/* {Map Products} */}
-
                 <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
                   {loading
                     ? Array(21)
@@ -332,13 +342,15 @@ const ShopAll: React.FC = () => {
                             key={index}
                             product={product}
                             loading={loading}
+                            formatAmount={formatAmount}
                           />
                         ))
-                    : filteredProducts.map((product: any, index: number) => (
+                    : filteredProducts?.map((product: any, index: number) => (
                         <ProductItem
                           key={index}
                           product={product}
                           loading={loading}
+                          formatAmount={formatAmount}
                         />
                       ))}
                 </div>
@@ -354,9 +366,14 @@ const ShopAll: React.FC = () => {
 interface ProductProps {
   product: any;
   loading: Boolean;
+  formatAmount: any;
 }
 
-const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
+const ProductItem: React.FC<ProductProps> = ({
+  product,
+  loading,
+  formatAmount,
+}) => {
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
 
@@ -437,7 +454,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
               (size) => (
                 <button
                   key={size}
-                  className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
                     product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@relume_io/relume-ui";
 import { useShop } from "../../context/ShopContext";
-import { formatAmount } from "../../lib/utils";
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { toast } from "react-toastify";
 
@@ -33,11 +32,22 @@ const zipCodePatterns: { [key: string]: RegExp } = {
 
 const CheckOut: React.FC = ({}) => {
   const { user } = useContext(AuthContext);
-  const { getCartAmount, delivery_fee, setCartItems } = useShop();
+  const {
+    getCartAmount,
+    delivery_fee,
+    setCartItems,
+    formatAmount,
+    currentCurrency,
+  } = useShop();
   const { orderDispatch } = useOrders();
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
-  const { getCartDetailsForOrder, paymentLoader, setPaymentLoader } = useShop();
+  const {
+    getCartDetailsForOrder,
+    paymentLoader,
+    setPaymentLoader,
+    guestEmail,
+  } = useShop();
   const [selectedCountry, setSelectedCountry] = useState<any>();
   const [selectedState, setSelectedState] = useState<any>();
 
@@ -82,8 +92,10 @@ const CheckOut: React.FC = ({}) => {
         ...data,
         user: user ? user.id : null,
         totalPrice: finalTotal,
+        guestOrder: guestEmail ? true : false,
+        guestEmail: guestEmail ? guestEmail : null,
         coupon,
-        currency: "GBP",
+        currency: currentCurrency,
         discount,
         sourceId: token,
         orderedItems,
@@ -270,7 +282,7 @@ const CheckOut: React.FC = ({}) => {
               </div>
 
               {/* address */}
-              <div className="relative w-full mb-1 col-span-2">
+              <div className="relative w-full mb-1 max-md:col-span-2">
                 <label>Address Line One</label>
                 <input
                   {...register("addressLineOne", {
@@ -288,7 +300,7 @@ const CheckOut: React.FC = ({}) => {
                 )}
               </div>
 
-              <div className="relative w-full mb-1 col-span-2">
+              <div className="relative w-full mb-1 max-md:col-span-2">
                 <div className="flex items-center gap-1">
                   <label>Address Line Two </label>
                   <span className="hidden md:flex">(optional)</span>

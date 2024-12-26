@@ -12,6 +12,7 @@ import { LuHeart } from "react-icons/lu";
 import { CiSearch, CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
+import CurrencySwitcher from "./CurrencySwitcher";
 
 type ImageProps = {
   url?: string;
@@ -78,6 +79,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex gap-3 items-center">
+              <CurrencySwitcher color="white" />
               <CiSearch
                 className="text-3xl cursor-pointer text-text-primary hover:text-brand-primary"
                 onClick={() => setIsActive(!isActive)}
@@ -196,26 +198,32 @@ export const Navbar7 = (props: Navbar7Props) => {
             </>
           )}
         </div>
-        <button
-          className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center lg:hidden"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          <motion.span
-            className="my-[3px] h-0.5 w-6 bg-black"
-            animate={isMobileMenuOpen ? ["open", "rotatePhase"] : "closed"}
-            variants={topLineVariants}
-          />
-          <motion.span
-            className="my-[3px] h-0.5 w-6 bg-black"
-            animate={isMobileMenuOpen ? "open" : "closed"}
-            variants={middleLineVariants}
-          />
-          <motion.span
-            className="my-[3px] h-0.5 w-6 bg-black"
-            animate={isMobileMenuOpen ? ["open", "rotatePhase"] : "closed"}
-            variants={bottomLineVariants}
-          />
-        </button>
+
+        <div className="flex items-center">
+          <div className="max-sm:hidden flex lg:hidden">
+            <CurrencySwitcher color="white" />
+          </div>
+          <button
+            className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center lg:hidden"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <motion.span
+              className="my-[3px] h-0.5 w-6 bg-black"
+              animate={isMobileMenuOpen ? ["open", "rotatePhase"] : "closed"}
+              variants={topLineVariants}
+            />
+            <motion.span
+              className="my-[3px] h-0.5 w-6 bg-black"
+              animate={isMobileMenuOpen ? "open" : "closed"}
+              variants={middleLineVariants}
+            />
+            <motion.span
+              className="my-[3px] h-0.5 w-6 bg-black"
+              animate={isMobileMenuOpen ? ["open", "rotatePhase"] : "closed"}
+              variants={bottomLineVariants}
+            />
+          </button>
+        </div>
       </div>
       <AnimatePresence>
         {isMobileMenuOpen && (

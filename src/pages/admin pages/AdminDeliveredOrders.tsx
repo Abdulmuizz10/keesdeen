@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { formatAmount } from "../../lib/utils";
 import { FaRegCopy } from "react-icons/fa";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { formatAmountDefault } from "../../lib/utils";
 
 const AdminDeliveredOrders: React.FC = () => {
   const [orders, setOrders] = useState([]);
@@ -102,7 +102,9 @@ const AdminDeliveredOrders: React.FC = () => {
                           {order.isDelivered}
                         </span>
                       </td>
-                      <td className="p-5">{formatAmount(order.totalPrice)}</td>
+                      <td className="p-5">
+                        {formatAmountDefault(order.currency, order.totalPrice)}
+                      </td>
                       <td className="p-5">
                         {new Date(order.deliveredAt).toLocaleString()}
                       </td>

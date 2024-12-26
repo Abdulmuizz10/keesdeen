@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { useProducts } from "../context/ProductContext/ProductContext";
 import { Product } from "../lib/types";
 import ProductItem from "./ProductItem";
 import Spinner from "./Spinner";
 import Axios from "axios";
 import { URL } from "../lib/constants";
+import { useShop } from "../context/ShopContext";
 
 type Gallery5Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -16,19 +16,18 @@ export const Gallery5 = ({
   heading = "Collections",
   description = "Discover the latest additions to our collections.",
 }: Gallery5Props) => {
+  const { currentCurrency } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
-  const { dispatch } = useProducts();
-  // Fetch products on component mount
   useEffect(() => {
     let isMounted = true;
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await Axios.get(`${URL}/products`, {
+        const res = await Axios.get(`${URL}/products/collections`, {
           validateStatus: (status) => status < 600,
         });
         if (res.status === 200) {
@@ -48,7 +47,7 @@ export const Gallery5 = ({
     return () => {
       isMounted = false;
     };
-  }, [dispatch]);
+  }, [currentCurrency]);
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28" ref={ref}>
@@ -65,7 +64,7 @@ export const Gallery5 = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
-            {products.slice(0, 8).map((product: Product, index) => (
+            {products?.map((product: Product, index) => (
               <motion.div
                 key={product._id} // Use product ID as the unique key
                 initial={{ opacity: 0, y: 50 }}
@@ -79,7 +78,7 @@ export const Gallery5 = ({
                   delay: index * 0.5, // Adjust delay for smoother staggered animation
                 }}
               >
-                <ProductItem product={product} />
+                <ProductItem product={product} key={index} />
               </motion.div>
             ))}
           </div>

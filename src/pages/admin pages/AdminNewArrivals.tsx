@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Chart, ArcElement } from "chart.js";
-import { formatAmount } from "../../lib/utils";
+// import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { URL } from "../../lib/constants";
+import { useShop } from "../../context/ShopContext";
 
 Chart.register(ArcElement);
 
 const AdminNewArrivals: React.FC = () => {
+  const { formatAmount } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);

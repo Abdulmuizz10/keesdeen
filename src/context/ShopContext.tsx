@@ -25,6 +25,10 @@ interface ShopContextType {
   wishLists: any;
   setWishLists: any;
   manageWishLists: any;
+  currentCurrency: any;
+  fetchExchangeRates: any;
+  setCurrency: any;
+  formatAmount: any;
   isActive: any;
   setIsActive: any;
   paymentLoader: any;
@@ -213,6 +217,44 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
+  const [currentCurrency, setCurrentCurrency] = useState("GBP"); // Default currency
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>(
+    {}
+  ); // State for exchange rates
+
+  useEffect(() => {
+    fetchExchangeRates(); // Fetch exchange rates when the component mounts
+  }, []);
+
+  const setCurrency = (currency: string) => {
+    setCurrentCurrency(currency);
+  };
+
+  const fetchExchangeRates = async (baseCurrency: string = "USD") => {
+    try {
+      const response = await fetch(
+        `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`
+      );
+      const data = await response.json();
+      setExchangeRates(data.rates); // Update state with fetched rates
+    } catch (error) {
+      console.error("Error fetching exchange rates:", error);
+    }
+  };
+
+  const formatAmount = (amount: number) => {
+    const rate = exchangeRates[currentCurrency] || 1; // Fallback to 1 if rate is unavailable
+    const convertedAmount = amount * rate;
+    console.log(`Exchange rate for ${currentCurrency}:`, rate);
+
+    const formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currentCurrency,
+      minimumFractionDigits: 2,
+    });
+    return formatter.format(convertedAmount);
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -230,6 +272,10 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         wishLists,
         setWishLists,
         manageWishLists,
+        currentCurrency,
+        fetchExchangeRates,
+        setCurrency,
+        formatAmount,
         isActive,
         setIsActive,
         paymentLoader,

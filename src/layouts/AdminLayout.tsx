@@ -62,7 +62,7 @@ import { Link } from "react-router-dom";
 import Axios from "axios";
 import { toast } from "react-toastify";
 import { URL } from "../lib/constants";
-import { formatAmount } from "../lib/utils";
+import { useShop } from "../context/ShopContext";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -73,6 +73,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, animation }) => {
   // const [isSearchIconClicked, setIsSearchIconClicked] =
   //   useState<boolean>(false);
   // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+
   const isMobile = useMediaQuery("(max-width: 991px)");
 
   return (
@@ -122,6 +123,7 @@ const Navigation = () => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [searchQuery, setSearchQuery] = useState<any>("");
   const [order, setOrder] = useState<any>("");
+  const { formatAmount } = useShop();
 
   const handleQuerySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

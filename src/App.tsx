@@ -54,30 +54,32 @@ import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import FitnessAccessories from "./pages/root pages/FitnessAccessories";
-import { useProducts } from "./context/ProductContext/ProductContext";
-import { getProducts } from "./context/ProductContext/ProductApiCalls";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
+import Axios from "axios";
+import { URL } from "./lib/constants";
 
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
+  const { user } = useContext(AuthContext);
+  const [products, setProducts] = useState([]);
   const [animation, setAnimation] = useState<Boolean>(true);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const res = await Axios.get(`${URL}/products`, {
+        validateStatus: (status) => status < 600,
+      });
+      setProducts(res.data);
+      setProducts(res.data);
+    };
+    fetchData();
     setTimeout(() => {
       setAnimation(false);
       window.scrollTo(0, 0);
     }, 6000);
   }, []);
-
-  const { user } = useContext(AuthContext);
-
-  const { products, dispatch } = useProducts();
-
-  useEffect(() => {
-    getProducts(dispatch);
-  }, [dispatch]);
 
   return (
     <div className="overflow-x-hidden ">
@@ -98,10 +100,7 @@ const App: React.FC = () => {
               path="/collections/Fitness_accessories"
               element={<FitnessAccessories />}
             />
-            <Route
-              path="/collections/:name"
-              element={<Collections products={products} />}
-            />
+            <Route path="/collections/:name" element={<Collections />} />
             <Route path="/product_details/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route
@@ -116,10 +115,7 @@ const App: React.FC = () => {
           {/* Admin Routes (Only accessible to admins) */}
           {user?.isAdmin ? (
             <Route element={<AdminLayout animation={animation} />}>
-              <Route
-                path="/admin"
-                element={<AdminHome products={products} />}
-              />
+              <Route path="/admin" element={<AdminHome />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route

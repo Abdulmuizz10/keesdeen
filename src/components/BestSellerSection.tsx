@@ -7,22 +7,19 @@ import {
   CarouselPrevious,
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
-import { useProducts } from "../context/ProductContext/ProductContext";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
-import { formatAmount } from "../lib/utils";
 import Axios from "axios";
 import { URL } from "../lib/constants";
 
 export const Gallery19: React.FC = () => {
+  const { currentCurrency, formatAmount } = useShop();
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [_, setCurrent] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
-
-  const { dispatch } = useProducts();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,7 +42,7 @@ export const Gallery19: React.FC = () => {
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [currentCurrency]);
 
   useEffect(() => {
     if (api) {
@@ -81,20 +78,30 @@ export const Gallery19: React.FC = () => {
                 {loading
                   ? Array(10)
                       .fill(null)
-                      .map((product, index) => (
+                      .map((product: any, index: number) => (
                         <CarouselItem
                           key={index}
                           className="basis-full md:basis-2/4 lg:basis-1/4"
                         >
-                          <ProductItem product={product} loading={loading} />
+                          <ProductItem
+                            product={product}
+                            loading={loading}
+                            key={index}
+                            formatAmount={formatAmount}
+                          />
                         </CarouselItem>
                       ))
-                  : products?.map((product, index: number) => (
+                  : products?.map((product: any, index: number) => (
                       <CarouselItem
                         key={index}
                         className="basis-full md:basis-2/4 lg:basis-1/4"
                       >
-                        <ProductItem product={product} loading={loading} />
+                        <ProductItem
+                          product={product}
+                          loading={loading}
+                          key={index}
+                          formatAmount={formatAmount}
+                        />
                       </CarouselItem>
                     ))}
               </CarouselContent>
@@ -111,9 +118,14 @@ export const Gallery19: React.FC = () => {
 interface ProductProps {
   product: any;
   loading: Boolean;
+  formatAmount: any;
 }
 
-const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
+const ProductItem: React.FC<ProductProps> = ({
+  product,
+  loading,
+  formatAmount,
+}) => {
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
 
@@ -194,7 +206,7 @@ const ProductItem: React.FC<ProductProps> = ({ product, loading }) => {
               (size) => (
                 <button
                   key={size}
-                  className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
                     product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >

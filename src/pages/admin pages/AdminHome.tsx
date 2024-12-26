@@ -2,33 +2,26 @@ import React, { useEffect, useRef, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { FaRegCopy } from "react-icons/fa";
 import { Chart, ArcElement } from "chart.js";
-import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { formatAmountDefault } from "../../lib/utils";
 
 Chart.register(ArcElement);
 
-interface ProductListProps {
-  products: any;
-}
-
-interface Products {
-  products: any;
-}
-
-const AdminHome: React.FC<ProductListProps> = ({ products }) => {
+const AdminHome: React.FC = () => {
   return (
     <section className="container ">
-      <Dashboard products={products} />
+      <Dashboard />
     </section>
   );
 };
 
-const Dashboard: React.FC<Products> = ({ products }) => {
+const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<any>([]);
   const [users, setUsers] = useState<any>([]);
+  const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
@@ -36,11 +29,11 @@ const Dashboard: React.FC<Products> = ({ products }) => {
 
   useEffect(() => {
     fetchData(currentPage);
-    fetchUsers();
   }, [currentPage]);
 
   useEffect(() => {
     fetchUsers();
+    fetchProducts();
   }, []);
 
   const fetchData = async (page: number) => {
@@ -74,6 +67,15 @@ const Dashboard: React.FC<Products> = ({ products }) => {
         },
       });
       setUsers(response.data);
+    } catch (error) {
+      toast.error("Error fetching users!");
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await Axios.get(`${URL}/products`);
+      setProducts(response.data);
     } catch (error) {
       toast.error("Error fetching users!");
     }
@@ -226,7 +228,10 @@ const Dashboard: React.FC<Products> = ({ products }) => {
                           )}
                         </td>
                         <td className="p-5">
-                          {formatAmount(transaction.totalPrice)}
+                          {formatAmountDefault(
+                            transaction.currency,
+                            transaction.totalPrice
+                          )}
                         </td>
                         <td className="p-5">
                           {new Date(transaction.paidAt).toLocaleString()}

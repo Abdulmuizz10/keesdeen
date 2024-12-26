@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
-import { formatAmount } from "../../lib/utils";
+// import { formatAmount } from "../../lib/utils";
 import { useOrders } from "../../context/OrderContext/OrderContext";
 import { useShop } from "../../context/ShopContext";
 import {
@@ -16,7 +16,7 @@ import {
 } from "../../context/OrderContext/OrderApiCalls";
 
 const OrderHistory: React.FC = () => {
-  const { guestEmail } = useShop();
+  const { guestEmail, formatAmount } = useShop();
   const { orders, orderDispatch } = useOrders();
   const [sortedOrders, setSortedOrders] = useState<any[]>([]); // State for sorted orders
   const [sortType, setSortType] = useState<string>("newest"); // Default sort type
@@ -151,15 +151,15 @@ const OrderHistory: React.FC = () => {
                     {/* Right Section: Order Summary */}
                     <div className="w-full sm:w-1/3 flex flex-col items-start sm:items-end gap-6">
                       <div className="flex">
-                        <p className="text-xl text-gray-500">Total:</p>
-                        <p className="text-xl px-1 font-semibold text-green-600">
+                        <p className="t text-gray-500">Total:</p>
+                        <p className="px-1 font-semibold text-green-600">
                           {formatAmount(order.totalPrice)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <p className="text-xl text-gray-500">Status:</p>
+                        <p className="text-gray-500">Status:</p>
                         <p
-                          className={`text-sm font-semibold px-2 py-2 rounded mt-1 ${
+                          className={`font-semibold px-2 py-2 rounded mt-1 ${
                             order.isDelivered === "Delivered"
                               ? "bg-green-100 text-green-700"
                               : "bg-yellow-100 text-yellow-700"

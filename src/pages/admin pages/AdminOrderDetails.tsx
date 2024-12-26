@@ -5,6 +5,7 @@ import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { Country } from "country-state-city";
+import { formatAmountDefault } from "../../lib/utils";
 
 const AdminOrderDetails: React.FC = () => {
   const { id } = useParams();
@@ -88,6 +89,8 @@ const AdminOrderDetails: React.FC = () => {
     lastName,
     email,
     phoneNumber,
+    guestOrder,
+    guestEmail,
     addressLineOne,
     addressLineTwo,
     cityAndRegion,
@@ -151,6 +154,21 @@ const AdminOrderDetails: React.FC = () => {
           <span className="font-medium">Address:</span> {addressLineOne},{" "}
           {addressLineTwo || ""} {cityAndRegion}, {zipCode}, {country}
         </p>
+        {guestOrder && (
+          <>
+            <p className="text-lg text-gray-800">
+              <span className="font-medium">Guest order:</span>{" "}
+              {guestOrder && "Yes"}
+            </p>
+            <p className="text-lg text-gray-800">
+              <span className="font-medium">Guest Email:</span> {guestEmail}
+            </p>
+          </>
+        )}
+        <p className="text-lg text-gray-800">
+          <span className="font-medium">Address:</span> {addressLineOne},{" "}
+          {addressLineTwo || ""} {cityAndRegion}, {zipCode}, {country}
+        </p>
       </div>
 
       {/* Order Items */}
@@ -184,12 +202,12 @@ const AdminOrderDetails: React.FC = () => {
           Payment Information
         </h2>
         <p className="text-lg text-gray-800">
-          <span className="font-medium">Total Price:</span> {currency}{" "}
-          {totalPrice}
+          <span className="font-medium">Total Price:</span>{" "}
+          {formatAmountDefault(currency, totalPrice)}
         </p>
         <p className="text-lg text-gray-800">
-          <span className="font-medium">Shipping:</span> {currency}{" "}
-          {shippingPrice}
+          <span className="font-medium">Shipping:</span>{" "}
+          {formatAmountDefault(currency, shippingPrice)}
         </p>
         <p className="text-lg text-gray-800">
           <span className="font-medium">Paid At:</span>{" "}

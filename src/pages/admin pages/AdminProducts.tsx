@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { FaRegPenToSquare } from "react-icons/fa6";
-import { formatAmount } from "../../lib/utils";
 import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
 import { useProducts } from "../../context/ProductContext/ProductContext";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+// import { formatAmount } from "../../lib/utils";
+import { useShop } from "../../context/ShopContext";
 
 const AdminProducts: React.FC = () => {
+  const { formatAmount } = useShop();
   const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);

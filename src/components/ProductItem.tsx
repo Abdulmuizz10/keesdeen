@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { formatAmount } from "../lib/utils";
 import { useState } from "react";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
@@ -11,7 +10,7 @@ interface ProductProps {
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
   const [image, setImage] = useState<boolean>(false);
-  const { manageWishLists, wishLists } = useShop();
+  const { manageWishLists, wishLists, formatAmount } = useShop();
 
   return (
     <div
@@ -53,7 +52,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
               (size) => (
                 <button
                   key={size}
-                  className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
                     product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >

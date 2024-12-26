@@ -6,7 +6,7 @@ import { BiArrowBack } from "react-icons/bi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { formatAmount } from "../../lib/utils";
+
 import { Button } from "@relume_io/relume-ui";
 import RelatedProducts from "../../components/RelatedProducts";
 import Reviews from "../../components/Reviews";
@@ -19,7 +19,7 @@ const ProductDetails = () => {
   const [animation, setAnimation] = useState<boolean>(true);
   const [result, setResult] = useState<any>();
   const navigate = useNavigate();
-  const { addToCart } = useShop();
+  const { addToCart, currentCurrency, formatAmount } = useShop();
   const [size, setSize] = useState<string>();
   const [color, setColor] = useState<string>();
 
@@ -33,11 +33,10 @@ const ProductDetails = () => {
     const fetchData = async () => {
       const response = await Axios.get(`${URL}/products/${id}`);
       setResult(response.data);
-      console.log(response.data);
       setTimeout(() => setAnimation(false), 4000);
     };
     fetchData();
-  }, [id]);
+  }, [id, currentCurrency]);
 
   const settings = {
     infinite: true,
@@ -217,6 +216,7 @@ const SampleNextArrow = (props: any) => {
     </div>
   );
 };
+
 const SamplePrevArrow = (props: any) => {
   const { onClick } = props;
   return (
@@ -230,6 +230,7 @@ const SamplePrevArrow = (props: any) => {
     </div>
   );
 };
+
 const Animation = () => (
   <div className="w-screen h-screen flex items-center justify-center bg-white">
     <Spinner />

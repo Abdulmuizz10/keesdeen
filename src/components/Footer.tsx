@@ -4,6 +4,8 @@ import type { ButtonProps } from "@relume_io/relume-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { BiLogoFacebookCircle, BiLogoInstagram } from "react-icons/bi";
 import { FaTiktok } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import CurrencySwitcher from "./CurrencySwitcher";
 
 type ImageProps = {
   url?: string;
@@ -69,13 +71,16 @@ export const Footer1 = (props: Footer1Props) => {
             </a>
             <p className="mb-5 md:mb-6">{newsletterDescription}</p>
             <div className="max-w-md">
-              <div className="mb-3 grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[1fr_max-content] md:gap-y-4">
+              <div className="mb-3 grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[1fr_max-content] md:gap-y-4 text-text-primary">
                 <Input placeholder={inputPlaceholder} />
                 <Button {...button} className="items-center justify-center">
                   {button.title}
                 </Button>
               </div>
               <div dangerouslySetInnerHTML={{ __html: termsAndConditions }} />
+              <div className="mt-10">
+                <CurrencySwitcher color="black" />
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-1 items-start gap-y-10 sm:grid-cols-3 sm:gap-x-6 md:gap-x-8 md:gap-y-4">
@@ -88,13 +93,13 @@ export const Footer1 = (props: Footer1Props) => {
                 <ul>
                   {column.links.map((link, linkIndex) => (
                     <li key={linkIndex} className="py-2 text-sm">
-                      <a
-                        href={link.url}
+                      <Link
+                        to={link.url}
                         className="flex items-center gap-3 text-text-secondary"
                       >
                         {link.icon && <span>{link.icon}</span>}
                         <span>{link.title}</span>
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

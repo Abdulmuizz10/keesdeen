@@ -44,7 +44,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
                 delay: index * 0.6,
               }}
             >
-              <ProductItem product={product} />
+              <ProductItem product={product} key={index} />
             </motion.div>
           ))}
       </div>

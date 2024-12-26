@@ -9,24 +9,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
-import ProductItem from "../../components/ProductItem";
+import { RiHeartLine } from "react-icons/ri";
+import { RiHeartFill } from "react-icons/ri";
 import { useParams } from "react-router-dom";
-import Spinner from "../../components/Spinner";
-import { useProducts } from "../../context/ProductContext/ProductContext";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
-interface ProductListProps {
-  products: any;
-}
-
-const Collections: React.FC<ProductListProps> = ({ products }) => {
+const Collections: React.FC = () => {
   const { name } = useParams();
-  const { isActive } = useShop();
-  const { isFetching } = useProducts();
+  const { isActive, currentCurrency, formatAmount } = useShop();
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<any>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
   const [sortType, setSortType] = useState<string>("Relevance");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await Axios.get(`${URL}/products/search-results`, {
+          validateStatus: (status) => status < 600,
+          params: { query: name },
+        });
+        if (res.status === 200) {
+          setProducts(res.data);
+          setFilteredProducts(res.data);
+          setLoading(false);
+        } else {
+          toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        toast.error("An unexpected error occurred. Please refresh the page.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [name, currentCurrency]);
 
   const toggleSizeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (sizeCategory.includes(e.target.value)) {
@@ -47,9 +71,7 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
   };
 
   const applyFilter = () => {
-    let productsCopy = products.filter((product: any) =>
-      product.name.split(" ").some((p: any) => name?.split(" ").includes(p))
-    );
+    let productsCopy = products;
 
     if (sizeCategory.length > 0) {
       productsCopy = productsCopy.filter((item: any) =>
@@ -272,18 +294,27 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
                 </div>
               </div>
               {/* {Map Products} */}
-              <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
-                {filteredProducts.length > 0 &&
-                  filteredProducts.map((product: any, index: number) => (
-                    <ProductItem product={product} key={index} />
-                  ))}
+              <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
+                {loading
+                  ? Array(21)
+                      .fill(null)
+                      .map((product: any, index: number) => (
+                        <ProductItem
+                          key={index}
+                          product={product}
+                          loading={loading}
+                          formatAmount={formatAmount}
+                        />
+                      ))
+                  : filteredProducts?.map((product: any, index: number) => (
+                      <ProductItem
+                        key={index}
+                        product={product}
+                        loading={loading}
+                        formatAmount={formatAmount}
+                      />
+                    ))}
               </div>
-            </div>
-            <div className="w-full flex justify-center mt-10">
-              {isFetching && <Spinner />}
-              {!isFetching && filteredProducts.length < 1 ? (
-                <ProductUnavailable />
-              ) : null}
             </div>
           </div>
         </div>
@@ -292,10 +323,109 @@ const Collections: React.FC<ProductListProps> = ({ products }) => {
   );
 };
 
-const ProductUnavailable = () => {
+interface ProductProps {
+  product: any;
+  loading: Boolean;
+  formatAmount: any;
+}
+
+const ProductItem: React.FC<ProductProps> = ({
+  product,
+  loading,
+  formatAmount,
+}) => {
+  const [image, setImage] = useState<boolean>(false);
+  const { manageWishLists, wishLists } = useShop();
+
+  if (loading) {
+    return (
+      <div className="max-w-xs mx-auto bg-white shadow-large overflow-hidden relative z-[1] h-[500px]">
+        <div className="relative">
+          <div className="w-full h-[360px] bg-gray-200 animate-pulse" />
+        </div>
+        <div className="p-4 text-center">
+          <div className="flex flex-col gap-2 items-center">
+            <div className="h-6 w-full rounded bg-gray-200 animate-pulse" />
+            <div className="h-6 w-3/5 rounded bg-gray-200 animate-pulse" />
+          </div>
+          <div className="mt-2">
+            <div className="flex flex-wrap gap-1 items-center justify-center">
+              {[
+                "XXS",
+                "XS",
+                "S",
+                "M",
+                "L",
+                "XL",
+                "2XL",
+                "3XL",
+                "4XL",
+                "5XL",
+              ].map((size) => (
+                <button
+                  key={size}
+                  className="rounded-sm px-1 py-1 h-6 w-8 bg-gray-200 animate-pulse"
+                ></button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <p className="text-xl w-full text-center">Product is not available...</p>
+    <div
+      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px]"
+      onMouseOver={() => setImage(true)}
+      onMouseLeave={() => setImage(false)}
+    >
+      <div className="absolute top-3 right-3 z-50 cursor-pointer">
+        {wishLists.includes(product._id) ? (
+          <RiHeartFill
+            onClick={() => manageWishLists(product._id)}
+            className="text-xl text-text-primary"
+          />
+        ) : (
+          <RiHeartLine
+            onClick={() => manageWishLists(product._id)}
+            className="text-xl text-text-primary"
+          />
+        )}
+      </div>
+      <div className="relative">
+        <Link to={`/product_details/${product._id}`}>
+          <img
+            src={image ? product.imageUrls[1] : product.imageUrls[0]}
+            alt="Product"
+            className="w-full h-auto"
+          />
+        </Link>
+      </div>
+      <div className="p-4 text-center">
+        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
+          {product.name}
+        </h3>
+        <p className="text-gray-500">{formatAmount(product.price)}</p>
+
+        <div className="mt-2">
+          <div className="flex flex-wrap gap-1 items-center justify-center">
+            {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
+              (size) => (
+                <button
+                  key={size}
+                  className={`border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                    product.sizes.includes(size) ? "" : "opacity-[0.3]"
+                  }`}
+                >
+                  {size}
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
-
 export default Collections;

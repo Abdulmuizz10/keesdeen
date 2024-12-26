@@ -9,11 +9,9 @@ import {
 import type { CarouselApi } from "@relume_io/relume-ui";
 import clsx from "clsx";
 import { Link } from "react-router-dom";
-
-import { useProducts } from "../context/ProductContext/ProductContext";
 import { URL } from "../lib/constants";
 import Axios from "axios";
-import { formatAmount } from "../lib/utils";
+import { useShop } from "../context/ShopContext";
 
 type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -24,7 +22,7 @@ export const Gallery21 = ({
   heading = "New Arrivals",
   description = "Discover the latest additions to our Arrivals.",
 }: Gallery21Props) => {
-  const { dispatch } = useProducts();
+  const { currentCurrency, formatAmount } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState<CarouselApi | null>(null);
@@ -52,7 +50,7 @@ export const Gallery21 = ({
       }
     };
     fetchData();
-  }, [dispatch]);
+  }, [currentCurrency]);
 
   // Set up carousel scroll state
   useEffect(() => {

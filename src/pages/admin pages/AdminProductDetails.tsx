@@ -3,10 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
 import Axios from "axios";
-import { formatAmount } from "../../lib/utils";
+// import { formatAmount } from "../../lib/utils";
 import { toast } from "react-toastify";
+import { useShop } from "../../context/ShopContext";
 
 const AdminProductDetails = () => {
+  const { formatAmount } = useShop();
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [product, setProduct] = useState<any>();

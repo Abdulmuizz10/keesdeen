@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useShop } from "../../context/ShopContext";
-import { formatAmount } from "../../lib/utils";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
@@ -8,7 +7,7 @@ import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { Link } from "react-router-dom";
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity, guestEmail } = useShop();
+  const { cartItems, updateQuantity, guestEmail, formatAmount } = useShop();
   const [cartData, setCartData] = useState<any[]>([]);
   const { user } = useContext(AuthContext);
 

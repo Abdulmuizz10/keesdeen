@@ -42,6 +42,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
               </div>
             )}
           </Link>
+
           <Footer1 />
         </div>
       </div>
