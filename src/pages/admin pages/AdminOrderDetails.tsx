@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
-import { Country } from "country-state-city";
+import { Country, State } from "country-state-city";
 import { formatAmountDefault } from "../../lib/utils";
 
 const AdminOrderDetails: React.FC = () => {
@@ -22,24 +22,22 @@ const AdminOrderDetails: React.FC = () => {
       });
       const fetchedOrder = response.data;
 
-      // if (fetchedOrder.country && fetchedOrder.cityAndRegion) {
-      //   const country = Country.getCountryByCode(fetchedOrder.country);
-      //   fetchedOrder.country = country ? country.name : fetchedOrder.country;
-
-      //   const cityAndRegion = State.getStateByCodeAndCountry(
-      //     fetchedOrder.cityAndRegion,
-      //     fetchedOrder.country
-      //   );
-      //   fetchedOrder.cityAndRegion = cityAndRegion
-      //     ? cityAndRegion.name
-      //     : fetchedOrder.cityAndRegion;
-      // }
-
+      let countryCode = fetchedOrder.country;
       if (fetchedOrder.country) {
-        const country = Country.getCountryByCode(fetchedOrder.country);
+        const country = Country.getCountryByCode(countryCode);
         fetchedOrder.country = country ? country.name : fetchedOrder.country;
+        countryCode = country ? country.isoCode : fetchedOrder.country;
       }
 
+      if (countryCode && fetchedOrder.cityAndRegion) {
+        const state = State.getStateByCodeAndCountry(
+          fetchedOrder.cityAndRegion,
+          countryCode
+        );
+        fetchedOrder.cityAndRegion = state
+          ? state.name
+          : fetchedOrder.cityAndRegion;
+      }
       setOrder(fetchedOrder);
     } catch (error) {
       toast.error("Error fetching order:");
@@ -166,7 +164,7 @@ const AdminOrderDetails: React.FC = () => {
         </p>
         <p className="text-lg text-gray-800">
           <span className="font-medium">Address:</span> {addressLineOne},{" "}
-          {addressLineTwo || ""} {cityAndRegion}, {zipCode}, {country}
+          {addressLineTwo || ""}, {cityAndRegion}, {zipCode}, {country}
         </p>
         {guestOrder && (
           <>
