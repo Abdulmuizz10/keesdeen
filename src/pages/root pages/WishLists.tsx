@@ -3,25 +3,14 @@ import { motion, useInView } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
 import ProductItem from "../../components/ProductItem";
 
-interface Products {
-  products: any;
-}
-
-const WishLists: React.FC<Products> = ({ products }) => {
+const WishLists: React.FC = () => {
   const { wishLists } = useShop();
   const [lists, setLists] = useState([]);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
-    const fetchWishLists = async () => {
-      const extractWishLists = await products.filter((product: any) =>
-        wishLists.includes(product._id)
-      );
-      setLists(extractWishLists);
-    };
-
-    fetchWishLists();
+    setLists(wishLists);
   }, [wishLists]);
 
   return (

@@ -98,7 +98,21 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          navigate("/check_out");
+          if (res.data) {
+            const user = res.data.id;
+            const email = res.data.email;
+            const userInfo = { user, email };
+            const expect = await Axios.post(
+              `${URL}/orders/link-guest/orders`,
+              userInfo
+            );
+            if (expect) {
+              if (guestEmail) {
+                setGuestEmail("");
+              }
+            }
+            navigate("/check_out");
+          }
         } else {
           dispatch(AccessFailure());
           toast.error(res.data.message || "Something went wrong");

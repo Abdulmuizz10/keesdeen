@@ -82,11 +82,22 @@ export const Login7: React.FC = (props: Login7Props) => {
           }
         );
         if (res.status === 200) {
-          if (guestEmail) {
-            setGuestEmail("");
-          }
           dispatch(AccessSuccess(res.data));
-          navigate("/");
+          if (res.data) {
+            const user = res.data.id;
+            const email = res.data.email;
+            const userInfo = { user, email };
+            const expect = await Axios.post(
+              `${URL}/orders/link-guest/orders`,
+              userInfo
+            );
+            if (expect) {
+              if (guestEmail) {
+                setGuestEmail("");
+              }
+            }
+            navigate("/");
+          }
         } else {
           dispatch(AccessFailure());
           toast.error(res.data.message || "Something went wrong");

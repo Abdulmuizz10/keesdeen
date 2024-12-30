@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import ProductItem from "./ProductItem";
-import { useProducts } from "../context/ProductContext/ProductContext";
-import { getProducts } from "../context/ProductContext/ProductApiCalls";
+import Axios from "axios";
+import { URL } from "../lib/constants";
 
 interface ProductListProps {
   category: string;
@@ -10,16 +10,28 @@ interface ProductListProps {
 }
 
 const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
-  const { products, dispatch } = useProducts();
   const [related, setRelated] = useState<any>();
 
   useEffect(() => {
-    getProducts(dispatch);
-    const relatedProducts = products
-      .filter((p) => p.category === category)
-      .filter((p) => p._id !== id);
-    setRelated(relatedProducts);
-  }, [dispatch, id]);
+    const fetchData = async () => {
+      try {
+        const res = await Axios.get(`${URL}/products`, {
+          validateStatus: (status) => status < 600,
+        });
+        if (res.status === 200) {
+          const relatedProducts = res.data
+            .filter((p: any) => p.category === category)
+            .filter((p: any) => p._id !== id);
+          setRelated(relatedProducts);
+        } else {
+          // toast.error(res.data.message || "Something went wrong");
+        }
+      } catch (error) {
+        // toast.error("An unexpected error occurred. Please try again.");
+      }
+    };
+    fetchData();
+  }, [id]);
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });

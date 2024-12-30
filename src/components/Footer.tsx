@@ -6,6 +6,10 @@ import { BiLogoFacebookCircle, BiLogoInstagram } from "react-icons/bi";
 import { FaTiktok } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import CurrencySwitcher from "./CurrencySwitcher";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import Axios from "axios";
+import { URL } from "../lib/constants";
 
 type ImageProps = {
   url?: string;
@@ -57,6 +61,32 @@ export const Footer1 = (props: Footer1Props) => {
     ...Footer1Defaults,
     ...props,
   } as Props;
+
+  const [email, setEmail] = useState<string>("");
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const res = await Axios.post(
+        `${URL}/subscribers`,
+        { email },
+        {
+          validateStatus: (status) => status < 600,
+        }
+      );
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setEmail("");
+      } else {
+        toast.error(
+          res.data.message || "Something went wrong please try again"
+        );
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred. Please try again.");
+    }
+  };
+
   return (
     <footer className="px-[5%] py-12 md:py-18 lg:py-20 bg-brand-neutral text-text-light">
       <div className="container">
@@ -71,12 +101,20 @@ export const Footer1 = (props: Footer1Props) => {
             </a>
             <p className="mb-5 md:mb-6">{newsletterDescription}</p>
             <div className="max-w-md">
-              <div className="mb-3 grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[1fr_max-content] md:gap-y-4 text-text-primary">
-                <Input placeholder={inputPlaceholder} />
-                <Button {...button} className="items-center justify-center">
+              <form
+                className="mb-3 grid grid-cols-1 gap-x-4 gap-y-3 sm:grid-cols-[1fr_max-content] md:gap-y-4 text-text-primary poppins"
+                onSubmit={handleSubmit}
+              >
+                <Input
+                  placeholder={inputPlaceholder}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <Button {...button} className="items-center justify-center ">
                   {button.title}
                 </Button>
-              </div>
+              </form>
+
               <div dangerouslySetInnerHTML={{ __html: termsAndConditions }} />
               <div className="mt-10">
                 <CurrencySwitcher color="black" />
@@ -129,8 +167,7 @@ export const Footer1Defaults: Footer1Props = {
     src: mainLogoWhite,
     alt: "Logo image",
   },
-  newsletterDescription:
-    "Join our newsletter to stay up to date on features and releases.",
+  newsletterDescription: "Join our newsletter to stay up to date with us.",
   inputPlaceholder: "Enter your email",
   button: {
     title: "Subscribe",

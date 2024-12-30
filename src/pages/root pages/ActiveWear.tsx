@@ -137,8 +137,8 @@ const ActiveWear: React.FC = () => {
   return (
     <section className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="rb-12 mb-12 md:mb-5">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+        <div className="mb-12 md:mb-5">
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
             Active Wear
           </h2>
           <p className="md:text-md">
@@ -428,14 +428,14 @@ const ProductItem: React.FC<ProductProps> = ({
       onMouseLeave={() => setImage(false)}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        {wishLists.includes(product._id) ? (
+        {wishLists.find((wish: any) => wish._id === product._id)  ? (
           <RiHeartFill
-            onClick={() => manageWishLists(product._id)}
+            onClick={() => manageWishLists(product)}
             className="text-xl text-text-primary"
           />
         ) : (
           <RiHeartLine
-            onClick={() => manageWishLists(product._id)}
+            onClick={() => manageWishLists(product)}
             className="text-xl text-text-primary"
           />
         )}

@@ -8,6 +8,8 @@ import {
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
 import clsx from "clsx";
+import { RiHeartLine } from "react-icons/ri";
+import { RiHeartFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import { URL } from "../lib/constants";
 import Axios from "axios";
@@ -22,7 +24,8 @@ export const Gallery21 = ({
   heading = "New Arrivals",
   description = "Discover the latest additions to our Arrivals.",
 }: Gallery21Props) => {
-  const { currentCurrency, formatAmount } = useShop();
+  const { currentCurrency, formatAmount, wishLists, manageWishLists } =
+    useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState<CarouselApi | null>(null);
@@ -85,7 +88,7 @@ export const Gallery21 = ({
             align: "start",
           }}
         >
-          <CarouselContent className="ml-0">
+          <CarouselContent className="ml-0 gap-4">
             {loading
               ? Array(10)
                   .fill(null)
@@ -100,8 +103,23 @@ export const Gallery21 = ({
               : products?.map((product: any, index) => (
                   <CarouselItem
                     key={index}
-                    className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
+                    className="basis-full pl-0 sm:basis-2/5 md:basis-1/2 relative"
                   >
+                    <div className="absolute top-3 right-3 z-50 cursor-pointer">
+                      {wishLists.find(
+                        (wish: any) => wish._id === product._id
+                      ) ? (
+                        <RiHeartFill
+                          onClick={() => manageWishLists(product)}
+                          className="text-xl text-text-primary"
+                        />
+                      ) : (
+                        <RiHeartLine
+                          onClick={() => manageWishLists(product)}
+                          className="text-xl text-text-primary"
+                        />
+                      )}
+                    </div>
                     <Link to={`/product_details/${product._id}`}>
                       <img
                         src={product?.imageUrls[0]}

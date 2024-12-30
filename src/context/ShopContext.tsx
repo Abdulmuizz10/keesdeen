@@ -12,8 +12,6 @@ import { useProducts } from "./ProductContext/ProductContext";
 // Define the context type
 interface ShopContextType {
   cartItems: any;
-  orderHistory: any;
-  setOrderHistory: any;
   guestEmail: any;
   setGuestEmail: any;
   setCartItems: any;
@@ -46,7 +44,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   const { dispatch } = useProducts();
   const [isActive, setIsActive] = useState(false);
   const [paymentLoader, setPaymentLoader] = useState(false);
-  const [orderHistory, setOrderHistory] = useState<any>([]);
 
   const [guestEmail, setGuestEmail] = useState<String>(() => {
     const storedGuestEmail = localStorage.getItem("guestEmail");
@@ -171,7 +168,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
             totalAmount += item.price * quantity;
           }
         } catch (error) {
-          console.log(error);
+          // console.log(error);
         }
       }
     }
@@ -205,14 +202,24 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     return cartDetailsArray;
   };
 
-  const manageWishLists = (productId: any) => {
+  const manageWishLists = (product: any) => {
+    // setWishLists((prevWishLists: any) => {
+    //   if (prevWishLists.includes(productId)) {
+    //     // Remove the product if it's already in the wishlist
+    //     return prevWishLists.filter((id: any) => id !== productId);
+    //   } else {
+    //     // Add the product if it's not in the wishlist
+    //     return [...prevWishLists, productId];
+    //   }
+    // });
+
     setWishLists((prevWishLists: any) => {
-      if (prevWishLists.includes(productId)) {
+      if (prevWishLists.find((wish: any) => wish._id === product._id)) {
         // Remove the product if it's already in the wishlist
-        return prevWishLists.filter((id: any) => id !== productId);
+        return prevWishLists.filter((wish: any) => wish._id !== product._id);
       } else {
         // Add the product if it's not in the wishlist
-        return [...prevWishLists, productId];
+        return [...prevWishLists, product];
       }
     });
   };
@@ -238,14 +245,13 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
       const data = await response.json();
       setExchangeRates(data.rates); // Update state with fetched rates
     } catch (error) {
-      console.error("Error fetching exchange rates:", error);
+      // toast.error("Error fetching exchange rates");
     }
   };
 
   const formatAmount = (amount: number) => {
     const rate = exchangeRates[currentCurrency] || 1; // Fallback to 1 if rate is unavailable
     const convertedAmount = amount * rate;
-    console.log(`Exchange rate for ${currentCurrency}:`, rate);
 
     const formatter = new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -258,8 +264,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <ShopContext.Provider
       value={{
-        orderHistory,
-        setOrderHistory,
         guestEmail,
         setGuestEmail,
         cartItems,

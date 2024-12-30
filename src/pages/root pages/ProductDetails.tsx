@@ -73,9 +73,12 @@ const ProductDetails = () => {
 
             {/* Product Details */}
             <div className="flex-1">
-              <h2 className="rb-5 mb-2 text-2xl font-bold md:mb-4 md:text-4xl lg:text-5xl bricolage-grotesque">
-                {result.product.name}
-              </h2>
+              <div className="mb-2 md:mb-4">
+                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
+                  {result.product.name}
+                </h2>
+                <p>{result.product.brand}</p>
+              </div>
               <div className="flex items-center gap-1 mt-2">
                 {[...Array(5)].map((_, index) => {
                   const ratingValue = index + 1; // Ratings are 1-based
@@ -112,7 +115,7 @@ const ProductDetails = () => {
 
               {/* Color selection */}
               <div className="flex flex-col gap-4 my-8">
-                <p className="mb-2">Select Color</p>
+                <p className="mb-2">Select Color :</p>
                 <div className="grid max-sm:grid-cols-3 gap-3 grid-cols-4 xl:grid-cols-5 ">
                   {result?.product?.colors?.map(
                     (option: any, index: number) => (
@@ -147,7 +150,7 @@ const ProductDetails = () => {
 
               {/* Size selection */}
               <div className="flex flex-col gap-4 my-8">
-                <p className="mb-2">Select Size</p>
+                <p className="mb-2">Select Size :</p>
                 <div className="flex flex-wrap gap-2">
                   {result?.product?.sizes?.map((item: any, index: number) => (
                     <div

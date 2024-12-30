@@ -173,14 +173,14 @@ const ProductItem: React.FC<ProductProps> = ({
       onMouseLeave={() => setImage(false)}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        {wishLists.includes(product._id) ? (
+        {wishLists.find((wish: any) => wish._id === product._id) ? (
           <RiHeartFill
-            onClick={() => manageWishLists(product._id)}
+            onClick={() => manageWishLists(product)}
             className="text-xl text-text-primary"
           />
         ) : (
           <RiHeartLine
-            onClick={() => manageWishLists(product._id)}
+            onClick={() => manageWishLists(product)}
             className="text-xl text-text-primary"
           />
         )}

@@ -1,36 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
-// import { formatAmount } from "../../lib/utils";
-import { useOrders } from "../../context/OrderContext/OrderContext";
+import { Link } from "react-router-dom";
+import Axios from "axios";
+import { toast } from "react-toastify";
+import { URL } from "../../lib/constants";
 import { useShop } from "../../context/ShopContext";
-import {
-  getGuestOrders,
-  getProfileOrders,
-} from "../../context/OrderContext/OrderApiCalls";
+import { AuthContext } from "../../context/AuthContext/AuthContext";
 
 const OrderHistory: React.FC = () => {
   const { guestEmail, formatAmount } = useShop();
-  const { orders, orderDispatch } = useOrders();
-  const [sortedOrders, setSortedOrders] = useState<any[]>([]); // State for sorted orders
-  const [sortType, setSortType] = useState<string>("newest"); // Default sort type
+  const { user } = useContext(AuthContext);
+  const [orders, setOrders] = useState<any[]>();
+  const [sortedOrders, setSortedOrders] = useState<any[]>([]);
+  const [sortType, setSortType] = useState<string>("newest");
 
   useEffect(() => {
     const fetchOrderHistory = async () => {
       if (guestEmail) {
-        getGuestOrders(guestEmail, orderDispatch);
+        try {
+          const response = await Axios.get(
+            `${URL}/orders/guest/orders?guest=${guestEmail}`,
+            {
+              validateStatus: (status) => status < 600,
+            }
+          );
+          if (response.status === 200) {
+            setOrders(response.data);
+          } else {
+            toast(response.data.message);
+          }
+        } catch (error) {
+          toast.error("Error fetching order");
+        }
+      } else if (user) {
+        try {
+          const userToken = JSON.parse(
+            localStorage.getItem("user") || "{}"
+          ).token;
+          const response = await Axios.get(`${URL}/orders/profile/orders`, {
+            headers: {
+              token: "Bearer " + userToken,
+            },
+          });
+          setOrders(response.data);
+        } catch (error) {
+          toast.error("Error fetching order");
+        }
       } else {
-        getProfileOrders(orderDispatch);
+        toast("No previous orders!");
       }
     };
     fetchOrderHistory();
-  }, [orderDispatch, guestEmail]);
+  }, [guestEmail]);
 
   // Sort orders whenever the `sortType` or `orders` change
   useEffect(() => {
@@ -116,10 +145,10 @@ const OrderHistory: React.FC = () => {
           <div className="space-y-6 mt-8">
             {sortedOrders ? (
               sortedOrders.length > 0 ? (
-                sortedOrders.map((order: any) => (
+                sortedOrders.map((order: any, index: number) => (
                   <div
-                    key={order.id}
-                    className="bg-white shadow-md hover:shadow-lg rounded-lg py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition duration-300"
+                    key={index}
+                    className="bg-white shadow-md hover:shadow-lg rounded-lg py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300"
                   >
                     {/* Left Section: Order Details */}
                     <div className="w-full sm:w-2/3">
@@ -142,24 +171,25 @@ const OrderHistory: React.FC = () => {
                             key={index}
                             className="bg-gray-100 text-gray-600 px-3 py-2 text-sm"
                           >
-                            {item.name}
+                            Name: {item.name} | Qty: X {item.qty} | Color:{" "}
+                            {item?.color}
                           </span>
                         ))}
                       </div>
                     </div>
 
                     {/* Right Section: Order Summary */}
-                    <div className="w-full sm:w-1/3 flex flex-col items-start sm:items-end gap-6">
+                    <div className="w-full md:w-1/3 flex flex-col items-start md:items-end gap-6">
                       <div className="flex">
                         <p className="t text-gray-500">Total:</p>
                         <p className="px-1 font-semibold text-green-600">
                           {formatAmount(order.totalPrice)}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-start sm:items-center gap-2">
                         <p className="text-gray-500">Status:</p>
                         <p
-                          className={`font-semibold px-2 py-2 rounded mt-1 ${
+                          className={`font-semibold px-2 py-1 rounded mt-1 ${
                             order.isDelivered === "Delivered"
                               ? "bg-green-100 text-green-700"
                               : "bg-yellow-100 text-yellow-700"
@@ -168,6 +198,11 @@ const OrderHistory: React.FC = () => {
                           {order.isDelivered}
                         </p>
                       </div>
+                      <Link to={`/order_details/${order._id}`}>
+                        <Button className="bg-brand-neutral text-white rounded-md md:py-3 md:px-5 max-md:w-full text-base poppins">
+                          More details
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 ))

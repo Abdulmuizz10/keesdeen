@@ -25,7 +25,7 @@ const CurrencySwitcher = ({ color }: { color: string }) => {
   };
 
   return (
-    <div className="currency-switcher flex items-center space-x-2">
+    <div className="currency-switcher flex items-center space-x-2 poppins">
       <label
         htmlFor="currency"
         className={`text-sm ${color === "black" ? "flex" : "hidden"}`}
@@ -34,7 +34,7 @@ const CurrencySwitcher = ({ color }: { color: string }) => {
       </label>
       <select
         id="currency"
-        className={`p-2 rounded-md outline-none poppins ${
+        className={`p-2 rounded-md outline-none cursor-pointer ${
           color === "black"
             ? "bg-brand-neutral text-text-light border border-gray-300"
             : "bg-white"
@@ -42,7 +42,7 @@ const CurrencySwitcher = ({ color }: { color: string }) => {
         onChange={handleCurrencyChange}
       >
         {currencies.map((currency) => (
-          <option key={currency} value={currency} className="poppins">
+          <option key={currency} value={currency}>
             {currency}
           </option>
         ))}

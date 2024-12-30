@@ -26,6 +26,7 @@ import WishLists from "./pages/root pages/WishLists";
 import NewArrivals from "./pages/root pages/NewArrivals";
 import Profile from "./pages/root pages/Profile";
 import OrderHistory from "./pages/root pages/OrderHistory";
+import OrderDetails from "./pages/root pages/OrderDetails";
 
 // Auth Pages
 import { Login7 } from "./pages/auth pages/Login";
@@ -56,25 +57,14 @@ import { AuthContext } from "./context/AuthContext/AuthContext";
 import FitnessAccessories from "./pages/root pages/FitnessAccessories";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
-import Axios from "axios";
-import { URL } from "./lib/constants";
 
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
   const { user } = useContext(AuthContext);
-  const [products, setProducts] = useState([]);
   const [animation, setAnimation] = useState<Boolean>(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await Axios.get(`${URL}/products`, {
-        validateStatus: (status) => status < 600,
-      });
-      setProducts(res.data);
-      setProducts(res.data);
-    };
-    fetchData();
     setTimeout(() => {
       setAnimation(false);
       window.scrollTo(0, 0);
@@ -103,13 +93,11 @@ const App: React.FC = () => {
             <Route path="/collections/:name" element={<Collections />} />
             <Route path="/product_details/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
-            <Route
-              path="/wishlists"
-              element={<WishLists products={products} />}
-            />
+            <Route path="/wishlists" element={<WishLists />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/check_out" element={<Checkout />} />
             <Route path="/order_history" element={<OrderHistory />} />
+            <Route path="/order_details/:id" element={<OrderDetails />} />
           </Route>
 
           {/* Admin Routes (Only accessible to admins) */}
