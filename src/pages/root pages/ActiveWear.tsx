@@ -141,9 +141,9 @@ const ActiveWear: React.FC = () => {
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
             Active Wear
           </h2>
-          <p className="md:text-md">
+          {/* <p className="md:text-md">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p>
+          </p> */}
         </div>
         <div
           className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
@@ -393,7 +393,10 @@ const ProductItem: React.FC<ProductProps> = ({
         <div className="p-4 text-center">
           <div className="flex flex-col gap-2 items-center">
             <div className="h-6 w-full rounded bg-gray-200 animate-pulse" />
-            <div className="h-6 w-3/5 rounded bg-gray-200 animate-pulse" />
+            <div className="flex gap-2 items-center justify-center">
+              <div className="h-6 w-16 rounded bg-gray-200 animate-pulse" />
+              <div className="h-6 w-16 rounded bg-gray-200 animate-pulse" />
+            </div>
           </div>
           <div className="mt-2">
             <div className="flex flex-wrap gap-1 items-center justify-center">
@@ -428,7 +431,7 @@ const ProductItem: React.FC<ProductProps> = ({
       onMouseLeave={() => setImage(false)}
     >
       <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        {wishLists.find((wish: any) => wish._id === product._id)  ? (
+        {wishLists.find((wish: any) => wish._id === product._id) ? (
           <RiHeartFill
             onClick={() => manageWishLists(product)}
             className="text-xl text-text-primary"
@@ -453,8 +456,12 @@ const ProductItem: React.FC<ProductProps> = ({
         <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
           {product.name}
         </h3>
-        <p className="text-gray-500">{formatAmount(product.price)}</p>
-
+        <div className="flex gap-2 items-center justify-center">
+          <s className="text-gray-500">
+            {formatAmount(product?.previousPrice)}
+          </s>
+          <p className="text-gray-500">{formatAmount(product.price)}</p>
+        </div>
         <div className="mt-2">
           <div className="flex flex-wrap gap-1 items-center justify-center">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(

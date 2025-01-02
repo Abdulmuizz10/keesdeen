@@ -105,8 +105,8 @@ const ProductDetails = () => {
                     ); // Empty star
                   }
                 })}
-                <p className="pl-1 font-semibold text-xl">
-                  {result?.averageRating}
+                <p className="pl-1 text-md font-medium">
+                  ({result?.averageRating}) • {result?.totalReviews} reviews
                 </p>
               </div>
               <p className="mt-5 text-3xl font-medium">

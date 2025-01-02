@@ -20,13 +20,10 @@ const AdminDeliveredOrders: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
         `${URL}/orders/page/delivered-orders?page=${page}`,
         {
-          headers: {
-            token: "Bearer " + userToken,
-          },
+          withCredentials: true,
         }
       );
       setOrders(response.data.orders);

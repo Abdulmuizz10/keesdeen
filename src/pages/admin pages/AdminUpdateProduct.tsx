@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useProducts } from "../../context/ProductContext/ProductContext";
 import { updateProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -64,14 +63,13 @@ const AdminUpdateProduct: React.FC = () => {
   const [productType, setProductType] = useState<string>("");
   const [productSex, setProductSex] = useState<string>("");
   const [productColors, setProductColors] = useState<string[]>([]);
+  const [productPreviousPrice, setProductPreviousPrice] = useState<string>("");
   const [productPrice, setProductPrice] = useState<string>("");
   const [productSizes, setProductSizes] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<string[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [bestSeller, setBestSeller] = useState<boolean>(false);
   const [newArrival, setNewArrival] = useState<boolean>(false);
-
-  const { dispatch } = useProducts();
   const navigate = useNavigate();
 
   const handleColorToggle = (color: string) => {
@@ -145,6 +143,7 @@ const AdminUpdateProduct: React.FC = () => {
     if (productType) formData.type = productType;
     if (productSex) formData.gender = productSex;
     if (productColors.length > 0) formData.colors = productColors;
+    if (productPreviousPrice) formData.previousPrice = productPreviousPrice;
     if (productPrice) formData.price = productPrice;
     if (productSizes.length > 0) formData.sizes = productSizes;
     if (productImages.length > 0) formData.imageUrls = productImages;
@@ -152,7 +151,7 @@ const AdminUpdateProduct: React.FC = () => {
     if (newArrival) formData.newArrival = newArrival;
 
     // Dispatch the update request
-    await updateProduct(formData, dispatch);
+    await updateProduct(formData);
 
     // Navigate back to the products list
     navigate("/admin/products");
@@ -166,6 +165,7 @@ const AdminUpdateProduct: React.FC = () => {
     setProductType("");
     setProductSex("");
     setProductColors([]);
+    setProductPreviousPrice("");
     setProductPrice("");
     setProductSizes([]);
     setProductImages([]);
@@ -225,28 +225,32 @@ const AdminUpdateProduct: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* Product Information */}
-        <div className="space-y-4 poppins">
-          <div className="flex gap-5">
-            <input
-              type="text"
-              placeholder="Product Name"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
-            />
-
-            <input
-              type="text"
-              placeholder="Product Brand"
-              value={productBrand}
-              onChange={(e) => setProductBrand(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
-            />
+        <div className="space-y-4">
+          <div className="flex gap-5 items-center flex-col sm:flex-row">
+            <div className="w-full space-y-2">
+              <label>Product name:</label>
+              <input
+                type="text"
+                placeholder="Product Name"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+              />
+            </div>
+            <div className="w-full space-y-2">
+              <label>Product brand:</label>
+              <input
+                type="text"
+                placeholder="Product Brand"
+                value={productBrand}
+                onChange={(e) => setProductBrand(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+              />
+            </div>
           </div>
 
-          <div>
+          <div className="space-y-2">
+            <label>Product description:</label>
             <textarea
               placeholder="Product Description"
               value={productDescription}
@@ -257,11 +261,12 @@ const AdminUpdateProduct: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div>
+            <div className="space-y-2">
+              <label>Product category:</label>
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300  transition-all  bg-white rounded-lg"
+                className="w-full p-3 border border-gray-300  transition-all bg-white rounded-lg"
               >
                 <option value=" ">Select Category</option>
                 <option value="Active Wear">Active Wear</option>
@@ -270,7 +275,8 @@ const AdminUpdateProduct: React.FC = () => {
             </div>
 
             {productCategory === "Active Wear" ? (
-              <div>
+              <div className="space-y-2">
+                <label>Product sub-category:</label>
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
@@ -294,11 +300,12 @@ const AdminUpdateProduct: React.FC = () => {
                 </select>
               </div>
             ) : (
-              <div>
+              <div className="space-y-2">
+                <label>Product category:</label>
                 <select
                   value={productSubCategory}
                   onChange={(e) => setProductSubCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
+                  className="w-full p-3 border border-gray-300 transition-all  bg-white rounded-lg"
                 >
                   <option value="">Select Sub-Category</option>
                   <option value="Gym Essentials Kit">Gym Essentials Kit</option>
@@ -310,7 +317,8 @@ const AdminUpdateProduct: React.FC = () => {
               </div>
             )}
 
-            <div>
+            <div className="space-y-2">
+              <label>Product type:</label>
               <select
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
@@ -323,7 +331,8 @@ const AdminUpdateProduct: React.FC = () => {
               </select>
             </div>
 
-            <div>
+            <div className="space-y-2">
+              <label>Product sex:</label>
               <select
                 value={productSex}
                 onChange={(e) => setProductSex(e.target.value)}
@@ -336,7 +345,19 @@ const AdminUpdateProduct: React.FC = () => {
               </select>
             </div>
 
-            <div>
+            <div className="space-y-2">
+              <label>Product previous price:</label>
+              <input
+                type="number"
+                placeholder="Product Previous Price Optional"
+                value={productPreviousPrice}
+                onChange={(e) => setProductPreviousPrice(e.target.value)}
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label>Product price:</label>
               <input
                 type="number"
                 placeholder="Product Price"
@@ -347,10 +368,9 @@ const AdminUpdateProduct: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* Colors */}
         <div>
-          <label className="text-sm font-medium">Colors:</label>
+          <label className="font-medium">Colors:</label>
           <div className="mt-2 grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-5">
             {popularColors.map((item, index) => (
               <div className="flex flex-col justify-center items-center">

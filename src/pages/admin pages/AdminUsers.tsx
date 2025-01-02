@@ -19,11 +19,8 @@ const AdminUsers: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(`${URL}/users/page/users?page=${page}`, {
-        headers: {
-          token: "Bearer " + userToken,
-        },
+        withCredentials: true,
       });
       setUsers(response.data.users);
       setTotalPages(response.data.totalPages);
@@ -58,17 +55,18 @@ const AdminUsers: React.FC = () => {
 
   return (
     <div className="w-full" ref={scrollRef}>
-      <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+      <div className="w-full bg-white p-6 rounded-lg shadow-lg">
         <h3 className="text-xl font-semibold mb-4">Customer List</h3>
         <div className="overflow-x-auto">
           <table className="w-full bg-white poppins">
             <thead className="text-sm">
               <tr className="bg-gray-100 font-extrabold">
+                <th className="text-left p-4 font-semibold">SN</th>
                 <th className="text-left p-4 font-semibold">User ID</th>
                 <th className="text-left p-4 font-semibold">Username</th>
                 <th className="text-left p-4 font-semibold">Email address</th>
                 <th className="text-left p-4 font-semibold">Admin</th>
-                <th className="text-left p-4 font-semibold">Date added</th>
+                <th className="text-left p-4 font-semibold">Date signed up</th>
                 <th className="text-left p-4 font-semibold">Delete</th>
               </tr>
             </thead>
@@ -76,6 +74,7 @@ const AdminUsers: React.FC = () => {
               {loading
                 ? Array.from({ length: 20 }).map((_, index) => (
                     <tr key={index} className="border-b">
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
@@ -89,6 +88,7 @@ const AdminUsers: React.FC = () => {
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
+                      <td className="p-4">{index + 1}</td>
                       <td className="p-4">
                         {user._id.split("").slice(0, 15)}...
                       </td>

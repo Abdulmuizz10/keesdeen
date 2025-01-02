@@ -6,8 +6,6 @@ import React, {
   useEffect,
 } from "react";
 import { toast } from "react-toastify";
-import { getProducts } from "./ProductContext/ProductApiCalls";
-import { useProducts } from "./ProductContext/ProductContext";
 
 // Define the context type
 interface ShopContextType {
@@ -41,7 +39,6 @@ const ShopContext = createContext<ShopContextType | undefined>(undefined);
 export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { dispatch } = useProducts();
   const [isActive, setIsActive] = useState(false);
   const [paymentLoader, setPaymentLoader] = useState(false);
 
@@ -61,10 +58,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   });
 
   const delivery_fee = 100;
-
-  useEffect(() => {
-    getProducts(dispatch);
-  }, [dispatch]);
 
   useEffect(() => {
     localStorage.setItem("guestEmail", JSON.stringify(guestEmail));

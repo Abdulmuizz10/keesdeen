@@ -14,11 +14,8 @@ const AdminOrderDetails: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(`${URL}/orders/${id}`, {
-        headers: {
-          token: "Bearer " + userToken,
-        },
+        withCredentials: true, // Include cookies in the request
       });
       const fetchedOrder = response.data;
 
@@ -53,14 +50,11 @@ const AdminOrderDetails: React.FC = () => {
   const handleStatusChange = async (orderId: any, status: string) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.patch(
         `${URL}/orders/${orderId}/deliver`,
         { status },
         {
-          headers: {
-            token: "Bearer " + userToken,
-          },
+          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );
@@ -120,16 +114,16 @@ const AdminOrderDetails: React.FC = () => {
   return (
     <section className="bg-white rounded-lg">
       {/* Order Overview */}
-      <div className="p-6 border-b">
+      <div className="p-6 border-b text-md">
         <h1 className="text-3xl font-semibold text-gray-800">
           Order Details - {_id}
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-gray-600">
           <span className="font-medium">Placed on:</span>{" "}
           {new Date(createdAt).toLocaleString()}
         </p>
         <p
-          className={`mt-2 text-base ${
+          className={`mt-2 ${
             isDelivered === "Delivered" ? "text-green-600" : "text-red-600"
           }`}
         >
@@ -148,31 +142,31 @@ const AdminOrderDetails: React.FC = () => {
       </div>
 
       {/* Customer Information */}
-      <div className="p-6 border-b">
+      <div className="p-6 border-b text-md">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Customer Information
         </h2>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Name:</span> {firstName} {lastName}
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Email:</span> {email}
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Phone:</span> +{phoneNumber.slice(0, 3)}{" "}
           {phoneNumber.slice(3)}
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Address:</span> {addressLineOne},{" "}
           {addressLineTwo || ""}, {cityAndRegion}, {zipCode}, {country}
         </p>
         {guestOrder && (
           <>
-            <p className="text-lg text-gray-800">
+            <p className="text-gray-800">
               <span className="font-medium">Guest order:</span>{" "}
               {guestOrder && "Yes"}
             </p>
-            <p className="text-lg text-gray-800">
+            <p className="text-gray-800">
               <span className="font-medium">Guest Email:</span> {guestEmail}
             </p>
           </>
@@ -184,7 +178,7 @@ const AdminOrderDetails: React.FC = () => {
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Ordered Items
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-5 text-md">
           {orderedItems.map((item: any, index: number) => (
             <div key={index} className="flex items-center space-x-4">
               <img
@@ -193,10 +187,10 @@ const AdminOrderDetails: React.FC = () => {
                 className="w-28 h-28 rounded-md border"
               />
               <div>
-                <p className="text-xl font-medium text-gray-800">{item.name}</p>
-                <p className="text-lg text-gray-800">
+                <p className="font-medium text-gray-800">{item.name}</p>
+                <p className="text-gray-800">
                   Quantity: {item.qty} | Price: {currency} {item.price} | Color:{" "}
-                  {item.color}
+                  {item?.color}
                 </p>
               </div>
             </div>
@@ -205,23 +199,23 @@ const AdminOrderDetails: React.FC = () => {
       </div>
 
       {/* Payment Information */}
-      <div className="p-6">
+      <div className="p-6 text-md">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           Payment Information
         </h2>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Total Price:</span>{" "}
           {formatAmountDefault(currency, totalPrice)}
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Shipping:</span>{" "}
           {formatAmountDefault(currency, shippingPrice)}
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Paid At:</span>{" "}
           {new Date(paidAt).toLocaleString()}
         </p>
-        <p className="text-lg text-gray-800">
+        <p className="text-gray-800">
           <span className="font-medium">Delivered At:</span>{" "}
           {deliveredAt
             ? new Date(deliveredAt).toLocaleString()

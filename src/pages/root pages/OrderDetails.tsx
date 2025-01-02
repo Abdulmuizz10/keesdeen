@@ -21,13 +21,10 @@ const OrderDetails: React.FC = () => {
         : `${URL}/orders/profile/order/${id}`;
       const headers = !guest
         ? {
-            headers: {
-              token: `Bearer ${
-                JSON.parse(localStorage.getItem("user") || "{}").token
-              }`,
-            },
+            withCredentials: true,
           }
         : {};
+
       const response = await Axios.get(endpoint, headers);
       const fetchedOrder = response.data;
 
@@ -50,7 +47,7 @@ const OrderDetails: React.FC = () => {
 
       setOrder(fetchedOrder);
     } catch (error) {
-      toast.error("Error fetching order details.");
+      toast.error("Error fetching order details!");
     } finally {
       setLoading(false);
     }
@@ -101,19 +98,19 @@ const OrderDetails: React.FC = () => {
     <section className="px-[5%] py-24 md:py-30">
       <div className="container mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 text-md">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
             Order Details
           </h2>
-          <p className="mt-2 text-md text-gray-500">Order ID: {_id}</p>
+          <p className="mt-2 text-gray-500">Order ID: {_id}</p>
           <p
-            className={`mt-2 text-md font-medium ${
+            className={`mt-2 font-medium ${
               isDelivered === "Delivered" ? "text-green-600" : "text-red-600"
             }`}
           >
             Status: {isDelivered}
           </p>
-          <p className="mt-1 text-md text-gray-500">
+          <p className="mt-1 text-gray-500">
             Placed on: {new Date(createdAt).toLocaleString()}
           </p>
         </div>
@@ -123,18 +120,18 @@ const OrderDetails: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-800">
             Customer Information
           </h2>
-          <div className="mt-4 space-y-2">
-            <p className="text-md text-gray-600">
+          <div className="mt-4 space-y-2 text-md">
+            <p className=" text-gray-600">
               <span className="font-medium">Name:</span> {firstName} {lastName}
             </p>
-            <p className="text-md text-gray-600">
+            <p className=" text-gray-600">
               <span className="font-medium">Email:</span> {email}
             </p>
-            <p className="text-md text-gray-600">
+            <p className=" text-gray-600">
               <span className="font-medium">Phone:</span> +
               {phoneNumber.slice(0, 3)} {phoneNumber.slice(3)}
             </p>
-            <p className="text-md text-gray-600">
+            <p className=" text-gray-600">
               <span className="font-medium">Address:</span> {addressLineOne},{" "}
               {addressLineTwo || ""}, {cityAndRegion}, {zipCode}, {country}
             </p>
@@ -146,17 +143,15 @@ const OrderDetails: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-800">Ordered Items</h2>
           <div className="mt-4 space-y-4">
             {orderedItems.map((item: any, index: number) => (
-              <div key={index} className="flex items-center space-x-4">
+              <div key={index} className="flex items-center space-x-4 text-md">
                 <img
                   src={item.image}
                   alt={item.name}
                   className="w-16 h-16 object-cover rounded border"
                 />
                 <div>
-                  <p className="text-md font-medium text-gray-800">
-                    {item.name}
-                  </p>
-                  <p className="text-md text-gray-600">
+                  <p className="font-medium text-gray-800">{item.name}</p>
+                  <p className="text-gray-600">
                     Quantity: {item.qty} | Price: {currency} {item.price} |{" "}
                     Color: {item?.color}
                   </p>
@@ -171,20 +166,20 @@ const OrderDetails: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-800">
             Payment Information
           </h2>
-          <div className="mt-4 space-y-2">
-            <p className="text-md text-gray-600">
+          <div className="mt-4 space-y-2 text-md">
+            <p className="text-gray-600">
               <span className="font-medium">Total Price:</span>{" "}
               {formatAmountDefault(currency, totalPrice)}
             </p>
-            <p className="text-md text-gray-600">
+            <p className="text-gray-600">
               <span className="font-medium">Shipping:</span>{" "}
               {formatAmountDefault(currency, shippingPrice)}
             </p>
-            <p className="text-md text-gray-600">
+            <p className="text-gray-600">
               <span className="font-medium">Paid At:</span>{" "}
               {new Date(paidAt).toLocaleString()}
             </p>
-            <p className="text-md text-gray-600">
+            <p className="text-gray-600">
               <span className="font-medium">Delivered At:</span>{" "}
               {deliveredAt
                 ? new Date(deliveredAt).toLocaleString()

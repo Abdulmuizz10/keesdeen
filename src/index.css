@@ -57,6 +57,7 @@ option {
   font-style: normal;
 }
 p,
+s,
 label,
 span {
   font-family: "poppins", sans-serif;

@@ -129,15 +129,12 @@ const Navigation = () => {
     event.preventDefault();
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(`${URL}/orders/${searchQuery}`, {
-        headers: {
-          token: "Bearer " + userToken,
-        },
+        withCredentials: true, // Include cookies in the request
       });
       setOrder(response.data);
     } catch (error) {
-      toast.error("Error fetching order:");
+      toast.error("Error fetching order");
     } finally {
       setLoading(false);
     }
@@ -251,6 +248,38 @@ const Navigation = () => {
                 >
                   <BiLayer className="size-6 shrink-0" />
                   <p className="bricolage-grotesque">Add to new arrival</p>
+                </Link>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger
+                className="p-2 font-normal"
+                icon={<RxChevronDown />}
+              >
+                <span className="flex items-center gap-3">
+                  <BiLayer className="size-6 shrink-0" />
+                  <p className="bricolage-grotesque">Subscribers</p>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/subscribers"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p className="bricolage-grotesque">All subscribers</p>
+                </Link>
+              </AccordionContent>
+              <AccordionContent className="flex items-center gap-x-2 p-2 pl-[1rem] text-center">
+                <Link
+                  to="/admin/email-to-subscribers"
+                  className="flex w-full items-center gap-3"
+                >
+                  <BiLayer className="size-6 shrink-0" />
+                  <p className="bricolage-grotesque">Send email to all</p>
                 </Link>
               </AccordionContent>
             </AccordionItem>

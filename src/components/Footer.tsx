@@ -75,7 +75,7 @@ export const Footer1 = (props: Footer1Props) => {
         }
       );
       if (res.status === 200) {
-        toast.success(res.data.message);
+        toast(res.data.message);
         setEmail("");
       } else {
         toast.error(
@@ -107,6 +107,7 @@ export const Footer1 = (props: Footer1Props) => {
               >
                 <Input
                   placeholder={inputPlaceholder}
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

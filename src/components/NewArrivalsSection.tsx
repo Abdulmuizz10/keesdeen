@@ -130,9 +130,19 @@ export const Gallery21 = ({
                         <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
                           {product.name}
                         </h3>
-                        <p className="text-gray-500">
+
+                        <div className="flex gap-2 items-center justify-start">
+                          <s className="text-gray-500">
+                            {formatAmount(product?.previousPrice)}
+                          </s>
+                          <p className="text-gray-500">
+                            {formatAmount(product.price)}
+                          </p>
+                        </div>
+
+                        {/* <p className="text-gray-500">
                           {formatAmount(product.price)}
-                        </p>
+                        </p> */}
                       </div>
                     </Link>
                   </CarouselItem>

@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { FaRegPenToSquare } from "react-icons/fa6";
-import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
-import { useProducts } from "../../context/ProductContext/ProductContext";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 // import { formatAmount } from "../../lib/utils";
 import { useShop } from "../../context/ShopContext";
+import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
 
 const AdminProducts: React.FC = () => {
   const { formatAmount } = useShop();
@@ -16,7 +15,6 @@ const AdminProducts: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const { dispatch } = useProducts();
   const scrollRef = useRef<any>(null);
 
   useEffect(() => {
@@ -27,13 +25,10 @@ const AdminProducts: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
         `${URL}/products/page/products?page=${page}`,
         {
-          headers: {
-            token: "Bearer " + userToken,
-          },
+          withCredentials: true,
         }
       );
       setProducts(response.data.products);
@@ -49,15 +44,9 @@ const AdminProducts: React.FC = () => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this product?"
     );
-
     if (confirmDelete) {
-      try {
-        await deleteProduct(productId, dispatch); // Deleting product
-        // Re-fetch products after deletion to ensure consistency
-        fetchData(currentPage);
-      } catch (error) {
-        toast.error("Error deleting product");
-      }
+      await deleteProduct(productId);
+      fetchData(currentPage);
     }
   };
 

@@ -20,13 +20,10 @@ const AdminNewArrivals: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
         `${URL}/products/page/products?page=${page}`,
         {
-          headers: {
-            token: "Bearer " + userToken,
-          },
+          withCredentials: true, // Include cookies in the request
         }
       );
       setProducts(response.data.products);
@@ -46,14 +43,11 @@ const AdminNewArrivals: React.FC = () => {
   const handleStatusChange = async (productId: any, status: string) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.patch(
         `${URL}/products/update/${productId}/new-arrival`,
         { status },
         {
-          headers: {
-            token: "Bearer " + userToken,
-          },
+          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

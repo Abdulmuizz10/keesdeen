@@ -39,17 +39,13 @@ const Dashboard: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(
         `${URL}/orders/page/orders?page=${page}`,
         {
-          headers: {
-            token: "Bearer " + userToken,
-          },
+          withCredentials: true, // Include cookies in the request
         }
       );
       setTransactions(response.data.orders);
-      console.log(response.data.orders[0]);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
@@ -60,11 +56,8 @@ const Dashboard: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const userToken = JSON.parse(localStorage.getItem("user") || "{}").token;
       const response = await Axios.get(`${URL}/users`, {
-        headers: {
-          token: "Bearer " + userToken,
-        },
+        withCredentials: true, // Include cookies in the request
       });
       setUsers(response.data);
     } catch (error) {
@@ -202,7 +195,7 @@ const Dashboard: React.FC = () => {
                         key={index}
                         className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                       >
-                        <td className="py-4 px-2 flex gap-2 items-center">
+                        <td className="py-4 px-2 flex items-center gap-2 ">
                           {transaction._id.split("").slice(0, 6)}....
                           <FaRegCopy
                             className="text-xl cursor-pointer"

@@ -34,7 +34,7 @@ const CurrencySwitcher = ({ color }: { color: string }) => {
       </label>
       <select
         id="currency"
-        className={`p-2 rounded-md outline-none cursor-pointer ${
+        className={`p-1 px-2 rounded-md outline-none cursor-pointer ${
           color === "black"
             ? "bg-brand-neutral text-text-light border border-gray-300"
             : "bg-white"

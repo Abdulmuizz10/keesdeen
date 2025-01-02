@@ -18,6 +18,7 @@ import {
 import { URL } from "../../lib/constants";
 import { useShop } from "../../context/ShopContext";
 import { toast } from "react-toastify";
+import Spinner from "../../components/Spinner";
 
 type ImageProps = {
   url?: string;
@@ -61,35 +62,37 @@ export const Signup7: React.FC = (props: Signup7Props) => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
     SignUp(
       { firstName, lastName, email, password },
       dispatch,
       navigate,
       guestEmail,
-      setGuestEmail
+      setGuestEmail,
+      setLoading
     );
   };
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
-        // Send the access token (googleToken) to get user info and authenticate
+        setLoading(true);
         const res = await Axios.post(
           `${URL}/auth/google-sign-in`,
           {
             googleToken: tokenResponse.access_token,
           },
-          {
-            validateStatus: (status) => status < 600,
-          }
+          { withCredentials: true, validateStatus: (status) => status < 600 }
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
+          setLoading(false);
           if (res.data) {
             const user = res.data.id;
             const email = res.data.email;
@@ -107,20 +110,28 @@ export const Signup7: React.FC = (props: Signup7Props) => {
           }
         } else {
           dispatch(AccessFailure());
-          toast.error(res.data.message || "Something went wrong");
+          setLoading(false);
+          toast.error(res.data.message || "Something went wrong!");
         }
       } catch (error) {
         dispatch(AccessFailure());
+        setLoading(false);
         toast.error("An unexpected error occurred. Please try again.");
       }
     },
-    onError: (error) => {
-      toast.error(`Google login error: ${error}`);
+    onError: () => {
+      setLoading(false);
+      toast.error("Google login error!");
     },
   });
 
   return (
-    <section className="bg-background-light">
+    <section className="bg-background-light relative">
+      {loading && (
+        <div className="fixed top-0 left-0 right-0 bottom-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
+          <Spinner />
+        </div>
+      )}
       <div className="relative grid min-h-screen grid-cols-1 items-stretch justify-center overflow-auto lg:grid-cols-2 overflow-x-hidden">
         <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
           <Link to={logo.url}>

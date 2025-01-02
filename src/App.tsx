@@ -43,13 +43,13 @@ import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
 import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
 import AdminOrderDetails from "./pages/admin pages/AdminOrderDetails";
 import AdminAddProduct from "./pages/admin pages/AdminAddProduct";
+import AdminUsers from "./pages/admin pages/AdminUsers";
 import AdminBestSellers from "./pages/admin pages/AdminBestSellers";
 import AdminNewArrivals from "./pages/admin pages/AdminNewArrivals";
 import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
-import AdminDashBoardSales from "./pages/admin pages/AdminDashBoardSales";
-import AdminDashBoardOrders from "./pages/admin pages/AdminDashBoardOrders";
 import AdminProducts from "./pages/admin pages/AdminProducts";
-import AdminUsers from "./pages/admin pages/AdminUsers";
+import AdminSubscribers from "./pages/admin pages/AdminSubscribers";
+import AdminSendEmailToSubscribers from "./pages/admin pages/AdminSendEmailToSubscribers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
 
 // Context
@@ -100,6 +100,18 @@ const App: React.FC = () => {
             <Route path="/order_details/:id" element={<OrderDetails />} />
           </Route>
 
+          {/* Auth Routes */}
+          <Route element={<AuthLayout animation={animation} />}>
+            <Route path="/auth/login" element={<Login7 />} />
+            <Route path="/auth/signUp" element={<Signup7 />} />
+            <Route path="/auth/guest-signUp" element={<GuestSignUp />} />
+            <Route path="/auth/forget_password" element={<ForgetPassword />} />
+            <Route
+              path="/auth/reset_password/:token"
+              element={<ResetPassword />}
+            />
+          </Route>
+
           {/* Admin Routes (Only accessible to admins) */}
           {user?.isAdmin ? (
             <Route element={<AdminLayout animation={animation} />}>
@@ -132,32 +144,17 @@ const App: React.FC = () => {
                 path="/admin/new_arrivals"
                 element={<AdminNewArrivals />}
               />
+              <Route path="/admin/subscribers" element={<AdminSubscribers />} />
+              <Route
+                path="/admin/email-to-subscribers"
+                element={<AdminSendEmailToSubscribers />}
+              />
               <Route
                 path="/admin/update_product/:id"
                 element={<AdminUpdateProduct />}
               />
-              <Route
-                path="/admin/dashboard/sales"
-                element={<AdminDashBoardSales />}
-              />
-              <Route
-                path="/admin/dashboard/orders"
-                element={<AdminDashBoardOrders />}
-              />
             </Route>
           ) : null}
-
-          {/* Auth Routes */}
-          <Route element={<AuthLayout animation={animation} />}>
-            <Route path="/auth/login" element={<Login7 />} />
-            <Route path="/auth/signUp" element={<Signup7 />} />
-            <Route path="/auth/guest-signUp" element={<GuestSignUp />} />
-            <Route path="/auth/forget_password" element={<ForgetPassword />} />
-            <Route
-              path="/auth/reset_password/:token"
-              element={<ResetPassword />}
-            />
-          </Route>
         </Routes>
       </Router>
     </div>

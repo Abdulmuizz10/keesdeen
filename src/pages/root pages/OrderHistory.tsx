@@ -23,6 +23,7 @@ const OrderHistory: React.FC = () => {
   const [sortType, setSortType] = useState<string>("newest");
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchOrderHistory = async () => {
       if (guestEmail) {
         try {
@@ -42,13 +43,8 @@ const OrderHistory: React.FC = () => {
         }
       } else if (user) {
         try {
-          const userToken = JSON.parse(
-            localStorage.getItem("user") || "{}"
-          ).token;
           const response = await Axios.get(`${URL}/orders/profile/orders`, {
-            headers: {
-              token: "Bearer " + userToken,
-            },
+            withCredentials: true,
           });
           setOrders(response.data);
         } catch (error) {

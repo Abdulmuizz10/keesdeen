@@ -44,8 +44,12 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
         <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
           {product.name}
         </h3>
-        <p className="text-gray-500">{formatAmount(product.price)}</p>
-
+        <div className="flex gap-2 items-center justify-center">
+          <s className="text-gray-500">
+            {formatAmount(product?.previousPrice)}
+          </s>
+          <p className="text-gray-500">{formatAmount(product.price)}</p>
+        </div>
         <div className="mt-2">
           <div className="flex flex-wrap gap-1 items-center justify-center">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
