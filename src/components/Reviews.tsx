@@ -10,7 +10,6 @@ import {
 } from "@relume_io/relume-ui";
 import { Review } from "../lib/types";
 import { createReview } from "../context/ProductContext/ProductApiCalls";
-import { useProducts } from "../context/ProductContext/ProductContext";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import Axios from "axios";
 import { URL } from "../lib/constants";
@@ -25,7 +24,6 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
   const [change, setChange] = useState<boolean>(true);
   const [sortOption, setSortOption] = useState<string>("oldest");
   const [reviews, setReviews] = useState<Review[]>([]);
-  const { dispatch } = useProducts();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,8 +54,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
     setReviews([...reviews, { ...newReview, date: today }]);
     createReview(
       { ...newReview, date: today, user: user ? user.id : null },
-      id,
-      dispatch
+      id
     );
     setNewReview({
       name: "",

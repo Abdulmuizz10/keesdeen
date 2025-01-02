@@ -10,7 +10,6 @@ import { Country, State } from "country-state-city";
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { useOrders } from "../../context/OrderContext/OrderContext";
 import { createOrder } from "../../context/OrderContext/OrderApiCalls";
 import Spinner from "../../components/Spinner";
 
@@ -39,7 +38,6 @@ const CheckOut: React.FC = ({}) => {
     formatAmount,
     // currentCurrency,
   } = useShop();
-  const { orderDispatch } = useOrders();
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
   const {
@@ -106,7 +104,6 @@ const CheckOut: React.FC = ({}) => {
       try {
         createOrder(
           orderData,
-          orderDispatch,
           setPaymentLoader,
           setCartItems,
           setSelectedCountry,
