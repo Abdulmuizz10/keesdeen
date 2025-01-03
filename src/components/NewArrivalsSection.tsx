@@ -132,9 +132,11 @@ export const Gallery21 = ({
                         </h3>
 
                         <div className="flex gap-2 items-center justify-start">
-                          <s className="text-gray-500">
-                            {formatAmount(product?.previousPrice)}
-                          </s>
+                          {product.previousPrice && (
+                            <s className="text-gray-500">
+                              {formatAmount(product.previousPrice)}
+                            </s>
+                          )}
                           <p className="text-gray-500">
                             {formatAmount(product.price)}
                           </p>
