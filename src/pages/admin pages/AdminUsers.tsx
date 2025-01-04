@@ -39,11 +39,7 @@ const AdminUsers: React.FC = () => {
     if (confirmDelete) {
       try {
         await Axios.delete(`${URL}/users/${productId}`, {
-          headers: {
-            token:
-              "Bearer " +
-              JSON.parse(localStorage.getItem("user") || "{}").token,
-          },
+          withCredentials: true,
         });
         toast.success("User deleted successfully!");
         fetchData(currentPage);

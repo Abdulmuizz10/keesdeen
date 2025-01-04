@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
       const response = await Axios.get(
         `${URL}/orders/page/orders?page=${page}`,
         {
-          withCredentials: true, // Include cookies in the request
+          withCredentials: true,
         }
       );
       setTransactions(response.data.orders);
@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
   const fetchUsers = async () => {
     try {
       const response = await Axios.get(`${URL}/users`, {
-        withCredentials: true, // Include cookies in the request
+        withCredentials: true,
       });
       setUsers(response.data);
     } catch (error) {

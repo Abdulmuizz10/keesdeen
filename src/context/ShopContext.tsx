@@ -230,7 +230,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     setCurrentCurrency(currency);
   };
 
-  const fetchExchangeRates = async (baseCurrency: string = "USD") => {
+  const fetchExchangeRates = async (baseCurrency: string = "GBP") => {
     try {
       const response = await fetch(
         `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`

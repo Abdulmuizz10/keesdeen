@@ -104,23 +104,23 @@ export const LogOut = async (
   navigate: any,
   dispatch: Dispatch<any>
 ): Promise<void> => {
-  dispatch(AccessStart());
   try {
+    // Notify the backend (optional)
     const res = await axios.post(`${URL}/auth/logout`, {
       withCredentials: true,
       validateStatus: (status: any) => status < 600,
     });
+
     if (res.status === 200) {
       dispatch(Logout());
       setCartItems({});
       setWishLists([]);
-      navigate("/");
+      navigate("/auth/login");
       toast.success(res.data.message);
     } else {
       toast.error(res.data.message);
     }
   } catch (err) {
-    dispatch(AccessFailure());
     toast.error("An unexpected error occurred. Please try again.");
   }
 };

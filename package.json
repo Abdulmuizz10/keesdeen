@@ -21,6 +21,7 @@
     "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
     "framer-motion": "^10.12.17",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
