@@ -127,7 +127,7 @@ const AdminProductDetails = () => {
                   {product.sizes.map((size: any, index: number) => (
                     <span
                       key={index}
-                      className="w-14 h-14 flex items-center justify-center py-1 bg-gray-100 text-gray-800 text-sm border poppins"
+                      className="w-14 h-14 flex items-center justify-center py-1 bg-gray-100 text-text-primary text-sm border poppins"
                     >
                       {size}
                     </span>

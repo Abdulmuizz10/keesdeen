@@ -27,16 +27,16 @@ const WishLists: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
               {lists?.map((product: any, index: number) => (
                 <motion.div
-                  key={index} // Use unique product ID as the key
+                  key={index}
                   initial={{ opacity: 0, y: 50 }}
                   animate={{
                     opacity: isInView ? 1 : 0,
                     y: isInView ? 0 : 50,
                   }}
                   transition={{
-                    duration: 0.5,
+                    duration: 1,
                     ease: "easeOut",
-                    delay: index * 0.2,
+                    delay: index * 0.4,
                   }}
                 >
                   <ProductItem product={product} />

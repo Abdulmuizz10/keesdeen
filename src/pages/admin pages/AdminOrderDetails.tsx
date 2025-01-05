@@ -115,7 +115,7 @@ const AdminOrderDetails: React.FC = () => {
     <section className="bg-white rounded-lg">
       {/* Order Overview */}
       <div className="p-6 border-b text-md">
-        <h1 className="text-3xl font-semibold text-gray-800">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-4">
           Order Details - {_id}
         </h1>
         <p className="text-gray-600">
@@ -131,7 +131,7 @@ const AdminOrderDetails: React.FC = () => {
         </p>
         <select
           onChange={(e) => handleStatusChange(order._id, e.target.value)}
-          className="border border-gray-300  py-3 px-3 mt-3 focus:ring-none rounded-md poppins w-full sm:w-80 bg-white"
+          className="border border-gray-300 py-2 px-3 mt-3 focus:ring-none rounded-md poppins w-full sm:w-80 bg-white"
         >
           <option value="">Select status</option>
           <option value={"Pending"}>Pending</option>
@@ -142,9 +142,9 @@ const AdminOrderDetails: React.FC = () => {
       </div>
 
       {/* Customer Information */}
-      <div className="p-6 border-b text-md">
+      <div className="p-6 border-b text-md space-y-2">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Customer Information
+          Delivery information
         </h2>
         <p className="text-gray-800">
           <span className="font-medium">Name:</span> {firstName} {lastName}
@@ -176,7 +176,7 @@ const AdminOrderDetails: React.FC = () => {
       {/* Order Items */}
       <div className="p-6 border-b">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Ordered Items
+          Ordered products
         </h2>
         <div className="space-y-5 text-md">
           {orderedItems.map((item: any, index: number) => (
@@ -199,9 +199,9 @@ const AdminOrderDetails: React.FC = () => {
       </div>
 
       {/* Payment Information */}
-      <div className="p-6 text-md">
+      <div className="p-6 text-md space-y-2">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Payment Information
+          Payment information
         </h2>
         <p className="text-gray-800">
           <span className="font-medium">Total Price:</span>{" "}

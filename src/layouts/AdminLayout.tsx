@@ -27,6 +27,7 @@ import {
   // BiHelpCircle,
   BiHome,
   BiLayer,
+  BiPaperPlane,
   // BiPieChartAlt2,
   // BiSearch,
 } from "react-icons/bi";
@@ -63,6 +64,7 @@ import Axios from "axios";
 import { toast } from "react-toastify";
 import { URL } from "../lib/constants";
 import { useShop } from "../context/ShopContext";
+import { IoPeopleOutline } from "react-icons/io5";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -260,7 +262,7 @@ const Navigation = () => {
                 icon={<RxChevronDown />}
               >
                 <span className="flex items-center gap-3">
-                  <BiLayer className="size-6 shrink-0" />
+                  <FaRegUser className="size-6 shrink-0" />
                   <p className="bricolage-grotesque">Subscribers</p>
                 </span>
               </AccordionTrigger>
@@ -269,7 +271,7 @@ const Navigation = () => {
                   to="/admin/subscribers"
                   className="flex w-full items-center gap-3"
                 >
-                  <BiLayer className="size-6 shrink-0" />
+                  <IoPeopleOutline className="size-5 shrink-0" />
                   <p className="bricolage-grotesque">All subscribers</p>
                 </Link>
               </AccordionContent>
@@ -278,7 +280,7 @@ const Navigation = () => {
                   to="/admin/email-to-subscribers"
                   className="flex w-full items-center gap-3"
                 >
-                  <BiLayer className="size-6 shrink-0" />
+                  <BiPaperPlane className="size-5 shrink-0" />
                   <p className="bricolage-grotesque">Send email to all</p>
                 </Link>
               </AccordionContent>

@@ -65,13 +65,15 @@ const Cart: React.FC = () => {
                     {item.name}
                   </p>
                   <div className="flex items-center gap-2 sm:gap-3 mt-1 text-sm">
-                    <p>{formatAmount(item.price)}</p>
-                    <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] bg-gray-100 font-semibold flex items-center justify-center cursor-pointer text-text-primary">
+                    <p className="text-base md:text-lg">
+                      {formatAmount(item.price)}
+                    </p>
+                    <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
                       {item.size}
                     </p>
-                    {/* <p className="h-[30px] md:h-[40px] px-3 bg-gray-100 font-semibold flex items-center justify-center cursor-pointer text-text-primary">
+                    <p className="h-[30px] md:h-[40px] px-3 bg-gray-100 font-medium hidden sm:flex items-center justify-center cursor-pointer text-text-primary border">
                       {item.color}
-                    </p> */}
+                    </p>
                   </div>
                 </div>
               </div>

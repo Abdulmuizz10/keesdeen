@@ -118,7 +118,7 @@ const OrderDetails: React.FC = () => {
         {/* Customer Information */}
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-800">
-            Customer Information
+            Delivery information
           </h2>
           <div className="mt-4 space-y-2 text-md">
             <p className=" text-gray-600">
@@ -140,7 +140,9 @@ const OrderDetails: React.FC = () => {
 
         {/* Ordered Items */}
         <div className="p-6 bg-gray-50 rounded-md">
-          <h2 className="text-lg font-semibold text-gray-800">Ordered Items</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            Ordered products
+          </h2>
           <div className="mt-4 space-y-4">
             {orderedItems.map((item: any, index: number) => (
               <div key={index} className="flex items-center space-x-4 text-md">
@@ -164,7 +166,7 @@ const OrderDetails: React.FC = () => {
         {/* Payment Information */}
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-800">
-            Payment Information
+            Payment information
           </h2>
           <div className="mt-4 space-y-2 text-md">
             <p className="text-gray-600">

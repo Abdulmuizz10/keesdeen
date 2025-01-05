@@ -110,6 +110,7 @@ export const Footer1 = (props: Footer1Props) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
                 <Button {...button} className="items-center justify-center ">
                   {button.title}
