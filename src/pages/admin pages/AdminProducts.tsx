@@ -5,12 +5,10 @@ import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-// import { formatAmount } from "../../lib/utils";
-import { useShop } from "../../context/ShopContext";
 import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
+import { formatAmountDefault } from "../../lib/utils";
 
 const AdminProducts: React.FC = () => {
-  const { formatAmount } = useShop();
   const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -90,7 +88,9 @@ const AdminProducts: React.FC = () => {
                       </Link>
                       <td className="p-4">{product.category}</td>
                       <td className="p-4">{product.subcategory}</td>
-                      <td className="p-4">{formatAmount(product.price)}</td>
+                      <td className="p-4">
+                        {formatAmountDefault("GBP", product.price)}
+                      </td>
                       <td className="p-4">
                         {new Date(product.createdAt).toLocaleString()}
                       </td>

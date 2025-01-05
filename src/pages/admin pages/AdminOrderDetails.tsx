@@ -15,7 +15,7 @@ const AdminOrderDetails: React.FC = () => {
   const fetchData = async () => {
     try {
       const response = await Axios.get(`${URL}/orders/${id}`, {
-        withCredentials: true, // Include cookies in the request
+        withCredentials: true,
       });
       const fetchedOrder = response.data;
 

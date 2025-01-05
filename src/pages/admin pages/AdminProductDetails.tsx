@@ -3,12 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
 import Axios from "axios";
-// import { formatAmount } from "../../lib/utils";
 import { toast } from "react-toastify";
-import { useShop } from "../../context/ShopContext";
+import { formatAmountDefault } from "../../lib/utils";
 
 const AdminProductDetails = () => {
-  const { formatAmount } = useShop();
   const { id } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [product, setProduct] = useState<any>();
@@ -85,8 +83,14 @@ const AdminProductDetails = () => {
               </p>
               <p className="text-lg text-gray-600 mb-2">
                 <span className="font-medium">Product Price:</span>{" "}
-                {formatAmount(product.price)}
+                {formatAmountDefault("GBP", product.price)}
               </p>
+              {product.previousPrice && (
+                <p className="text-lg text-gray-600 mb-2">
+                  <span className="font-medium">Product Previous Price:</span>{" "}
+                  {formatAmountDefault("GBP", product.previousPrice)}
+                </p>
+              )}
               <p className="text-lg text-gray-600 mb-2">
                 <span className="font-medium">Product Gender Type:</span>{" "}
                 {product.gender}

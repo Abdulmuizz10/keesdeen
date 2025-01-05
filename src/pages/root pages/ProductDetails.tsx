@@ -109,9 +109,16 @@ const ProductDetails = () => {
                   ({result?.averageRating}) • {result?.totalReviews} reviews
                 </p>
               </div>
-              <p className="mt-5 text-3xl font-medium">
-                {formatAmount(result?.product.price)}
-              </p>
+              <div className="flex gap-2 items-center">
+                {result?.product.previousPrice && (
+                  <s className="mt-5 text-2xl font-medium">
+                    {formatAmount(result?.product.previousPrice)}
+                  </s>
+                )}
+                <p className="mt-5 text-2xl font-medium">
+                  {formatAmount(result?.product.price)}
+                </p>
+              </div>
 
               {/* Color selection */}
               <div className="flex flex-col gap-4 my-8">

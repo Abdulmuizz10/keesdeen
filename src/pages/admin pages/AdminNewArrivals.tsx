@@ -80,6 +80,7 @@ const AdminNewArrivals: React.FC = () => {
                 <tr className="bg-gray-100 font-extrabold">
                   <th className="text-left p-4 font-semibold">Product name</th>
                   <th className="text-left p-4 font-semibold">Category</th>
+                  <th className="text-left p-4 font-semibold">Sub-category</th>
                   <th className="text-left p-4 font-semibold">Price</th>
                   <th className="text-left p-4 font-semibold">New arrival</th>
                   <th className="text-left p-4 font-semibold">
@@ -100,6 +101,7 @@ const AdminNewArrivals: React.FC = () => {
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                         <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                       </tr>
                     ))
                   : products?.map((product: any, index: number) => (
@@ -111,6 +113,7 @@ const AdminNewArrivals: React.FC = () => {
                           <td className="p-4 line-clamp-1">{product.name}</td>
                         </Link>
                         <td className="p-4">{product.category}</td>
+                        <td className="p-4">{product.subcategory}</td>
                         <td className="p-4">{formatAmount(product.price)}</td>
                         <td className="p-4">
                           {product.newArrival ? (
