@@ -392,7 +392,7 @@ const AdminUpdateProduct: React.FC = () => {
 
         {/* Sizes */}
         <div>
-          <label className="text-sm font-medium">Sizes:</label>
+          <label className="font-medium">Sizes:</label>
           <div className="mt-2 flex gap-4 flex-wrap">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (item, index) => (
