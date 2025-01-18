@@ -111,7 +111,7 @@ const ProductDetails = () => {
               </div>
               <div className="flex gap-2 items-center">
                 {result?.product.previousPrice && (
-                  <s className="mt-5 text-2xl font-medium">
+                  <s className="mt-5 text-xl font-medium">
                     {formatAmount(result?.product.previousPrice)}
                   </s>
                 )}

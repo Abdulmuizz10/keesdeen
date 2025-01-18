@@ -81,7 +81,7 @@ export const Gallery19: React.FC = () => {
                       .map((product: any, index: number) => (
                         <CarouselItem
                           key={index}
-                          className="basis-full md:basis-2/4 lg:basis-1/4"
+                          className="basis-full sm:basis-2/4 lg:basis-1/4"
                         >
                           <ProductItem
                             product={product}

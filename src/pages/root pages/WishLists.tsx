@@ -16,13 +16,14 @@ const WishLists: React.FC = () => {
   return (
     <section className="px-[5%] py-24 md:py-30" ref={ref}>
       <div className="container">
-        <div className="rb-12 mb-12 md:mb-5">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+        <div className="mb-12 md:mb-5">
+          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque">
             Wishlists
           </h2>
+          <p className="md:text-md">Your wishlists.</p>
         </div>
 
-        <div className="mt-4 border-t border-border-secondary">
+        <div className="mt-4 border-t">
           {lists?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
               {lists?.map((product: any, index: number) => (

@@ -140,9 +140,6 @@ const ShopAll: React.FC = () => {
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
             Shop All
           </h2>
-          {/* <p className="md:text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p> */}
         </div>
         <div>
           <div

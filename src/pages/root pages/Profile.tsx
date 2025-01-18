@@ -73,7 +73,7 @@ const Profile: React.FC = () => {
                   >
                     <img
                       src={item.image}
-                      alt="Relume placeholder image 1"
+                      alt="Profile link image"
                       className="absolute size-full object-cover"
                     />
                     <div className="absolute left-6 top-6 flex items-center bg-background-secondary px-2 py-1 text-sm font-semibold md:left-8 md:top-8"></div>

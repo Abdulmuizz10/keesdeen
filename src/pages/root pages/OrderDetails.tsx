@@ -139,7 +139,7 @@ const OrderDetails: React.FC = () => {
         </div>
 
         {/* Ordered Items */}
-        <div className="p-6 bg-gray-50 rounded-md">
+        <div className="p-6 bg-gray-50 rounded-lg">
           <h2 className="text-lg font-semibold text-gray-800">
             Ordered products
           </h2>
@@ -149,7 +149,7 @@ const OrderDetails: React.FC = () => {
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-16 h-16 object-cover rounded border"
+                  className="w-32 h-32 object-cover rounded border"
                 />
                 <div>
                   <p className="font-medium text-gray-800">{item.name}</p>

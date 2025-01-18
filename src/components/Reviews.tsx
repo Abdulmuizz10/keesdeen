@@ -205,7 +205,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
             <h2 className="text-2xl font-bold mb-4">Customer Review</h2>
 
             {/* Review Form */}
-            <form onSubmit={handleSubmit} className="mb-8">
+            <form onSubmit={handleSubmit} className="mb-8 poppins">
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
                   Name

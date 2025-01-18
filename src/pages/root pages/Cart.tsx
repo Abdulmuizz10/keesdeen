@@ -37,10 +37,11 @@ const Cart: React.FC = () => {
   return (
     <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="rb-12 mb-12 md:mb-5">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+        <div className="mb-12 md:mb-5">
+          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque">
             Cart
           </h2>
+          <p className="md:text-md">Your cart.</p>
         </div>
 
         <div className="border-t border-border-secondary">
@@ -56,7 +57,7 @@ const Cart: React.FC = () => {
             >
               <div className="flex items-start gap-6">
                 <img
-                  className="w-16 sm:w-20 rounded-sm"
+                  className="w-16 sm:w-20 rounded-sm border border-gray-300"
                   src={item.image}
                   alt="cart image"
                 />

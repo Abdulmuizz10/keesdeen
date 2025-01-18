@@ -12,13 +12,6 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { createOrder } from "../../context/OrderContext/OrderApiCalls";
 import Spinner from "../../components/Spinner";
-
-import {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-  DialogContent,
-} from "@relume_io/relume-ui";
 import { useNavigate } from "react-router-dom";
 
 const zipCodePatterns: { [key: string]: RegExp } = {
@@ -155,14 +148,9 @@ const CheckOut: React.FC = ({}) => {
   return (
     <section className="px-[5%] py-24 md:py-30">
       {paymentLoader && (
-        <Dialog open={true}>
-          <DialogPortal>
-            <DialogOverlay className="bg-black/50" autoFocus={true} />
-            <DialogContent className="w-full h-full flex items-center justify-center fixed">
-              <Spinner />
-            </DialogContent>
-          </DialogPortal>
-        </Dialog>
+        <div className="fixed top-0 left-0 right-0 bottom-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
+          <Spinner />
+        </div>
       )}
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5 border-b border-border-secondary ">
