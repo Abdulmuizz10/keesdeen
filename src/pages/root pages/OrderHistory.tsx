@@ -129,7 +129,7 @@ const OrderHistory: React.FC = () => {
                     Most Expensive
                   </SelectItem>
                   <SelectItem
-                    value="less_expensive"
+                    value="less-expensive"
                     className=" cursor-pointer  hover:text-text-secondary"
                   >
                     Less Expensive

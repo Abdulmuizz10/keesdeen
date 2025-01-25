@@ -61,6 +61,8 @@ const SearchModal: React.FC = () => {
                   onClick={() => {
                     setIsActive(!isActive);
                     setSearchQuery("");
+                    setResults([]);
+                    setSuggestions([]);
                   }}
                 />
               </div>

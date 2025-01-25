@@ -92,6 +92,8 @@ const OrderDetails: React.FC = () => {
     isDelivered,
     deliveredAt,
     createdAt,
+    guestOrder,
+    guestEmail,
   } = order;
 
   return (
@@ -113,6 +115,12 @@ const OrderDetails: React.FC = () => {
           <p className="mt-1 text-gray-500">
             Placed on: {new Date(createdAt).toLocaleString()}
           </p>
+          {guestOrder && (
+            <>
+              <p className="mt-1 text-gray-500">Ordered as guest: Yes</p>
+              <p className="mt-1 text-gray-500">Guest email: {guestEmail}</p>
+            </>
+          )}
         </div>
 
         {/* Customer Information */}
@@ -149,7 +157,7 @@ const OrderDetails: React.FC = () => {
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-32 h-32 object-cover rounded border"
+                  className="w-28 h-28 object-cover rounded border"
                 />
                 <div>
                   <p className="font-medium text-gray-800">{item.name}</p>

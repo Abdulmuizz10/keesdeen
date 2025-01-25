@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
+import { RiHeartLine } from "react-icons/ri";
+import { RiHeartFill } from "react-icons/ri";
 import { BiArrowBack } from "react-icons/bi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -19,7 +21,13 @@ const ProductDetails = () => {
   const [animation, setAnimation] = useState<boolean>(true);
   const [result, setResult] = useState<any>();
   const navigate = useNavigate();
-  const { addToCart, currentCurrency, formatAmount } = useShop();
+  const {
+    addToCart,
+    currentCurrency,
+    manageWishLists,
+    wishLists,
+    formatAmount,
+  } = useShop();
   const [size, setSize] = useState<string>();
   const [color, setColor] = useState<string>();
 
@@ -141,9 +149,9 @@ const ProductDetails = () => {
                           className="hidden"
                         />
                         <span
-                          className={`block w-6 h-6 rounded-full border-2 ${
+                          className={`block w-5 h-5 rounded-full border-2 transition-all duration-300 ${
                             color === option
-                              ? "border-black"
+                              ? "border-black rounded-md h-6 w-6"
                               : "border-gray-300"
                           }`}
                           style={{ backgroundColor: option.toLowerCase() }}
@@ -172,22 +180,35 @@ const ProductDetails = () => {
                   ))}
                 </div>
               </div>
-
-              <Button
-                className="active:bg-gray-700 rounded-md bg-brand-neutral text-text-light border-none"
-                onClick={() =>
-                  addToCart(
-                    result?.product?._id,
-                    size,
-                    color,
-                    result?.product?.name,
-                    result?.product?.price,
-                    result?.product?.imageUrls[0]
-                  )
-                }
-              >
-                ADD TO CART
-              </Button>
+              <div className="flex items-center gap-2 sm:max-w-xs w-full">
+                <Button
+                  className="active:bg-gray-700 py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full"
+                  onClick={() =>
+                    addToCart(
+                      result?.product?._id,
+                      size,
+                      color,
+                      result?.product?.name,
+                      result?.product?.price,
+                      result?.product?.imageUrls[0]
+                    )
+                  }
+                >
+                  ADD TO CART
+                </Button>
+                <div
+                  className="px-3 py-3 border-2 border-border-primary rounded-lg flex items-center justify-center cursor-pointer flex-1"
+                  onClick={() => manageWishLists(result?.product)}
+                >
+                  {wishLists.find(
+                    (wish: any) => wish._id === result?.product._id
+                  ) ? (
+                    <RiHeartFill className="text-2xl text-text-primary" />
+                  ) : (
+                    <RiHeartLine className="text-2xl text-text-primary" />
+                  )}
+                </div>
+              </div>
               <hr className="mt-8 sm:w-4/5" />
               <div className="text-base text-text-secondary mt-5 flex flex-col gap-1">
                 <p>100% Original product.</p>

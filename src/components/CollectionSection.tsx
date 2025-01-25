@@ -66,7 +66,7 @@ export const Gallery5 = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
             {products?.map((product: Product, index) => (
               <motion.div
-                key={product._id} // Use product ID as the unique key
+                key={product._id}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{
                   opacity: isInView ? 1 : 0,
@@ -75,7 +75,7 @@ export const Gallery5 = ({
                 transition={{
                   duration: 0.5,
                   ease: "easeOut",
-                  delay: index * 0.5, // Adjust delay for smoother staggered animation
+                  delay: index * 0.4,
                 }}
               >
                 <ProductItem product={product} key={index} />
