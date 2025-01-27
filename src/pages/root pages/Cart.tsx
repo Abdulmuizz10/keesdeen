@@ -37,7 +37,7 @@ const Cart: React.FC = () => {
   return (
     <section id="relume" className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="mb-12 md:mb-5">
+        <div className="mb-2 md:mb-5">
           <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque">
             Cart
           </h2>
@@ -46,7 +46,7 @@ const Cart: React.FC = () => {
 
         <div className="border-t border-border-secondary">
           {cartData.length === 0 && (
-            <p className="mt-4 text-3xl text-text-secondary">
+            <p className="mt-4 text-base md:text-3xl text-text-secondary">
               Your cart is empty.
             </p>
           )}
@@ -66,7 +66,7 @@ const Cart: React.FC = () => {
                     {item.name}
                   </p>
                   <div className="flex items-center gap-2 sm:gap-3 mt-1 text-sm">
-                    <p className="text-base md:text-lg">
+                    <p className="text-base md:text-md xl:text-lg">
                       {formatAmount(item.price)}
                     </p>
                     <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">

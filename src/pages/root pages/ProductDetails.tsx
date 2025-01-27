@@ -197,7 +197,13 @@ const ProductDetails = () => {
                   ADD TO CART
                 </Button>
                 <div
-                  className="px-3 py-3 border-2 border-border-primary rounded-lg flex items-center justify-center cursor-pointer flex-1"
+                  className={`px-3 py-3 border-2 ${
+                    wishLists.find(
+                      (wish: any) => wish._id === result?.product._id
+                    )
+                      ? "border-border-primary"
+                      : "border-border-secondary"
+                  } rounded-lg flex items-center justify-center cursor-pointer flex-1`}
                   onClick={() => manageWishLists(result?.product)}
                 >
                   {wishLists.find(
@@ -205,7 +211,7 @@ const ProductDetails = () => {
                   ) ? (
                     <RiHeartFill className="text-2xl text-text-primary" />
                   ) : (
-                    <RiHeartLine className="text-2xl text-text-primary" />
+                    <RiHeartLine className="text-2xl text-text-secondary" />
                   )}
                 </div>
               </div>

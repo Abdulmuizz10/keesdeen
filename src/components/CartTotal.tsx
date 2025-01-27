@@ -9,7 +9,7 @@ const CartTotal: React.FC = () => {
         Cart Subtotal:
       </h2>
 
-      <div className="flex flex-col gap-2 mt-2 text-sm">
+      <div className="flex flex-col gap-2 mt-2 text-md">
         <div className="flex justify-between">
           <p>Subtotal:</p>
           <p>{formatAmount(getCartAmount())}</p>

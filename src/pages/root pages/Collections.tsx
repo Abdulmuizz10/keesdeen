@@ -124,13 +124,11 @@ const Collections: React.FC = () => {
   return (
     <section className="px-[5%] py-24 md:py-30">
       <div className="container">
-        <div className="mb-12 md:mb-5">
-          <div className="flex items-center mb-5 md:mb-6 gap-1">
-            <h2 className="text-2xl font-bold bricolage-grotesque">
-              Search for :
-            </h2>
-            <p className="poppins text-md text-text-secondary">{name}</p>
-          </div>
+        <div className="mb-2 md:mb-5">
+          <h2 className="text-2xl font-bold bricolage-grotesque">
+            Search results
+          </h2>
+          {/* <p className="poppins text-md text-text-secondary">{name}</p> */}
         </div>
         <div
           className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${

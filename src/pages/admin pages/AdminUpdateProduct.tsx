@@ -370,17 +370,22 @@ const AdminUpdateProduct: React.FC = () => {
         </div>
         {/* Colors */}
         <div>
-          <label className="font-medium">Colors:</label>
+          <label>Colors:</label>
           <div className="mt-2 grid grid-cols-3 md:grid-cols-5 xl:grid-cols-7 gap-5">
             {popularColors.map((item, index) => (
               <div className="flex flex-col justify-center items-center">
-                <p className="font-medium mb-1">{item.name}</p>
+                <p
+                  className={`mb-1 ${
+                    productColors.includes(item.name) && "font-bold text-black"
+                  }`}
+                >
+                  {item.name}
+                </p>
                 <div
                   key={index}
                   className={`p-2 h-[45px] w-[45px] rounded-full cursor-pointer flex items-center justify-center border-[3px] transition-all duration-300 ease-in-out ${
-                    productColors.includes(item.name)
-                      ? "border-white shadow-lg scale-110"
-                      : "border-black"
+                    productColors.includes(item.name) &&
+                    "border-white shadow-lg !w-[10px] !h-[10px]"
                   }`}
                   style={{ backgroundColor: item.code }}
                   onClick={() => handleColorToggle(item.name)}
@@ -392,7 +397,7 @@ const AdminUpdateProduct: React.FC = () => {
 
         {/* Sizes */}
         <div>
-          <label className="font-medium">Sizes:</label>
+          <label>Sizes:</label>
           <div className="mt-2 flex gap-4 flex-wrap">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (item, index) => (

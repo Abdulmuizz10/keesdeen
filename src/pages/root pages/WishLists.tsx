@@ -16,7 +16,7 @@ const WishLists: React.FC = () => {
   return (
     <section className="px-[5%] py-24 md:py-30" ref={ref}>
       <div className="container">
-        <div className="mb-12 md:mb-5">
+        <div className="mb-2 md:mb-5">
           <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque">
             Wishlists
           </h2>
@@ -45,7 +45,7 @@ const WishLists: React.FC = () => {
               ))}
             </div>
           ) : (
-            <p className="mt-4 text-3xl text-text-secondary">
+            <p className="mt-4 text-base md:text-3xl text-text-secondary">
               No products in your wishlist yet.
             </p>
           )}

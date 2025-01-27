@@ -43,6 +43,16 @@ const SearchModal: React.FC = () => {
         searchQuery.length === 0 ? "items-center" : "items-start"
       }`}
     >
+      <FiX
+        className="text-2xl cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-6"
+        onClick={() => {
+          setIsActive(!isActive);
+          setSearchQuery("");
+          setResults([]);
+          setSuggestions([]);
+        }}
+      />
+
       {isActive && (
         <div className="container mt-10 px-9">
           <div className="w-full">
@@ -59,7 +69,6 @@ const SearchModal: React.FC = () => {
                 <FiX
                   className="text-2xl cursor-pointer text-text-primary my-2"
                   onClick={() => {
-                    setIsActive(!isActive);
                     setSearchQuery("");
                     setResults([]);
                     setSuggestions([]);
@@ -79,7 +88,10 @@ const SearchModal: React.FC = () => {
                     </div>
                     <ul className="flex flex-col gap-2">
                       {suggestions.map((suggestion: any, index: number) => (
-                        <Link to={`/collections/${suggestion}`} key={index}>
+                        <Link
+                          to={`/collections/${suggestion.split(" ")[0 || 1]}`}
+                          key={index}
+                        >
                           <li className="poppins text-md md:text-xl text-gray-500">
                             {suggestion}
                           </li>
