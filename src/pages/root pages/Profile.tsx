@@ -44,7 +44,7 @@ const Profile: React.FC = () => {
         {/* Profile Section */}
         <div className="py-2">
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="w-24 h-24 rounded-full border shadow-lg bg-brand-neutral flex items-center justify-center text-text-light text-3xl lg:text-4xl">
+            <div className="w-24 h-24 rounded-full border bg-brand-neutral flex items-center justify-center text-text-light text-3xl lg:text-4xl">
               {user?.firstName.split("")[0]}
             </div>
 

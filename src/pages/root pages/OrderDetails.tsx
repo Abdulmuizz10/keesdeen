@@ -98,7 +98,7 @@ const OrderDetails: React.FC = () => {
 
   return (
     <section className="px-[5%] py-24 md:py-30">
-      <div className="container mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <div className="container mx-auto bg-white rounded-lg overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-gray-200 text-md">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">

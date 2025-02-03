@@ -157,7 +157,7 @@ const OrderHistory: React.FC = () => {
                   sortedOrders.map((order: any, index: number) => (
                     <div
                       key={index}
-                      className="bg-white shadow-md hover:shadow-lg rounded-lg py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300"
+                      className="bg-white shadow-md rounded-lg py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300"
                     >
                       {/* Left Section: Order Details */}
                       <div className="w-full sm:w-2/3">

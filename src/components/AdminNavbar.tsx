@@ -214,7 +214,7 @@ const SubMenu = ({
               },
             }}
             transition={{ duration: 0.2 }}
-            className="bg-white dark:bg-gray-800 lg:absolute lg:z-50 lg:border lg:border-gray-300 dark:lg:border-gray-600 lg:p-2 lg:rounded-lg lg:shadow-lg lg:[--y-close:25%] transition-all duration-200 ease-in-out"
+            className="bg-white dark:bg-gray-800 lg:absolute lg:z-50 lg:border lg:border-gray-300 dark:lg:border-gray-600 lg:p-2 lg:rounded-lg lg:[--y-close:25%] transition-all duration-200 ease-in-out"
           >
             {navLink.subMenuLinks?.map((subMenuLink, index) => (
               <Link

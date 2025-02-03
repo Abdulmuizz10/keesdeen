@@ -390,7 +390,7 @@ const AdminUpdateProduct: React.FC = () => {
                   key={index}
                   className={`p-2 h-[45px] w-[45px] rounded-full cursor-pointer flex items-center justify-center border-[3px] transition-all duration-300 ease-in-out ${
                     productColors.includes(item.name) &&
-                    "border-white shadow-lg !w-[10px] !h-[10px]"
+                    "border-white !w-[10px] !h-[10px]"
                   }`}
                   style={{ backgroundColor: item.code }}
                   onClick={() => handleColorToggle(item.name)}

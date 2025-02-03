@@ -2,18 +2,22 @@ import React, { useState } from "react";
 import axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
+import { useShop } from "../../context/ShopContext";
 
 const AdminSendEmailToSubscribers: React.FC = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Track loading state
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { setAdminLoader } = useShop();
 
   const handleSendEmail = async () => {
     if (!subject || !message) {
       toast.error("Subject and message are required!");
       return;
     }
-    setIsLoading(true); // Set loading to true when the request starts
+    setAdminLoader(true);
+    setIsLoading(true);
     try {
       const response = await axios.post(
         `${URL}/subscribers/send-email`,
@@ -31,20 +35,21 @@ const AdminSendEmailToSubscribers: React.FC = () => {
     } catch (error) {
       toast.error("Failed to send emails.");
     } finally {
-      setIsLoading(false); // Set loading to false once the request completes
+      setIsLoading(false);
+      setAdminLoader(false);
     }
   };
 
   return (
     <section className="w-full">
-      <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+      <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
         <h3 className="text-xl font-semibold mb-4">
           Send email to subscribers
         </h3>
 
         <div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-4">Subject:</label>
+            <label className="block text-base font-medium mb-4">Subject:</label>
             <input
               type="text"
               value={subject}
@@ -53,7 +58,7 @@ const AdminSendEmailToSubscribers: React.FC = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-4">Message:</label>
+            <label className="block text-base font-medium mb-4">Message:</label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -63,14 +68,10 @@ const AdminSendEmailToSubscribers: React.FC = () => {
           </div>
           <button
             onClick={handleSendEmail}
-            className="bg-brand-neutral text-white rounded-md py-4 px-18 max-sm:w-full text-base poppins"
-            disabled={isLoading} // Disable button during loading
+            className="bg-brand-neutral text-white rounded-md py-4 px-18 w-full text-base poppins"
+            disabled={isLoading}
           >
-            {isLoading ? (
-              <span className="animate-spin">Sending...</span> // Display loading text or spinner
-            ) : (
-              "Send Email"
-            )}
+            {isLoading ? "Sending email..." : "Send Email"}
           </button>
         </div>
       </div>

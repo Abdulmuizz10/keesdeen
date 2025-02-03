@@ -51,7 +51,7 @@ const AdminUsers: React.FC = () => {
 
   return (
     <div className="w-full" ref={scrollRef}>
-      <div className="w-full bg-white p-6 rounded-lg shadow-lg">
+      <div className="w-full bg-white p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-4">Customer List</h3>
         <div className="overflow-x-auto">
           <table className="w-full bg-white poppins">

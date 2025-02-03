@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { FaRegCopy } from "react-icons/fa";
+import Spinner from "../../components/Spinner";
 
 const AdminSubscribers: React.FC = () => {
   const [subscribers, setSubscribers] = useState<any[]>([]);
@@ -36,13 +37,19 @@ const AdminSubscribers: React.FC = () => {
       });
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-white rounded-lg">
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <section className="w-full">
-      <div className="w-full max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <div className="w-full max-w-7xl mx-auto bg-white p-6 rounded-lg">
         <h3 className="text-xl font-semibold mb-6">All subscribers</h3>
-        {loading ? (
-          <div className="text-center text-gray-500">Loading...</div>
-        ) : subscribers.length > 0 ? (
+        {subscribers?.length > 0 ? (
           <table className="w-full bg-white poppins">
             <thead>
               <tr className="bg-gray-100">

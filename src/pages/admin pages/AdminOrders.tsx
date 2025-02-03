@@ -78,7 +78,7 @@ const AdminOrders: React.FC = () => {
     <section className="w-full" ref={scrollRef}>
       <div className="w-full">
         {/* Latest Orders */}
-        <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
           <h3 className="text-xl font-semibold mb-4">Orders</h3>
 
           <div className="overflow-x-auto">

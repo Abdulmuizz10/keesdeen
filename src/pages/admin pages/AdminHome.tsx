@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
     <section className="w-full">
       {/* Header stats with doughnut charts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
+        <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
           <div className="w-20 h-20 md:w-24 md:h-24 sm:hidden xl:flex">
             <Doughnut data={userData} options={chartOptions} />
           </div>
@@ -138,7 +138,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
+        <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
           <div className="w-20 h-20 md:w-24 md:h-24 sm:hidden xl:flex">
             <Doughnut data={stockData} options={chartOptions} />
           </div>
@@ -148,7 +148,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
+        <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
           <div className="w-20 h-20 md:w-24 md:h-24 sm:hidden xl:flex">
             <Doughnut data={revenueData} options={chartOptions} />
           </div>
@@ -163,7 +163,7 @@ const Dashboard: React.FC = () => {
 
       <div className="w-full" ref={scrollRef}>
         {/* Latest Orders */}
-        <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+        <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
           <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
 
           <div className="overflow-x-auto">

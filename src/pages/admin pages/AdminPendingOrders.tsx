@@ -50,7 +50,7 @@ const AdminPendingOrders: React.FC = () => {
   return (
     <section className="w-full" ref={scrollRef}>
       {/* Latest Orders */}
-      <div className="w-full bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+      <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
         <h3 className="text-xl font-semibold mb-4">Pending orders</h3>
 
         <div className="overflow-x-auto">
