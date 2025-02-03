@@ -65,6 +65,7 @@ import { toast } from "react-toastify";
 import { URL } from "../lib/constants";
 import { useShop } from "../context/ShopContext";
 import { IoPeopleOutline } from "react-icons/io5";
+import AdminSpinner from "../components/AdminSpinner";
 
 interface AdminLayoutProps {
   children?: React.ReactNode;
@@ -77,9 +78,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, animation }) => {
   // const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const isMobile = useMediaQuery("(max-width: 991px)");
+  const { adminLoader } = useShop();
 
   return (
     <div className={`${animation ? "opacity-0" : " opacity-100"}`}>
+      {adminLoader && <AdminSpinner />}
       <main className="flex min-h-screen flex-col lg:flex-row bg-white">
         <div className="absolute top-0 z-10 flex min-h-16 flex-col px-6 md:min-h-18 md:px-8 lg:sticky lg:h-screen lg:min-h-[auto] lg:w-[15.5rem] lg:min-w-[15.5rem]  lg:px-0 lg:py-6">
           <div className="flex flex-1 flex-row items-center lg:flex-col lg:items-stretch">

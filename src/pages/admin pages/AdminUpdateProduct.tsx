@@ -3,6 +3,7 @@ import { updateProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useShop } from "../../context/ShopContext";
 
 const popularColors = [
   { name: "Black", code: "#000000" },
@@ -70,7 +71,9 @@ const AdminUpdateProduct: React.FC = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [bestSeller, setBestSeller] = useState<boolean>(false);
   const [newArrival, setNewArrival] = useState<boolean>(false);
+
   const navigate = useNavigate();
+  const { setAdminLoader } = useShop();
 
   const handleColorToggle = (color: string) => {
     if (productColors.includes(color)) {
@@ -99,6 +102,7 @@ const AdminUpdateProduct: React.FC = () => {
   };
 
   const uploadToCloudinary = async (file: File, index: number) => {
+    setAdminLoader(true);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET); // Replace with your preset
@@ -119,13 +123,15 @@ const AdminUpdateProduct: React.FC = () => {
       if (data.secure_url) {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
+        setAdminLoader(false);
         toast("Image uploaded!", {
           position: "top-left", // Set position to top-left
         });
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
-      toast.error(`Cloudinary upload error: ${error}`);
+      setAdminLoader(false);
+      toast.error(`Image upload error: ${error}`);
     }
   };
 
@@ -151,27 +157,26 @@ const AdminUpdateProduct: React.FC = () => {
     if (newArrival) formData.newArrival = newArrival;
 
     // Dispatch the update request
-    await updateProduct(formData);
-
-    // Navigate back to the products list
-    navigate("/admin/products");
-
-    // Clear form fields after submission
-    setProductName("");
-    setProductBrand("");
-    setProductDescription("");
-    setProductCategory("");
-    setProductSubCategory("");
-    setProductType("");
-    setProductSex("");
-    setProductColors([]);
-    setProductPreviousPrice("");
-    setProductPrice("");
-    setProductSizes([]);
-    setProductImages([]);
-    setImagePreviews([]);
-    setBestSeller(false);
-    setNewArrival(false);
+    await updateProduct(
+      formData,
+      setProductName,
+      setProductBrand,
+      setProductDescription,
+      setProductCategory,
+      setProductSubCategory,
+      setProductType,
+      setProductSex,
+      setProductColors,
+      setProductPreviousPrice,
+      setProductPrice,
+      setProductSizes,
+      setProductImages,
+      setImagePreviews,
+      setBestSeller,
+      setNewArrival,
+      navigate,
+      setAdminLoader
+    );
   };
 
   return (

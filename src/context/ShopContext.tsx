@@ -29,6 +29,8 @@ interface ShopContextType {
   setIsActive: any;
   paymentLoader: any;
   setPaymentLoader: any;
+  adminLoader: any;
+  setAdminLoader: any;
   delivery_fee: number;
 }
 
@@ -41,6 +43,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [paymentLoader, setPaymentLoader] = useState(false);
+  const [adminLoader, setAdminLoader] = useState(false);
 
   const [guestEmail, setGuestEmail] = useState<String>(() => {
     const storedGuestEmail = localStorage.getItem("guestEmail");
@@ -277,6 +280,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         setIsActive,
         paymentLoader,
         setPaymentLoader,
+        adminLoader,
+        setAdminLoader,
         delivery_fee,
       }}
     >

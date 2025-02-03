@@ -149,9 +149,9 @@ const ProductDetails = () => {
                           className="hidden"
                         />
                         <span
-                          className={`block w-5 h-5 rounded-full border-2 transition-all duration-300 ${
+                          className={`block w-5 h-5 rounded-full border-2  ${
                             color === option
-                              ? "border-black rounded-md h-6 w-6"
+                              ? "border-border-primary rounded-md h-7 w-7"
                               : "border-gray-300"
                           }`}
                           style={{ backgroundColor: option.toLowerCase() }}

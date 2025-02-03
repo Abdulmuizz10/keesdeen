@@ -19,12 +19,14 @@ const OrderHistory: React.FC = () => {
   const { guestEmail, formatAmount } = useShop();
   const { user } = useContext(AuthContext);
   const [orders, setOrders] = useState<any[]>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [sortedOrders, setSortedOrders] = useState<any[]>([]);
   const [sortType, setSortType] = useState<string>("newest");
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const fetchOrderHistory = async () => {
+      setLoading(true);
       if (guestEmail) {
         try {
           const response = await Axios.get(
@@ -35,8 +37,10 @@ const OrderHistory: React.FC = () => {
           );
           if (response.status === 200) {
             setOrders(response.data);
+            setLoading(false);
           } else {
             toast(response.data.message);
+            setLoading(false);
           }
         } catch (error) {
           toast.error("Error fetching order");
@@ -47,8 +51,10 @@ const OrderHistory: React.FC = () => {
             withCredentials: true,
           });
           setOrders(response.data);
+          setLoading(false);
         } catch (error) {
           toast.error("Error fetching order");
+          setLoading(false);
         }
       } else {
         toast("No previous orders!");
@@ -88,7 +94,7 @@ const OrderHistory: React.FC = () => {
   }, [orders, sortType]);
 
   return (
-    <section id="relume" className="px-[5%] py-24 md:py-30">
+    <section className="px-[5%] py-24 md:py-30">
       <div className="container">
         <div className="rb-12 mb-12 md:mb-5">
           <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
@@ -100,120 +106,130 @@ const OrderHistory: React.FC = () => {
         </div>
 
         {/* Filter Dropdown */}
-        <div className="mt-5 border-t border-border-secondary">
-          <div className="flex max-md:flex-col max-md:items-start items-center justify-between my-8">
-            <h2 className="text-2xl font-bold mb-4">All Orders</h2>
-            <div className="w-full md:w-1/2">
-              <Select onValueChange={setSortType}>
-                <SelectTrigger className="rounded-md">
-                  <SelectValue placeholder="Sort Orders" />
-                </SelectTrigger>
-                <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                  <SelectItem
-                    value="latest"
-                    className=" cursor-pointer hover:text-text-secondary
-                      "
-                  >
-                    Latest
-                  </SelectItem>
-                  <SelectItem
-                    value="oldest"
-                    className=" cursor-pointer  hover:text-text-secondary"
-                  >
-                    Oldest
-                  </SelectItem>
-                  <SelectItem
-                    value="most-expensive"
-                    className=" cursor-pointer  hover:text-text-secondary"
-                  >
-                    Most Expensive
-                  </SelectItem>
-                  <SelectItem
-                    value="less-expensive"
-                    className=" cursor-pointer  hover:text-text-secondary"
-                  >
-                    Less Expensive
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+        {loading ? (
+          <div className="flex items-center justify-center w-full mt-5 border-t border-border-secondary">
+            <div className="mt-20">
+              <Spinner />
             </div>
           </div>
-          <div className="space-y-6 mt-8">
-            {sortedOrders ? (
-              sortedOrders.length > 0 ? (
-                sortedOrders.map((order: any, index: number) => (
-                  <div
-                    key={index}
-                    className="bg-white shadow-md hover:shadow-lg rounded-lg py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300"
-                  >
-                    {/* Left Section: Order Details */}
-                    <div className="w-full sm:w-2/3">
-                      <div className="mb-6">
-                        <p className="text-sm text-gray-500">Order ID</p>
-                        <p className="text-lg font-semibold text-gray-900">
-                          #{order._id}
-                        </p>
-                      </div>
-                      <div className="mb-6">
-                        <p className="text-sm text-gray-500">Order Date</p>
-                        <p className="text-md font-medium text-gray-700">
-                          {new Date(order?.paidAt).toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 items-center">
-                        <p className="text-sm text-gray-500">Items:</p>
-                        {order.orderedItems.map((item: any, index: number) => (
-                          <span
-                            key={index}
-                            className="bg-gray-100 text-gray-600 px-3 py-2 text-sm"
-                          >
-                            Name: {item.name} | Qty: X {item.qty} | Color:{" "}
-                            {item?.color}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Right Section: Order Summary */}
-                    <div className="w-full md:w-1/3 flex flex-col items-start md:items-end gap-6">
-                      <div className="flex">
-                        <p className="t text-gray-500">Total:</p>
-                        <p className="px-1 font-semibold text-green-600">
-                          {formatAmount(order.totalPrice)}
-                        </p>
-                      </div>
-                      <div className="flex items-start sm:items-center gap-2">
-                        <p className="text-gray-500">Status:</p>
-                        <p
-                          className={`font-semibold px-2 py-1 rounded mt-1 ${
-                            order.isDelivered === "Delivered"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-yellow-100 text-yellow-700"
-                          }`}
-                        >
-                          {order.isDelivered}
-                        </p>
-                      </div>
-                      <Link to={`/order_details/${order._id}`}>
-                        <Button className="bg-brand-neutral text-white rounded-md md:py-3 md:px-5 max-md:w-full text-base poppins">
-                          More details
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-center text-gray-500">
-                  No order history available.
-                </p>
-              )
-            ) : (
-              <div className="w-full flex justify-center">
-                <Spinner />
+        ) : (
+          <div className="mt-5 border-t border-border-secondary">
+            <div className="flex max-md:flex-col max-md:items-start items-center justify-between my-8">
+              <h2 className="text-2xl font-bold mb-4">All Orders</h2>
+              <div className="w-full md:w-1/2">
+                <Select onValueChange={setSortType}>
+                  <SelectTrigger className="rounded-md">
+                    <SelectValue placeholder="Sort Orders" />
+                  </SelectTrigger>
+                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                    <SelectItem
+                      value="latest"
+                      className=" cursor-pointer hover:text-text-secondary
+                      "
+                    >
+                      Latest
+                    </SelectItem>
+                    <SelectItem
+                      value="oldest"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
+                      Oldest
+                    </SelectItem>
+                    <SelectItem
+                      value="most-expensive"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
+                      Most Expensive
+                    </SelectItem>
+                    <SelectItem
+                      value="less-expensive"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
+                      Less Expensive
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            )}
+            </div>
+            <div className="space-y-6 mt-8">
+              {sortedOrders ? (
+                sortedOrders.length > 0 ? (
+                  sortedOrders.map((order: any, index: number) => (
+                    <div
+                      key={index}
+                      className="bg-white shadow-md hover:shadow-lg rounded-lg py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300"
+                    >
+                      {/* Left Section: Order Details */}
+                      <div className="w-full sm:w-2/3">
+                        <div className="mb-6">
+                          <p className="text-sm text-gray-500">Order ID</p>
+                          <p className="text-lg font-semibold text-gray-900">
+                            #{order._id}
+                          </p>
+                        </div>
+                        <div className="mb-6">
+                          <p className="text-sm text-gray-500">Order Date</p>
+                          <p className="text-md font-medium text-gray-700">
+                            {new Date(order?.paidAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 items-center">
+                          <p className="text-sm text-gray-500">Items:</p>
+                          {order.orderedItems.map(
+                            (item: any, index: number) => (
+                              <span
+                                key={index}
+                                className="bg-gray-100 text-gray-600 px-3 py-2 text-sm"
+                              >
+                                Name: {item.name} | Qty: X {item.qty} | Color:{" "}
+                                {item?.color}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right Section: Order Summary */}
+                      <div className="w-full md:w-1/3 flex flex-col items-start md:items-end gap-6">
+                        <div className="flex">
+                          <p className="t text-gray-500">Total:</p>
+                          <p className="px-1 font-semibold text-green-600">
+                            {formatAmount(order.totalPrice)}
+                          </p>
+                        </div>
+                        <div className="flex items-start sm:items-center gap-2">
+                          <p className="text-gray-500">Status:</p>
+                          <p
+                            className={`font-semibold px-2 py-1 rounded mt-1 ${
+                              order.isDelivered === "Delivered"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-yellow-100 text-yellow-700"
+                            }`}
+                          >
+                            {order.isDelivered}
+                          </p>
+                        </div>
+                        <Link to={`/order_details/${order._id}`}>
+                          <Button className="bg-brand-neutral text-white rounded-md md:py-3 md:px-5 max-md:w-full text-base poppins">
+                            More details
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500">
+                    No order history available.
+                  </p>
+                )
+              ) : (
+                <div className="w-full flex justify-center">
+                  <Spinner />
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

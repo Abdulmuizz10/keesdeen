@@ -22,7 +22,7 @@ export const Cta3 = (props: Cta3Props) => {
     ...props,
   } as Props;
   return (
-    <section id="relume" className="relative px-[5%] py-16 md:py-24 lg:py-28">
+    <section className="relative px-[5%] py-16 md:py-24 lg:py-28">
       <div className="container flex items-center justify-center">
         <div className="w-full max-w-lg text-center">
           <h2 className="mb-5 text-5xl font-bold text-text-alternative md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">

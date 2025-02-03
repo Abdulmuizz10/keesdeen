@@ -88,10 +88,7 @@ const SearchModal: React.FC = () => {
                     </div>
                     <ul className="flex flex-col gap-2">
                       {suggestions.map((suggestion: any, index: number) => (
-                        <Link
-                          to={`/collections/${suggestion.split(" ")[0 || 1]}`}
-                          key={index}
-                        >
+                        <Link to={`/collections/${suggestion}`} key={index}>
                           <li className="poppins text-md md:text-xl text-gray-500">
                             {suggestion}
                           </li>

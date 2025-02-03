@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createProduct } from "../../context/ProductContext/ProductApiCalls";
 import { toast } from "react-toastify";
+import { useShop } from "../../context/ShopContext";
 
 const popularColors = [
   { name: "Black", code: "#000000" },
@@ -68,6 +69,8 @@ const AdminAddProduct: React.FC = () => {
   const [bestSeller, setBestSeller] = useState<boolean>(false);
   const [newArrival, setNewArrival] = useState<boolean>(false);
 
+  const { setAdminLoader } = useShop();
+
   const handleColorToggle = (color: string) => {
     if (productColors.includes(color)) {
       setProductColors(productColors.filter((s) => s !== color));
@@ -95,6 +98,7 @@ const AdminAddProduct: React.FC = () => {
   };
 
   const uploadToCloudinary = async (file: File, index: number) => {
+    setAdminLoader(true);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET); // Replace with your preset
@@ -115,13 +119,15 @@ const AdminAddProduct: React.FC = () => {
       if (data.secure_url) {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
+        setAdminLoader(false);
         toast.success("Image uploaded!", {
           position: "top-left", // Set position to top-left
         });
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
-      toast.error(`Cloudinary upload error ${error}`);
+      setAdminLoader(false);
+      toast.error(`Image upload error: ${error}`);
     }
   };
 
@@ -145,24 +151,25 @@ const AdminAddProduct: React.FC = () => {
       imageUrls: productImages, // Store URLs in product data
     };
 
-    createProduct(formData);
-
-    // Clear form after submission
-    setProductName("");
-    setProductBrand("");
-    setProductDescription("");
-    setProductCategory("");
-    setProductSubCategory("");
-    setProductType("");
-    setProductSex("");
-    setProductColors([]);
-    setProductPreviousPrice("");
-    setProductPrice("");
-    setProductSizes([]);
-    setProductImages([]);
-    setImagePreviews([]);
-    setBestSeller(false);
-    setNewArrival(false);
+    createProduct(
+      formData,
+      setProductName,
+      setProductBrand,
+      setProductDescription,
+      setProductCategory,
+      setProductSubCategory,
+      setProductType,
+      setProductSex,
+      setProductColors,
+      setProductPreviousPrice,
+      setProductPrice,
+      setProductSizes,
+      setProductImages,
+      setImagePreviews,
+      setBestSeller,
+      setNewArrival,
+      setAdminLoader
+    );
   };
 
   return (

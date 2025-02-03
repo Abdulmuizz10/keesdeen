@@ -73,9 +73,9 @@ export const Gallery5 = ({
                   y: isInView ? 0 : 50,
                 }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.6,
                   ease: "easeOut",
-                  delay: index * 0.6,
+                  delay: index * 0.7,
                 }}
               >
                 <ProductItem product={product} key={index} />
