@@ -47,14 +47,14 @@ const AdminSendEmailToSubscribers: React.FC = () => {
           Send email to subscribers
         </h3>
 
-        <div>
+        <div className="poppins">
           <div className="mb-4">
             <label className="block text-base font-medium mb-4">Subject:</label>
             <input
               type="text"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="border rounded w-full px-3 py-2 poppins"
+              className="border rounded w-full px-3 py-2 outline-none"
             />
           </div>
           <div className="mb-4">
@@ -62,7 +62,7 @@ const AdminSendEmailToSubscribers: React.FC = () => {
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="border rounded w-full px-3 py-2 ring-0 poppins"
+              className="border rounded w-full px-3 py-2 outline-none"
               rows={15}
             ></textarea>
           </div>

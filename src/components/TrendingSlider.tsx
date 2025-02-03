@@ -105,19 +105,19 @@ export const Gallery21Defaults: Gallery21Props = {
   images: [
     {
       src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 1",
+      alt: "Placeholder image",
     },
     {
       src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 2",
+      alt: "Placeholder image",
     },
     {
       src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 3",
+      alt: "Placeholder image",
     },
     {
       src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-      alt: "Relume placeholder image 4",
+      alt: "Placeholder image",
     },
   ],
 };

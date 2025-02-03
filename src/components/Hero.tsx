@@ -101,53 +101,53 @@ export const Header76Defaults: Header76Props = {
   images: [
     {
       src: Images.img_1,
-      alt: "Relume placeholder image 1",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_2_1,
-      alt: "Relume placeholder image 2",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_26,
-      alt: "Relume placeholder image 3",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_15,
-      alt: "Relume placeholder image 4",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_17,
-      alt: "Relume placeholder image 5",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_20,
-      alt: "Relume placeholder image 6",
+      alt: "Placeholder image",
     },
   ],
   images1: [
     {
       src: Images.img_31,
-      alt: "Relume placeholder image 1",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_32,
-      alt: "Relume placeholder image 2",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_33,
-      alt: "Relume placeholder image 3",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_34,
-      alt: "Relume placeholder image 4",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_35,
-      alt: "Relume placeholder image 5",
+      alt: "Placeholder image",
     },
     {
       src: Images.img_36,
-      alt: "Relume placeholder image 6",
+      alt: "Placeholder image",
     },
   ],
 };
