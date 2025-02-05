@@ -3,12 +3,15 @@ import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { toast } from "react-toastify";
+import { FaRegCopy } from "react-icons/fa";
+import { useShop } from "../../context/ShopContext";
 
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const { setAdminLoader } = useShop();
   const scrollRef = useRef<any>(null);
 
   useEffect(() => {
@@ -35,18 +38,31 @@ const AdminUsers: React.FC = () => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
     );
-
     if (confirmDelete) {
+      setAdminLoader(true);
       try {
         await Axios.delete(`${URL}/users/${productId}`, {
           withCredentials: true,
         });
         toast.success("User deleted successfully!");
+        setAdminLoader(false);
         fetchData(currentPage);
       } catch (error) {
+        setAdminLoader(false);
         toast.error("Error while deleting the user!");
       }
     }
+  };
+
+  const copyId = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast("User ID copied to clipboard!");
+      })
+      .catch(() => {
+        toast("Failed to copy transaction ID.");
+      });
   };
 
   return (
@@ -85,10 +101,14 @@ const AdminUsers: React.FC = () => {
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
                       <td className="p-4">{index + 1}</td>
-                      <td className="p-4">
-                        {user._id.split("").slice(0, 15)}...
+                      <td className="p-4 flex gap-1 items-center">
+                        {user._id.split("").slice(0, 10)}...
+                        <FaRegCopy
+                          className="text-xl cursor-pointer"
+                          onClick={() => copyId(user._id)}
+                        />
                       </td>
-                      <td className="p-4 line-clamp-1">
+                      <td className="p-4">
                         {`${user.firstName} ${user.lastName}`}
                       </td>
                       <td className="p-4">{user.email}</td>

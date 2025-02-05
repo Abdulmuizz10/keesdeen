@@ -22,8 +22,8 @@ export const createProduct = async (
   setNewArrival: any,
   setAdminLoader: any
 ) => {
+  setAdminLoader(true);
   try {
-    setAdminLoader(true);
     const res = await axios.post(`${URL}/products`, product, {
       withCredentials: true,
       validateStatus: (status: any) => status < 600,
@@ -78,8 +78,8 @@ export const updateProduct = async (
   navigate: any,
   setAdminLoader: any
 ) => {
+  setAdminLoader(true);
   try {
-    setAdminLoader(true);
     const res = await axios.put(`${URL}/products/${product._id}`, product, {
       withCredentials: true,
       validateStatus: (status: any) => status < 600,
@@ -125,15 +125,18 @@ export const createReview = async (reviewInfo: any, productId: string) => {
 };
 
 // Delete a product
-export const deleteProduct = async (id: any) => {
+export const deleteProduct = async (id: any, setAdminLoader: any) => {
+  setAdminLoader(true);
   try {
     const res = await axios.delete(`${URL}/products/${id}`, {
       withCredentials: true,
       validateStatus: (status: any) => status < 600,
     });
     if (res.status === 200) {
+      setAdminLoader(false);
       toast.success("Product deleted!");
     } else {
+      setAdminLoader(false);
       toast.error(res.data.message || "Something went wrong");
     }
   } catch (err) {

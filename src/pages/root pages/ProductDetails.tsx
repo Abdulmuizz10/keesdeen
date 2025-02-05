@@ -41,7 +41,7 @@ const ProductDetails = () => {
     const fetchData = async () => {
       const response = await Axios.get(`${URL}/products/${id}`);
       setResult(response.data);
-      setTimeout(() => setAnimation(false), 4000);
+      setTimeout(() => setAnimation(false), 3000);
     };
     fetchData();
   }, [id, currentCurrency]);
@@ -80,7 +80,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Product Details */}
-            <div className="flex-1">
+            <div className="flex-1 w-full">
               <div className="mb-2 md:mb-4">
                 <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
                   {result.product.name}
@@ -131,7 +131,7 @@ const ProductDetails = () => {
               {/* Color selection */}
               <div className="flex flex-col gap-4 my-8">
                 <p className="mb-2">Select Color :</p>
-                <div className="grid max-sm:grid-cols-3 gap-3 grid-cols-4 xl:grid-cols-5 ">
+                <div className="grid max-sm:grid-cols-3 gap-2 lg:gap-3 xl:gap-4 grid-cols-4 xl:grid-cols-5 ">
                   {result?.product?.colors?.map(
                     (option: any, index: number) => (
                       <label
@@ -149,10 +149,9 @@ const ProductDetails = () => {
                           className="hidden"
                         />
                         <span
-                          className={`block w-5 h-5 rounded-full border-2  ${
-                            color === option
-                              ? "border-border-primary rounded-md h-7 w-7"
-                              : "border-gray-300"
+                          className={`w-8 h-8 rounded-full border-2 transition-all ${
+                            color === option &&
+                            "border-border-secondary !h-4 !w-4"
                           }`}
                           style={{ backgroundColor: option.toLowerCase() }}
                         ></span>
@@ -169,8 +168,10 @@ const ProductDetails = () => {
                 <div className="flex flex-wrap gap-2">
                   {result?.product?.sizes?.map((item: any, index: number) => (
                     <div
-                      className={`p-2 h-[45px] w-[45px] bg-gray-200 flex items-center justify-center cursor-pointer text-sm poppins ${
-                        item === size && "border-2 border-border-primary"
+                      className={`p-2 h-[45px] w-[45px] bg-gray-200 flex items-center justify-center cursor-pointer text-sm poppins transition-all ${
+                        item === size
+                          ? "border-2 border-border-primary"
+                          : "border border-border-secondary"
                       }`}
                       key={index}
                       onClick={() => setSize(item)}

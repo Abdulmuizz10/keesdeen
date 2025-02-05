@@ -7,12 +7,14 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
 import { formatAmountDefault } from "../../lib/utils";
+import { useShop } from "../../context/ShopContext";
 
 const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const { setAdminLoader } = useShop();
   const scrollRef = useRef<any>(null);
 
   useEffect(() => {
@@ -43,7 +45,7 @@ const AdminProducts: React.FC = () => {
       "Are you sure you want to delete this product?"
     );
     if (confirmDelete) {
-      await deleteProduct(productId);
+      await deleteProduct(productId, setAdminLoader);
       fetchData(currentPage);
     }
   };

@@ -131,7 +131,7 @@ const AdminUpdateProduct: React.FC = () => {
       }
     } catch (error) {
       setAdminLoader(false);
-      toast.error(`Image upload error: ${error}`);
+      toast.error(`Image upload error`);
     }
   };
 

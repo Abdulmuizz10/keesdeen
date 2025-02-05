@@ -14,7 +14,7 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ animation }) => {
   return (
     <>
-      {!animation && (
+      {!animation ? (
         <>
           <Header76 />
           <Gallery19 />
@@ -24,6 +24,8 @@ const Home: React.FC<HomeProps> = ({ animation }) => {
           <Gallery21 />
           {/* <Testimonial21 /> */}
         </>
+      ) : (
+        <></>
       )}
     </>
   );

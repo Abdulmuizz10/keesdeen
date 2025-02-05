@@ -101,7 +101,7 @@ const OrderHistory: React.FC = () => {
             Order History
           </h2>
           <p className="md:text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Preview and sort through your order history.
           </p>
         </div>
 
@@ -153,7 +153,7 @@ const OrderHistory: React.FC = () => {
             </div>
             <div className="space-y-6 mt-8">
               {sortedOrders ? (
-                sortedOrders.length > 0 ? (
+                sortedOrders?.length > 0 ? (
                   sortedOrders.map((order: any, index: number) => (
                     <div
                       key={index}
@@ -197,7 +197,7 @@ const OrderHistory: React.FC = () => {
                             {formatAmount(order.totalPrice)}
                           </p>
                         </div>
-                        <div className="flex items-start sm:items-center gap-2">
+                        <div className="flex items-center gap-2">
                           <p className="text-gray-500">Status:</p>
                           <p
                             className={`font-semibold px-2 py-1 rounded mt-1 ${
@@ -209,8 +209,11 @@ const OrderHistory: React.FC = () => {
                             {order.isDelivered}
                           </p>
                         </div>
-                        <Link to={`/order_details/${order._id}`}>
-                          <Button className="bg-brand-neutral text-white rounded-md md:py-3 md:px-5 max-md:w-full text-base poppins">
+                        <Link
+                          to={`/order_details/${order._id}`}
+                          className="max-md:w-full"
+                        >
+                          <Button className="bg-brand-neutral text-white rounded-md md:py-2.5 md:px-5 max-md:w-full text-base poppins">
                             More details
                           </Button>
                         </Link>
