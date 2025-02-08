@@ -46,6 +46,7 @@ import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
 import AdminOrderDetails from "./pages/admin pages/AdminOrderDetails";
 import AdminAddProduct from "./pages/admin pages/AdminAddProduct";
 import AdminUsers from "./pages/admin pages/AdminUsers";
+import AdminUserDetails from "./pages/admin pages/AdminUserDetails";
 import AdminBestSellers from "./pages/admin pages/AdminBestSellers";
 import AdminNewArrivals from "./pages/admin pages/AdminNewArrivals";
 import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
@@ -118,6 +119,10 @@ const App: React.FC = () => {
             <Route element={<AdminLayout animation={animation} />}>
               <Route path="/admin" element={<AdminHome />} />
               <Route path="/admin/users" element={<AdminUsers />} />
+              <Route
+                path="/admin/user_details/:id"
+                element={<AdminUserDetails />}
+              />
               <Route path="/admin/products" element={<AdminProducts />} />
               <Route
                 path="/admin/product_details/:id"

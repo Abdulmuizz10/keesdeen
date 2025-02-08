@@ -5,6 +5,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { FaRegCopy } from "react-icons/fa";
 import { useShop } from "../../context/ShopContext";
+import { Link } from "react-router-dom";
 
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<any>([]);
@@ -29,19 +30,19 @@ const AdminUsers: React.FC = () => {
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch (error) {
-      toast.error("Error fetching users!");
+      toast.error("Error getting users!");
       setLoading(false);
     }
   };
 
-  const handleDelete = async (productId: string) => {
+  const handleDelete = async (userId: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this user?"
     );
     if (confirmDelete) {
       setAdminLoader(true);
       try {
-        await Axios.delete(`${URL}/users/${productId}`, {
+        await Axios.delete(`${URL}/users/${userId}`, {
           withCredentials: true,
         });
         toast.success("User deleted successfully!");
@@ -109,7 +110,9 @@ const AdminUsers: React.FC = () => {
                         />
                       </td>
                       <td className="p-4">
-                        {`${user.firstName} ${user.lastName}`}
+                        <Link to={`/admin/user_details/${user._id}`}>
+                          {`${user.firstName} ${user.lastName}`}
+                        </Link>
                       </td>
                       <td className="p-4">{user.email}</td>
                       <td className="p-4">

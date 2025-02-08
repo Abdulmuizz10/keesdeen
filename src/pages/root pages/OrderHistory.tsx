@@ -14,9 +14,10 @@ import { toast } from "react-toastify";
 import { URL } from "../../lib/constants";
 import { useShop } from "../../context/ShopContext";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
+import { formatAmountDefault } from "../../lib/utils";
 
 const OrderHistory: React.FC = () => {
-  const { guestEmail, formatAmount } = useShop();
+  const { guestEmail } = useShop();
   const { user } = useContext(AuthContext);
   const [orders, setOrders] = useState<any[]>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -155,70 +156,7 @@ const OrderHistory: React.FC = () => {
               {sortedOrders ? (
                 sortedOrders?.length > 0 ? (
                   sortedOrders.map((order: any, index: number) => (
-                    <div
-                      key={index}
-                      className="bg-white shadow-md rounded-lg py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300"
-                    >
-                      {/* Left Section: Order Details */}
-                      <div className="w-full sm:w-2/3">
-                        <div className="mb-6">
-                          <p className="text-sm text-gray-500">Order ID</p>
-                          <p className="text-lg font-semibold text-gray-900">
-                            #{order._id}
-                          </p>
-                        </div>
-                        <div className="mb-6">
-                          <p className="text-sm text-gray-500">Order Date</p>
-                          <p className="text-md font-medium text-gray-700">
-                            {new Date(order?.paidAt).toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap gap-2 items-center">
-                          <p className="text-sm text-gray-500">Items:</p>
-                          {order.orderedItems.map(
-                            (item: any, index: number) => (
-                              <span
-                                key={index}
-                                className="bg-gray-100 text-gray-600 px-3 py-2 text-sm"
-                              >
-                                Name: {item.name} | Qty: X {item.qty} | Color:{" "}
-                                {item?.color}
-                              </span>
-                            )
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Right Section: Order Summary */}
-                      <div className="w-full md:w-1/3 flex flex-col items-start md:items-end gap-6">
-                        <div className="flex">
-                          <p className="t text-gray-500">Total:</p>
-                          <p className="px-1 font-semibold text-green-600">
-                            {formatAmount(order.totalPrice)}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-gray-500">Status:</p>
-                          <p
-                            className={`font-semibold px-2 py-1 rounded mt-1 ${
-                              order.isDelivered === "Delivered"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-yellow-100 text-yellow-700"
-                            }`}
-                          >
-                            {order.isDelivered}
-                          </p>
-                        </div>
-                        <Link
-                          to={`/order_details/${order._id}`}
-                          className="max-md:w-full"
-                        >
-                          <Button className="bg-brand-neutral text-white rounded-md md:py-2.5 md:px-5 max-md:w-full text-base poppins">
-                            More details
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
+                    <OrderCard order={order} key={index} />
                   ))
                 ) : (
                   <p className="text-center text-gray-500">
@@ -235,6 +173,53 @@ const OrderHistory: React.FC = () => {
         )}
       </div>
     </section>
+  );
+};
+
+const OrderCard = ({ order }: { order: any }) => {
+  return (
+    <div className="bg-white border-b border-border-secondary py-5 sm:py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition duration-300">
+      <div className="w-full sm:w-2/3 space-y-3">
+        <div>
+          <p className="text-base text-gray-500">Order ID:</p>
+          <p className="text-lg font-semibold text-gray-900">{order._id}</p>
+        </div>
+        <div>
+          <p className="text-base text-gray-500">Date ordered:</p>
+          <p className="text-md font-medium text-gray-700">
+            {new Date(order.paidAt).toLocaleString()}
+          </p>
+        </div>
+        <div>
+          <p className="text-base text-gray-500">Total:</p>
+          <p className="text-md font-medium text-gray-700">
+            {formatAmountDefault(order.currency, order.totalPrice)}
+          </p>
+        </div>
+      </div>
+      <div className="w-full md:w-1/3 flex flex-col items-start md:items-end gap-4">
+        <div className="flex items-center max-sm:flex-col max-sm:items-start gap-2">
+          <p className="text-gray-500 text-base">Status:</p>
+          <p
+            className={`font-semibold px-2 py-1 rounded ${
+              order.isDelivered === "Delivered"
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700"
+            }`}
+          >
+            {order.isDelivered}
+          </p>
+        </div>
+        <Link
+          to={`/order_details/${order._id}`}
+          className="w-full md:w-auto max-sm:mt-5"
+        >
+          <Button className="bg-brand-neutral text-white rounded-md py-2.5 px-5 text-base poppins w-full md:w-auto">
+            More details
+          </Button>
+        </Link>
+      </div>
+    </div>
   );
 };
 
