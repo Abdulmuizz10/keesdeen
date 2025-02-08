@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { AnimatePresence, motion } from "framer-motion";
@@ -159,7 +157,7 @@ export const Layout422Defaults: Layout422Props = {
       //   alt: "Relume placeholder image 1",
       // },
       image: {
-        src: Images.img_13,
+        src: Images.img_20,
         alt: "Relume placeholder image 1",
       },
 
@@ -180,7 +178,7 @@ export const Layout422Defaults: Layout422Props = {
       //   alt: "Relume placeholder image 1",
       // },
       image: {
-        src: Images.img_10,
+        src: Images.img_31,
         alt: "Relume placeholder image 2",
       },
       button: {
