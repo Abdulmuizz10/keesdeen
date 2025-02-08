@@ -131,7 +131,7 @@ const ProductDetails = () => {
               {/* Color selection */}
               <div className="flex flex-col gap-4 my-8">
                 <p className="mb-2">Select Color :</p>
-                <div className="grid max-sm:grid-cols-3 gap-2 lg:gap-3 xl:gap-4 grid-cols-4 xl:grid-cols-5 ">
+                <div className="flex flex-wrap gap-5 md:gap-7 lg:gap-10 items-center">
                   {result?.product?.colors?.map(
                     (option: any, index: number) => (
                       <label
@@ -181,7 +181,7 @@ const ProductDetails = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center gap-2 sm:max-w-xs w-full">
+              <div className="flex items-center gap-2 lg:max-w-xs w-full">
                 <Button
                   className="active:bg-gray-700 py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full"
                   onClick={() =>

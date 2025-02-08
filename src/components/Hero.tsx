@@ -112,7 +112,7 @@ export const Header76Defaults: Header76Props = {
       alt: "Placeholder image",
     },
     {
-      src: Images.img_15,
+      src: Images.img_35,
       alt: "Placeholder image",
     },
     {
@@ -130,23 +130,23 @@ export const Header76Defaults: Header76Props = {
       alt: "Placeholder image",
     },
     {
-      src: Images.img_32,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_33,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_34,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_35,
+      src: Images.img_38,
       alt: "Placeholder image",
     },
     {
       src: Images.img_36,
+      alt: "Placeholder image",
+    },
+    {
+      src: Images.img_44,
+      alt: "Placeholder image",
+    },
+    {
+      src: Images.img_42,
+      alt: "Placeholder image",
+    },
+    {
+      src: Images.img_34,
       alt: "Placeholder image",
     },
   ],

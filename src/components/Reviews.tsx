@@ -101,23 +101,11 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
         </div>
 
         {change ? (
-          <div className="mx-auto shadow-md rounded-lg mt-10">
+          <div className="mx-auto rounded-lg mt-10">
             {reviews?.length > 0 ? (
               <>
-                <div className="mb-4">
+                <div className="mb-6 sm:mb-4">
                   <h2 className="text-2xl font-bold mb-4">All Reviews</h2>
-                  {/* <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="all">All</option>
-                  <option value="highest">Highest Rating</option>
-                  <option value="lowest">Lowest Rating</option>
-                  <option value="latest">Latest</option>
-                  <option value="oldest">Oldest</option>
-                </select> */}
-
                   <div className="w-full md:w-1/2 mt-1">
                     <Select onValueChange={setSortOption}>
                       <SelectTrigger className="rounded-md">

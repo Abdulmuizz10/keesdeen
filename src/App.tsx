@@ -76,7 +76,6 @@ const App: React.FC = () => {
   return (
     <div className="overflow-x-hidden ">
       <ToastContainer />
-
       <AnimatePresence mode="wait">
         {animation && <Animation />}
       </AnimatePresence>

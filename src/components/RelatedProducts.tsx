@@ -43,7 +43,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
           Related Products
         </h2>
       </div>
-      <div className="grid gird-cols md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-6">
+      <div className="grid gird-cols grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xxl:grid-cols-5 gap-4 gap-y-6">
         {related ? (
           related.slice(0, 8).map((product: any, index: number) => (
             <motion.div

@@ -126,9 +126,8 @@ const Collections: React.FC = () => {
       <div className="container">
         <div className="mb-2 md:mb-5">
           <h2 className="text-2xl font-bold bricolage-grotesque">
-            Search results
+            results for: "{name}"
           </h2>
-          {/* <p className="poppins text-md text-text-secondary">{name}</p> */}
         </div>
         <div
           className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
@@ -250,7 +249,8 @@ const Collections: React.FC = () => {
                 {/* {Product Sort} */}
 
                 <p className="info-text hidden xl:flex">
-                  Showing 1 . {filteredProducts.length} of 31 Products
+                  Showing 1 . {filteredProducts.length} of {products?.length}{" "}
+                  Products
                 </p>
 
                 <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
