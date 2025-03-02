@@ -5,7 +5,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { BiLogoFacebookCircle, BiLogoInstagram } from "react-icons/bi";
 import { FaTiktok } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import CurrencySwitcher from "./CurrencySwitcher";
+// import CurrencySwitcher from "./CurrencySwitcher";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Axios from "axios";
@@ -119,7 +119,7 @@ export const Footer1 = (props: Footer1Props) => {
 
               <div dangerouslySetInnerHTML={{ __html: termsAndConditions }} />
               <div className="mt-10">
-                <CurrencySwitcher color="black" />
+                {/* <CurrencySwitcher color="black" /> */}
               </div>
             </div>
           </div>

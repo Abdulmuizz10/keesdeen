@@ -12,7 +12,7 @@ import { LuHeart } from "react-icons/lu";
 import { CiSearch, CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
-import CurrencySwitcher from "./CurrencySwitcher";
+// import CurrencySwitcher from "./CurrencySwitcher";
 
 type ImageProps = {
   url?: string;
@@ -79,7 +79,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           </div>
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex gap-3 items-center">
-              <CurrencySwitcher color="white" />
+              {/* <CurrencySwitcher color="white" /> */}
               <CiSearch
                 className="text-3xl cursor-pointer text-text-primary hover:text-brand-primary"
                 onClick={() => setIsActive(!isActive)}
@@ -201,7 +201,7 @@ export const Navbar7 = (props: Navbar7Props) => {
 
         <div className="flex items-center">
           <div className="max-sm:hidden flex xl:hidden">
-            <CurrencySwitcher color="white" />
+            {/* <CurrencySwitcher color="white" /> */}
           </div>
           <button
             className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center xl:hidden"
