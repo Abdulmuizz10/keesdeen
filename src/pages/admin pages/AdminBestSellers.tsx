@@ -92,57 +92,63 @@ const AdminBestSellers: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading
-                  ? Array.from({ length: 20 }).map((_, index) => (
-                      <tr key={index} className="border-b">
-                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      </tr>
-                    ))
-                  : products?.map((product: any, index: number) => (
-                      <tr
-                        key={index}
-                        className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
-                      >
-                        <Link to={`/admin/product_details/${product._id}`}>
-                          <td className="p-4 line-clamp-1">{product.name}</td>
-                        </Link>
-                        <td className="p-4">{product.category}</td>
-                        <td className="p-4">{product.subcategory}</td>
-                        <td className="p-4">{formatAmount(product.price)}</td>
-                        <td className="p-4">
-                          {product.bestSeller ? (
-                            <p className="text-green-500 font-semibold pl-4">
-                              True
-                            </p>
-                          ) : (
-                            <p className="text-brand-secondary font-semibold pl-4">
-                              False
-                            </p>
-                          )}
-                        </td>
-                        <td className="p-4">
-                          <select
-                            onChange={(e) =>
-                              handleStatusChange(product._id, e.target.value)
-                            }
-                            className="border border-gray-300  p-1 focus:ring-none"
-                          >
-                            <option value="">Select status</option>
-                            <option value={"isBestSeller"}>Yes</option>
-                            <option value={"notBestSeller"}>No</option>
-                          </select>
-                        </td>
-                        <td className="p-5">
-                          {new Date(product.createdAt).toLocaleString()}
-                        </td>
-                      </tr>
-                    ))}
+                {loading ? (
+                  Array.from({ length: 20 }).map((_, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    </tr>
+                  ))
+                ) : products.length > 0 ? (
+                  products?.map((product: any, index: number) => (
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+                    >
+                      <Link to={`/admin/product_details/${product._id}`}>
+                        <td className="p-4 line-clamp-1">{product.name}</td>
+                      </Link>
+                      <td className="p-4">{product.category}</td>
+                      <td className="p-4">{product.subcategory}</td>
+                      <td className="p-4">{formatAmount(product.price)}</td>
+                      <td className="p-4">
+                        {product.bestSeller ? (
+                          <p className="text-green-500 font-semibold pl-4">
+                            True
+                          </p>
+                        ) : (
+                          <p className="text-brand-secondary font-semibold pl-4">
+                            False
+                          </p>
+                        )}
+                      </td>
+                      <td className="p-4">
+                        <select
+                          onChange={(e) =>
+                            handleStatusChange(product._id, e.target.value)
+                          }
+                          className="border border-gray-300  p-1 focus:ring-none"
+                        >
+                          <option value="">Select status</option>
+                          <option value={"isBestSeller"}>Yes</option>
+                          <option value={"notBestSeller"}>No</option>
+                        </select>
+                      </td>
+                      <td className="p-5">
+                        {new Date(product.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <p className="text-base sm:text-xl py-5">
+                    No best seller products
+                  </p>
+                )}
               </tbody>
             </table>
           </div>

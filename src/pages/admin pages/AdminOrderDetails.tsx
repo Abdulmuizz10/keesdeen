@@ -12,6 +12,39 @@ const AdminOrderDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [order, setOrder] = useState<any>();
 
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await Axios.get(`${URL}/orders/${id}`, {
+  //       withCredentials: true,
+  //     });
+  //     const fetchedOrder = response.data;
+  //     let countryCode = fetchedOrder.shippingAddress.country;
+  //     if (fetchedOrder.shippingAddress.country) {
+  //       const country = Country.getCountryByCode(countryCode);
+  //       fetchedOrder.shippingAddress.country = country
+  //         ? country.name
+  //         : fetchedOrder.shippingAddress.country;
+  //       countryCode = country
+  //         ? country.isoCode
+  //         : fetchedOrder.shippingAddress.country;
+  //     }
+
+  //     const stateCode = fetchedOrder.shippingAddress.state;
+  //     if (countryCode && stateCode) {
+  //       const state = State.getStateByCodeAndCountry(stateCode, countryCode);
+  //       fetchedOrder.shippingAddress.state = state
+  //         ? state.name
+  //         : fetchedOrder.shippingAddress.state;
+  //     }
+
+  //     setOrder(fetchedOrder);
+  //   } catch (error) {
+  //     toast.error("Error fetching order:");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchData = async () => {
     try {
       const response = await Axios.get(`${URL}/orders/${id}`, {
@@ -19,22 +52,29 @@ const AdminOrderDetails: React.FC = () => {
       });
       const fetchedOrder = response.data;
 
-      let countryCode = fetchedOrder.country;
-      if (fetchedOrder.country) {
-        const country = Country.getCountryByCode(countryCode);
-        fetchedOrder.country = country ? country.name : fetchedOrder.country;
-        countryCode = country ? country.isoCode : fetchedOrder.country;
-      }
+      const updateCountryAndState = (address: any) => {
+        if (!address) return;
 
-      if (countryCode && fetchedOrder.cityAndRegion) {
-        const state = State.getStateByCodeAndCountry(
-          fetchedOrder.cityAndRegion,
-          countryCode
-        );
-        fetchedOrder.cityAndRegion = state
-          ? state.name
-          : fetchedOrder.cityAndRegion;
-      }
+        const countryCode = address.country;
+        if (countryCode) {
+          const country = Country.getCountryByCode(countryCode);
+          address.country = country ? country.name : address.country;
+          const updatedCountryCode = country ? country.isoCode : countryCode;
+
+          const stateCode = address.state;
+          if (updatedCountryCode && stateCode) {
+            const state = State.getStateByCodeAndCountry(
+              stateCode,
+              updatedCountryCode
+            );
+            address.state = state ? state.name : address.state;
+          }
+        }
+      };
+
+      updateCountryAndState(fetchedOrder.shippingAddress);
+      updateCountryAndState(fetchedOrder.billingAddress);
+
       setOrder(fetchedOrder);
     } catch (error) {
       toast.error("Error fetching order:");
@@ -90,17 +130,11 @@ const AdminOrderDetails: React.FC = () => {
 
   const {
     _id,
-    firstName,
-    lastName,
+    shippingAddress,
+    billingAddress,
     email,
-    phoneNumber,
     guestOrder,
     guestEmail,
-    addressLineOne,
-    addressLineTwo,
-    cityAndRegion,
-    country,
-    zipCode,
     orderedItems,
     totalPrice,
     shippingPrice,
@@ -131,7 +165,7 @@ const AdminOrderDetails: React.FC = () => {
         </p>
         <select
           onChange={(e) => handleStatusChange(order._id, e.target.value)}
-          className="border border-gray-300 py-2 px-3 mt-3 focus:ring-none rounded-md poppins w-full sm:w-80 bg-white"
+          className="border border-gray-300 py-2 px-3 mt-3 focus:ring-none rounded-md w-full sm:w-80 bg-white"
         >
           <option value="">Select status</option>
           <option value={"Pending"}>Pending</option>
@@ -147,18 +181,23 @@ const AdminOrderDetails: React.FC = () => {
           Delivery information
         </h2>
         <p className="text-gray-800">
-          <span className="font-medium">Name:</span> {firstName} {lastName}
+          <span className="font-medium">Name:</span> {shippingAddress.firstName}{" "}
+          {shippingAddress.lastName}
         </p>
         <p className="text-gray-800">
           <span className="font-medium">Email:</span> {email}
         </p>
         <p className="text-gray-800">
-          <span className="font-medium">Phone:</span> +{phoneNumber.slice(0, 3)}{" "}
-          {phoneNumber.slice(3)}
+          <span className="font-medium">Phone:</span> +
+          {shippingAddress.phoneNumber.slice(0, 3)}{" "}
+          {shippingAddress.phoneNumber.slice(3)}
         </p>
         <p className="text-gray-800">
-          <span className="font-medium">Address:</span> {addressLineOne},{" "}
-          {addressLineTwo || ""}, {cityAndRegion}, {zipCode}, {country}
+          <span className="font-medium">Address:</span>{" "}
+          {shippingAddress.addressLineOne},{" "}
+          {shippingAddress.addressLineTwo || ""}, {shippingAddress.zipCode},{" "}
+          {shippingAddress.state}, {shippingAddress.city},{" "}
+          {shippingAddress.country}.
         </p>
         {guestOrder && (
           <>
@@ -222,6 +261,29 @@ const AdminOrderDetails: React.FC = () => {
             : "Not Delivered"}
         </p>
       </div>
+
+      {/* Billing Address */}
+      {billingAddress && (
+        <div className="p-6 text-md space-y-2 border-t">
+          <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+            Billing information
+          </h2>
+          <p className="text-gray-800">
+            <span className="font-medium">Name:</span>{" "}
+            {billingAddress.firstName} {billingAddress.lastName}
+          </p>
+          <p className="text-gray-800">
+            <span className="font-medium">Phone:</span> +
+            {billingAddress.phoneNumber.slice(0, 3)}{" "}
+            {billingAddress.phoneNumber.slice(3)}
+          </p>
+          <p className="text-gray-800">
+            <span className="font-medium">Address:</span>{" "}
+            {billingAddress.zipCode}, {billingAddress.state},{" "}
+            {billingAddress.street}, {billingAddress.country}.
+          </p>
+        </div>
+      )}
     </section>
   );
 };

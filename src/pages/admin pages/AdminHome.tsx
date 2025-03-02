@@ -179,58 +179,64 @@ const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading
-                  ? Array.from({ length: 20 }).map((_, index) => (
-                      <tr key={index} className="border-b">
-                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      </tr>
-                    ))
-                  : transactions?.map((transaction: any, index: number) => (
-                      <tr
-                        key={index}
-                        className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
-                      >
-                        <td className="py-4 px-2 flex items-center gap-2 ">
-                          {transaction._id.split("").slice(0, 6)}....
-                          <FaRegCopy
-                            className="text-xl cursor-pointer"
-                            onClick={() => copyId(transaction._id)}
-                          />
-                        </td>
+                {loading ? (
+                  Array.from({ length: 20 }).map((_, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    </tr>
+                  ))
+                ) : transactions.length > 0 ? (
+                  transactions?.map((transaction: any, index: number) => (
+                    <tr
+                      key={index}
+                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+                    >
+                      <td className="py-4 px-2 flex items-center gap-2 ">
+                        {transaction._id.split("").slice(0, 6)}....
+                        <FaRegCopy
+                          className="text-xl cursor-pointer"
+                          onClick={() => copyId(transaction._id)}
+                        />
+                      </td>
 
-                        <td className="p-5 cursor-pointer">
-                          <Link
-                            to={`/admin/order_details/${transaction._id}`}
-                          >{`${transaction.firstName} ${transaction.lastName}`}</Link>
-                        </td>
-                        <td className="p-5">{transaction.email}</td>
-                        <td className="p-5">
-                          {transaction.isDelivered === "Delivered" ? (
-                            <span className="text-green-500 font-semibold">
-                              Delivered
-                            </span>
-                          ) : (
-                            <span className="text-brand-secondary font-semibold">
-                              {transaction.isDelivered}
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-5">
-                          {formatAmountDefault(
-                            transaction.currency,
-                            transaction.totalPrice
-                          )}
-                        </td>
-                        <td className="p-5">
-                          {new Date(transaction.paidAt).toLocaleString()}
-                        </td>
-                      </tr>
-                    ))}
+                      <td className="p-5 cursor-pointer">
+                        <Link
+                          to={`/admin/order_details/${transaction._id}`}
+                        >{`${transaction.shippingAddress.firstName} ${transaction.shippingAddress.lastName}`}</Link>
+                      </td>
+                      <td className="p-5">{transaction.email}</td>
+                      <td className="p-5">
+                        {transaction.isDelivered === "Delivered" ? (
+                          <span className="text-green-500 font-semibold">
+                            Delivered
+                          </span>
+                        ) : (
+                          <span className="text-brand-secondary font-semibold">
+                            {transaction.isDelivered}
+                          </span>
+                        )}
+                      </td>
+                      <td className="p-5">
+                        {formatAmountDefault(
+                          transaction.currency,
+                          transaction.totalPrice
+                        )}
+                      </td>
+                      <td className="p-5">
+                        {new Date(transaction.paidAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <p className="text-base sm:text-xl py-5">
+                    No transactions made
+                  </p>
+                )}
               </tbody>
             </table>
           </div>

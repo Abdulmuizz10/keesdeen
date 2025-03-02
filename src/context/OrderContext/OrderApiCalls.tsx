@@ -6,10 +6,14 @@ import { showOrderSummary } from "../../components/SweatOrderPopUP";
 // Create a new order
 export const createOrder = async (
   order: any,
-  setPaymentLoader: any,
+  setLoading: any,
   setCartItems: any,
-  setSelectedCountry: any,
-  setSelectedState: any,
+  setDeliverySelectedCountry: any,
+  setDeliverySelectedState: any,
+  setDeliverySelectedCity: any,
+  setBillingSelectedCountry: any,
+  setBillingSelectedState: any,
+  setBillingSelectedCity: any,
   navigate: any
 ) => {
   try {
@@ -18,20 +22,23 @@ export const createOrder = async (
       validateStatus: (status) => status < 600,
     });
     if (res.status === 200) {
-      setPaymentLoader(false);
+      setLoading(false);
       toast.success("Order placed successfully!");
       showOrderSummary(res.data);
       setCartItems({});
-      setSelectedCountry("");
-      setSelectedState("");
+      setDeliverySelectedCountry("");
+      setDeliverySelectedState("");
+      setDeliverySelectedCity("");
+      setBillingSelectedCountry("");
+      setBillingSelectedState("");
+      setBillingSelectedCity("");
       navigate("/collections/shop_all");
     } else {
-      setPaymentLoader(false);
+      setLoading(false);
       toast.error(res.data.message || "Something went wrong please try again");
     }
   } catch (err) {
-    setPaymentLoader(false);
-
+    setLoading(false);
     toast.error("An unexpected error occurred. Please try again.");
   }
 };

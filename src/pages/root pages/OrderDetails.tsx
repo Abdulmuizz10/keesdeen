@@ -14,6 +14,47 @@ const OrderDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [order, setOrder] = useState<any>();
 
+  // const fetchData = async () => {
+  //   try {
+  //     const endpoint = guest
+  //       ? `${URL}/orders/guest/order/${id}`
+  //       : `${URL}/orders/profile/order/${id}`;
+  //     const headers = !guest
+  //       ? {
+  //           withCredentials: true,
+  //         }
+  //       : {};
+
+  //     const response = await Axios.get(endpoint, headers);
+  //     const fetchedOrder = response.data;
+
+  //     let countryCode = fetchedOrder.shippingAddress.country;
+  //     if (countryCode) {
+  //       const country = Country.getCountryByCode(countryCode);
+  //       fetchedOrder.shippingAddress.country = country
+  //         ? country.name
+  //         : countryCode;
+  //       countryCode = country ? country.isoCode : countryCode;
+  //     }
+
+  //     if (countryCode && fetchedOrder.cityAndRegion) {
+  //       const state = State.getStateByCodeAndCountry(
+  //         fetchedOrder.shippingAddress.city,
+  //         countryCode
+  //       );
+  //       fetchedOrder.shippingAddress.city = state
+  //         ? state.name
+  //         : fetchedOrder.shippingAddress.city;
+  //     }
+
+  //     setOrder(fetchedOrder);
+  //   } catch (error) {
+  //     toast.error("Error fetching order details!");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchData = async () => {
     try {
       const endpoint = guest
@@ -28,21 +69,23 @@ const OrderDetails: React.FC = () => {
       const response = await Axios.get(endpoint, headers);
       const fetchedOrder = response.data;
 
-      let countryCode = fetchedOrder.country;
+      let countryCode = fetchedOrder.shippingAddress.country;
       if (countryCode) {
         const country = Country.getCountryByCode(countryCode);
-        fetchedOrder.country = country ? country.name : countryCode;
+        fetchedOrder.shippingAddress.country = country
+          ? country.name
+          : countryCode;
         countryCode = country ? country.isoCode : countryCode;
       }
 
-      if (countryCode && fetchedOrder.cityAndRegion) {
+      if (countryCode && fetchedOrder.shippingAddress.state) {
         const state = State.getStateByCodeAndCountry(
-          fetchedOrder.cityAndRegion,
+          fetchedOrder.shippingAddress.state,
           countryCode
         );
-        fetchedOrder.cityAndRegion = state
+        fetchedOrder.shippingAddress.state = state
           ? state.name
-          : fetchedOrder.cityAndRegion;
+          : fetchedOrder.shippingAddress.state;
       }
 
       setOrder(fetchedOrder);
@@ -75,15 +118,8 @@ const OrderDetails: React.FC = () => {
 
   const {
     _id,
-    firstName,
-    lastName,
+    shippingAddress,
     email,
-    phoneNumber,
-    addressLineOne,
-    addressLineTwo,
-    cityAndRegion,
-    country,
-    zipCode,
     orderedItems,
     totalPrice,
     shippingPrice,
@@ -130,18 +166,23 @@ const OrderDetails: React.FC = () => {
           </h2>
           <div className="mt-4 space-y-2 text-md">
             <p className=" text-gray-600">
-              <span className="font-medium">Name:</span> {firstName} {lastName}
+              <span className="font-medium">Name:</span>{" "}
+              {shippingAddress.firstName} {shippingAddress.lastName}
             </p>
             <p className=" text-gray-600">
               <span className="font-medium">Email:</span> {email}
             </p>
             <p className=" text-gray-600">
               <span className="font-medium">Phone:</span> +
-              {phoneNumber.slice(0, 3)} {phoneNumber.slice(3)}
+              {shippingAddress.phoneNumber.slice(0, 3)}{" "}
+              {shippingAddress.phoneNumber.slice(3)}
             </p>
             <p className=" text-gray-600">
-              <span className="font-medium">Address:</span> {addressLineOne},{" "}
-              {addressLineTwo || ""}, {cityAndRegion}, {zipCode}, {country}
+              <span className="font-medium">Address:</span>{" "}
+              {shippingAddress.addressLineOne},{" "}
+              {shippingAddress.addressLineTwo || ""}, {shippingAddress.state},{" "}
+              {shippingAddress.city}, {shippingAddress.zipCode},{" "}
+              {shippingAddress.country}
             </p>
           </div>
         </div>

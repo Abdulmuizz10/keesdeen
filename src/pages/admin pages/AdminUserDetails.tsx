@@ -121,17 +121,17 @@ const AdminUserDetails: React.FC = () => {
 
         <div className="space-y-4">
           <div className="flex justify-between text-gray-800">
-            <span className="font-medium">Auth Method:</span>
+            <span className="font-medium poppins">Auth Method:</span>
             <span className="text-gray-900">{user?.authMethod}</span>
           </div>
           <div className="flex justify-between text-gray-800">
-            <span className="font-medium">Joined On:</span>
+            <span className="font-medium poppins">Joined On:</span>
             <span className="text-gray-900">
               {new Date(user?.createdAt).toLocaleString()}
             </span>
           </div>
           <div className="flex justify-between text-gray-800">
-            <span className="font-medium">Admin Status:</span>
+            <span className="font-medium poppins">Admin Status:</span>
             <span
               className={`px-3 py-1 text-sm font-semibold rounded-full ${
                 user?.isAdmin
@@ -145,7 +145,7 @@ const AdminUserDetails: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <FaUser className="text-green-600" /> Regular user
+                  <FaUser /> Regular user
                 </>
               )}
             </span>

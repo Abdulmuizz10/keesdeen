@@ -25,10 +25,9 @@ interface ShopContextType {
   fetchExchangeRates: any;
   setCurrency: any;
   formatAmount: any;
+  getRawAmount: any;
   isActive: any;
   setIsActive: any;
-  paymentLoader: any;
-  setPaymentLoader: any;
   adminLoader: any;
   setAdminLoader: any;
   delivery_fee: number;
@@ -42,7 +41,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [isActive, setIsActive] = useState(false);
-  const [paymentLoader, setPaymentLoader] = useState(false);
   const [adminLoader, setAdminLoader] = useState(false);
 
   const [guestEmail, setGuestEmail] = useState<String>(() => {
@@ -199,16 +197,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const manageWishLists = (product: any) => {
-    // setWishLists((prevWishLists: any) => {
-    //   if (prevWishLists.includes(productId)) {
-    //     // Remove the product if it's already in the wishlist
-    //     return prevWishLists.filter((id: any) => id !== productId);
-    //   } else {
-    //     // Add the product if it's not in the wishlist
-    //     return [...prevWishLists, productId];
-    //   }
-    // });
-
     setWishLists((prevWishLists: any) => {
       if (prevWishLists.find((wish: any) => wish._id === product._id)) {
         // Remove the product if it's already in the wishlist
@@ -257,6 +245,11 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     return formatter.format(convertedAmount);
   };
 
+  const getRawAmount = (amount: number): number => {
+    const rate = exchangeRates[currentCurrency] || 1;
+    return amount * rate;
+  };
+
   return (
     <ShopContext.Provider
       value={{
@@ -276,10 +269,9 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         fetchExchangeRates,
         setCurrency,
         formatAmount,
+        getRawAmount,
         isActive,
         setIsActive,
-        paymentLoader,
-        setPaymentLoader,
         adminLoader,
         setAdminLoader,
         delivery_fee,
@@ -301,111 +293,3 @@ export const useShop = () => {
 {
   /* old cart codes */
 }
-
-//  const addToCart = async (
-//    itemId: string,
-//    size: string,
-//    name: string,
-//    price: any,
-//    image: string
-//  ) => {
-//    if (!size) {
-//      toast.error("Select Product Size");
-//      return;
-//    }
-//    // Clone the cartItems to avoid mutating state directly
-//    let cartData = structuredClone(cartItems || {});
-
-//    // Check if the cart has this itemId already
-//    if (!cartData[itemId]) {
-//      // Initialize the item object if it doesn't exist
-//      cartData[itemId] = {};
-//    }
-
-//    // Check if the size exists for this item
-//    if (cartData[itemId][size]) {
-//      // If the size exists, increment the quantity
-//      cartData[itemId][size] += 1;
-//    } else {
-//      // If the size doesn't exist, initialize it with 1
-//      cartData[itemId][size] = 1;
-//    }
-
-//    // Update the state with the new cart data
-//    setCartItems(cartData);
-//  };
-
-//  const getCartCount = () => {
-//    let totalCount = 0;
-//    for (const items in cartItems) {
-//      for (const item in cartItems[items]) {
-//        try {
-//          if (cartItems[items][item] > 0) {
-//            totalCount += cartItems[items][item];
-//          }
-//        } catch (error) {
-//          console.log(error);
-//        }
-//      }
-//    }
-//    return totalCount;
-//  };
-
-//  const updateQuantity = async (
-//    itemId: string,
-//    size: string,
-//    quantity: number
-//  ) => {
-//    let cartData = structuredClone(cartItems || {});
-//    if (quantity > 0) {
-//      cartData[itemId][size] = quantity;
-//    } else {
-//      delete cartData[itemId][size]; // Remove size if quantity is 0
-//      if (Object.keys(cartData[itemId]).length === 0) {
-//        delete cartData[itemId]; // Remove item if no sizes left
-//      }
-//    }
-//    setCartItems(cartData);
-//  };
-
-//  const getCartAmount = () => {
-//    let totalAmount = 0;
-//    for (const items in cartItems) {
-//      let itemInfo = products?.find((product: Product) => product._id === items);
-//      for (const item in cartItems[items]) {
-//        try {
-//          if (cartItems[items][item] > 0 && itemInfo) {
-//            totalAmount += itemInfo.price * cartItems[items][item];
-//          }
-//        } catch (error) {
-//          console.log(error);
-//        }
-//      }
-//    }
-//    return totalAmount;
-//  };
-
-//  const getCartDetailsForOrder = () => {
-//    const cartDetailsArray = [];
-
-//    for (const itemId in cartItems) {
-//      const products = cartItems;
-//      for (const size in cartItems[itemId]) {
-//        const quantity = cartItems[itemId][size];
-
-//        const product = products[itemId];
-//        if (product && quantity > 0) {
-//          cartDetailsArray.push({
-//            name: product.name,
-//            qty: quantity,
-//            image: product.image,
-//            price: product.price,
-//            product: itemId,
-//            size,
-//          });
-//        }
-//      }
-//    }
-
-//    return cartDetailsArray;
-//  };

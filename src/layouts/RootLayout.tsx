@@ -37,7 +37,6 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
           >
             <CiDeliveryTruck className="text-white text-2xl cursor-pointer" />
           </Link>
-
           <Footer1 />
         </div>
       </div>

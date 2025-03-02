@@ -10,18 +10,6 @@ body {
   background: #ffffff;
 }
 
-.gradient-bg-footer {
-  background-color: #3c3c3c;
-  background-image: radial-gradient(
-      at 0% 100%,
-      hsla(253, 16%, 7%, 1) 0,
-      transparent 53%
-    ),
-    radial-gradient(at 50% 100%, #3c3c3c 0, transparent 50%),
-    radial-gradient(at 50% 0%, #da5b14 0, transparent 50%),
-    radial-gradient(at 100% 0%, #04bb6e, transparent 50%);
-}
-
 .text-gradient {
   background: linear-gradient(90deg, #000000, #04b96d, #db5d14);
   -webkit-background-clip: text;
@@ -56,6 +44,9 @@ option {
   font-weight: 300;
   font-style: normal;
 }
+
+select,
+option,
 p,
 s,
 label,
@@ -97,6 +88,7 @@ td {
   mask-composite: subtract;
   animation: l3 1s infinite linear;
 }
+
 @keyframes l3 {
   to {
     transform: rotate(1turn);

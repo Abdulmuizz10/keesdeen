@@ -57,7 +57,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             className="inline-block w-[150px] md:w-[200px]"
           />
         </Link>
-        <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 lg:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
+        <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 xl:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
           <div className="flex flex-col items-center lg:flex-row">
             {navLinks.map((navLink, index) => (
               <div key={index}>
@@ -145,7 +145,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             )}
           </div>
         </div>
-        <div className="flex lg:hidden gap-[6px] items-center">
+        <div className="flex xl:hidden gap-[6px] items-center">
           <CiSearch
             className="text-3xl cursor-pointer text-text-primary"
             onClick={() => setIsActive(!isActive)}
@@ -200,11 +200,11 @@ export const Navbar7 = (props: Navbar7Props) => {
         </div>
 
         <div className="flex items-center">
-          <div className="max-sm:hidden flex lg:hidden">
+          <div className="max-sm:hidden flex xl:hidden">
             <CurrencySwitcher color="white" />
           </div>
           <button
-            className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center lg:hidden"
+            className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center xl:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <motion.span

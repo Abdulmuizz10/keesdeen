@@ -84,59 +84,63 @@ const AdminUsers: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading
-                ? Array.from({ length: 20 }).map((_, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    </tr>
-                  ))
-                : users?.map((user: any, index: number) => (
-                    <tr
-                      key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
-                    >
-                      <td className="p-4">{index + 1}</td>
-                      <td className="p-4 flex gap-1 items-center">
-                        {user._id.split("").slice(0, 10)}...
-                        <FaRegCopy
-                          className="text-xl cursor-pointer"
-                          onClick={() => copyId(user._id)}
-                        />
-                      </td>
-                      <td className="p-4">
-                        <Link to={`/admin/user_details/${user._id}`}>
-                          {`${user.firstName} ${user.lastName}`}
-                        </Link>
-                      </td>
-                      <td className="p-4">{user.email}</td>
-                      <td className="p-4">
-                        {user.isAdmin ? (
-                          <span className="text-green-500 font-semibold">
-                            True
-                          </span>
-                        ) : (
-                          <span className="text-brand-secondary font-semibold">
-                            False
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        {new Date(user?.createdAt).toLocaleString()}
-                      </td>
-                      <td className="py-2 px-8">
-                        <RiDeleteBin5Line
-                          className="text-2xl cursor-pointer"
-                          onClick={() => handleDelete(user._id)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+              {loading ? (
+                Array.from({ length: 20 }).map((_, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                  </tr>
+                ))
+              ) : users.length > 0 ? (
+                users?.map((user: any, index: number) => (
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+                  >
+                    <td className="p-4">{index + 1}</td>
+                    <td className="p-4 flex gap-1 items-center">
+                      {user._id.split("").slice(0, 10)}...
+                      <FaRegCopy
+                        className="text-xl cursor-pointer"
+                        onClick={() => copyId(user._id)}
+                      />
+                    </td>
+                    <td className="p-4">
+                      <Link to={`/admin/user_details/${user._id}`}>
+                        {`${user.firstName} ${user.lastName}`}
+                      </Link>
+                    </td>
+                    <td className="p-4">{user.email}</td>
+                    <td className="p-4">
+                      {user.isAdmin ? (
+                        <span className="text-green-500 font-semibold">
+                          True
+                        </span>
+                      ) : (
+                        <span className="text-brand-secondary font-semibold">
+                          False
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      {new Date(user?.createdAt).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-8">
+                      <RiDeleteBin5Line
+                        className="text-2xl cursor-pointer"
+                        onClick={() => handleDelete(user._id)}
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <p className="text-base sm:text-xl py-5">No Users available</p>
+              )}
             </tbody>
           </table>
         </div>

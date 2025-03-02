@@ -65,48 +65,52 @@ const AdminDeliveredOrders: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading
-                ? Array.from({ length: 20 }).map((_, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    </tr>
-                  ))
-                : orders?.map((order: any, index: number) => (
-                    <tr
-                      key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
-                    >
-                      <td className="py-4 px-2 flex gap-2 items-center">
-                        {order._id.split("").slice(0, 10)}...
-                        <FaRegCopy
-                          className="text-xl cursor-pointer"
-                          onClick={() => copyId(order._id)}
-                        />
-                      </td>
-                      <td className="py-2 cursor-pointer">
-                        <Link
-                          to={`/admin/order_details/${order._id}`}
-                        >{`${order.firstName} ${order.lastName}`}</Link>
-                      </td>
-                      <td className="p-5">{order.email}</td>
-                      <td className="p-5">
-                        <span className="text-brand-primary font-semibold">
-                          {order.isDelivered}
-                        </span>
-                      </td>
-                      <td className="p-5">
-                        {formatAmountDefault(order.currency, order.totalPrice)}
-                      </td>
-                      <td className="p-5">
-                        {new Date(order.deliveredAt).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
+              {loading ? (
+                Array.from({ length: 20 }).map((_, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                  </tr>
+                ))
+              ) : orders.length > 0 ? (
+                orders?.map((order: any, index: number) => (
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+                  >
+                    <td className="py-4 px-2 flex gap-2 items-center">
+                      {order._id.split("").slice(0, 10)}...
+                      <FaRegCopy
+                        className="text-xl cursor-pointer"
+                        onClick={() => copyId(order._id)}
+                      />
+                    </td>
+                    <td className="py-2 cursor-pointer">
+                      <Link
+                        to={`/admin/order_details/${order._id}`}
+                      >{`${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`}</Link>
+                    </td>
+                    <td className="p-5">{order.email}</td>
+                    <td className="p-5">
+                      <span className="text-brand-primary font-semibold">
+                        {order.isDelivered}
+                      </span>
+                    </td>
+                    <td className="p-5">
+                      {formatAmountDefault(order.currency, order.totalPrice)}
+                    </td>
+                    <td className="p-5">
+                      {new Date(order.deliveredAt).toLocaleString()}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <p className="text-base sm:text-xl py-5">No orders available</p>
+              )}
             </tbody>
           </table>
         </div>

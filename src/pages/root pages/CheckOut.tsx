@@ -6,13 +6,49 @@ import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { toast } from "react-toastify";
 
 import { AuthContext } from "../../context/AuthContext/AuthContext";
-import { Country, State } from "country-state-city";
+import { Country, State, City } from "country-state-city";
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { createOrder } from "../../context/OrderContext/OrderApiCalls";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
+
+interface OrderData {
+  user: any;
+  email: any;
+  currency: string;
+  coupon: string;
+  orderedItems: any;
+  shippingAddress: {
+    firstName: any;
+    lastName: any;
+    country: any;
+    state: any;
+    city: any;
+    addressLineOne: any;
+    addressLineTwo: any;
+    phoneNumber: any;
+    zipCode: any;
+  };
+  billingAddress?: {
+    firstName: any;
+    lastName: any;
+    country: any;
+    state: any;
+    city: any;
+    street: any;
+    phoneNumber: any;
+    zipCode: any;
+  };
+  billingSameAsShipping: boolean;
+  shippingPrice: number;
+  totalPrice: number;
+  guestOrder: boolean;
+  guestEmail: string | null;
+  paidAt: string;
+  sourceId: string;
+}
 
 const zipCodePatterns: { [key: string]: RegExp } = {
   US: /^[0-9]{5}(-[0-9]{4})?$/,
@@ -29,27 +65,27 @@ const CheckOut: React.FC = ({}) => {
     delivery_fee,
     setCartItems,
     formatAmount,
+    getRawAmount,
+    getCartDetailsForOrder,
+    guestEmail,
     // currentCurrency,
   } = useShop();
+  const [loading, setLoading] = useState<boolean>(false);
   const [coupon, setCoupon] = useState<string>("");
   const [discount, setDiscount] = useState<number>(0);
-  const {
-    getCartDetailsForOrder,
-    paymentLoader,
-    setPaymentLoader,
-    guestEmail,
-  } = useShop();
-  const [selectedCountry, setSelectedCountry] = useState<any>();
-  const [selectedState, setSelectedState] = useState<any>();
-
+  const [deliverySelectedCountry, setDeliverySelectedCountry] = useState<any>();
+  const [deliverySelectedState, setDeliverySelectedState] = useState<any>();
+  const [deliverySelectedCity, setDeliverySelectedCity] = useState<any>();
+  const [billingSelectedCountry, setBillingSelectedCountry] = useState<any>();
+  const [billingSelectedState, setBillingSelectedState] = useState<any>();
+  const [billingSelectedCity, setBillingSelectedCity] = useState<any>();
+  const [billingSameAsShipping, setBillingSameAsShipping] = useState(false);
   const orderedItems = getCartDetailsForOrder();
-  const subtotal = getCartAmount();
-
   const navigate = useNavigate();
-  // Calculate the final total
-  const finalTotal = discount
-    ? getCartAmount() - (getCartAmount() / 100) * discount + delivery_fee
-    : getCartAmount() + delivery_fee;
+
+  const subtotal = getCartAmount();
+  const discountAmount = (subtotal / 100) * discount;
+  const finalTotal = subtotal - discountAmount + delivery_fee;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -62,6 +98,7 @@ const CheckOut: React.FC = ({}) => {
     setValue,
     watch,
     trigger,
+    unregister,
   } = useForm({ mode: "onChange" });
 
   const applyCoupon = () => {
@@ -75,65 +112,117 @@ const CheckOut: React.FC = ({}) => {
     }
   };
 
-  const handleOrderSubmission = async (data: any, token: string) => {
-    if (data) {
-      const today = new Date().toISOString();
-
-      let orderData = {
-        ...data,
-        user: user ? user.id : null,
-        totalPrice: finalTotal,
-        guestOrder: guestEmail ? true : false,
-        guestEmail: guestEmail ? guestEmail : null,
-        coupon,
-        currency: "GBP",
-        // currency: currentCurrency,
-        discount,
-        sourceId: token,
-        orderedItems,
-        paidAt: today,
-        shippingPrice: delivery_fee,
-      };
-      try {
-        createOrder(
-          orderData,
-          setPaymentLoader,
-          setCartItems,
-          setSelectedCountry,
-          setSelectedState,
-          navigate
-        );
-      } catch (error) {
-        toast.error("Order submission failed. Please try again.");
-      }
+  const handleBillingCheckbox = () => {
+    setBillingSameAsShipping(!billingSameAsShipping);
+    if (!billingSameAsShipping) {
+      unregister("billingFirstName");
+      unregister("billingLastName");
+      unregister("billingCountry");
+      unregister("billingState");
+      unregister("billingCity");
+      unregister("billingStreet");
+      unregister("billingPhoneNumber");
+      unregister("billingZipCode");
+      setBillingSelectedCountry("");
+      setBillingSelectedState("");
+      setBillingSelectedCity("");
     } else {
-      setPaymentLoader(false);
-      toast.error("Please fill in your delivery information.");
-      return;
+      register("billingFirstName");
+      register("billingLastName");
+      register("billingCountry");
+      register("billingState");
+      register("billingCity");
+      register("billingStreet");
+      register("billingPhoneNumber");
+      register("billingZipCode");
+    }
+  };
+
+  const handleOrderSubmission = async (data: any, token: string) => {
+    const today = new Date().toISOString();
+
+    const orderData: OrderData = {
+      user: user ? user.id : null,
+      email: data.email,
+      currency: "GBP",
+      coupon,
+      orderedItems,
+      shippingAddress: {
+        firstName: data.deliveryFirstName,
+        lastName: data.deliveryLastName,
+        country: data.deliveryCountry,
+        state: data.deliveryState,
+        city: data.deliveryCity,
+        addressLineOne: data.deliveryAddressLineOne,
+        addressLineTwo: data.deliveryAddressLineTwo,
+        phoneNumber: data.deliveryPhoneNumber,
+        zipCode: data.deliveryZipCode,
+      },
+      billingSameAsShipping,
+      shippingPrice: delivery_fee,
+      totalPrice: getRawAmount(finalTotal),
+      guestOrder: !!guestEmail,
+      guestEmail: guestEmail || null,
+      paidAt: today,
+      sourceId: token,
+    };
+
+    if (!billingSameAsShipping) {
+      orderData.billingAddress = {
+        firstName: data.billingFirstName,
+        lastName: data.billingLastName,
+        country: data.billingCountry,
+        state: data.billingState,
+        city: data.billingCity,
+        street: data.billingStreet,
+        phoneNumber: data.billingPhoneNumber,
+        zipCode: data.billingZipCode,
+      };
+    }
+    try {
+      await createOrder(
+        orderData,
+        setLoading,
+        setCartItems,
+        setDeliverySelectedCountry,
+        setDeliverySelectedState,
+        setDeliverySelectedCity,
+        setBillingSelectedCountry,
+        setBillingSelectedState,
+        setBillingSelectedCity,
+        navigate
+      );
+    } catch (error) {
+      toast.error("Order submission failed. Please try again.");
+      setLoading(false);
     }
   };
 
   const onPaymentSuccess = async (token: string) => {
     if (token) {
-      const isValid = await trigger(); // Trigger validation for all form fields
+      const isValid = await trigger();
       if (!isValid) {
-        setPaymentLoader(false);
-        toast.error("Please fill in your delivery information.");
+        setLoading(false);
+        toast.error("Please fill in your information completely.");
         return;
       }
-
-      handleSubmit((data: any) => {
-        handleOrderSubmission(data, token); // Proceed with the payment
-      })();
+      handleSubmit((data: any) => handleOrderSubmission(data, token))();
     }
   };
 
-  const validateZipCode = (zip: string) => {
-    const pattern = zipCodePatterns[selectedCountry] || /^[A-Za-z0-9 -]{3,10}$/;
+  const deliveryValidateZipCode = (zip: string) => {
+    const pattern =
+      zipCodePatterns[deliverySelectedCountry] || /^[A-Za-z0-9 -]{3,10}$/;
     return pattern.test(zip) || "Invalid postal code format";
   };
 
-  const phoneValidation = {
+  const billingValidateZipCode = (zip: string) => {
+    const pattern =
+      zipCodePatterns[billingSelectedCountry] || /^[A-Za-z0-9 -]{3,10}$/;
+    return pattern.test(zip) || "Invalid postal code format";
+  };
+
+  const deliveryPhoneValidation = {
     required: "Phone number is required",
     validate: {
       isValid: (value: string) =>
@@ -141,217 +230,467 @@ const CheckOut: React.FC = ({}) => {
     },
   };
 
-  React.useEffect(() => {
-    register("phoneNumber", phoneValidation);
+  const billingPhoneValidation = {
+    required: "Phone number is required",
+    validate: {
+      isValid: (value: string) =>
+        (value && value.length >= 10) || "Invalid phone number",
+    },
+  };
+
+  useEffect(() => {
+    register("deliveryPhoneNumber", deliveryPhoneValidation);
+    register("billingPhoneNumber", billingPhoneValidation);
   }, [register]);
 
   return (
     <section className="px-[5%] py-24 md:py-30">
-      {paymentLoader && (
+      {loading && (
         <div className="fixed top-0 left-0 right-0 bottom-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
           <Spinner />
         </div>
       )}
       <div className="container">
-        <div className="rb-12 mb-12 md:mb-5 border-b border-border-secondary ">
-          <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+        <div className="mb-5 border-b border-border-secondary ">
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
             Checkout
           </h2>
           <p className="md:text-md pb-5">
-            Please make sure to fill the input fields before checking out.
+            Please provide delivery and billing details below.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-5">
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-            <form className="grid grid-cols-2 gap-5 w-full poppins">
-              <div className="relative w-full mb-1 max-sm:col-span-2">
-                <label>First Name</label>
-                <input
-                  {...register("firstName", {
-                    required: "First name is required",
-                  })}
-                  type="text"
-                  placeholder="First name"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                  autoComplete="no"
-                />
-                {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {String(errors.firstName.message)}
-                  </p>
-                )}
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:pt-5">
+          <div className="flex flex-col gap-5">
+            <form className="flex flex-col gap-5">
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Delivery Address</h2>
+                <div className="grid grid-cols-2 gap-5 w-full poppins">
+                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                    <label>First Name</label>
+                    <input
+                      {...register("deliveryFirstName", {
+                        required: "First name is required",
+                      })}
+                      type="text"
+                      placeholder="First name"
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
+                    />
+                    {errors.deliveryFirstName && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {String(errors.deliveryFirstName.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                    <label>Last Name</label>
+                    <input
+                      {...register("deliveryLastName", {
+                        required: "Last name is required",
+                      })}
+                      type="text"
+                      placeholder="Last name"
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
+                    />
+                    {errors.deliveryLastName && (
+                      <p className="absolute text-red-500 text-sm mt-1">
+                        {String(errors.deliveryLastName.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                    <label>Email Address</label>
+                    <input
+                      {...register("email", {
+                        required: "Email is required",
+                      })}
+                      type="text"
+                      placeholder="example@gmail.com"
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
+                    />
+                    {errors.email && (
+                      <p className="absolute text-red-500 text-sm mt-1">
+                        {String(errors.email.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                    <label>Country</label>
+                    <select
+                      {...register("deliveryCountry", {
+                        required: "Country is required",
+                      })}
+                      value={deliverySelectedCountry}
+                      onChange={(e) =>
+                        setDeliverySelectedCountry(e.target.value)
+                      }
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                      autoComplete="no"
+                    >
+                      <option value="">Select country</option>
+                      {Country.getAllCountries().map((country) => (
+                        <option key={country.isoCode} value={country.isoCode}>
+                          {country.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.deliveryCountry && (
+                      <p className="absolute text-red-500 text-sm mt-1">
+                        {String(errors.deliveryCountry.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                    <label>State / Province</label>
+                    <select
+                      {...register("deliveryState", {
+                        required: "State is required",
+                      })}
+                      value={deliverySelectedState}
+                      onChange={(e) => setDeliverySelectedState(e.target.value)}
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                      autoComplete="no"
+                    >
+                      <option value="">Select state / province</option>
+                      {State.getStatesOfCountry(deliverySelectedCountry).map(
+                        (state) => (
+                          <option key={state.isoCode} value={state.isoCode}>
+                            {state.name}
+                          </option>
+                        )
+                      )}
+                    </select>
+                    {errors.deliveryState && (
+                      <p className="absolute text-red-500 text-sm mt-1">
+                        {String(errors.deliveryState.message)}
+                      </p>
+                    )}
+                  </div>
 
-              <div className="relative w-full mb-1 max-sm:col-span-2">
-                <label>Last Name</label>
-                <input
-                  {...register("lastName", {
-                    required: "Last name is required",
-                  })}
-                  type="text"
-                  placeholder="Last name"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                  autoComplete="no"
-                />
-                {errors.lastName && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.lastName.message)}
-                  </p>
-                )}
-              </div>
+                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                    <label>City</label>
+                    <select
+                      {...register("deliveryCity", {
+                        required: "City is required",
+                      })}
+                      value={deliverySelectedCity}
+                      onChange={(e) => setDeliverySelectedCity(e.target.value)}
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                      autoComplete="no"
+                    >
+                      <option value="">Select city</option>
+                      {City.getCitiesOfState(
+                        deliverySelectedCountry,
+                        deliverySelectedState
+                      ).map((city) => (
+                        <option key={city.name} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.deliveryCity && (
+                      <p className="absolute text-red-500 text-sm mt-1">
+                        {String(errors.deliveryCity.message)}
+                      </p>
+                    )}
+                  </div>
 
-              <div className="relative w-full mb-1 col-span-2">
-                <label>Email Address</label>
-                <input
-                  {...register("email", {
-                    required: "Email is required",
-                  })}
-                  type="text"
-                  placeholder="example@gmail.com"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                  autoComplete="no"
-                />
-                {errors.email && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.email.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="relative w-full mb-1 max-sm:col-span-2">
-                <label>Country</label>
-                <select
-                  {...register("country", { required: "Country is required" })}
-                  value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
-                  autoComplete="no"
-                >
-                  <option value="">Select country</option>
-                  {Country.getAllCountries().map((country) => (
-                    <option key={country.isoCode} value={country.isoCode}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.country && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.country.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="relative w-full mb-1 max-sm:col-span-2">
-                <label>State / Region</label>
-                <select
-                  {...register("cityAndRegion", {
-                    required: "City or Region is required",
-                  })}
-                  value={selectedState}
-                  onChange={(e) => setSelectedState(e.target.value)}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
-                  autoComplete="no"
-                >
-                  <option value="">Select city/region</option>
-                  {State.getStatesOfCountry(selectedCountry).map((state) => (
-                    <option key={state.isoCode} value={state.isoCode}>
-                      {state.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.cityAndRegion && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.cityAndRegion.message)}
-                  </p>
-                )}
-              </div>
-
-              {/* address */}
-              <div className="relative w-full mb-1 max-md:col-span-2">
-                <label>Address Line One</label>
-                <input
-                  {...register("addressLineOne", {
-                    required: "Address is required",
-                  })}
-                  type="text"
-                  placeholder="Address line one"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                  autoComplete="no"
-                />
-                {errors.addressLineOne && (
-                  <p className="absolute text-red-500 text-sm mt-1">
-                    {String(errors.addressLineOne.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="relative w-full mb-1 max-md:col-span-2">
-                <div className="flex items-center gap-1">
-                  <label>Address Line Two </label>
-                  <span className="hidden md:flex">(optional)</span>
+                  {/* address */}
+                  <div className="relative w-full mb-1 max-md:col-span-2">
+                    <label>Address Line One</label>
+                    <input
+                      {...register("deliveryAddressLineOne", {
+                        required: "Address is required",
+                      })}
+                      type="text"
+                      placeholder="Address line one"
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
+                    />
+                    {errors.deliveryAddressLineOne && (
+                      <p className="absolute text-red-500 text-sm mt-1">
+                        {String(errors.deliveryAddressLineOne.message)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative w-full mb-1 max-md:col-span-2">
+                    <div className="flex items-center gap-1">
+                      <label>Address Line Two </label>
+                      <span className="hidden md:flex">(optional)</span>
+                    </div>
+                    <input
+                      {...register("deliveryAddressLineTwo")}
+                      type="text"
+                      placeholder="Address line two optional"
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md "
+                      autoComplete="no"
+                    />
+                  </div>
+                  {/* Phone Number */}
+                  <div className="relative w-full mb-1 max-md:col-span-2">
+                    <label>Phone Number</label>
+                    <PhoneInput
+                      country="us"
+                      value={watch("deliveryPhoneNumber")}
+                      onChange={(phone) =>
+                        setValue("deliveryPhoneNumber", phone, {
+                          shouldValidate: true,
+                        })
+                      }
+                      // inputClass="w-full border border-border-secondary px-2 py-6 rounded-md"
+                      // containerClass="!w-[100px]"
+                      containerStyle={{
+                        width: "100%", // Tailwind's `w-full`
+                        borderRadius: "0.375rem", // Tailwind's `rounded-md`
+                      }}
+                      inputStyle={{
+                        width: "100%", // Tailwind's `w-full`
+                        border: "1px solid #afafaf", // Tailwind's `border-border-secondary` (replace with your custom color)
+                        padding: "1.5rem 3rem", // Tailwind's `py-2 px-6`
+                        borderRadius: "0.375rem", // Tailwind's `rounded-md`
+                      }}
+                    />
+                    {errors.deliveryPhoneNumber && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {String(errors.deliveryPhoneNumber.message)}
+                      </p>
+                    )}
+                  </div>
+                  {/* Zip Code */}
+                  <div className="relative w-full mb-1 max-md:col-span-2">
+                    <label>Zip Code / Postal code</label>
+                    <input
+                      {...register("deliveryZipCode", {
+                        required: "Zip code is required",
+                        validate: deliveryValidateZipCode, // Hooking the custom validation
+                      })}
+                      type="text"
+                      placeholder="Zip code / Postal code"
+                      maxLength={12} // Preventing user input beyond 12 characters
+                      className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                      autoComplete="no"
+                    />
+                    {errors.deliveryZipCode && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {String(errors.deliveryZipCode.message)}
+                      </p>
+                    )}
+                  </div>
                 </div>
+              </div>
+              <div className="col-span-2 flex items-center gap-2">
                 <input
-                  {...register("addressLineTwo")}
-                  type="text"
-                  placeholder="Address line two optional"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md "
-                  autoComplete="no"
+                  type="checkbox"
+                  id="billingSameAsShipping"
+                  checked={billingSameAsShipping}
+                  onChange={handleBillingCheckbox}
+                  className="h-5 w-5 cursor-pointer"
                 />
+                <label
+                  htmlFor="billingSameAsShipping"
+                  className="text-base md:text-md cursor-pointer"
+                >
+                  Billing address same as shipping address
+                </label>
               </div>
+              {!billingSameAsShipping ? (
+                <div>
+                  <h2 className="text-xl font-semibold mb-4">
+                    Billing Address
+                  </h2>
+                  <div className="grid grid-cols-2 gap-5 w-full poppins">
+                    <div className="relative w-full mb-1 max-sm:col-span-2">
+                      <label>First Name</label>
+                      <input
+                        {...register("billingFirstName", {
+                          required: "First name is required",
+                        })}
+                        type="text"
+                        placeholder="First name"
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                        autoComplete="no"
+                      />
+                      {errors.billingFirstName && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {String(errors.billingFirstName.message)}
+                        </p>
+                      )}
+                    </div>
+                    <div className="relative w-full mb-1 max-sm:col-span-2">
+                      <label>Last Name</label>
+                      <input
+                        {...register("billingLastName", {
+                          required: "Last name is required",
+                        })}
+                        type="text"
+                        placeholder="Last name"
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                        autoComplete="no"
+                      />
+                      {errors.billingLastName && (
+                        <p className="absolute text-red-500 text-sm mt-1">
+                          {String(errors.billingLastName.message)}
+                        </p>
+                      )}
+                    </div>
+                    <div className="relative w-full mb-1 max-sm:col-span-2">
+                      <label>Country</label>
+                      <select
+                        {...register("billingCountry", {
+                          required: "Country is required",
+                        })}
+                        value={billingSelectedCountry}
+                        onChange={(e) =>
+                          setBillingSelectedCountry(e.target.value)
+                        }
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                        autoComplete="no"
+                      >
+                        <option value="">Select country</option>
+                        {Country.getAllCountries().map((country) => (
+                          <option key={country.isoCode} value={country.isoCode}>
+                            {country.name}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.billingCountry && (
+                        <p className="absolute text-red-500 text-sm mt-1">
+                          {String(errors.billingCountry.message)}
+                        </p>
+                      )}
+                    </div>
+                    <div className="relative w-full mb-1 max-sm:col-span-2">
+                      <label>State / Province</label>
+                      <select
+                        {...register("billingState", {
+                          required: "State is required",
+                        })}
+                        value={billingSelectedState}
+                        onChange={(e) =>
+                          setBillingSelectedState(e.target.value)
+                        }
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                        autoComplete="no"
+                      >
+                        <option value="">Select State / Province</option>
+                        {State.getStatesOfCountry(billingSelectedCountry).map(
+                          (state) => (
+                            <option key={state.isoCode} value={state.isoCode}>
+                              {state.name}
+                            </option>
+                          )
+                        )}
+                      </select>
+                      {errors.billingState && (
+                        <p className="absolute text-red-500 text-sm mt-1">
+                          {String(errors.billingState.message)}
+                        </p>
+                      )}
+                    </div>
 
-              {/* Phone Number */}
-              <div className="relative w-full mb-1 max-md:col-span-2">
-                <label>Phone Number</label>
-                <PhoneInput
-                  country="us"
-                  value={watch("phoneNumber")}
-                  onChange={(phone) =>
-                    setValue("phoneNumber", phone, { shouldValidate: true })
-                  }
-                  // inputClass="w-full border border-border-secondary px-2 py-6 rounded-md"
-                  // containerClass="!w-[100px]"
-                  containerStyle={{
-                    width: "100%", // Tailwind's `w-full`
-                    borderRadius: "0.375rem", // Tailwind's `rounded-md`
-                  }}
-                  inputStyle={{
-                    width: "100%", // Tailwind's `w-full`
-                    border: "1px solid #afafaf", // Tailwind's `border-border-secondary` (replace with your custom color)
-                    padding: "1.5rem 3rem", // Tailwind's `py-2 px-6`
-                    borderRadius: "0.375rem", // Tailwind's `rounded-md`
-                  }}
-                />
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {String(errors.phoneNumber.message)}
-                  </p>
-                )}
-              </div>
+                    <div className="relative w-full mb-1 max-sm:col-span-2">
+                      <label>City</label>
+                      <select
+                        {...register("billingCity", {
+                          required: "City is required",
+                        })}
+                        value={billingSelectedCity}
+                        onChange={(e) => setBillingSelectedCity(e.target.value)}
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
+                        autoComplete="no"
+                      >
+                        <option value="">Select city</option>
+                        {City.getCitiesOfState(
+                          billingSelectedCountry,
+                          billingSelectedState
+                        ).map((city) => (
+                          <option key={city.name} value={city.name}>
+                            {city.name}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.billingCity && (
+                        <p className="absolute text-red-500 text-sm mt-1">
+                          {String(errors.billingCity.message)}
+                        </p>
+                      )}
+                    </div>
+                    {/* address */}
+                    <div className="relative w-full mb-1 max-md:col-span-2">
+                      <label>Street address</label>
+                      <input
+                        {...register("billingStreet", {
+                          required: "Address is required",
+                        })}
+                        type="text"
+                        placeholder="Street address"
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                        autoComplete="no"
+                      />
+                      {errors.billingStreet && (
+                        <p className="absolute text-red-500 text-sm mt-1">
+                          {String(errors.billingStreet.message)}
+                        </p>
+                      )}
+                    </div>
 
-              {/* Zip Code */}
-              <div className="relative w-full mb-1 max-md:col-span-2">
-                <label>Zip Code / Postal code</label>
-                <input
-                  {...register("zipCode", {
-                    required: "Zip code is required",
-                    validate: validateZipCode, // Hooking the custom validation
-                  })}
-                  type="text"
-                  placeholder="Zip code / Postal code"
-                  maxLength={12} // Preventing user input beyond 12 characters
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md"
-                  autoComplete="no"
-                />
-                {errors.zipCode && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {String(errors.zipCode.message)}
-                  </p>
-                )}
-              </div>
+                    {/* Phone Number */}
+                    <div className="relative w-full mb-1 max-md:col-span-2">
+                      <label>Phone Number</label>
+                      <PhoneInput
+                        country="us"
+                        value={watch("billingPhoneNumber")}
+                        onChange={(phone) =>
+                          setValue("billingPhoneNumber", phone, {
+                            shouldValidate: true,
+                          })
+                        }
+                        // inputClass="w-full border border-border-secondary px-2 py-6 rounded-md"
+                        // containerClass="!w-[100px]"
+                        containerStyle={{
+                          width: "100%", // Tailwind's `w-full`
+                          borderRadius: "0.375rem", // Tailwind's `rounded-md`
+                        }}
+                        inputStyle={{
+                          width: "100%", // Tailwind's `w-full`
+                          border: "1px solid #afafaf", // Tailwind's `border-border-secondary` (replace with your custom color)
+                          padding: "1.5rem 3rem", // Tailwind's `py-2 px-6`
+                          borderRadius: "0.375rem", // Tailwind's `rounded-md`
+                        }}
+                      />
+                      {errors.billingPhoneNumber && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {String(errors.billingPhoneNumber.message)}
+                        </p>
+                      )}
+                    </div>
+                    {/* Zip Code */}
+                    <div className="relative w-full mb-1 max-md:col-span-2">
+                      <label>Zip Code / Postal code</label>
+                      <input
+                        {...register("billingZipCode", {
+                          required: "Zip code is required",
+                          validate: billingValidateZipCode, // Hooking the custom validation
+                        })}
+                        type="text"
+                        placeholder="Zip code / Postal code"
+                        maxLength={12} // Preventing user input beyond 12 characters
+                        className="border border-border-secondary px-2 py-3 w-full rounded-md"
+                        autoComplete="no"
+                      />
+                      {errors.billingZipCode && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {String(errors.billingZipCode.message)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </form>
           </div>
-
           {/* Payment and Summary */}
           <div>
             <h2 className="text-xl font-semibold mb-6">Payment</h2>
@@ -364,8 +703,7 @@ const CheckOut: React.FC = ({}) => {
                 <div className="flex justify-between">
                   <p>Discount:</p>
                   <p>
-                    -{discount}% (
-                    {formatAmount((getCartAmount() / 100) * discount)})
+                    -{discount}% ({formatAmount(discountAmount)})
                   </p>
                 </div>
               )}
@@ -373,7 +711,6 @@ const CheckOut: React.FC = ({}) => {
                 <p>Delivery Fee:</p>
                 <p>{formatAmount(delivery_fee)}</p>
               </div>
-
               <div className="flex justify-between font-bold">
                 <p>Total:</p>
                 <p>{formatAmount(finalTotal)}</p>
@@ -409,10 +746,11 @@ const CheckOut: React.FC = ({}) => {
               applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
               locationId={"LNS0B6E8H9C06"}
               cardTokenizeResponseReceived={(tokenResult: any) => {
+                setLoading(true);
                 if (tokenResult.errors) {
                   toast.error("Payment failed. Please try again.");
+                  setLoading(false);
                 } else {
-                  setPaymentLoader(true);
                   onPaymentSuccess(tokenResult.token);
                 }
               }}
@@ -442,104 +780,3 @@ const CheckOut: React.FC = ({}) => {
 };
 
 export default CheckOut;
-
-// {
-//     "user": "66dedaef81577d2dec786e94",
-//     "firstName": "Muizz",
-//     "lastName": "Muizz",
-//     "email": "muizz@gmail.com",
-//     "sourceId": "cnon:CA4SEK69FSpHbaS3MF781U3Qnb0YASgC",
-//     "currency": "GBP",
-//     "coupon": "",
-//     "orderedItems": [
-//         {
-//             "name": "Pink T-shirt",
-//             "qty": 1,
-//             "image": "https://res.cloudinary.com/dx2alxgiq/image/upload/v1730377838/product_images/djzdd3n6hxvw4j4wzyh0.png",
-//             "price": 10.99,
-//             "product": "672378ef27f78174ac01aa3c",
-//             "size": "M",
-//             "_id": "6734cb8772fc5fc34c4b5062"
-//         },
-//         {
-//             "name": "Pink T-shirt",
-//             "qty": 1,
-//             "image": "https://res.cloudinary.com/dx2alxgiq/image/upload/v1730377838/product_images/djzdd3n6hxvw4j4wzyh0.png",
-//             "price": 10.99,
-//             "product": "672378ef27f78174ac01aa3c",
-//             "size": "2XL",
-//             "_id": "6734cb8772fc5fc34c4b5063"
-//         }
-//     ],
-//     "address": "No 21A, Idoji, Okene",
-//     "city": "Kuje",
-//     "state": "FC",
-//     "zipCode": 905101,
-//     "country": "NG",
-//     "shippingPrice": 100,
-//     "totalPrice": 121.98,
-//     "paidAt": "2024-11-13T15:53:41.539Z",
-//     "isDelivered": false,
-//     "_id": "6734cb8772fc5fc34c4b5061",
-//     "createdAt": "2024-11-13T15:53:43.528Z",
-//     "updatedAt": "2024-11-13T15:53:43.528Z",
-//     "__v": 0,
-//     "paymentResult": {
-//         "payment": {
-//             "id": "bJIDTWlENfCLSxhEfvnCZuSVLcVZY",
-//             "createdAt": "2024-11-13T15:53:56.559Z",
-//             "updatedAt": "2024-11-13T15:53:56.796Z",
-//             "amountMoney": {
-//                 "amount": "12198",
-//                 "currency": "GBP"
-//             },
-//             "totalMoney": {
-//                 "amount": "12198",
-//                 "currency": "GBP"
-//             },
-//             "approvedMoney": {
-//                 "amount": "12198",
-//                 "currency": "GBP"
-//             },
-//             "status": "COMPLETED",
-//             "delayDuration": "PT168H",
-//             "delayAction": "CANCEL",
-//             "delayedUntil": "2024-11-20T15:53:56.559Z",
-//             "sourceType": "CARD",
-//             "cardDetails": {
-//                 "status": "CAPTURED",
-//                 "card": {
-//                     "cardBrand": "VISA",
-//                     "last4": "1111",
-//                     "expMonth": "11",
-//                     "expYear": "2024",
-//                     "fingerprint": "sq-1-9QI3c6XiavYctLcKqqQgOQgB8PprRp9AWXEAVoXK5FnFhUcpTueuxpAY72n_evNbIw",
-//                     "cardType": "CREDIT",
-//                     "prepaidType": "NOT_PREPAID",
-//                     "bin": "411111"
-//                 },
-//                 "entryMethod": "KEYED",
-//                 "cvvStatus": "CVV_ACCEPTED",
-//                 "avsStatus": "AVS_ACCEPTED",
-//                 "statementDescription": "SQ *DEFAULT TEST ACCOUNT",
-//                 "cardPaymentTimeline": {
-//                     "authorizedAt": "2024-11-13T15:53:56.696Z",
-//                     "capturedAt": "2024-11-13T15:53:56.796Z"
-//                 }
-//             },
-//             "locationId": "LNS0B6E8H9C06",
-//             "orderId": "xvFVjrT9P5ueqVXs4hZCSdVnClQZY",
-//             "riskEvaluation": {
-//                 "createdAt": "2024-11-13T15:53:56.696Z",
-//                 "riskLevel": "NORMAL"
-//             },
-//             "receiptNumber": "bJID",
-//             "receiptUrl": "https://squareupsandbox.com/receipt/preview/bJIDTWlENfCLSxhEfvnCZuSVLcVZY",
-//             "applicationDetails": {
-//                 "squareProduct": "ECOMMERCE_API",
-//                 "applicationId": "sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"
-//             },
-//             "versionToken": "hO4gkmRpOCXu8K9tTHlk1cKubHOad5pXe66XxeRrKOn6o"
-//         }
-//     }
-// }

@@ -68,47 +68,51 @@ const AdminProducts: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {loading
-                ? Array.from({ length: 20 }).map((_, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    </tr>
-                  ))
-                : products?.map((product: any, index: number) => (
-                    <tr
-                      key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
-                    >
-                      <Link to={`/admin/product_details/${product._id}`}>
-                        <td className="p-4 line-clamp-1">{product.name}</td>
+              {loading ? (
+                Array.from({ length: 20 }).map((_, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                  </tr>
+                ))
+              ) : products.length > 0 ? (
+                products?.map((product: any, index: number) => (
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+                  >
+                    <Link to={`/admin/product_details/${product._id}`}>
+                      <td className="p-4 line-clamp-1">{product.name}</td>
+                    </Link>
+                    <td className="p-4">{product.category}</td>
+                    <td className="p-4">{product.subcategory}</td>
+                    <td className="p-4">
+                      {formatAmountDefault("GBP", product.price)}
+                    </td>
+                    <td className="p-4">
+                      {new Date(product.createdAt).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-8">
+                      <Link to={`/admin/update_product/${product._id}`}>
+                        <FaRegPenToSquare className="text-xl cursor-pointer" />
                       </Link>
-                      <td className="p-4">{product.category}</td>
-                      <td className="p-4">{product.subcategory}</td>
-                      <td className="p-4">
-                        {formatAmountDefault("GBP", product.price)}
-                      </td>
-                      <td className="p-4">
-                        {new Date(product.createdAt).toLocaleString()}
-                      </td>
-                      <td className="py-2 px-8">
-                        <Link to={`/admin/update_product/${product._id}`}>
-                          <FaRegPenToSquare className="text-xl cursor-pointer" />
-                        </Link>
-                      </td>
-                      <td className="py-2 px-8">
-                        <RiDeleteBin5Line
-                          className="text-2xl cursor-pointer"
-                          onClick={() => handleDelete(product._id)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                    </td>
+                    <td className="py-2 px-8">
+                      <RiDeleteBin5Line
+                        className="text-2xl cursor-pointer"
+                        onClick={() => handleDelete(product._id)}
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <p className="text-base sm:text-xl py-5">No products created</p>
+              )}
             </tbody>
           </table>
         </div>

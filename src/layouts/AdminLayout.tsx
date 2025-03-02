@@ -345,7 +345,8 @@ const Navigation = () => {
                             <div className="w-full border p-5 rounded-md flex flex-col items-start gap-2 bg-gray-50">
                               <p className=" text-gray-700">
                                 <span className="font-medium">Name:</span>{" "}
-                                {order.firstName} {order.lastName}
+                                {order.shippingAddress.firstName}{" "}
+                                {order.shippingAddress.lastName}
                               </p>
                               <p className="text-gray-700">
                                 <span className="font-medium">

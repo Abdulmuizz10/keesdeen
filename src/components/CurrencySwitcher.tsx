@@ -3,21 +3,7 @@ import { useShop } from "../context/ShopContext";
 
 const CurrencySwitcher = ({ color }: { color: string }) => {
   const { setCurrency } = useShop();
-  const currencies = [
-    "GBP",
-    "USD",
-    "EUR",
-    "JPY",
-    "AUD",
-    "CHF",
-    "SEK",
-    "NOK",
-    "DKK",
-    "RUB",
-    "PLN",
-    "CZK",
-    "HUF",
-  ];
+  const currencies = ["GBP", "USD", "EUR", "AUD"];
 
   const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCurrency = e.target.value;

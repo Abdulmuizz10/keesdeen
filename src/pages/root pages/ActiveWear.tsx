@@ -146,7 +146,7 @@ const ActiveWear: React.FC = () => {
           </p> */}
         </div>
         <div
-          className={`flex flex-col lg:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
+          className={`flex flex-col xl:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
             isActive && "opacity-0 transition-opacity"
           }`}
         >
@@ -160,7 +160,7 @@ const ActiveWear: React.FC = () => {
                 Filters
               </p>
               <RxChevronDown
-                className={`text-2xl lg:hidden ${
+                className={`text-2xl xl:hidden ${
                   showFilter ? "" : "rotate-180"
                 }`}
               />
@@ -169,7 +169,7 @@ const ActiveWear: React.FC = () => {
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
+              } xl:block shadow-medium rounded`}
             >
               <p className="text-base md:text-md pb-3">Product Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
@@ -184,7 +184,7 @@ const ActiveWear: React.FC = () => {
                   <p className="flex gap-2" key={index}>
                     <input
                       type="checkbox"
-                      className="w-3 my"
+                      className="w-3 cursor-pointer"
                       value={wear}
                       onChange={toggleCategory}
                       ref={(el) => {
@@ -201,7 +201,7 @@ const ActiveWear: React.FC = () => {
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
+              } xl:block shadow-medium rounded`}
             >
               <p className="text-base md:text-md pb-3">Size</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
@@ -220,7 +220,7 @@ const ActiveWear: React.FC = () => {
                   <p className="flex gap-2" key={index}>
                     <input
                       type="checkbox"
-                      className="w-3"
+                      className="w-3 cursor-pointer"
                       value={size}
                       onChange={toggleSizeCategory}
                       ref={(el) => {
@@ -237,41 +237,44 @@ const ActiveWear: React.FC = () => {
             <div
               className={`border border-border-secondary pl-5 py-3 mt-2 ${
                 showFilter ? "" : "hidden"
-              } lg:block shadow-medium rounded`}
+              } xl:block shadow-medium rounded`}
             >
               <p className="text-base md:text-md pb-3">Colour</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
-                  "Black",
-                  "Blue",
-                  "Brown",
-                  "Cream",
-                  "Green",
-                  "Grey",
-                  "Pink",
-                  "Purple",
-                  "Red",
-                  "White",
+                  { name: "Black", code: "#000000" },
+                  { name: "White", code: "#FFFFFF" },
+                  { name: "Gray", code: "#808080" },
+                  { name: "Blue", code: "#0000FF" },
+                  { name: "Red", code: "#FF0000" },
+                  { name: "Green", code: "#008000" },
+                  { name: "Yellow", code: "#FFFF00" },
+                  { name: "Pink", code: "#FFC0CB" },
+                  { name: "Brown", code: "#A52A2A" },
+                  { name: "Beige", code: "#F5F5DC" },
+                  { name: "Navy Blue", code: "#000080" },
+                  { name: "Burgundy", code: "#800020" },
+                  { name: "Sky Blue", code: "#87CEEB" },
                 ].map((color, index) => (
                   <p className="flex gap-2 items-center" key={index}>
                     <input
                       type="checkbox"
-                      className="w-3"
-                      value={color}
+                      className="w-3 cursor-pointer"
+                      value={color.name}
                       onChange={toggleColorCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
                       }}
                     />
                     <div
-                      style={{ background: color }}
+                      style={{ backgroundColor: color.code }}
                       className={`h-3 w-3 rounded-full ${
-                        color === "WHITE" || "CREAM"
+                        color.name === "White" || "Beige"
                           ? "border border-border-primary"
                           : ""
                       }`}
                     ></div>
-                    {color}
+                    {color.name}
                   </p>
                 ))}
               </div>
@@ -279,7 +282,7 @@ const ActiveWear: React.FC = () => {
             <Button
               className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
                 showFilter ? "" : "hidden"
-              } lg:block`}
+              } xl:block`}
               variant="primary"
               onClick={() => {
                 clearFilters();
@@ -293,7 +296,7 @@ const ActiveWear: React.FC = () => {
             <div>
               <div className="flex-1 flex flex-col gap-5 w-full">
                 <div className="flex justify-between text-base items-center">
-                  <h3 className="text-base md:text-md">All Collections</h3>
+                  <p className="text-base md:text-md">Active Wears</p>
                   {/* {Product Sort} */}
 
                   <p className="info-text hidden xl:flex">
@@ -341,25 +344,33 @@ const ActiveWear: React.FC = () => {
                 </div>
                 {/* {Map Products} */}
                 <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6">
-                  {loading
-                    ? Array(21)
-                        .fill(null)
-                        .map((product, index) => (
-                          <ProductItem
-                            key={index}
-                            product={product}
-                            loading={loading}
-                            formatAmount={formatAmount}
-                          />
-                        ))
-                    : filteredProducts?.map((product: any, index: number) => (
+                  {loading ? (
+                    Array(21)
+                      .fill(null)
+                      .map((product, index) => (
                         <ProductItem
                           key={index}
                           product={product}
                           loading={loading}
                           formatAmount={formatAmount}
                         />
-                      ))}
+                      ))
+                  ) : filteredProducts.length > 0 ? (
+                    filteredProducts?.map((product: any, index: number) => (
+                      <ProductItem
+                        key={index}
+                        product={product}
+                        loading={loading}
+                        formatAmount={formatAmount}
+                      />
+                    ))
+                  ) : (
+                    <div className="sm:w-[700px] lg:w-[900px] xl:w-[850px] flex items-center justify-center">
+                      <p className="text-base sm:text-xl text-center">
+                        Products is not available
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
