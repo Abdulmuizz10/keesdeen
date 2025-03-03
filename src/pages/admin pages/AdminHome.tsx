@@ -170,8 +170,9 @@ const Dashboard: React.FC = () => {
             <table className="w-full bg-white poppins">
               <thead className="text-sm">
                 <tr className="bg-gray-100 font-extrabold">
+                  <th className="text-left p-4 font-semibold">S/N</th>
                   <th className="text-left p-4 font-semibold">Order ID</th>
-                  <th className="text-left p-4 font-semibold">Username</th>
+                  <th className="text-left p-4 font-semibold">Full name</th>
                   <th className="text-left p-4 font-semibold">Email address</th>
                   <th className="text-left p-4 font-semibold">Order status</th>
                   <th className="text-left p-4 font-semibold">Amount</th>
@@ -182,6 +183,7 @@ const Dashboard: React.FC = () => {
                 {loading ? (
                   Array.from({ length: 20 }).map((_, index) => (
                     <tr key={index} className="border-b">
+                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                       <td className="p-4 h-6 bg-gray-200 animate-pulse" />
@@ -196,6 +198,7 @@ const Dashboard: React.FC = () => {
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
+                      <td className="py-5 pl-6 text-start">{index + 1}</td>
                       <td className="py-4 px-2 flex items-center gap-2 ">
                         {transaction._id.split("").slice(0, 6)}....
                         <FaRegCopy

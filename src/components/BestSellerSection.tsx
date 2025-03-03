@@ -12,10 +12,11 @@ import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
 import { Link } from "react-router-dom";
 import Axios from "axios";
-import { URL } from "../lib/constants";
+import { currency, URL } from "../lib/constants";
+import { formatAmountDefault } from "../lib/utils";
 
 export const Gallery19: React.FC = () => {
-  const { currentCurrency, formatAmount } = useShop();
+  // const { currentCurrency, formatAmount } = useShop();
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [_, setCurrent] = useState(0);
   const [products, setProducts] = useState([]);
@@ -42,7 +43,7 @@ export const Gallery19: React.FC = () => {
       }
     };
     fetchData();
-  }, [currentCurrency]);
+  }, []);
 
   useEffect(() => {
     if (api) {
@@ -87,7 +88,7 @@ export const Gallery19: React.FC = () => {
                             product={product}
                             loading={loading}
                             key={index}
-                            formatAmount={formatAmount}
+                            formatAmountDefault={formatAmountDefault}
                           />
                         </CarouselItem>
                       ))
@@ -100,7 +101,7 @@ export const Gallery19: React.FC = () => {
                           product={product}
                           loading={loading}
                           key={index}
-                          formatAmount={formatAmount}
+                          formatAmountDefault={formatAmountDefault}
                         />
                       </CarouselItem>
                     ))}
@@ -118,13 +119,13 @@ export const Gallery19: React.FC = () => {
 interface ProductProps {
   product: any;
   loading: Boolean;
-  formatAmount: any;
+  formatAmountDefault: any;
 }
 
 const ProductItem: React.FC<ProductProps> = ({
   product,
   loading,
-  formatAmount,
+  formatAmountDefault,
 }) => {
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
@@ -205,10 +206,12 @@ const ProductItem: React.FC<ProductProps> = ({
         <div className="flex gap-2 items-center justify-center">
           {product.previousPrice && (
             <s className="text-gray-500">
-              {formatAmount(product.previousPrice)}
+              {formatAmountDefault(currency, product.previousPrice)}
             </s>
           )}
-          <p className="text-gray-500">{formatAmount(product.price)}</p>
+          <p className="text-gray-500">
+            {formatAmountDefault(currency, product.price)}
+          </p>
         </div>
         <div className="mt-2">
           <div className="flex flex-wrap gap-1 items-center justify-center">

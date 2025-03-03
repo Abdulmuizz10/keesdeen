@@ -76,8 +76,8 @@ td {
 
 /* Tailwind styles */
 .loader {
-  width: 90px;
-  padding: 8px;
+  width: 85px;
+  padding: 4px;
   aspect-ratio: 1;
   border-radius: 50%;
   background: #04bb6e;

@@ -3,6 +3,8 @@ import { useState } from "react";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { useShop } from "../context/ShopContext";
+import { formatAmountDefault } from "../lib/utils";
+import { currency } from "../lib/constants";
 
 interface ProductProps {
   product: any;
@@ -10,7 +12,7 @@ interface ProductProps {
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
   const [image, setImage] = useState<boolean>(false);
-  const { manageWishLists, wishLists, formatAmount } = useShop();
+  const { manageWishLists, wishLists } = useShop();
 
   return (
     <div
@@ -48,10 +50,12 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
         <div className="flex gap-2 items-center justify-center">
           {product.previousPrice && (
             <s className="text-gray-500">
-              {formatAmount(product.previousPrice)}
+              {formatAmountDefault(currency, product.previousPrice)}
             </s>
           )}
-          <p className="text-gray-500">{formatAmount(product.price)}</p>
+          <p className="text-gray-500">
+            {formatAmountDefault(currency, product.price)}
+          </p>
         </div>
         <div className="mt-2">
           <div className="flex flex-wrap gap-1 items-center justify-center">

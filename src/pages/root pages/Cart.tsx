@@ -5,9 +5,11 @@ import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { Link } from "react-router-dom";
+import { formatAmountDefault } from "../../lib/utils";
+import { currency } from "../../lib/constants";
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity, guestEmail, formatAmount } = useShop();
+  const { cartItems, updateQuantity, guestEmail } = useShop();
   const [cartData, setCartData] = useState<any[]>([]);
   const { user } = useContext(AuthContext);
 
@@ -67,7 +69,7 @@ const Cart: React.FC = () => {
                   </p>
                   <div className="flex items-center gap-2 sm:gap-3 mt-1 text-sm">
                     <p className="text-base md:text-md xl:text-lg">
-                      {formatAmount(item.price)}
+                      {formatAmountDefault(currency, item.price)}
                     </p>
                     <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
                       {item.size}

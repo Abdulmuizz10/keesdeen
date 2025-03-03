@@ -11,9 +11,10 @@ import clsx from "clsx";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import { URL } from "../lib/constants";
+import { currency, URL } from "../lib/constants";
 import Axios from "axios";
 import { useShop } from "../context/ShopContext";
+import { formatAmountDefault } from "../lib/utils";
 
 type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -24,8 +25,7 @@ export const Gallery21 = ({
   heading = "New Arrivals",
   description = "Discover the latest additions to our Arrivals.",
 }: Gallery21Props) => {
-  const { currentCurrency, formatAmount, wishLists, manageWishLists } =
-    useShop();
+  const { wishLists, manageWishLists } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState<CarouselApi | null>(null);
@@ -53,7 +53,7 @@ export const Gallery21 = ({
       }
     };
     fetchData();
-  }, [currentCurrency]);
+  }, []);
 
   // Set up carousel scroll state
   useEffect(() => {
@@ -135,16 +135,19 @@ export const Gallery21 = ({
                         <div className="flex gap-2 items-center justify-start">
                           {product.previousPrice && (
                             <s className="text-gray-500">
-                              {formatAmount(product.previousPrice)}
+                              {formatAmountDefault(
+                                currency,
+                                product.previousPrice
+                              )}
                             </s>
                           )}
                           <p className="text-gray-500">
-                            {formatAmount(product.price)}
+                            {formatAmountDefault(currency, product.price)}
                           </p>
                         </div>
 
                         {/* <p className="text-gray-500">
-                          {formatAmount(product.price)}
+                          {formatAmountDefault(product.price)}
                         </p> */}
                       </div>
                     </Link>

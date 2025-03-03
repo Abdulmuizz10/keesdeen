@@ -68,7 +68,7 @@ const AdminSendEmailToSubscribers: React.FC = () => {
           </div>
           <button
             onClick={handleSendEmail}
-            className="bg-brand-neutral text-white rounded-md py-4 px-18 w-full text-base poppins"
+            className="bg-brand-neutral text-white rounded-md py-3 px-18 w-full text-base poppins"
             disabled={isLoading}
           >
             {isLoading ? "Sending email..." : "Send Email"}

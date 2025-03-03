@@ -5,7 +5,6 @@ import ProductItem from "./ProductItem";
 import Spinner from "./Spinner";
 import Axios from "axios";
 import { URL } from "../lib/constants";
-import { useShop } from "../context/ShopContext";
 
 type Gallery5Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -16,7 +15,7 @@ export const Gallery5 = ({
   heading = "Collections",
   description = "Discover the latest additions to our collections.",
 }: Gallery5Props) => {
-  const { currentCurrency } = useShop();
+  // const { currentCurrency } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const ref = useRef(null);
@@ -47,7 +46,7 @@ export const Gallery5 = ({
     return () => {
       isMounted = false;
     };
-  }, [currentCurrency]);
+  }, []);
 
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28" ref={ref}>

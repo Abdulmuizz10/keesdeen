@@ -13,10 +13,11 @@ import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import Axios from "axios";
-import { URL } from "../../lib/constants";
+import { currency, URL } from "../../lib/constants";
+import { formatAmountDefault } from "../../lib/utils";
 
 const NewArrivals: React.FC = () => {
-  const { isActive, currentCurrency, formatAmount } = useShop();
+  const { isActive } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +42,7 @@ const NewArrivals: React.FC = () => {
       }
     };
     fetchData();
-  }, [currentCurrency]);
+  }, []);
 
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState<any>([]);
@@ -346,7 +347,7 @@ const NewArrivals: React.FC = () => {
                           key={index}
                           product={product}
                           loading={loading}
-                          formatAmount={formatAmount}
+                          formatAmountDefault={formatAmountDefault}
                         />
                       ))
                   ) : filteredProducts.length > 0 ? (
@@ -355,7 +356,7 @@ const NewArrivals: React.FC = () => {
                         key={index}
                         product={product}
                         loading={loading}
-                        formatAmount={formatAmount}
+                        formatAmountDefault={formatAmountDefault}
                       />
                     ))
                   ) : (
@@ -378,13 +379,13 @@ const NewArrivals: React.FC = () => {
 interface ProductProps {
   product: any;
   loading: Boolean;
-  formatAmount: any;
+  formatAmountDefault: any;
 }
 
 const ProductItem: React.FC<ProductProps> = ({
   product,
   loading,
-  formatAmount,
+  formatAmountDefault,
 }) => {
   const [image, setImage] = useState<boolean>(false);
   const { manageWishLists, wishLists } = useShop();
@@ -465,10 +466,12 @@ const ProductItem: React.FC<ProductProps> = ({
         <div className="flex gap-2 items-center justify-center">
           {product.previousPrice && (
             <s className="text-gray-500">
-              {formatAmount(product.previousPrice)}
+              {formatAmountDefault(currency, product.previousPrice)}
             </s>
           )}
-          <p className="text-gray-500">{formatAmount(product.price)}</p>
+          <p className="text-gray-500">
+            {formatAmountDefault(currency, product.price)}
+          </p>
         </div>
         <div className="mt-2">
           <div className="flex flex-wrap gap-1 items-center justify-center">

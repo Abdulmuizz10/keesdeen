@@ -13,6 +13,8 @@ import "react-phone-input-2/lib/style.css";
 import { createOrder } from "../../context/OrderContext/OrderApiCalls";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
+import { formatAmountDefault } from "../../lib/utils";
+import { currency } from "../../lib/constants";
 
 interface OrderData {
   user: any;
@@ -64,8 +66,6 @@ const CheckOut: React.FC = ({}) => {
     getCartAmount,
     delivery_fee,
     setCartItems,
-    formatAmount,
-    getRawAmount,
     getCartDetailsForOrder,
     guestEmail,
     // currentCurrency,
@@ -160,7 +160,7 @@ const CheckOut: React.FC = ({}) => {
       },
       billingSameAsShipping,
       shippingPrice: delivery_fee,
-      totalPrice: getRawAmount(finalTotal),
+      totalPrice: finalTotal,
       guestOrder: !!guestEmail,
       guestEmail: guestEmail || null,
       paidAt: today,
@@ -697,23 +697,24 @@ const CheckOut: React.FC = ({}) => {
             <div className="mb-[18px] flex flex-col gap-[15px]">
               <div className="flex justify-between">
                 <p>Subtotal:</p>
-                <p>{formatAmount(subtotal)}</p>
+                <p>{formatAmountDefault(currency, subtotal)}</p>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between">
                   <p>Discount:</p>
                   <p>
-                    -{discount}% ({formatAmount(discountAmount)})
+                    -{discount}% (
+                    {formatAmountDefault(currency, discountAmount)})
                   </p>
                 </div>
               )}
               <div className="flex justify-between">
                 <p>Delivery Fee:</p>
-                <p>{formatAmount(delivery_fee)}</p>
+                <p>{formatAmountDefault(currency, delivery_fee)}</p>
               </div>
               <div className="flex justify-between font-bold">
                 <p>Total:</p>
-                <p>{formatAmount(finalTotal)}</p>
+                <p>{formatAmountDefault(currency, finalTotal)}</p>
               </div>
             </div>
 
@@ -769,7 +770,7 @@ const CheckOut: React.FC = ({}) => {
                 }}
               >
                 Pay {/* ... */}
-                {formatAmount(finalTotal)}
+                {formatAmountDefault(currency, finalTotal)}
               </CreditCard>
             </PaymentForm>
           </div>

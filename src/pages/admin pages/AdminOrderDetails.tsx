@@ -165,7 +165,7 @@ const AdminOrderDetails: React.FC = () => {
         </p>
         <select
           onChange={(e) => handleStatusChange(order._id, e.target.value)}
-          className="border border-gray-300 py-2 px-3 mt-3 focus:ring-none rounded-md w-full sm:w-80 bg-white"
+          className="border border-gray-300 py-2 px-3 mt-3 focus:ring-none rounded-md w-full sm:w-80 bg-white cursor-pointer"
         >
           <option value="">Select status</option>
           <option value={"Pending"}>Pending</option>

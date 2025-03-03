@@ -4,13 +4,14 @@ import { Chart, ArcElement } from "chart.js";
 import Axios from "axios";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { URL } from "../../lib/constants";
-import { useShop } from "../../context/ShopContext";
+import { currency, URL } from "../../lib/constants";
+import { formatAmountDefault } from "../../lib/utils";
+// import { useShop } from "../../context/ShopContext";
 
 Chart.register(ArcElement);
 
 const AdminBestSellers: React.FC = () => {
-  const { formatAmount } = useShop();
+  // const { formatAmount } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState<Boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -115,7 +116,9 @@ const AdminBestSellers: React.FC = () => {
                       </Link>
                       <td className="p-4">{product.category}</td>
                       <td className="p-4">{product.subcategory}</td>
-                      <td className="p-4">{formatAmount(product.price)}</td>
+                      <td className="p-4">
+                        {formatAmountDefault(currency, product.price)}
+                      </td>
                       <td className="p-4">
                         {product.bestSeller ? (
                           <p className="text-green-500 font-semibold pl-4">

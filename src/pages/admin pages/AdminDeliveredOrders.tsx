@@ -57,7 +57,7 @@ const AdminDeliveredOrders: React.FC = () => {
             <thead className="text-sm">
               <tr className="bg-gray-100 font-extrabold">
                 <th className="text-left p-4 font-semibold">Order ID</th>
-                <th className="text-left p-4 font-semibold">Username</th>
+                <th className="text-left p-4 font-semibold">Full name</th>
                 <th className="text-left p-4 font-semibold">Email address</th>
                 <th className="text-left p-4 font-semibold">Order status</th>
                 <th className="text-left p-4 font-semibold">Amount</th>

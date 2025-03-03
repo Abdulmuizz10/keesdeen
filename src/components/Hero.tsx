@@ -31,7 +31,7 @@ export const Header76 = (props: Header76Props) => {
         {/* <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-brand-neutral">
           {heading}
         </h1> */}
-        <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl bricolage-grotesque text-gradient">
+        <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-7xl lg:text-8xl xl:text-9xl bricolage-grotesque text-gradient">
           {heading}
         </h1>
         {/* <p className="md:text-md text-text-primary">{description}</p> */}
