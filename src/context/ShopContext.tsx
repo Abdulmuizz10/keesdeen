@@ -1,3 +1,4 @@
+import Axios from "axios";
 import React, {
   createContext,
   useContext,
@@ -6,6 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import { toast } from "react-toastify";
+import { URL } from "../lib/constants";
 
 // Define the context type
 interface ShopContextType {
@@ -30,7 +32,12 @@ interface ShopContextType {
   setIsActive: any;
   adminLoader: any;
   setAdminLoader: any;
-  delivery_fee: number;
+  deliveryFee: any;
+  setDeliveryFee: any;
+  discountPercent: any;
+  setDiscountPercent: any;
+  change: any;
+  setChange: any;
 }
 
 // Create the ShopContext with an empty default value
@@ -42,23 +49,38 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [adminLoader, setAdminLoader] = useState(false);
-
   const [guestEmail, setGuestEmail] = useState<String>(() => {
     const storedGuestEmail = localStorage.getItem("guestEmail");
     return storedGuestEmail ? JSON.parse(storedGuestEmail) : "";
   });
-
   const [cartItems, setCartItems] = useState<any>(() => {
     const storedCart = localStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : {};
   });
-
   const [wishLists, setWishLists] = useState(() => {
     const storedWishLists = localStorage.getItem("wishLists");
     return storedWishLists ? JSON.parse(storedWishLists) : [];
   });
 
-  const delivery_fee = 100;
+  const [deliveryFee, setDeliveryFee] = useState<any>();
+  const [discountPercent, setDiscountPercent] = useState<any>();
+  const [change, setChange] = useState<boolean>(true);
+
+  useEffect(() => {
+    const handleGetUtility = async () => {
+      try {
+        const response = await Axios.get(`${URL}/utility/delivery-discount`, {
+          withCredentials: true,
+        });
+        setDeliveryFee(response.data.deliveryFee);
+        setDiscountPercent(response.data.discount);
+      } catch (error) {
+        toast.error("Error getting utilities");
+      }
+    };
+
+    handleGetUtility();
+  }, [change]);
 
   useEffect(() => {
     localStorage.setItem("guestEmail", JSON.stringify(guestEmail));
@@ -274,7 +296,12 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         setIsActive,
         adminLoader,
         setAdminLoader,
-        delivery_fee,
+        deliveryFee,
+        setDeliveryFee,
+        discountPercent,
+        setDiscountPercent,
+        change,
+        setChange,
       }}
     >
       {children}

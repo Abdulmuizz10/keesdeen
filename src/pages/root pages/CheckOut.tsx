@@ -14,7 +14,8 @@ import { createOrder } from "../../context/OrderContext/OrderApiCalls";
 import Spinner from "../../components/Spinner";
 import { useNavigate } from "react-router-dom";
 import { formatAmountDefault } from "../../lib/utils";
-import { currency } from "../../lib/constants";
+import { currency, URL } from "../../lib/constants";
+import Axios from "axios";
 
 interface OrderData {
   user: any;
@@ -64,7 +65,8 @@ const CheckOut: React.FC = ({}) => {
   const { user } = useContext(AuthContext);
   const {
     getCartAmount,
-    delivery_fee,
+    deliveryFee,
+    discountPercent,
     setCartItems,
     getCartDetailsForOrder,
     guestEmail,
@@ -85,7 +87,7 @@ const CheckOut: React.FC = ({}) => {
 
   const subtotal = getCartAmount();
   const discountAmount = (subtotal / 100) * discount;
-  const finalTotal = subtotal - discountAmount + delivery_fee;
+  const finalTotal = subtotal - discountAmount + deliveryFee;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -101,14 +103,27 @@ const CheckOut: React.FC = ({}) => {
     unregister,
   } = useForm({ mode: "onChange" });
 
-  const applyCoupon = () => {
-    if (coupon === "SAVE10") {
-      setDiscount(10);
-      toast.success("Coupon applied successfully!");
-    } else if (coupon === "") {
-      toast.error("The coupon field is empty please apply the coupon");
-    } else {
-      toast.error("Invalid Coupon Code");
+  const applyCoupon = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.post(
+        `${URL}/utility/apply-coupon`,
+        { coupon },
+        {
+          withCredentials: true,
+          validateStatus: (status) => status < 600,
+        }
+      );
+      if (response.status === 200) {
+        setDiscount(discountPercent);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message || "Invalid coupon");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,7 +159,7 @@ const CheckOut: React.FC = ({}) => {
     const orderData: OrderData = {
       user: user ? user.id : null,
       email: data.email,
-      currency: "GBP",
+      currency: currency,
       coupon,
       orderedItems,
       shippingAddress: {
@@ -159,7 +174,7 @@ const CheckOut: React.FC = ({}) => {
         zipCode: data.deliveryZipCode,
       },
       billingSameAsShipping,
-      shippingPrice: delivery_fee,
+      shippingPrice: deliveryFee,
       totalPrice: finalTotal,
       guestOrder: !!guestEmail,
       guestEmail: guestEmail || null,
@@ -203,7 +218,7 @@ const CheckOut: React.FC = ({}) => {
       const isValid = await trigger();
       if (!isValid) {
         setLoading(false);
-        toast.error("Please fill in your information completely.");
+        toast.error("Please fill all your information completely.");
         return;
       }
       handleSubmit((data: any) => handleOrderSubmission(data, token))();
@@ -432,7 +447,7 @@ const CheckOut: React.FC = ({}) => {
                   <div className="relative w-full mb-1 max-md:col-span-2">
                     <label>Phone Number</label>
                     <PhoneInput
-                      country="us"
+                      country="gb"
                       value={watch("deliveryPhoneNumber")}
                       onChange={(phone) =>
                         setValue("deliveryPhoneNumber", phone, {
@@ -640,7 +655,7 @@ const CheckOut: React.FC = ({}) => {
                     <div className="relative w-full mb-1 max-md:col-span-2">
                       <label>Phone Number</label>
                       <PhoneInput
-                        country="us"
+                        country="gb"
                         value={watch("billingPhoneNumber")}
                         onChange={(phone) =>
                           setValue("billingPhoneNumber", phone, {
@@ -692,7 +707,7 @@ const CheckOut: React.FC = ({}) => {
             </form>
           </div>
           {/* Payment and Summary */}
-          <div>
+          <div className="poppins">
             <h2 className="text-xl font-semibold mb-6">Payment</h2>
             <div className="mb-[18px] flex flex-col gap-[15px]">
               <div className="flex justify-between">
@@ -710,7 +725,7 @@ const CheckOut: React.FC = ({}) => {
               )}
               <div className="flex justify-between">
                 <p>Delivery Fee:</p>
-                <p>{formatAmountDefault(currency, delivery_fee)}</p>
+                <p>{formatAmountDefault(currency, deliveryFee)}</p>
               </div>
               <div className="flex justify-between font-bold">
                 <p>Total:</p>

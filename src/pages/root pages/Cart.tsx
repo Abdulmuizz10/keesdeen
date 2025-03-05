@@ -107,17 +107,17 @@ const Cart: React.FC = () => {
         <div className="flex justify-end my-20">
           <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
             <CartTotal />
-            <div className="w-full text-end mt-5">
+            <div className="w-full text-end mt-5 poppins">
               {!user && !guestEmail ? (
                 <Link to="/auth/guest-signUp">
                   <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
-                    PROCEED TO CHECKOUT
+                    Proceed to checkout
                   </Button>
                 </Link>
               ) : (
                 <Link to="/check_out">
                   <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
-                    PROCEED TO CHECKOUT
+                    Proceed to checkout
                   </Button>
                 </Link>
               )}
