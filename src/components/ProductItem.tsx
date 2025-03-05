@@ -24,12 +24,12 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
         {wishLists.find((wish: any) => wish._id === product._id) ? (
           <RiHeartFill
             onClick={() => manageWishLists(product)}
-            className="text-2xl text-text-primary"
+            className="text-[22px] text-text-primary"
           />
         ) : (
           <RiHeartLine
             onClick={() => manageWishLists(product)}
-            className="text-2xl text-text-primary"
+            className="text-[22px] text-text-primary"
           />
         )}
       </div>
