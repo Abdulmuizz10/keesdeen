@@ -271,7 +271,7 @@ const CheckOut: React.FC = ({}) => {
             Checkout
           </h2>
           <p className="md:text-md pb-5">
-            Please provide delivery and billing details below.
+            Please provide delivery and billing information below.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:pt-5">

@@ -133,8 +133,8 @@ const Navigation = () => {
   const [order, setOrder] = useState<any>("");
   const [utility, setUtility] = useState<any>();
   const [utilityCouponCode, setUtilityCouponCode] = useState<string>("");
-  const [utilityDeliveryFee, setUtilityDeliveryFee] = useState("0");
-  const [utilityDiscount, setUtilityDiscount] = useState<string>("0");
+  const [utilityDeliveryFee, setUtilityDeliveryFee] = useState<string>("");
+  const [utilityDiscount, setUtilityDiscount] = useState<string>("");
 
   const handleQuerySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
