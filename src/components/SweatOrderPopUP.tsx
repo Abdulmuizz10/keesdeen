@@ -39,6 +39,7 @@ export const showOrderSummary = (orderData: any) => {
   MySwal.fire({
     title: "Order Summary",
     html: `
+    <div style="font-size: 13px; font-family: poppins";>
       <strong>Name:</strong> ${orderData.shippingAddress.firstName} ${
       orderData.shippingAddress.lastName
     } <br/>
@@ -62,7 +63,8 @@ export const showOrderSummary = (orderData: any) => {
       <strong>Payment Status:</strong> ${
         orderData.paymentResult.payment.status
       } <br/>
-    `,
+    </div>
+  `,
     icon: "success",
     confirmButtonText: "Close",
     confirmButtonColor: "#04BB6E",
