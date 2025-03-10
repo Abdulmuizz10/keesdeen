@@ -113,14 +113,14 @@ const AdminOrders: React.FC = () => {
                       key={index}
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
-                      <td className="py-4 px-1 flex gap-1 items-center">
+                      <td className="px-3 py-5 flex gap-1 items-center">
                         {order._id.split("").slice(0, 7)}...
                         <FaRegCopy
                           className="text-xl cursor-pointer"
                           onClick={() => copyId(order._id)}
                         />
                       </td>
-                      <td className="py-2 cursor-pointer">
+                      <td className="p-3 cursor-pointer">
                         <Link
                           to={`/admin/order_details/${order._id}`}
                         >{`${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`}</Link>

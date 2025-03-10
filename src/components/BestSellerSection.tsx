@@ -61,7 +61,7 @@ export const Gallery19: React.FC = () => {
       <div className="px-[5%] py-16 md:py-24 lg:py-28">
         <div className="container">
           <div className="mb-12 text-center md:mb-18 lg:mb-10">
-            <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
+            <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl text-gradient">
               Best Sellers
             </h2>
             <p>Our Best Sellers: Where Modesty Meets Unmatched Style.</p>

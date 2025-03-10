@@ -138,7 +138,7 @@ const ShopAll: React.FC = () => {
     <section className="px-[5%] py-24 md:py-30">
       <div className="container">
         <div className="mb-2 md:mb-5">
-          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Shop All
           </h2>
         </div>
@@ -149,7 +149,7 @@ const ShopAll: React.FC = () => {
             }`}
           >
             {/* Left Side */}
-            <div className="min-w-60">
+            <div className="min-w-60 poppins">
               <div
                 className="flex items-center gap-2"
                 onClick={() => setShowFilter(!showFilter)}
@@ -271,7 +271,7 @@ const ShopAll: React.FC = () => {
                 </div>
               </div>
               <Button
-                className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
+                className={`my-4 w-full active:bg-brand-neutral/50 bg-brand-neutral text-text-light border-none rounded-md ${
                   showFilter ? "" : "hidden"
                 } xl:block`}
                 variant="primary"

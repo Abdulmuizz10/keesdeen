@@ -40,7 +40,7 @@ const Cart: React.FC = () => {
     <section className="px-[5%] py-24 md:py-30">
       <div className="container">
         <div className="mb-2 md:mb-5">
-          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque">
+          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Cart
           </h2>
           <p className="md:text-md">Your cart.</p>

@@ -199,7 +199,7 @@ const Dashboard: React.FC = () => {
                       className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                     >
                       <td className="py-5 pl-6 text-start">{index + 1}</td>
-                      <td className="py-4 px-2 flex items-center gap-2 ">
+                      <td className="px-3 py-5 flex items-center gap-2 ">
                         {transaction._id.split("").slice(0, 6)}....
                         <FaRegCopy
                           className="text-xl cursor-pointer"

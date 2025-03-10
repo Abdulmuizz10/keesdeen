@@ -44,7 +44,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
         </Link>
       </div>
       <div className="p-4 text-center">
-        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
+        <h3 className="text-md xl:text-lg font-semibold bricolage-grotesque">
           {product.name}
         </h3>
         <div className="flex gap-2 items-center justify-center">

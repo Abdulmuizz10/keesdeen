@@ -77,7 +77,7 @@ const ProductDetails = () => {
             {/* Product Details */}
             <div className="flex-1 w-full">
               <div className="mb-2 md:mb-4">
-                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
+                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque text-gradient">
                   {result.product.name}
                 </h2>
                 <p>{result.product.brand}</p>
@@ -112,7 +112,7 @@ const ProductDetails = () => {
                   ({result?.averageRating}) • {result?.totalReviews} reviews
                 </p>
               </div>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center text-gradient">
                 {result?.product.previousPrice && (
                   <s className="mt-5 text-xl font-medium">
                     {formatAmountDefault(
@@ -196,15 +196,15 @@ const ProductDetails = () => {
                   ADD TO CART
                 </Button>
                 <div
-                  className={`px-3 py-3 border-2 border-border-primary rounded-lg flex items-center justify-center cursor-pointer flex-1`}
+                  className={`px-3 py-3 border-2 border-brand-neutral rounded-lg flex items-center justify-center cursor-pointer flex-1`}
                   onClick={() => manageWishLists(result?.product)}
                 >
                   {wishLists.find(
                     (wish: any) => wish._id === result?.product._id
                   ) ? (
-                    <RiHeartFill className="text-2xl text-text-primary" />
+                    <RiHeartFill className="text-2xl text-brand-neutral" />
                   ) : (
-                    <RiHeartLine className="text-2xl text-text-secondary" />
+                    <RiHeartLine className="text-2xl text-brand-neutral" />
                   )}
                 </div>
               </div>

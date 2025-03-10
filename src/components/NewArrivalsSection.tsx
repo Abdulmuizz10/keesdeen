@@ -75,7 +75,7 @@ export const Gallery21 = ({
     >
       <div className="container">
         <div className="rb-12 mb-12 text-center md:mb-18 lg:mb-20">
-          <h2 className="rb-5 mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
+          <h2 className="rb-5 mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl text-gradient">
             {heading}
           </h2>
           <p className="md:text-md">{description}</p>

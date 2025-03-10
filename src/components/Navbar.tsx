@@ -63,7 +63,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               <div key={index}>
                 <Link
                   to={navLink.url}
-                  className={`relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-text-primary hover:text-brand-primary ${
+                  className={`relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-brand-neutral hover:text-brand-primary ${
                     index === 0 ? "lg:hidden" : ""
                   }`}
                   onClick={() => {
@@ -81,12 +81,12 @@ export const Navbar7 = (props: Navbar7Props) => {
             <div className="hidden lg:flex gap-3 items-center">
               {/* <CurrencySwitcher color="white" /> */}
               <CiSearch
-                className="text-3xl cursor-pointer text-text-primary hover:text-brand-primary"
+                className="text-3xl cursor-pointer  text-brand-neutral hover:text-brand-primary"
                 onClick={() => setIsActive(!isActive)}
               />
               <Link className="relative" to="/cart">
                 <IoBagOutline
-                  className="text-2xl text-text-primary  hover:text-brand-primary"
+                  className="text-2xl text-gradient  text-brand-neutral hover:text-brand-primary"
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
@@ -104,7 +104,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               </Link>
               <Link to="/wishlists" className="relative">
                 <LuHeart
-                  className="text-2xl text-text-primary hover:text-brand-primary"
+                  className="text-2xl text-brand-neutral hover:text-brand-primary"
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
@@ -121,7 +121,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                 <div className="flex flex-col items-center">
                   <Link
                     to="/admin"
-                    className="relative block w-auto text-md lg:inline-block lg:px-1 lg:text-md text-text-primary poppins"
+                    className="relative block w-auto text-md lg:inline-block lg:px-1 lg:text-md poppins  text-brand-neutral hover:text-brand-primary"
                   >
                     Admin
                   </Link>
@@ -134,12 +134,12 @@ export const Navbar7 = (props: Navbar7Props) => {
             </div>
             {user ? (
               <Link to="/profile">
-                <CiUser className="text-3xl text-text-primary hover:text-brand-primary" />
+                <CiUser className="text-3xl  text-brand-neutral hover:text-brand-primary" />
               </Link>
             ) : (
               <>
                 <Link to="/auth/login">
-                  <CiUser className="text-3xl text-text-primary hover:text-brand-primary" />
+                  <CiUser className="text-3xl  text-brand-neutral hover:text-brand-primary" />
                 </Link>
               </>
             )}
@@ -152,7 +152,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           />
           <Link className="relative" to="/cart">
             <IoBagOutline
-              className="text-2xl text-text-primary hover:text-brand-primary"
+              className="text-2xl  text-brand-neutral hover:text-brand-primary"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -170,7 +170,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           </Link>
           <Link to="/wishlists" className="relative">
             <LuHeart
-              className="text-2xl text-text-primary hover:text-brand-primary"
+              className="text-2xl text-brand-neutral hover:text-brand-primary"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -270,7 +270,7 @@ export const Navbar7 = (props: Navbar7Props) => {
                   {user?.isAdmin ? (
                     <Link
                       to="/admin"
-                      className="relative block w-auto text-md lg:inline-block lg:px-4 lg:text-base poppins"
+                      className="relative block w-auto text-md lg:inline-block lg:px-4 lg:text-base poppins  text-brand-neutral hover:text-brand-primary"
                     >
                       Admin
                     </Link>
