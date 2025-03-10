@@ -258,6 +258,9 @@ const CheckOut: React.FC = ({}) => {
     register("billingPhoneNumber", billingPhoneValidation);
   }, [register]);
 
+  console.log(import.meta.env.VITE_SQUARE_APP_ID);
+  console.log(import.meta.env.VITE_SQUARE_LOCATION_ID);
+
   return (
     <section className="px-[5%] py-24 md:py-30">
       {loading && (
