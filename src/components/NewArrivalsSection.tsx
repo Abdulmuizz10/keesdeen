@@ -95,9 +95,9 @@ export const Gallery21 = ({
                   .map((_, index) => (
                     <CarouselItem
                       key={index}
-                      className="basis-full pl-0 pr-6 md:basis-1/2 md:pr-8"
+                      className="basis-full pl-0 sm:basis-2/5 md:basis-1/2 relative"
                     >
-                      <div className="aspect-square h-[600px] bg-gray-200 object-cover animate-pulse" />
+                      <div className="aspect-square h-[600px] w-full bg-gray-200 object-cover animate-pulse" />
                     </CarouselItem>
                   ))
               : products?.map((product: any, index) => (
