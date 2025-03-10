@@ -56,6 +56,7 @@ const AdminDeliveredOrders: React.FC = () => {
           <table className="w-full bg-white poppins">
             <thead className="text-sm">
               <tr className="bg-gray-100 font-extrabold">
+                <th className="text-left p-4 font-semibold">S/N</th>
                 <th className="text-left p-4 font-semibold">Order ID</th>
                 <th className="text-left p-4 font-semibold">Full name</th>
                 <th className="text-left p-4 font-semibold">Email address</th>
@@ -70,6 +71,7 @@ const AdminDeliveredOrders: React.FC = () => {
                   <tr key={index} className="border-b">
                     <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                     <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
                     <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                     <td className="p-4 h-6 bg-gray-200 animate-pulse" />
                     <td className="p-4 h-6 bg-gray-200 animate-pulse" />
@@ -82,8 +84,9 @@ const AdminDeliveredOrders: React.FC = () => {
                     key={index}
                     className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
                   >
-                    <td className="px-3 py-5 flex gap-2 items-center">
-                      {order._id.split("").slice(0, 10)}...
+                    <td className="p-5 cursor-pointer">{index + 1}</td>
+                    <td className="px-2 py-5 flex gap-2 items-center">
+                      {order._id.split("").slice(0, 7)}...
                       <FaRegCopy
                         className="text-xl cursor-pointer"
                         onClick={() => copyId(order._id)}
