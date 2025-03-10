@@ -66,7 +66,7 @@ export const ForgetPassword: React.FC = (props: Signup7Props) => {
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="mb-6 text-center">
-              <h1 className="mb-5 text-3xl font-bold text-neutral-800 md:mb-1 md:text-7xl">
+              <h1 className="mb-5 text-3xl font-bold text-neutral-800 md:mb-1 md:text-7xl text-gradient">
                 {title}
               </h1>
               <p className="text-neutral-600 md:text-md">{description}</p>

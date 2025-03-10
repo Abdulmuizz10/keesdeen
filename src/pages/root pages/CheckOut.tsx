@@ -267,7 +267,7 @@ const CheckOut: React.FC = ({}) => {
       )}
       <div className="container">
         <div className="mb-5 border-b border-border-secondary ">
-          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Checkout
           </h2>
           <p className="md:text-md pb-5">
@@ -759,8 +759,8 @@ const CheckOut: React.FC = ({}) => {
             </div>
 
             <PaymentForm
-              applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
-              locationId={"LNS0B6E8H9C06"}
+              applicationId={import.meta.env.VITE_SQUARE_APP_ID}
+              locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 setLoading(true);
                 if (tokenResult.errors) {
