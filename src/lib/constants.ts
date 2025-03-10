@@ -1,4 +1,5 @@
-export const URL = "https://k-backend-vg9o.onrender.com";
+export const URL =
+  "https://keesdeen-35qmm0zgl-abdulmuizz10s-projects.vercel.app";
 
 import { Images } from "../assets";
 
