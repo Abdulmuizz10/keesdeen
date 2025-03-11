@@ -759,7 +759,7 @@ const CheckOut: React.FC = ({}) => {
             </div>
 
             <PaymentForm
-              applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
+              applicationId={"sq0idp-iYzYlKuv3IrrCUgk0mL_Tw"}
               locationId={"LNS0B6E8H9C06"}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 setLoading(true);
