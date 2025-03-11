@@ -258,9 +258,6 @@ const CheckOut: React.FC = ({}) => {
     register("billingPhoneNumber", billingPhoneValidation);
   }, [register]);
 
-  const appId = import.meta.env.VITE_SQUARE_APP_ID;
-  const locationId = import.meta.env.VITE_SQUARE_LOCATION_ID;
-
   return (
     <section className="px-[5%] py-24 md:py-30">
       {loading && (
@@ -269,7 +266,7 @@ const CheckOut: React.FC = ({}) => {
         </div>
       )}
       <div className="container">
-        <div className="mb-5 border-b border-border-secondary ">
+        <div className="mb-5 border-b border-border-secondary">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Checkout
           </h2>
@@ -762,8 +759,8 @@ const CheckOut: React.FC = ({}) => {
             </div>
 
             <PaymentForm
-              applicationId={appId}
-              locationId={locationId}
+              applicationId={"sq0idp-iYzYlKuv3IrrCUgk0mL_Tw"}
+              locationId={"LNS0B6E8H9C06"}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 setLoading(true);
                 if (tokenResult.errors) {
