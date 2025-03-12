@@ -77,7 +77,7 @@ const ProductDetails = () => {
             {/* Product Details */}
             <div className="flex-1 w-full">
               <div className="mb-2 md:mb-4">
-                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque text-gradient">
+                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
                   {result.product.name}
                 </h2>
                 <p>{result.product.brand}</p>
@@ -112,7 +112,7 @@ const ProductDetails = () => {
                   ({result?.averageRating}) • {result?.totalReviews} reviews
                 </p>
               </div>
-              <div className="flex gap-2 items-center text-gradient">
+              <div className="flex gap-2 items-center">
                 {result?.product.previousPrice && (
                   <s className="mt-5 text-xl font-medium">
                     {formatAmountDefault(
