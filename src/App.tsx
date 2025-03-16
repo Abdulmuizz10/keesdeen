@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // Libraries
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -38,7 +38,6 @@ import { ForgetPassword } from "./pages/auth pages/ForgetPassword";
 import { ResetPassword } from "./pages/auth pages/ResetPassword";
 
 // Admin Pages
-
 import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
 import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
@@ -54,6 +53,9 @@ import AdminProducts from "./pages/admin pages/AdminProducts";
 import AdminSubscribers from "./pages/admin pages/AdminSubscribers";
 import AdminSendEmailToSubscribers from "./pages/admin pages/AdminSendEmailToSubscribers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
+
+// 404 page
+import ErrorPage from "./pages/root pages/ErrorPage";
 
 // Context
 import { AuthContext } from "./context/AuthContext/AuthContext";
@@ -161,6 +163,9 @@ const App: React.FC = () => {
               />
             </Route>
           ) : null}
+
+          {/* 404 Route */}
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>
     </div>

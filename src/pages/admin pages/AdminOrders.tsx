@@ -1,13 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Chart, ArcElement } from "chart.js";
 import { FaRegCopy } from "react-icons/fa";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { formatAmountDefault } from "../../lib/utils";
-
-Chart.register(ArcElement);
 
 const AdminOrders: React.FC = () => {
   const [orders, setOrders] = useState([]);

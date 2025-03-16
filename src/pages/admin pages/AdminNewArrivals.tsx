@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Chart, ArcElement } from "chart.js";
 // import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
 import { toast } from "react-toastify";
@@ -7,8 +6,6 @@ import { Link } from "react-router-dom";
 import { currency, URL } from "../../lib/constants";
 import { formatAmountDefault } from "../../lib/utils";
 // import { useShop } from "../../context/ShopContext";
-
-Chart.register(ArcElement);
 
 const AdminNewArrivals: React.FC = () => {
   // const { formatAmount } = useShop();

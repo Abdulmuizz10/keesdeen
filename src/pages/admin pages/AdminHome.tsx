@@ -1,24 +1,92 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Doughnut } from "react-chartjs-2";
 import { FaRegCopy } from "react-icons/fa";
-import { Chart, ArcElement } from "chart.js";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { formatAmountDefault } from "../../lib/utils";
 
-Chart.register(ArcElement);
+const getCompletionPercentage = (value: number, max: number) => {
+  return Math.min(100, Math.round((value / max) * 100));
+};
 
-const AdminHome: React.FC = () => {
+const CircularLoader = ({
+  value,
+  max,
+  color,
+}: {
+  value: number;
+  max: number;
+  color: string;
+}) => {
+  const percentage = getCompletionPercentage(value, max);
+
   return (
-    <section className="container ">
-      <Dashboard />
-    </section>
+    <div
+      className="relative w-20 h-20 md:w-[93px] md:h-[93px] rounded-full flex items-center justify-center"
+      style={{
+        background: `conic-gradient(${color} ${percentage}%, #eee ${percentage}%)`,
+      }}
+    >
+      <div className="absolute bg-white w-16 h-16 md:w-20 md:h-20 rounded-full"></div>
+      <span className="text-sm font-bold">{percentage}%</span>
+    </div>
   );
 };
 
-const Dashboard: React.FC = () => {
+const DashboardStats = ({
+  users,
+  products,
+  transactions,
+}: {
+  users: any[];
+  products: any[];
+  transactions: any[];
+}) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+      <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
+        <CircularLoader
+          value={users?.length + 10}
+          max={users?.length + 50}
+          color="#13034bef"
+        />
+        <div>
+          <h3 className="text-lg md:text-xl font-semibold">Total Users</h3>
+          <p className="text-2xl md:text-4xl font-bold">{users?.length}</p>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
+        <CircularLoader
+          value={products?.length + 10}
+          max={products?.length + 50}
+          color="#DA5B14"
+        />
+        <div>
+          <h3 className="text-lg md:text-xl font-semibold">Products</h3>
+          <p className="text-2xl md:text-4xl font-bold">{products?.length}</p>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
+        <CircularLoader
+          value={transactions?.length + 10}
+          max={transactions?.length + 50}
+          color="#04BB6E"
+        />
+        <div>
+          <h3 className="text-lg md:text-xl font-semibold">Orders</h3>
+          <p className="text-2xl md:text-4xl font-bold">
+            {transactions?.length}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AdminHome: React.FC = () => {
   const [transactions, setTransactions] = useState<any>([]);
   const [users, setUsers] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
@@ -85,195 +153,136 @@ const Dashboard: React.FC = () => {
       });
   };
 
-  // Chart data
-  const userData = {
-    datasets: [
-      {
-        data: [users?.length + 10, users?.length + 50], // 75% completion
-        backgroundColor: ["#13034bef", "#eee"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const stockData = {
-    datasets: [
-      {
-        data: [products?.length + 10, products.length + 50], // 60% completion
-        backgroundColor: ["#DA5B14", "#eee"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  const revenueData = {
-    datasets: [
-      {
-        data: [transactions?.length + 10, transactions?.length + 50], // 85% completion
-        backgroundColor: ["#04BB6E", "#eee"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
-  // Chart options
-  const chartOptions = {
-    cutout: "65%",
-    plugins: {
-      tooltip: { enabled: false },
-    },
-  };
-
   return (
-    <section className="w-full">
-      {/* Header stats with doughnut charts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
-          <div className="w-20 h-20 md:w-24 md:h-24 sm:hidden xl:flex">
-            <Doughnut data={userData} options={chartOptions} />
-          </div>
-          <div>
-            <h3 className="text-lg md:text-xl font-semibold">Total Users</h3>
-            <p className="text-2xl md:text-4xl font-bold">{users?.length}</p>
-          </div>
-        </div>
+    <section className="container ">
+      <div className="w-full">
+        {/* Header stats with doughnut charts */}
 
-        <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
-          <div className="w-20 h-20 md:w-24 md:h-24 sm:hidden xl:flex">
-            <Doughnut data={stockData} options={chartOptions} />
-          </div>
-          <div>
-            <h3 className="text-lg md:text-xl font-semibold">Products</h3>
-            <p className="text-2xl md:text-4xl font-bold">{products?.length}</p>
-          </div>
-        </div>
+        <DashboardStats
+          users={users}
+          products={products}
+          transactions={transactions}
+        />
+        <div className="w-full" ref={scrollRef}>
+          {/* Latest Orders */}
+          <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
 
-        <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
-          <div className="w-20 h-20 md:w-24 md:h-24 sm:hidden xl:flex">
-            <Doughnut data={revenueData} options={chartOptions} />
-          </div>
-          <div>
-            <h3 className="text-lg md:text-xl font-semibold">Orders</h3>
-            <p className="text-2xl md:text-4xl font-bold">
-              {transactions?.length}
-            </p>
-          </div>
-        </div>
-      </div>
+            <div className="overflow-x-auto">
+              <table className="w-full bg-white poppins">
+                <thead className="text-sm">
+                  <tr className="bg-gray-100 font-extrabold">
+                    <th className="text-left p-4 font-semibold">S/N</th>
+                    <th className="text-left p-4 font-semibold">Order ID</th>
+                    <th className="text-left p-4 font-semibold">Full name</th>
+                    <th className="text-left p-4 font-semibold">
+                      Email address
+                    </th>
+                    <th className="text-left p-4 font-semibold">
+                      Order status
+                    </th>
+                    <th className="text-left p-4 font-semibold">Amount</th>
+                    <th className="text-left p-4 font-semibold">
+                      Date ordered
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    Array.from({ length: 20 }).map((_, index) => (
+                      <tr key={index} className="border-b">
+                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-6 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                        <td className="p-4 h-6 bg-gray-200 animate-pulse" />
+                      </tr>
+                    ))
+                  ) : transactions.length > 0 ? (
+                    transactions?.map((transaction: any, index: number) => (
+                      <tr
+                        key={index}
+                        className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+                      >
+                        <td className="py-5 pl-6 text-start">{index + 1}</td>
+                        <td className="px-3 py-5 flex items-center gap-2 ">
+                          {transaction._id.split("").slice(0, 6)}....
+                          <FaRegCopy
+                            className="text-xl cursor-pointer"
+                            onClick={() => copyId(transaction._id)}
+                          />
+                        </td>
 
-      <div className="w-full" ref={scrollRef}>
-        {/* Latest Orders */}
-        <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
-          <h3 className="text-xl font-semibold mb-4">Latest Transactions</h3>
+                        <td className="p-5 cursor-pointer">
+                          <Link
+                            to={`/admin/order_details/${transaction._id}`}
+                          >{`${transaction.shippingAddress.firstName} ${transaction.shippingAddress.lastName}`}</Link>
+                        </td>
+                        <td className="p-5">{transaction.email}</td>
+                        <td className="p-5">
+                          {transaction.isDelivered === "Delivered" ? (
+                            <span className="text-green-500 font-semibold">
+                              Delivered
+                            </span>
+                          ) : (
+                            <span className="text-brand-secondary font-semibold">
+                              {transaction.isDelivered}
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-5">
+                          {formatAmountDefault(
+                            transaction.currency,
+                            transaction.totalPrice
+                          )}
+                        </td>
+                        <td className="p-5">
+                          {new Date(transaction.paidAt).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <p className="text-base sm:text-xl py-5">
+                      No transactions made
+                    </p>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full bg-white poppins">
-              <thead className="text-sm">
-                <tr className="bg-gray-100 font-extrabold">
-                  <th className="text-left p-4 font-semibold">S/N</th>
-                  <th className="text-left p-4 font-semibold">Order ID</th>
-                  <th className="text-left p-4 font-semibold">Full name</th>
-                  <th className="text-left p-4 font-semibold">Email address</th>
-                  <th className="text-left p-4 font-semibold">Order status</th>
-                  <th className="text-left p-4 font-semibold">Amount</th>
-                  <th className="text-left p-4 font-semibold">Date ordered</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  Array.from({ length: 20 }).map((_, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                      <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    </tr>
-                  ))
-                ) : transactions.length > 0 ? (
-                  transactions?.map((transaction: any, index: number) => (
-                    <tr
-                      key={index}
-                      className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
-                    >
-                      <td className="py-5 pl-6 text-start">{index + 1}</td>
-                      <td className="px-3 py-5 flex items-center gap-2 ">
-                        {transaction._id.split("").slice(0, 6)}....
-                        <FaRegCopy
-                          className="text-xl cursor-pointer"
-                          onClick={() => copyId(transaction._id)}
-                        />
-                      </td>
+            {/* Pagination controls */}
 
-                      <td className="p-5 cursor-pointer">
-                        <Link
-                          to={`/admin/order_details/${transaction._id}`}
-                        >{`${transaction.shippingAddress.firstName} ${transaction.shippingAddress.lastName}`}</Link>
-                      </td>
-                      <td className="p-5">{transaction.email}</td>
-                      <td className="p-5">
-                        {transaction.isDelivered === "Delivered" ? (
-                          <span className="text-green-500 font-semibold">
-                            Delivered
-                          </span>
-                        ) : (
-                          <span className="text-brand-secondary font-semibold">
-                            {transaction.isDelivered}
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-5">
-                        {formatAmountDefault(
-                          transaction.currency,
-                          transaction.totalPrice
-                        )}
-                      </td>
-                      <td className="p-5">
-                        {new Date(transaction.paidAt).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <p className="text-base sm:text-xl py-5">
-                    No transactions made
-                  </p>
-                )}
-              </tbody>
-            </table>
-          </div>
+            <div className="flex justify-end mt-4 gap-3 poppins">
+              <button
+                className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={currentPage === 1}
+                onClick={() => {
+                  setCurrentPage((prev) => Math.max(prev - 1, 1));
+                  scrollRef.current.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Previous
+              </button>
 
-          {/* Pagination controls */}
-
-          <div className="flex justify-end mt-4 gap-3 poppins">
-            <button
-              className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
-                currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              disabled={currentPage === 1}
-              onClick={() => {
-                setCurrentPage((prev) => Math.max(prev - 1, 1));
-                scrollRef.current.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              Previous
-            </button>
-
-            <button
-              className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
-                currentPage === totalPages
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-              disabled={currentPage === totalPages}
-              onClick={() => {
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-                scrollRef.current.scrollIntoView({ behavior: "smooth" });
-              }}
-            >
-              Next
-            </button>
+              <button
+                className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                disabled={currentPage === totalPages}
+                onClick={() => {
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                  scrollRef.current.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
