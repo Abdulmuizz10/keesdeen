@@ -759,8 +759,10 @@ const CheckOut: React.FC = ({}) => {
             </div>
 
             <PaymentForm
-              applicationId={"sq0idp-iYzYlKuv3IrrCUgk0mL_Tw"}
-              locationId={"LNS0B6E8H9C06"}
+              // applicationId={"sq0idp-iYzYlKuv3IrrCUgk0mL_Tw"}
+              // locationId={"LNS0B6E8H9C06"}
+              applicationId={import.meta.env.VITE_SQUARE_APP_ID}
+              locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
               cardTokenizeResponseReceived={(tokenResult: any) => {
                 setLoading(true);
                 if (tokenResult.errors) {
