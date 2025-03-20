@@ -223,7 +223,7 @@ const AdminOrderDetails: React.FC = () => {
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-32 h-32 rounded-md border"
+                className="w-32 h-36 object-cover rounded-md border"
               />
               <div>
                 <p className="font-medium text-gray-800">{item.name}</p>

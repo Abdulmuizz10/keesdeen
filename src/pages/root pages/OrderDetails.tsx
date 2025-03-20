@@ -198,7 +198,7 @@ const OrderDetails: React.FC = () => {
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-28 h-28 object-cover rounded border"
+                  className="w-28 h-30 object-cover rounded border"
                 />
                 <div>
                   <p className="font-medium text-gray-800">{item.name}</p>
