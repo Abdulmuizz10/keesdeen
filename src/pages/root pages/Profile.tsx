@@ -14,23 +14,6 @@ export interface UserProfile {
 
 const Profile: React.FC = () => {
   const { user } = useContext(AuthContext);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await Axios.get(`${URL}/orders/profile/orders`, {
-  //         withCredentials: true,
-  //         validateStatus: (status) => status < 600,
-  //       });
-  //       if (res.status === 200) {
-  //       } else {
-  //         // toast.error(res.data.message || "Something went wrong");
-  //       }
-  //     } catch (error) {
-  //       // toast.error("An unexpected error occurred. Please try again.");
-  //     }
-  //   };
-  //   fetchData();
-  // }, [user]);
 
   return (
     <section id="profile" className="px-[5%] py-24 md:py-30">
@@ -57,7 +40,9 @@ const Profile: React.FC = () => {
                   {user?.lastName}
                 </h2>
               </div>
-              <p className="text-gray-500 text-lg">{user?.email}</p>
+              <p className="text-gray-500 text-xs sm:text-base md:text-lg">
+                {user?.email}
+              </p>
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@ const CircularLoader = ({
 
   return (
     <div
-      className="relative w-20 h-20 md:w-[93px] md:h-[93px] rounded-full flex items-center justify-center"
+      className="relative w-20 h-20 md:w-[95px] md:h-[95px] rounded-full flex items-center justify-center"
       style={{
         background: `conic-gradient(${color} ${percentage}%, #eee ${percentage}%)`,
       }}
@@ -44,7 +44,7 @@ const DashboardStats = ({
   transactions: any[];
 }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-4 lg:mb-8">
       <div className="bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300 flex items-center space-x-6">
         <CircularLoader
           value={users?.length + 10}

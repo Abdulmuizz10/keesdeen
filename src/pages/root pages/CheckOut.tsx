@@ -466,7 +466,7 @@ const CheckOut: React.FC = ({}) => {
                 />
                 <label
                   htmlFor="billingSameAsShipping"
-                  className="text-base md:text-md cursor-pointer"
+                  className="text-[14px] sm:text-base cursor-pointer"
                 >
                   Billing address same as shipping address
                 </label>

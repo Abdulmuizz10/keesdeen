@@ -57,31 +57,34 @@ const Cart: React.FC = () => {
               key={index}
               className="py-4 border-b border-border-secondary text-text-secondary grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
             >
-              <div className="flex items-start gap-6">
+              <div className="flex items-center lg:items-start gap-6">
                 <img
-                  className="w-16 sm:w-20 rounded-sm border border-gray-300"
+                  className="w-16 sm:w-28 rounded-sm border border-gray-300"
                   src={item.image}
                   alt="cart image"
                 />
                 <div className="flex flex-col gap-2">
-                  <p className="text-xs sm:text-lg font-medium text-text-primary bricolage-grotesque">
+                  <p className="text-xs sm:text-[14px] sm:text-lg font-medium text-text-primary bricolage-grotesque">
                     {item.name}
                   </p>
                   <div className="flex items-center gap-2 sm:gap-3 mt-1 text-sm">
-                    <p className="text-base md:text-md xl:text-lg">
+                    <p className="text-xs md:text-md xl:text-lg font-semibold text-text-primary">
                       {formatAmountDefault(currency, item.price)}
                     </p>
-                    <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] max-sm:text-xs bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
                       {item.size}
                     </p>
-                    <p className="h-[30px] md:h-[40px] px-3 bg-gray-100 font-medium hidden sm:flex items-center justify-center cursor-pointer text-text-primary border">
+                    <p className="h-[30px] md:h-[40px] max-sm:text-xs px-3 bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
                       {item.color}
                     </p>
                   </div>
                 </div>
               </div>
               <input
-                className="border border-border-secondary bg-background-primary max-w-[90px] sm:max-w-[100px] px-1 py-[5px] sm:px-2 sm:py-1  text-text-primary rounded-md"
+                className="border border-border-secondary bg-background-primary max-w-[65px] sm:max-w-[70px] lg:max-w-[100px] px-1 py-[5px] sm:px-2 sm:py-1  text-text-primary rounded-md"
                 type="number"
                 min={1}
                 value={item.quantity}
@@ -103,7 +106,6 @@ const Cart: React.FC = () => {
             </div>
           ))}
         </div>
-
         <div className="flex justify-end my-20">
           <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
             <CartTotal />

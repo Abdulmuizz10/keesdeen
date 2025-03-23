@@ -87,13 +87,13 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
       <>
         <div className="flex gap-2">
           <h3
-            className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
+            className="border border-border-secondary px-5 py-3 text-xs sm:text-sm cursor-pointer rounded-md"
             onClick={() => setChange(false)}
           >
             Click To Write A Review
           </h3>
           <p
-            className="border border-border-secondary px-5 py-3 text-sm cursor-pointer rounded-md"
+            className="border border-border-secondary px-5 py-3 text-xs sm:text-sm cursor-pointer rounded-md"
             onClick={() => setChange(true)}
           >
             All Reviews ({reviews?.length})
