@@ -6,7 +6,7 @@ import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { toast } from "react-toastify";
 
 import { AuthContext } from "../../context/AuthContext/AuthContext";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -28,7 +28,6 @@ interface OrderData {
     lastName: any;
     country: any;
     state: any;
-    city: any;
     addressLineOne: any;
     addressLineTwo: any;
     phoneNumber: any;
@@ -39,7 +38,6 @@ interface OrderData {
     lastName: any;
     country: any;
     state: any;
-    city: any;
     street: any;
     phoneNumber: any;
     zipCode: any;
@@ -77,10 +75,8 @@ const CheckOut: React.FC = ({}) => {
   const [discount, setDiscount] = useState<number>(0);
   const [deliverySelectedCountry, setDeliverySelectedCountry] = useState<any>();
   const [deliverySelectedState, setDeliverySelectedState] = useState<any>();
-  const [deliverySelectedCity, setDeliverySelectedCity] = useState<any>();
   const [billingSelectedCountry, setBillingSelectedCountry] = useState<any>();
   const [billingSelectedState, setBillingSelectedState] = useState<any>();
-  const [billingSelectedCity, setBillingSelectedCity] = useState<any>();
   const [billingSameAsShipping, setBillingSameAsShipping] = useState(false);
   const orderedItems = getCartDetailsForOrder();
   const navigate = useNavigate();
@@ -134,19 +130,16 @@ const CheckOut: React.FC = ({}) => {
       unregister("billingLastName");
       unregister("billingCountry");
       unregister("billingState");
-      unregister("billingCity");
       unregister("billingStreet");
       unregister("billingPhoneNumber");
       unregister("billingZipCode");
       setBillingSelectedCountry("");
       setBillingSelectedState("");
-      setBillingSelectedCity("");
     } else {
       register("billingFirstName");
       register("billingLastName");
       register("billingCountry");
       register("billingState");
-      register("billingCity");
       register("billingStreet");
       register("billingPhoneNumber");
       register("billingZipCode");
@@ -167,7 +160,6 @@ const CheckOut: React.FC = ({}) => {
         lastName: data.deliveryLastName,
         country: data.deliveryCountry,
         state: data.deliveryState,
-        city: data.deliveryCity,
         addressLineOne: data.deliveryAddressLineOne,
         addressLineTwo: data.deliveryAddressLineTwo,
         phoneNumber: data.deliveryPhoneNumber,
@@ -188,7 +180,6 @@ const CheckOut: React.FC = ({}) => {
         lastName: data.billingLastName,
         country: data.billingCountry,
         state: data.billingState,
-        city: data.billingCity,
         street: data.billingStreet,
         phoneNumber: data.billingPhoneNumber,
         zipCode: data.billingZipCode,
@@ -201,10 +192,8 @@ const CheckOut: React.FC = ({}) => {
         setCartItems,
         setDeliverySelectedCountry,
         setDeliverySelectedState,
-        setDeliverySelectedCity,
         setBillingSelectedCountry,
         setBillingSelectedState,
-        setBillingSelectedCity,
         navigate
       );
     } catch (error) {
@@ -314,7 +303,7 @@ const CheckOut: React.FC = ({}) => {
                       </p>
                     )}
                   </div>
-                  <div className="relative w-full mb-1 max-sm:col-span-2">
+                  <div className="relative w-full mb-1 col-span-2">
                     <label>Email Address</label>
                     <input
                       {...register("email", {
@@ -380,34 +369,6 @@ const CheckOut: React.FC = ({}) => {
                     {errors.deliveryState && (
                       <p className="absolute text-red-500 text-sm mt-1">
                         {String(errors.deliveryState.message)}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="relative w-full mb-1 max-sm:col-span-2">
-                    <label>City</label>
-                    <select
-                      {...register("deliveryCity", {
-                        required: "City is required",
-                      })}
-                      value={deliverySelectedCity}
-                      onChange={(e) => setDeliverySelectedCity(e.target.value)}
-                      className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
-                      autoComplete="no"
-                    >
-                      <option value="">Select city</option>
-                      {City.getCitiesOfState(
-                        deliverySelectedCountry,
-                        deliverySelectedState
-                      ).map((city) => (
-                        <option key={city.name} value={city.name}>
-                          {city.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.deliveryCity && (
-                      <p className="absolute text-red-500 text-sm mt-1">
-                        {String(errors.deliveryCity.message)}
                       </p>
                     )}
                   </div>
@@ -605,33 +566,6 @@ const CheckOut: React.FC = ({}) => {
                       )}
                     </div>
 
-                    <div className="relative w-full mb-1 max-sm:col-span-2">
-                      <label>City</label>
-                      <select
-                        {...register("billingCity", {
-                          required: "City is required",
-                        })}
-                        value={billingSelectedCity}
-                        onChange={(e) => setBillingSelectedCity(e.target.value)}
-                        className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white"
-                        autoComplete="no"
-                      >
-                        <option value="">Select city</option>
-                        {City.getCitiesOfState(
-                          billingSelectedCountry,
-                          billingSelectedState
-                        ).map((city) => (
-                          <option key={city.name} value={city.name}>
-                            {city.name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.billingCity && (
-                        <p className="absolute text-red-500 text-sm mt-1">
-                          {String(errors.billingCity.message)}
-                        </p>
-                      )}
-                    </div>
                     {/* address */}
                     <div className="relative w-full mb-1 max-md:col-span-2">
                       <label>Street address</label>
@@ -682,7 +616,7 @@ const CheckOut: React.FC = ({}) => {
                       )}
                     </div>
                     {/* Zip Code */}
-                    <div className="relative w-full mb-1 max-md:col-span-2">
+                    <div className="relative w-full mb-1 col-span-2">
                       <label>Zip Code / Postal code</label>
                       <input
                         {...register("billingZipCode", {

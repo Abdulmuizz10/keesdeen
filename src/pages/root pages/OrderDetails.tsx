@@ -181,8 +181,7 @@ const OrderDetails: React.FC = () => {
               <span className="font-medium">Address:</span>{" "}
               {shippingAddress.addressLineOne},{" "}
               {shippingAddress.addressLineTwo || ""}, {shippingAddress.state},{" "}
-              {shippingAddress.city}, {shippingAddress.zipCode},{" "}
-              {shippingAddress.country}
+              {shippingAddress.zipCode}, {shippingAddress.country}
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { formatAmountDefault } from "../lib/utils";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
 
 const MySwal = withReactContent(Swal);
 
@@ -15,11 +15,6 @@ export const showOrderSummary = (orderData: any) => {
   const state = State.getStatesOfCountry(
     orderData.shippingAddress.country
   ).find((s) => s.isoCode === orderData.shippingAddress.state)?.name;
-
-  const city = City.getCitiesOfState(
-    orderData.shippingAddress.country,
-    orderData.shippingAddress.state
-  ).find((city) => city.name === orderData.shippingAddress.city)?.name;
 
   const itemsList = orderData.orderedItems
     .map(
@@ -48,9 +43,9 @@ export const showOrderSummary = (orderData: any) => {
         orderData.shippingAddress.addressLineOne
       }, ${orderData?.shippingAddress.addressLineTwo}, ${
       state || orderData.shippingAddress.state
-    }, ${city || orderData.shippingAddress.city}, ${
-      country || orderData.shippingAddress.country
-    } - ${orderData.shippingAddress.zipCode}<br/>
+    }, ${country || orderData.shippingAddress.country} - ${
+      orderData.shippingAddress.zipCode
+    }<br/>
       <strong>Ordered Items:</strong>
       <ul>${itemsList}</ul>
       <strong>Total Price:</strong> ${formatAmountDefault(

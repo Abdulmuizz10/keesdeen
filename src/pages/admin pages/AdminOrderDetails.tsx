@@ -196,8 +196,7 @@ const AdminOrderDetails: React.FC = () => {
           <span className="font-medium">Address:</span>{" "}
           {shippingAddress.addressLineOne},{" "}
           {shippingAddress.addressLineTwo || ""}, {shippingAddress.zipCode},{" "}
-          {shippingAddress.state}, {shippingAddress.city},{" "}
-          {shippingAddress.country}.
+          {shippingAddress.state}, {shippingAddress.country}.
         </p>
         {guestOrder && (
           <>
