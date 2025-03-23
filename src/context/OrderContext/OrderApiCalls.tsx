@@ -10,10 +10,8 @@ export const createOrder = async (
   setCartItems: any,
   setDeliverySelectedCountry: any,
   setDeliverySelectedState: any,
-  setDeliverySelectedCity: any,
   setBillingSelectedCountry: any,
   setBillingSelectedState: any,
-  setBillingSelectedCity: any,
   navigate: any
 ) => {
   try {
@@ -28,10 +26,8 @@ export const createOrder = async (
       setCartItems({});
       setDeliverySelectedCountry("");
       setDeliverySelectedState("");
-      setDeliverySelectedCity("");
       setBillingSelectedCountry("");
       setBillingSelectedState("");
-      setBillingSelectedCity("");
       navigate("/collections/shop_all");
     } else {
       setLoading(false);
