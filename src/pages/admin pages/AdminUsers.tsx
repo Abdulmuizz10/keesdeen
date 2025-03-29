@@ -69,7 +69,7 @@ const AdminUsers: React.FC = () => {
   return (
     <div className="w-full" ref={scrollRef}>
       <div className="w-full bg-white p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">Customer List</h3>
+        <h3 className="text-xl font-semibold mb-4">All users</h3>
         <div className="overflow-x-auto">
           <table className="w-full bg-white poppins">
             <thead className="text-sm">
@@ -104,7 +104,7 @@ const AdminUsers: React.FC = () => {
                   >
                     <td className="p-4">{index + 1}</td>
                     <td className="p-4 flex gap-1 items-center">
-                      {user._id.split("").slice(0, 10)}...
+                      {user._id.split("").slice(0, 5)}...
                       <FaRegCopy
                         className="text-xl cursor-pointer"
                         onClick={() => copyId(user._id)}

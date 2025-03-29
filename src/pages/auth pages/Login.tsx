@@ -94,7 +94,6 @@ export const Login7: React.FC = (props: Login7Props) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          setLoading(true);
           if (res.data) {
             const user = res.data.id;
             const email = res.data.email;
@@ -109,6 +108,7 @@ export const Login7: React.FC = (props: Login7Props) => {
               }
             }
             navigate("/");
+            setLoading(false);
           }
         } else {
           dispatch(AccessFailure());
@@ -248,7 +248,7 @@ export const Login7Defaults: Login7Props = {
   //   alt: "Placeholder image",
   // },
   image: {
-    src: Images.loginImg,
+    src: Images.animated,
     alt: "Placeholder image",
   },
   signUpText: "Don't have an account?",

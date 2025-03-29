@@ -22,6 +22,7 @@ const AdminUserDetails: React.FC = () => {
   const { id } = useParams();
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [sortedOrders, setSortedOrders] = useState<any[]>([]);
   const [sortType, setSortType] = useState<string>("newest");
@@ -36,6 +37,7 @@ const AdminUserDetails: React.FC = () => {
       });
       setUser(response.data.user);
       setOrders(response.data.orders);
+      setIsAdmin(response.data.user.isAdmin);
     } catch (error) {
       toast.error("Error getting user!");
     } finally {
@@ -45,7 +47,7 @@ const AdminUserDetails: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [id, isAdmin]);
 
   useEffect(() => {
     if (orders) {
@@ -75,6 +77,27 @@ const AdminUserDetails: React.FC = () => {
       setSortedOrders(sorted);
     }
   }, [orders, sortType]);
+
+  const handleUpdate = async (value: string) => {
+    // setLoading(true);
+    setIsAdmin(value);
+    if (value === null || value === undefined) {
+      toast.error("Please select a status before updating");
+      return;
+    }
+    try {
+      const response = await Axios.put(
+        `${URL}/users/update-to-admin/${id}`,
+        { isAdmin: value },
+        { withCredentials: true }
+      );
+      toast.success(response.data.message || "User status updated");
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      // setLoading(false);
+    }
+  };
 
   const handleDelete = async (userId: string) => {
     const confirmDelete = window.confirm(
@@ -125,7 +148,7 @@ const AdminUserDetails: React.FC = () => {
             <span className="text-gray-900">{user?.authMethod}</span>
           </div>
           <div className="flex justify-between text-gray-800">
-            <span className="font-medium poppins">Joined On:</span>
+            <span className="font-medium poppins">Signed up on:</span>
             <span className="text-gray-900">
               {new Date(user?.createdAt).toLocaleString()}
             </span>
@@ -150,18 +173,34 @@ const AdminUserDetails: React.FC = () => {
               )}
             </span>
           </div>
+
+          <div className="flex justify-between text-gray-800">
+            <span className="font-medium poppins">Update Status:</span>
+            <div className="w-full md:w-1/2">
+              <Select onValueChange={handleUpdate}>
+                <SelectTrigger className="rounded-md">
+                  <SelectValue placeholder="Set Status" />
+                </SelectTrigger>
+                <SelectContent className="bg-background-light rounded-lg border border-border-secondary">
+                  <SelectItem
+                    value="true"
+                    className="cursor-pointer hover:text-text-secondary"
+                  >
+                    Set to Admin
+                  </SelectItem>
+                  <SelectItem
+                    value="false"
+                    className="cursor-pointer hover:text-text-secondary"
+                  >
+                    Set to Regular user
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-4">
-          <button
-            className="px-6 py-3 w-full justify-center bg-brand-neutral text-white rounded-lg flex items-center gap-2 transition poppins"
-            onClick={() => handleDelete(user?._id)}
-          >
-            <FaTrashAlt /> Delete User
-          </button>
-        </div>
-
-        <div className="mt-5 lg:mt-10">
+        <div className="mt-5 lg:mt-10 border-t">
           <div className="flex max-md:flex-col max-md:items-start items-center justify-between my-8">
             <h2 className="text-2xl font-bold mb-4">
               All Orders - ({orders?.length})
@@ -282,6 +321,15 @@ const AdminUserDetails: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-4">
+          <button
+            className="px-6 py-3 w-full justify-center bg-brand-neutral text-white rounded-lg flex items-center gap-2 transition poppins"
+            onClick={() => handleDelete(user?._id)}
+          >
+            <FaTrashAlt /> Delete User
+          </button>
         </div>
       </div>
     </div>

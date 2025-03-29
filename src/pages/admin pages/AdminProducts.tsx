@@ -53,7 +53,7 @@ const AdminProducts: React.FC = () => {
   return (
     <section className="w-full" ref={scrollRef}>
       <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
-        <h3 className="text-xl font-semibold mb-4">Products List</h3>
+        <h3 className="text-xl font-semibold mb-4">All products</h3>
         <div className="overflow-x-auto">
           <table className="w-full bg-white poppins">
             <thead className="text-sm">

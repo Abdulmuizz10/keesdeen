@@ -97,6 +97,7 @@ const Cart: React.FC = () => {
                   )
                 }
               />
+
               <RiDeleteBin5Line
                 className="text-text-primary h-[45px] w-[25px] cursor-pointer"
                 onClick={() =>

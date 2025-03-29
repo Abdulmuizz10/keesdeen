@@ -76,7 +76,7 @@ const AdminOrders: React.FC = () => {
       <div className="w-full">
         {/* Latest Orders */}
         <div className="w-full bg-white p-6 rounded-lg hover:shadow-2xl transition-shadow duration-300">
-          <h3 className="text-xl font-semibold mb-4">Orders</h3>
+          <h3 className="text-xl font-semibold mb-4">All orders</h3>
 
           <div className="overflow-x-auto">
             <table className="w-full bg-white poppins">

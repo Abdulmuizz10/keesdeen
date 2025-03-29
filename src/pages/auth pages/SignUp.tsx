@@ -92,7 +92,6 @@ export const Signup7: React.FC = (props: Signup7Props) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          setLoading(false);
           if (res.data) {
             const user = res.data.id;
             const email = res.data.email;
@@ -107,6 +106,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
               }
             }
             navigate("/");
+            setLoading(false);
           }
         } else {
           dispatch(AccessFailure());
@@ -269,7 +269,7 @@ export const Signup7Defaults: Signup7Props = {
   //   alt: "Placeholder image",
   // },
   image: {
-    src: Images.signupImg,
+    src: Images.animated2,
     alt: "Placeholder image",
   },
   logInText: "Already have an account?",

@@ -238,7 +238,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                 ></textarea>
               </div>
 
-              <Button className="rounded-md bg-brand-neutral border-none poppins text-white">
+              <Button className="rounded-md bg-brand-neutral border-none poppins text-white max-sm:w-full">
                 Submit Review
               </Button>
             </form>

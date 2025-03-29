@@ -8,8 +8,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { mainLogo, smallLogo } from "../assets";
 import { IoBagOutline } from "react-icons/io5";
-import { LuHeart } from "react-icons/lu";
-import { CiSearch, CiUser } from "react-icons/ci";
+import { LuHeart, LuSearch } from "react-icons/lu";
+import { CiUser } from "react-icons/ci";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
 // import CurrencySwitcher from "./CurrencySwitcher";
@@ -78,10 +78,10 @@ export const Navbar7 = (props: Navbar7Props) => {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden lg:flex gap-3 items-center">
+            <div className="hidden lg:flex gap-2.5 items-center">
               {/* <CurrencySwitcher color="white" /> */}
-              <CiSearch
-                className="text-3xl cursor-pointer  text-brand-neutral hover:text-brand-primary"
+              <LuSearch
+                className="text-2xl cursor-pointer  text-brand-neutral hover:text-brand-primary"
                 onClick={() => setIsActive(!isActive)}
               />
               <Link className="relative" to="/cart">
@@ -146,13 +146,13 @@ export const Navbar7 = (props: Navbar7Props) => {
           </div>
         </div>
         <div className="flex xl:hidden gap-[6px] items-center">
-          <CiSearch
-            className="text-3xl cursor-pointer text-text-primary"
+          <LuSearch
+            className="text-xl cursor-pointer text-text-primary"
             onClick={() => setIsActive(!isActive)}
           />
           <Link className="relative" to="/cart">
             <IoBagOutline
-              className="text-2xl  text-brand-neutral hover:text-brand-primary"
+              className="text-xl  text-brand-neutral hover:text-brand-primary"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -170,7 +170,7 @@ export const Navbar7 = (props: Navbar7Props) => {
           </Link>
           <Link to="/wishlists" className="relative">
             <LuHeart
-              className="text-2xl text-brand-neutral hover:text-brand-primary"
+              className="text-xl text-brand-neutral hover:text-brand-primary"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -188,12 +188,12 @@ export const Navbar7 = (props: Navbar7Props) => {
               to="/profile"
               // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <CiUser className="text-3xl text-text-primary" />
+              <CiUser className="text-2xl text-text-primary" />
             </Link>
           ) : (
             <>
               <Link to="/auth/login">
-                <CiUser className="text-3xl text-text-primary" />
+                <CiUser className="text-2xl text-text-primary" />
               </Link>
             </>
           )}

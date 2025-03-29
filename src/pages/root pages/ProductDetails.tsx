@@ -51,6 +51,30 @@ const ProductDetails = () => {
     prevArrow: <SamplePrevArrow />,
   };
 
+  const colorToHex = (colorName: string): string | null => {
+    const colors: { name: string; code: string }[] = [
+      { name: "Black", code: "#000000" },
+      { name: "White", code: "#FFFFFF" },
+      { name: "Gray", code: "#808080" },
+      { name: "Blue", code: "#0000FF" },
+      { name: "Red", code: "#FF0000" },
+      { name: "Green", code: "#008000" },
+      { name: "Yellow", code: "#FFFF00" },
+      { name: "Pink", code: "#FFC0CB" },
+      { name: "Brown", code: "#A52A2A" },
+      { name: "Beige", code: "#F5F5DC" },
+      { name: "Navy Blue", code: "#000080" },
+      { name: "Burgundy", code: "#800020" },
+      { name: "Sky Blue", code: "#87CEEB" },
+    ];
+
+    const color = colors.find(
+      (c) => c.name.toLowerCase() === colorName.toLowerCase()
+    );
+
+    return color ? color.code : null;
+  };
+
   return animation ? (
     <Animation />
   ) : (
@@ -151,7 +175,10 @@ const ProductDetails = () => {
                             color === option &&
                             "border-border-secondary !h-6 !w-6"
                           }`}
-                          style={{ backgroundColor: option.toLowerCase() }}
+                          style={{
+                            backgroundColor:
+                              colorToHex(option) || "transparent",
+                          }}
                         ></span>
                         {option}
                       </label>
@@ -181,7 +208,7 @@ const ProductDetails = () => {
               </div>
               <div className="flex items-center gap-2 lg:max-w-xs w-full">
                 <Button
-                  className="active:bg-gray-700 py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full"
+                  className="py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full"
                   onClick={() =>
                     addToCart(
                       result?.product?._id,

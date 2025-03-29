@@ -104,7 +104,6 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          setLoading(false);
           if (res.data) {
             const user = res.data.id;
             const email = res.data.email;
@@ -119,6 +118,7 @@ export const GuestSignUp: React.FC = (props: Signup7Props) => {
               }
             }
             navigate("/check_out");
+            setLoading(false);
           }
         } else {
           dispatch(AccessFailure());

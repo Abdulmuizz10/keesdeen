@@ -4,9 +4,8 @@ import smallLogo from "./Fvaicon.png";
 import profile from "./images/profile.png";
 import orders from "./images/orders.png";
 import card from "./images/creditcard.png";
-import loginImg from "./login image.jpg";
-import signupImg from "./signup image.jpg";
-
+import animated from "./animated.gif";
+import animated2 from "./animated2.gif";
 export { mainLogo, smallLogo, mainLogoWhite };
 
 import img_1 from "./product-images/p_img1.png"; //
@@ -38,6 +37,6 @@ export const Images = {
   profile,
   orders,
   card,
-  loginImg,
-  signupImg,
+  animated,
+  animated2,
 };

@@ -364,7 +364,7 @@ const AdminAddProduct: React.FC = () => {
                     "border-white !w-[10px] !h-[10px]"
                   }`}
                   style={{ backgroundColor: item.code }}
-                  onClick={() => handleColorToggle(item.name)}
+                  onClick={() => handleColorToggle(item.code)}
                 />
               </div>
             ))}

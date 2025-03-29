@@ -28,7 +28,6 @@ export const Login = async (
 
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
-      setLoading(false);
       if (res.data) {
         const user = res.data.id;
         const email = res.data.email;
@@ -43,6 +42,7 @@ export const Login = async (
           }
         }
         navigate("/");
+        setLoading(false);
       }
     } else {
       dispatch(AccessFailure());
@@ -71,7 +71,6 @@ export const SignUp = async (
     });
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
-      setLoading(false);
       if (res.data) {
         const user = res.data.id;
         const email = res.data.email;
@@ -86,6 +85,7 @@ export const SignUp = async (
           }
         }
         navigate("/");
+        setLoading(false);
       }
     } else {
       dispatch(AccessFailure());
