@@ -3,7 +3,9 @@
 import { Images } from "../assets";
 
 export const URL =
-  import.meta.env.VITE_ENV === "production" ? "" : "http://localhost:5000";
+  import.meta.env.VITE_ENV === "production"
+    ? "https://keesdeen-api.vercel.app"
+    : "http://localhost:5000";
 
 export const profileLinks = [
   // {

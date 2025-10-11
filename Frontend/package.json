@@ -23,7 +23,7 @@
     "react-hook-form": "^7.53.0",
     "react-phone-input-2": "^2.15.1",
     "react-router-dom": "^6.26.2",
-    "react-slick": "^0.28.1",
+    "react-slick": "^0.31.0",
     "react-square-web-payments-sdk": "^3.2.1",
     "react-toastify": "^10.0.5",
     "slick-carousel": "^1.8.1",
