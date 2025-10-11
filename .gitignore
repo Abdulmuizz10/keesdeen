@@ -1,0 +1,40 @@
+# === General ===
+node_modules/
+.env
+.env.local
+.DS_Store
+Thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === Frontend Build Outputs ===
+frontend/build/
+frontend/dist/
+frontend/.next/
+frontend/out/
+frontend/.turbo/
+frontend/.vite/
+frontend/.parcel-cache/
+
+# === Backend Build Outputs ===
+backend/dist/
+backend/build/
+
+# === Editor/IDE Files ===
+.vscode/
+.idea/
+*.swp
+
+# === System Files ===
+*.log
+*.tmp
+
+# === TypeScript Cache ===
+*.tsbuildinfo
+
+# === Coverage & Test Outputs ===
+coverage/
+.env.test
+jest-cache/

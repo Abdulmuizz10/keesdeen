@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  /* background: #ececec; */
+  background: #ffffff;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #000000, #04b96d, #db5d14);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bricolage-grotesque {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+.poppins {
+  font-family: "poppins", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong,
+option {
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+select,
+option,
+p,
+s,
+label,
+span {
+  font-family: "poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+tr {
+  font-size: 12.5px;
+}
+
+td {
+  font-size: 11.7px;
+}
+
+/* ::-webkit-scrollbar {
+  width: 10px;
+  background: #d4d4d4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3c3c3c;
+  border-radius: 10px;
+} */
+
+/* Tailwind styles */
+.loader {
+  width: 90px;
+  padding: 5.5px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #04bb6e;
+  --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+
+.small-loader {
+  width: 20px;
+  padding: 3px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #04bb6e;
+  --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+
+@keyframes l3 {
+  to {
+    transform: rotate(1turn);
+  }
+}
