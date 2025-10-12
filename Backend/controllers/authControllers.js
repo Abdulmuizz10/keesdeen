@@ -16,7 +16,7 @@ const createAndSendToken = (user, res) => {
 
   const cookieDomain =
     process.env.NODE_ENV === "production"
-      ? ".keesdeen.vercel.app"
+      ? "keesdeen-api.vercel.app"
       : "localhost";
 
   res.cookie("authToken", token, {
