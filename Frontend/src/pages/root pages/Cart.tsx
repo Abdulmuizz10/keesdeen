@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useShop } from "../../context/ShopContext";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import CartTotal from "../../components/CartTotal";
 import { Button } from "@relume_io/relume-ui";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
@@ -20,7 +20,7 @@ const Cart: React.FC = () => {
       for (const variantKey in item.variants) {
         const quantity = item.variants[variantKey];
         if (quantity > 0) {
-          const [size, color] = variantKey.split("-"); // Assuming size and color are separated by "-"
+          const [size, color] = variantKey.split("-");
           tempData.push({
             id: itemId,
             name: item.name,
@@ -36,6 +36,20 @@ const Cart: React.FC = () => {
     setCartData(tempData);
   }, [cartItems]);
 
+  // handle increment and decrement
+  const handleIncrease = (item: any) => {
+    updateQuantity(item.id, item.size, item.color, item.quantity + 1);
+  };
+
+  const handleDecrease = (item: any) => {
+    if (item.quantity > 1) {
+      updateQuantity(item.id, item.size, item.color, item.quantity - 1);
+    } else {
+      // remove item if quantity reaches zero
+      updateQuantity(item.id, item.size, item.color, 0);
+    }
+  };
+
   return (
     <section className="px-[5%] py-24 md:py-30">
       <div className="container">
@@ -43,90 +57,112 @@ const Cart: React.FC = () => {
           <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Cart
           </h2>
-          <p className="md:text-md">Your cart.</p>
         </div>
 
         <div className="border-t border-border-secondary">
-          {cartData.length === 0 && (
+          {cartData.length === 0 ? (
             <p className="mt-4 text-base md:text-3xl text-text-secondary">
               Your cart is empty.
             </p>
-          )}
-          {cartData.map((item, index) => (
-            <div
-              key={index}
-              className="py-4 border-b border-border-secondary text-text-secondary grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
-            >
-              <div className="flex items-center lg:items-start gap-6">
-                <img
-                  className="w-16 sm:w-28 rounded-sm border border-gray-300"
-                  src={item.image}
-                  alt="cart image"
-                />
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs sm:text-[14px] sm:text-lg font-medium text-text-primary bricolage-grotesque">
-                    {item.name}
-                  </p>
-                  <div className="flex items-center gap-2 sm:gap-3 mt-1 text-sm">
-                    <p className="text-xs md:text-md xl:text-lg font-semibold text-text-primary">
-                      {formatAmountDefault(currency, item.price)}
-                    </p>
+          ) : (
+            <div>
+              {cartData.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-start justify-between py-3 border-b border-border-secondary gap-6 lg:gap-10"
+                >
+                  {/* Left section: image + details */}
+                  <div className="flex items-center gap-6 lg:gap-8 flex-1">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-24 h-24 lg:w-32 lg:h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+                    />
+
+                    <div className="flex flex-col">
+                      <h3 className="text-base md:text-xl lg:text-2xl font-semibold text-text-primary bricolage-grotesque">
+                        {item.name}
+                      </h3>
+
+                      <p className="text-sm md:text-base text-text-secondary mt-1">
+                        Size:{" "}
+                        <span className="text-text-primary font-medium">
+                          {item.size}
+                        </span>{" "}
+                        | Color:{" "}
+                        <span className="text-text-primary font-medium">
+                          {item.color}
+                        </span>
+                      </p>
+
+                      <div className="flex items-center mt-4">
+                        <button
+                          className="border flex items-center justify-center border-gray-300 rounded-md w-8 h-8 md:w-9 md:h-9 lg:w-12 lg:h-12 text-xl font-bold text-text-primary hover:bg-gray-100 transition"
+                          onClick={() => handleDecrease(item)}
+                        >
+                          <Minus width={20} height={20} />
+                        </button>
+
+                        <span className="mx-4 text-base md:text-lg lg:text-xl font-semibold text-text-primary">
+                          {item.quantity}
+                        </span>
+
+                        <button
+                          className="border flex items-center justify-center border-gray-300 rounded-md w-8 h-8 md:w-9 md:h-9 lg:w-12 lg:h-12 text-xl font-bold text-text-primary hover:bg-gray-100 transition"
+                          onClick={() => handleIncrease(item)}
+                        >
+                          <Plus />
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <p className="h-[30px] w-[30px] md:h-[40px] md:w-[42px] max-sm:text-xs bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
-                      {item.size}
+                  {/* Right section: price + delete */}
+                  <div className="flex flex-col items-end justify-between h-full">
+                    <p className="text-lg md:text-xl lg:text-2xl font-semibold text-text-primary">
+                      {formatAmountDefault(
+                        currency,
+                        item.price * item.quantity
+                      )}
                     </p>
-                    <p className="h-[30px] md:h-[40px] max-sm:text-xs px-3 bg-gray-100 font-medium flex items-center justify-center cursor-pointer text-text-primary border">
-                      {item.color}
-                    </p>
+
+                    <Trash2
+                      width={24}
+                      height={24}
+                      className="mt-4 text-text-error cursor-pointer hover:text-red-700 transition"
+                      onClick={() =>
+                        updateQuantity(item.id, item.size, item.color, 0)
+                      }
+                    />
                   </div>
                 </div>
-              </div>
-              <input
-                className="border border-border-secondary bg-background-primary max-w-[65px] sm:max-w-[70px] lg:max-w-[100px] px-1 py-[5px] sm:px-2 sm:py-1  text-text-primary rounded-md"
-                type="number"
-                min={1}
-                value={item.quantity}
-                onChange={(e) =>
-                  updateQuantity(
-                    item.id,
-                    item.size,
-                    item.color,
-                    Number(e.target.value)
-                  )
-                }
-              />
-
-              <RiDeleteBin5Line
-                className="text-text-primary h-[45px] w-[25px] cursor-pointer"
-                onClick={() =>
-                  updateQuantity(item.id, item.size, item.color, 0)
-                }
-              />
+              ))}
             </div>
-          ))}
+          )}
         </div>
-        <div className="flex justify-end my-20">
-          <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
-            <CartTotal />
-            <div className="w-full text-end mt-5 poppins">
-              {!user && !guestEmail ? (
-                <Link to="/auth/guest-signUp">
-                  <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
-                    Proceed to checkout
-                  </Button>
-                </Link>
-              ) : (
-                <Link to="/check_out">
-                  <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
-                    Proceed to checkout
-                  </Button>
-                </Link>
-              )}
+
+        {cartData.length > 0 && (
+          <div className="flex justify-end mt-40">
+            <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
+              <CartTotal />
+              <div className="w-full text-end mt-5 poppins">
+                {!user && !guestEmail ? (
+                  <Link to="/auth/guest-signUp">
+                    <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
+                      Proceed to checkout
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/check_out">
+                    <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
+                      Proceed to checkout
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

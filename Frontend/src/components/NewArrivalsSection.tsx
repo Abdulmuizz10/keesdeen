@@ -2,19 +2,15 @@ import { useState, useEffect } from "react";
 import {
   Carousel,
   CarouselContent,
-  CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
 import clsx from "clsx";
-import { RiHeartLine } from "react-icons/ri";
-import { RiHeartFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
-import { currency, URL } from "../lib/constants";
+
+import { URL } from "../lib/constants";
 import Axios from "axios";
-import { useShop } from "../context/ShopContext";
-import { formatAmountDefault } from "../lib/utils";
+import LargeProductCard from "./LargeProductCard";
 
 type Gallery21Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -25,7 +21,6 @@ export const Gallery21 = ({
   heading = "New Arrivals",
   description = "Discover the latest additions to our Arrivals.",
 }: Gallery21Props) => {
-  const { wishLists, manageWishLists } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [api, setApi] = useState<CarouselApi | null>(null);
@@ -93,81 +88,54 @@ export const Gallery21 = ({
               ? Array(10)
                   .fill(null)
                   .map((_, index) => (
-                    <CarouselItem
+                    <LargeProductCard
+                      product={""}
+                      loading={loading}
                       key={index}
-                      className="basis-full pl-0 sm:basis-2/5 md:basis-1/2 relative"
-                    >
-                      <div className="aspect-square h-[600px] w-full bg-gray-200 object-cover animate-pulse" />
-                    </CarouselItem>
+                    />
                   ))
               : products?.map((product: any, index) => (
-                  <CarouselItem
+                  <LargeProductCard
+                    product={product}
+                    loading={loading}
                     key={index}
-                    className="basis-full pl-0 sm:basis-2/5 md:basis-1/2 relative"
-                  >
-                    <div className="absolute top-3 right-3 z-50 cursor-pointer">
-                      {wishLists.find(
-                        (wish: any) => wish._id === product._id
-                      ) ? (
-                        <RiHeartFill
-                          onClick={() => manageWishLists(product)}
-                          className="text-2xl text-text-primary"
-                        />
-                      ) : (
-                        <RiHeartLine
-                          onClick={() => manageWishLists(product)}
-                          className="text-2xl text-text-primary"
-                        />
-                      )}
-                    </div>
-                    <Link to={`/product_details/${product._id}`}>
-                      <img
-                        src={product?.imageUrls[0]}
-                        alt={`${product.name} - New Arrival`}
-                        className="aspect-square size-full object-cover"
-                        loading="lazy"
-                      />
-                      <div className="mt-2">
-                        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
-                          {product.name}
-                        </h3>
-
-                        <div className="flex gap-2 items-center justify-start">
-                          {product.previousPrice && (
-                            <s className="text-gray-500">
-                              {formatAmountDefault(
-                                currency,
-                                product.previousPrice
-                              )}
-                            </s>
-                          )}
-                          <p className="text-gray-500">
-                            {formatAmountDefault(currency, product.price)}
-                          </p>
-                        </div>
-
-                        {/* <p className="text-gray-500">
-                          {formatAmountDefault(product.price)}
-                        </p> */}
-                      </div>
-                    </Link>
-                  </CarouselItem>
+                  />
                 ))}
           </CarouselContent>
           <div className="mt-20 flex items-center justify-between">
             {/* Dot indicators for carousel */}
             <div className="mt-5 flex w-full items-start justify-start">
-              {products?.map((_, index) => (
-                <button
-                  key={`dot-${index}`}
-                  onClick={() => api?.scrollTo(index)}
-                  aria-label={`Slide ${index + 1}`}
-                  className={clsx("mx-[3px] inline-block size-2 rounded-full", {
-                    "bg-black": current === index + 1,
-                    "bg-neutral-400": current !== index + 1,
-                  })}
-                />
-              ))}
+              {loading
+                ? Array(10)
+                    .fill(null)
+                    .map((_, index) => (
+                      <button
+                        key={`dot-${index}`}
+                        onClick={() => api?.scrollTo(index)}
+                        aria-label={`Slide ${index + 1}`}
+                        className={clsx(
+                          "mx-[3px] inline-block size-2 rounded-full",
+                          {
+                            "bg-black": current === index + 1,
+                            "bg-neutral-400": current !== index + 1,
+                          }
+                        )}
+                      />
+                    ))
+                : products?.map((_, index) => (
+                    <button
+                      key={`dot-${index}`}
+                      onClick={() => api?.scrollTo(index)}
+                      aria-label={`Slide ${index + 1}`}
+                      className={clsx(
+                        "mx-[3px] inline-block size-2 rounded-full",
+                        {
+                          "bg-black": current === index + 1,
+                          "bg-neutral-400": current !== index + 1,
+                        }
+                      )}
+                    />
+                  ))}
             </div>
             {/* Carousel navigation buttons */}
             <div className="flex items-end justify-end gap-2 md:gap-4">

@@ -7,9 +7,8 @@ import type { ButtonProps } from "@relume_io/relume-ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { mainLogo, smallLogo } from "../assets";
-import { IoBagOutline } from "react-icons/io5";
-import { LuHeart, LuSearch } from "react-icons/lu";
-import { CiUser } from "react-icons/ci";
+
+import { Search, ShoppingBag, Heart, User } from "lucide-react";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
 // import CurrencySwitcher from "./CurrencySwitcher";
@@ -80,22 +79,23 @@ export const Navbar7 = (props: Navbar7Props) => {
           <div className="flex items-center gap-2">
             <div className="hidden lg:flex gap-2.5 items-center">
               {/* <CurrencySwitcher color="white" /> */}
-              <LuSearch
-                className="text-2xl cursor-pointer  text-brand-neutral hover:text-brand-primary"
+              <Search
+                width={20}
+                height={20}
+                className="text-brand-neutral hover:text-brand-primary cursor-pointer"
                 onClick={() => setIsActive(!isActive)}
               />
               <Link className="relative" to="/cart">
-                <IoBagOutline
-                  className="text-2xl text-gradient  text-brand-neutral hover:text-brand-primary"
+                <ShoppingBag
+                  width={20}
+                  height={20}
+                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
                     }
                   }}
                 />
-                {/* <div className="h-4 w-4 p-2 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full text-sm">
-                  {getCartCount()}
-                </div> */}
                 {getCartCount() > 0 && (
                   <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
                     {getCartCount()}
@@ -103,8 +103,10 @@ export const Navbar7 = (props: Navbar7Props) => {
                 )}
               </Link>
               <Link to="/wishlists" className="relative">
-                <LuHeart
-                  className="text-2xl text-brand-neutral hover:text-brand-primary"
+                <Heart
+                  width={20}
+                  height={20}
+                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
                   onClick={() => {
                     if (isActive === true) {
                       setIsActive(!isActive);
@@ -134,25 +136,37 @@ export const Navbar7 = (props: Navbar7Props) => {
             </div>
             {user ? (
               <Link to="/profile">
-                <CiUser className="text-3xl  text-brand-neutral hover:text-brand-primary" />
+                <User
+                  width={20}
+                  height={20}
+                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
+                />
               </Link>
             ) : (
               <>
                 <Link to="/auth/login">
-                  <CiUser className="text-3xl  text-brand-neutral hover:text-brand-primary" />
+                  <User
+                    width={20}
+                    height={20}
+                    className="text-brand-neutral hover:text-brand-primary cursor-pointer"
+                  />
                 </Link>
               </>
             )}
           </div>
         </div>
         <div className="flex xl:hidden gap-2 items-center">
-          <LuSearch
-            className="text-xl cursor-pointer text-text-primary"
+          <Search
+            width={20}
+            height={20}
+            className="text-brand-neutral hover:text-brand-primary cursor-pointer"
             onClick={() => setIsActive(!isActive)}
           />
           <Link className="relative" to="/cart">
-            <IoBagOutline
-              className="text-xl  text-brand-neutral hover:text-brand-primary"
+            <ShoppingBag
+              width={20}
+              height={20}
+              className="text-brand-neutral hover:text-brand-primary cursor-pointer"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -169,8 +183,10 @@ export const Navbar7 = (props: Navbar7Props) => {
             )}
           </Link>
           <Link to="/wishlists" className="relative">
-            <LuHeart
-              className="text-xl text-brand-neutral hover:text-brand-primary"
+            <Heart
+              width={20}
+              height={20}
+              className="text-brand-neutral hover:text-brand-primary cursor-pointer"
               onClick={() => {
                 if (isActive === true) {
                   setIsActive(!isActive);
@@ -188,12 +204,20 @@ export const Navbar7 = (props: Navbar7Props) => {
               to="/profile"
               // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <CiUser className="text-2xl text-text-primary" />
+              <User
+                width={20}
+                height={20}
+                className="text-brand-neutral hover:text-brand-primary cursor-pointer"
+              />
             </Link>
           ) : (
             <>
               <Link to="/auth/login">
-                <CiUser className="text-2xl text-text-primary" />
+                <User
+                  width={20}
+                  height={20}
+                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
+                />
               </Link>
             </>
           )}
@@ -425,7 +449,7 @@ export const Navbar7Defaults: Navbar7Props = {
   navLinks: [
     { title: "Home", url: "/" },
     { title: "Shop All", url: "/collections/shop_all" },
-    { title: "New In", url: "/collections/new_in" },
+    { title: "New In", url: "/collections/new_arrivals" },
     { title: "Active wear", url: "/collections/Active_wear" },
     { title: "Fitness Accessories", url: "/collections/Fitness_accessories" },
   ],

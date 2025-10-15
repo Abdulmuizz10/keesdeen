@@ -36,7 +36,9 @@ export const Header76 = (props: Header76Props) => {
           {heading}
         </h1>
         {/* <p className="md:text-md text-text-primary">{description}</p> */}
-        <p className="md:text-md text-text-primary">{description}</p>
+        <p className="text-base xxl:text-base text-text-primary">
+          {description}
+        </p>
         <div className="mt-6 flex gap-x-4 md:mt-8">
           {[
             { route: "/collections/new_in", text: "New arrivals" },

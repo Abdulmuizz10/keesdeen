@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import ProductItem from "./ProductItem";
 import Axios from "axios";
 import { URL } from "../lib/constants";
+import ProductCard from "./ProductCard";
 
 interface ProductListProps {
   category: string;
@@ -10,24 +10,26 @@ interface ProductListProps {
 }
 
 const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
-  const [related, setRelated] = useState<any>();
+  const [products, setProducts] = useState<any>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Axios.get(`${URL}/products`, {
+        const response = await Axios.get(`${URL}/products`, {
           validateStatus: (status) => status < 600,
         });
-        if (res.status === 200) {
-          const relatedProducts = res.data
+        if (response.status === 200) {
+          const relatedProducts = response.data
             .filter((p: any) => p.category === category)
             .filter((p: any) => p._id !== id);
-          setRelated(relatedProducts);
-        } else {
-          // toast.error(res.data.message || "Something went wrong");
+          setProducts(relatedProducts);
         }
       } catch (error) {
-        // toast.error("An unexpected error occurred. Please try again.");
+        setError("Unable to get products!");
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -44,8 +46,8 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
         </h2>
       </div>
       <div className="grid gird-cols grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xxl:grid-cols-5 gap-4 gap-y-6">
-        {related ? (
-          related.slice(0, 8).map((product: any, index: number) => (
+        {products.length > 0 ? (
+          products?.slice(0, 8).map((product: any, index: number) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}
@@ -56,11 +58,13 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
                 delay: index * 0.6,
               }}
             >
-              <ProductItem product={product} key={index} />
+              <ProductCard product={product} loading={loading} key={index} />
             </motion.div>
           ))
         ) : (
-          <p className="text-gray-500">No related products!</p>
+          <p className="text-gray-500">
+            {products.length < 0 ? " No related products!" : `${error}`}
+          </p>
         )}
       </div>
     </div>

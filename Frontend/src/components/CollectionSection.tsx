@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Product } from "../lib/types";
-import ProductItem from "./ProductItem";
 import Spinner from "./Spinner";
 import Axios from "axios";
 import { URL } from "../lib/constants";
+import ProductCard from "./ProductCard";
 
 type Gallery5Props = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -55,7 +55,7 @@ export const Gallery5 = ({
           <h2 className="rb-5 mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl text-gradient">
             {heading}
           </h2>
-          <p className="md:text-md">{description}</p>
+          <p className="md:text-md text-text-primary">{description}</p>
         </div>
         {loading ? (
           <div className="flex justify-center">
@@ -65,7 +65,7 @@ export const Gallery5 = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
             {products?.map((product: Product, index) => (
               <motion.div
-                key={product._id}
+                key={index}
                 initial={{ opacity: 0, y: 50 }}
                 animate={{
                   opacity: isInView ? 1 : 0,
@@ -77,7 +77,7 @@ export const Gallery5 = ({
                   delay: index * 0.8,
                 }}
               >
-                <ProductItem product={product} key={index} />
+                <ProductCard product={product} loading={loading} />
               </motion.div>
             ))}
           </div>

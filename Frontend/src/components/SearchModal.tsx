@@ -2,35 +2,49 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { background } from "../lib/anim";
 import { useShop } from "../context/ShopContext";
-import { CiSearch } from "react-icons/ci";
+import { Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { FiX } from "react-icons/fi";
 import Axios from "axios";
 import { URL } from "../lib/constants";
-import ProductItem from "./ProductItem";
+import ProductCard from "./ProductCard";
 
 const SearchModal: React.FC = () => {
   const { isActive, setIsActive } = useShop();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [results, setResults] = useState([]);
+  const [products, setProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const handleSearchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
     if (searchQuery.trim() === "") {
-      setResults([]);
+      setProducts([]);
       setSuggestions([]);
       return;
     }
+
+    // try {
+    //   const { data } = await Axios.get(`${URL}/products/suggestions`, {
+    //     params: { query: searchQuery },
+    //   });
+    //   setResults(data.products);
+    //   setSuggestions(data.suggestions);
+    // } catch (error) {
+    //   console.error("Error searching for products:", error);
+    // }
+
     try {
       const { data } = await Axios.get(`${URL}/products/suggestions`, {
         params: { query: searchQuery },
       });
-      setResults(data.products);
+      setProducts(data.products);
       setSuggestions(data.suggestions);
     } catch (error) {
-      console.error("Error searching for products:", error);
+      setError("Unable to get products!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,12 +57,14 @@ const SearchModal: React.FC = () => {
         searchQuery.length === 0 ? "items-center" : "items-start"
       }`}
     >
-      <FiX
-        className="text-2xl cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-6"
+      <X
+        width={20}
+        height={20}
+        className="cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-6"
         onClick={() => {
           setIsActive(!isActive);
           setSearchQuery("");
-          setResults([]);
+          setProducts([]);
           setSuggestions([]);
         }}
       />
@@ -58,7 +74,11 @@ const SearchModal: React.FC = () => {
           <div className="w-full">
             <div className="w-full flex flex-col items-center">
               <div className="flex items-center justify-center w-full border-b border-border-secondary  outline-none gap-2">
-                <CiSearch className="text-3xl cursor-pointer text-text-primary my-2" />
+                <Search
+                  width={20}
+                  height={20}
+                  className="cursor-pointer text-text-primary my-2"
+                />
                 <input
                   type="text"
                   className="w-full bg-transparent focus:outline-none py-2 poppins"
@@ -66,11 +86,13 @@ const SearchModal: React.FC = () => {
                   onChange={handleSearchChange}
                   placeholder="Search product..."
                 />
-                <FiX
-                  className="text-2xl cursor-pointer text-text-primary my-2"
+                <X
+                  width={20}
+                  height={20}
+                  className="cursor-pointer text-text-primary my-2"
                   onClick={() => {
                     setSearchQuery("");
-                    setResults([]);
+                    setProducts([]);
                     setSuggestions([]);
                   }}
                 />
@@ -105,17 +127,24 @@ const SearchModal: React.FC = () => {
                     </div>
                     <div className="w-full">
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 w-full gap-3 mb-10">
-                        {results?.map((product: any, index: number) => (
-                          <ProductItem product={product} key={index} />
-                        ))}
+                        {products.length > 0 ? (
+                          products?.map((product: any, index: number) => (
+                            <ProductCard
+                              product={product}
+                              loading={loading}
+                              key={index}
+                            />
+                          ))
+                        ) : (
+                          <div className="col-span-4">
+                            <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
+                              {products.length < 0
+                                ? "Products not available!"
+                                : `${error}`}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                      {results?.length < 1 && (
-                        <div className="w-full flex justify-center">
-                          <p className="text-xl text-center">
-                            Product is not available...
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

@@ -48,8 +48,11 @@ app.use("/utility", utilityRoutes);
 
 //database initialization
 const PORT = process.env.PORT || 5000;
-const DATABASE_URL = process.env.MONGO_DB_URL;
-// const DATABASE_URL = process.env.LOCAL_URL;
+const DATABASE_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGO_DB_URL
+    : process.env.process.env.LOCAL_URL;
+
 mongoose
   .connect(DATABASE_URL)
   .then(() =>

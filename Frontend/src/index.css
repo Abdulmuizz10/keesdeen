@@ -10,11 +10,11 @@ body {
   background: #ffffff;
 }
 
-.text-gradient {
+/* .text-gradient {
   background: linear-gradient(90deg, #000000, #04b96d, #db5d14);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
+} */
 
 .bricolage-grotesque {
   font-family: "Bricolage Grotesque", sans-serif;
@@ -41,7 +41,7 @@ strong,
 option {
   font-family: "Bricolage Grotesque", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 300;
+  font-weight: 100;
   font-style: normal;
 }
 

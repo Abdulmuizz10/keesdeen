@@ -7,13 +7,9 @@ import {
   CarouselPrevious,
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
-import { RiHeartLine } from "react-icons/ri";
-import { RiHeartFill } from "react-icons/ri";
-import { useShop } from "../context/ShopContext";
-import { Link } from "react-router-dom";
 import Axios from "axios";
-import { currency, URL } from "../lib/constants";
-import { formatAmountDefault } from "../lib/utils";
+import { URL } from "../lib/constants";
+import ProductCard from "./ProductCard";
 
 export const Gallery19: React.FC = () => {
   // const { currentCurrency, formatAmount } = useShop();
@@ -64,7 +60,9 @@ export const Gallery19: React.FC = () => {
             <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl text-gradient">
               Best Sellers
             </h2>
-            <p>Our Best Sellers: Where Modesty Meets Unmatched Style.</p>
+            <p className="md:text-md text-text-primary">
+              Our Best Sellers: Where Modesty Meets Unmatched Style.
+            </p>
           </div>
 
           <Carousel
@@ -79,16 +77,15 @@ export const Gallery19: React.FC = () => {
                 {loading
                   ? Array(10)
                       .fill(null)
-                      .map((product: any, index: number) => (
+                      .map((_, index) => (
                         <CarouselItem
                           key={index}
-                          className="basis-full sm:basis-2/4 lg:basis-1/4"
+                          className="basis-full md:basis-2/4 lg:basis-1/4"
                         >
-                          <ProductItem
-                            product={product}
+                          <ProductCard
+                            product={""}
                             loading={loading}
                             key={index}
-                            formatAmountDefault={formatAmountDefault}
                           />
                         </CarouselItem>
                       ))
@@ -97,11 +94,10 @@ export const Gallery19: React.FC = () => {
                         key={index}
                         className="basis-full md:basis-2/4 lg:basis-1/4"
                       >
-                        <ProductItem
+                        <ProductCard
                           product={product}
                           loading={loading}
                           key={index}
-                          formatAmountDefault={formatAmountDefault}
                         />
                       </CarouselItem>
                     ))}
@@ -113,124 +109,6 @@ export const Gallery19: React.FC = () => {
         </div>
       </div>
     </section>
-  );
-};
-
-interface ProductProps {
-  product: any;
-  loading: Boolean;
-  formatAmountDefault: any;
-}
-
-const ProductItem: React.FC<ProductProps> = ({
-  product,
-  loading,
-  formatAmountDefault,
-}) => {
-  const [image, setImage] = useState<boolean>(false);
-  const { manageWishLists, wishLists } = useShop();
-
-  if (loading) {
-    return (
-      <div className="max-w-xs mx-auto bg-white shadow-large overflow-hidden relative z-[1]">
-        <div className="relative">
-          <div className="w-full h-[350px] bg-gray-200 animate-pulse" />
-        </div>
-        <div className="p-4 text-center">
-          <div className="flex flex-col gap-2 items-center">
-            <div className="h-6 w-full rounded bg-gray-200 animate-pulse" />
-            <div className="flex gap-2 items-center justify-center">
-              <div className="h-6 w-16 rounded bg-gray-200 animate-pulse" />
-              <div className="h-6 w-16 rounded bg-gray-200 animate-pulse" />
-            </div>
-          </div>
-          <div className="mt-2">
-            <div className="flex flex-wrap gap-1 items-center justify-center">
-              {[
-                "XXS",
-                "XS",
-                "S",
-                "M",
-                "L",
-                "XL",
-                "2XL",
-                "3XL",
-                "4XL",
-                "5XL",
-              ].map((size) => (
-                <button
-                  key={size}
-                  className="rounded-sm px-1 py-1 h-6 w-8 bg-gray-200 animate-pulse"
-                ></button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px]"
-      onMouseOver={() => setImage(true)}
-      onMouseLeave={() => setImage(false)}
-    >
-      <div className="absolute top-3 right-3 z-50 cursor-pointer">
-        {wishLists.find((wish: any) => wish._id === product._id) ? (
-          <RiHeartFill
-            onClick={() => manageWishLists(product)}
-            className="text-[22px] text-text-primary"
-          />
-        ) : (
-          <RiHeartLine
-            onClick={() => manageWishLists(product)}
-            className="text-[22px] text-text-primary"
-          />
-        )}
-      </div>
-      <div className="relative">
-        <Link to={`/product_details/${product._id}`}>
-          <img
-            src={image ? product.imageUrls[1] : product.imageUrls[0]}
-            alt="Product"
-            className="w-full h-auto"
-            loading="lazy"
-          />
-        </Link>
-      </div>
-      <div className="p-4 text-center">
-        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
-          {product.name}
-        </h3>
-        <div className="flex gap-2 items-center justify-center">
-          {product.previousPrice && (
-            <s className="text-gray-500">
-              {formatAmountDefault(currency, product.previousPrice)}
-            </s>
-          )}
-          <p className="text-gray-500">
-            {formatAmountDefault(currency, product.price)}
-          </p>
-        </div>
-        <div className="mt-2">
-          <div className="flex flex-wrap gap-1 items-center justify-center">
-            {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
-              (size) => (
-                <button
-                  key={size}
-                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
-                    product.sizes.includes(size) ? "" : "opacity-[0.3]"
-                  }`}
-                >
-                  {size}
-                </button>
-              )
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 

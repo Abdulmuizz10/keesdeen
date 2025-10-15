@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
-import ProductItem from "../../components/ProductItem";
+import ProductCard from "../../components/ProductCard";
 
 const WishLists: React.FC = () => {
   const { wishLists } = useShop();
   const [lists, setLists] = useState([]);
+  const [loading, setLoading] = useState(true);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
     setLists(wishLists);
+    setLoading(false);
   }, [wishLists]);
 
   return (
@@ -35,12 +37,12 @@ const WishLists: React.FC = () => {
                     y: isInView ? 0 : 50,
                   }}
                   transition={{
-                    duration: 1,
+                    duration: 0.8,
                     ease: "easeOut",
-                    delay: index * 0.4,
+                    delay: index * 0.8,
                   }}
                 >
-                  <ProductItem product={product} />
+                  <ProductCard product={product} loading={loading} />
                 </motion.div>
               ))}
             </div>

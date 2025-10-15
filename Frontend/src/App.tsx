@@ -88,7 +88,7 @@ const App: React.FC = () => {
           <Route element={<RootLayouts animation={animation} />}>
             <Route path="/" element={<Home animation={animation} />} />
             <Route path="/collections/shop_all" element={<ShopAll />} />
-            <Route path="/collections/new_in" element={<NewArrivals />} />
+            <Route path="/collections/new_arrivals" element={<NewArrivals />} />
             <Route path="/collections/Active_wear" element={<ActiveWear />} />
             <Route
               path="/collections/Fitness_accessories"
@@ -178,13 +178,13 @@ const Animation = () => {
       variants={appear}
       initial="open"
       exit="closed"
-      className="h-screen w-screen flex items-center justify-center fixed top-0 left-0 right-0 bottom-0 bg-white z-[10000px] transition-opacity"
+      className="h-screen w-screen fixed inset-0 flex items-center justify-center bg-white z-50 transition-opacity"
     >
       <div>
         <img
           src={mainLogo}
           alt="Animation logo"
-          className="inline-block w-[300px] md:w-[350px]"
+          className="inline-block w-[200px] sm:w-[280px]  md:w-[350px]"
         />
       </div>
     </motion.div>
