@@ -59,7 +59,7 @@ const Cart: React.FC = () => {
           </h2>
         </div>
 
-        <div className="border-t border-border-secondary">
+        <div className="mt-4 border-t">
           {cartData.length === 0 ? (
             <p className="mt-4 text-base md:text-3xl text-text-secondary">
               Your cart is empty.
