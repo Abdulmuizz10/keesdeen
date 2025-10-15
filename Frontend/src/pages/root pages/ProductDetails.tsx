@@ -18,12 +18,13 @@ import { formatAmountDefault } from "../../lib/utils";
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const [animation, setAnimation] = useState<boolean>(true);
   const [result, setResult] = useState<any>();
   const navigate = useNavigate();
   const { addToCart, manageWishLists, wishLists } = useShop();
   const [size, setSize] = useState<string>();
   const [color, setColor] = useState<string>();
+  const [animation, setAnimation] = useState<boolean>(true);
+  const [error, setError] = useState("");
 
   if (!id) {
     navigate("/");
@@ -31,11 +32,19 @@ const ProductDetails = () => {
   }
 
   useEffect(() => {
-    setAnimation(true);
     const fetchData = async () => {
-      const response = await Axios.get(`${URL}/products/${id}`);
-      setResult(response.data);
-      setTimeout(() => setAnimation(false), 3000);
+      try {
+        const response = await Axios.get(`${URL}/products/${id}`, {
+          validateStatus: (status) => status < 600,
+        });
+        if (response.status === 200) {
+          setResult(response.data);
+        }
+      } catch (error) {
+        setError("Unable to get product.");
+      } finally {
+        setAnimation(false);
+      }
     };
     fetchData();
   }, [id]);
@@ -78,7 +87,7 @@ const ProductDetails = () => {
     <Animation />
   ) : (
     <section className="px-[5%] py-24 md:py-30">
-      {result && (
+      {result ? (
         <div className="container">
           <div className="flex gap-10 flex-col lg:flex-row">
             {/* Product images */}
@@ -252,6 +261,10 @@ const ProductDetails = () => {
           <div className="mt-20">
             <RelatedProducts category={result?.product?.category} id={id} />
           </div>
+        </div>
+      ) : (
+        <div className="h-[65vh] flex items-center justify-center">
+          <p className="text-md">{error}</p>
         </div>
       )}
     </section>

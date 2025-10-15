@@ -57,6 +57,7 @@ const Cart: React.FC = () => {
           <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Cart
           </h2>
+          <p className="md:text-md">Your cart.</p>
         </div>
 
         <div className="mt-4 border-t">
@@ -69,7 +70,7 @@ const Cart: React.FC = () => {
               {cartData.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-start justify-between py-3 border-b border-border-secondary gap-6 lg:gap-10"
+                  className="flex items-start justify-between py-3 my-2 border-b border-border-secondary gap-6 lg:gap-10"
                 >
                   {/* Left section: image + details */}
                   <div className="flex items-center gap-6 lg:gap-8 flex-1">
@@ -100,7 +101,7 @@ const Cart: React.FC = () => {
                           className="border flex items-center justify-center border-gray-300 rounded-md w-8 h-8 md:w-9 md:h-9 lg:w-12 lg:h-12 text-xl font-bold text-text-primary hover:bg-gray-100 transition"
                           onClick={() => handleDecrease(item)}
                         >
-                          <Minus width={20} height={20} />
+                          <Minus className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
                         </button>
 
                         <span className="mx-4 text-base md:text-lg lg:text-xl font-semibold text-text-primary">
@@ -111,7 +112,7 @@ const Cart: React.FC = () => {
                           className="border flex items-center justify-center border-gray-300 rounded-md w-8 h-8 md:w-9 md:h-9 lg:w-12 lg:h-12 text-xl font-bold text-text-primary hover:bg-gray-100 transition"
                           onClick={() => handleIncrease(item)}
                         >
-                          <Plus />
+                          <Plus className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
                         </button>
                       </div>
                     </div>
