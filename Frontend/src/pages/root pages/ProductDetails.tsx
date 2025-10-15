@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-import { RiHeartLine, RiHeartFill } from "react-icons/ri";
+import { RiHeartLine } from "react-icons/ri";
+import { RiHeartFill } from "react-icons/ri";
 import { BiArrowBack } from "react-icons/bi";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -15,65 +16,42 @@ import { currency, URL } from "../../lib/constants";
 import Axios from "axios";
 import { formatAmountDefault } from "../../lib/utils";
 
-interface ProductData {
-  _id: string;
-  name: string;
-  brand: string;
-  category: string;
-  price: number;
-  previousPrice?: number;
-  imageUrls: string[];
-  sizes: string[];
-  colors: string[];
-  description: string;
-}
-
-interface ApiResponse {
-  product: ProductData;
-  averageRating: number;
-  totalReviews: number;
-}
-
 const ProductDetails = () => {
   const { id } = useParams();
+  const [animation, setAnimation] = useState<boolean>(true);
+  const [result, setResult] = useState<any>();
   const navigate = useNavigate();
   const { addToCart, manageWishLists, wishLists } = useShop();
+  const [size, setSize] = useState<string>();
+  const [color, setColor] = useState<string>();
 
-  const [result, setResult] = useState<ApiResponse | null>(null);
-  const [size, setSize] = useState<string>("");
-  const [color, setColor] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  if (!id) {
+    navigate("/");
+    return null;
+  }
 
   useEffect(() => {
-    if (!id) {
-      navigate("/");
-      return;
-    }
-
+    setAnimation(true);
     const fetchData = async () => {
-      try {
-        const response = await Axios.get(`${URL}/products/${id}`, {
-          validateStatus: (status) => status < 600,
-        });
-
-        if (response.status === 200 && response.data?.product) {
-          setResult(response.data);
-        } else {
-          setError("Product not found!");
-        }
-      } catch {
-        setError("Unable to get product!");
-      } finally {
-        setLoading(false);
-      }
+      const response = await Axios.get(`${URL}/products/${id}`);
+      setResult(response.data);
+      setTimeout(() => setAnimation(false), 3000);
     };
-
     fetchData();
-  }, [id, navigate]);
+  }, [id]);
+
+  const settings = {
+    infinite: true,
+    speed: 300,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+  };
 
   const colorToHex = (colorName: string): string | null => {
-    const colors = [
+    const colors: { name: string; code: string }[] = [
       { name: "Black", code: "#000000" },
       { name: "White", code: "#FFFFFF" },
       { name: "Gray", code: "#808080" },
@@ -88,143 +66,131 @@ const ProductDetails = () => {
       { name: "Burgundy", code: "#800020" },
       { name: "Sky Blue", code: "#87CEEB" },
     ];
+
     const color = colors.find(
       (c) => c.name.toLowerCase() === colorName.toLowerCase()
     );
+
     return color ? color.code : null;
   };
 
-  const sliderSettings = {
-    infinite: true,
-    speed: 300,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
-
-  if (loading) return <Animation />;
-
-  if (error)
-    return (
-      <div className="h-[65vh] flex items-center justify-center">
-        <p className="text-md text-gray-500">{error}</p>
-      </div>
-    );
-
-  if (!result) return null;
-
-  const { product, averageRating, totalReviews } = result;
-
-  return (
+  return animation ? (
+    <Animation />
+  ) : (
     <section className="px-[5%] py-24 md:py-30">
-      <div className="container">
-        <div className="flex gap-10 flex-col lg:flex-row">
-          {/* Product images */}
-          <div className="flex-1 w-full lg:w-1/2">
-            {Array.isArray(product.imageUrls) &&
-            product.imageUrls.length > 0 ? (
-              <Slider {...sliderSettings}>
-                {product.imageUrls.map((item, index) => (
-                  <img
-                    src={item}
-                    alt={`product image ${index + 1}`}
-                    key={index}
-                    className="w-full h-full object-cover"
-                  />
-                ))}
-              </Slider>
-            ) : (
-              <img
-                src="https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg"
-                alt="placeholder"
-                className="w-full h-full object-cover"
-              />
-            )}
-          </div>
-
-          {/* Product Details */}
-          <div className="flex-1 w-full">
-            <div className="mb-2 md:mb-4">
-              <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
-                {product.name}
-              </h2>
-              <p>{product.brand}</p>
-            </div>
-
-            {/* Rating */}
-            <div className="flex items-center gap-1 mt-2">
-              {[...Array(5)].map((_, index) => {
-                const ratingValue = index + 1;
-                if (ratingValue <= Math.floor(averageRating))
-                  return <FaStar key={index} className="text-yellow-500" />;
-                else if (ratingValue <= averageRating)
-                  return (
-                    <FaStarHalfAlt key={index} className="text-yellow-500" />
-                  );
-                else
-                  return <FaRegStar key={index} className="text-yellow-500" />;
-              })}
-              <p className="pl-1 text-md font-medium">
-                ({averageRating}) • {totalReviews} reviews
-              </p>
-            </div>
-
-            {/* Prices */}
-            <div className="flex gap-2 items-center">
-              {product.previousPrice && (
-                <s className="mt-5 text-xl font-medium">
-                  {formatAmountDefault(currency, product.previousPrice)}
-                </s>
-              )}
-              <p className="mt-5 text-2xl font-medium">
-                {formatAmountDefault(currency, product.price)}
-              </p>
-            </div>
-
-            {/* Color selection */}
-            {Array.isArray(product.colors) && product.colors.length > 0 && (
-              <div className="flex flex-col gap-4 my-8">
-                <p>Select Color :</p>
-                <div className="flex flex-wrap gap-6 items-center">
-                  {product.colors.map((option, index) => (
-                    <label
+      {result && (
+        <div className="container">
+          <div className="flex gap-10 flex-col lg:flex-row">
+            {/* Product images */}
+            <div className="flex-1 w-full lg:w-1/2">
+              <Slider {...settings}>
+                {result?.product?.imageUrls.map(
+                  (item: string, index: number) => (
+                    <img
+                      src={item}
+                      alt="product images"
                       key={index}
-                      className={`flex items-center gap-2 cursor-pointer text-gray-500 poppins ${
-                        color === option && "!font-bold !text-black"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="color"
-                        value={option}
-                        checked={color === option}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="hidden"
+                      className="w-full h-full"
+                    />
+                  )
+                )}
+              </Slider>
+            </div>
+
+            {/* Product Details */}
+            <div className="flex-1 w-full">
+              <div className="mb-2 md:mb-4">
+                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
+                  {result.product.name}
+                </h2>
+                <p>{result.product.brand}</p>
+              </div>
+              <div className="flex items-center gap-1 mt-2">
+                {[...Array(5)].map((_, index) => {
+                  const ratingValue = index + 1; // Ratings are 1-based
+                  if (ratingValue <= Math.floor(result?.averageRating)) {
+                    return (
+                      <FaStar
+                        key={index}
+                        className="text-yellow-500 text-base"
                       />
-                      <span
-                        className={`w-3 h-3 rounded-full border-2 ${
-                          color === option &&
-                          "border-border-secondary !h-6 !w-6"
+                    ); // Full star
+                  } else if (ratingValue <= result?.averageRating) {
+                    return (
+                      <FaStarHalfAlt
+                        key={index}
+                        className="text-yellow-500 text-base"
+                      />
+                    ); // Half star
+                  } else {
+                    return (
+                      <FaRegStar
+                        key={index}
+                        className="text-yellow-500 text-base"
+                      />
+                    ); // Empty star
+                  }
+                })}
+                <p className="pl-1 text-md font-medium">
+                  ({result?.averageRating}) • {result?.totalReviews} reviews
+                </p>
+              </div>
+              <div className="flex gap-2 items-center">
+                {result?.product.previousPrice && (
+                  <s className="mt-5 text-xl font-medium">
+                    {formatAmountDefault(
+                      currency,
+                      result?.product.previousPrice
+                    )}
+                  </s>
+                )}
+                <p className="mt-5 text-2xl font-medium">
+                  {formatAmountDefault(currency, result?.product.price)}
+                </p>
+              </div>
+
+              {/* Color selection */}
+              <div className="flex flex-col gap-4 my-8">
+                <p className="mb-2">Select Color :</p>
+                <div className="flex flex-wrap gap-5 md:gap-7 lg:gap-10 items-center">
+                  {result?.product?.colors?.map(
+                    (option: any, index: number) => (
+                      <label
+                        key={index}
+                        className={`flex items-center gap-2 cursor-pointer text-gray-500 poppins ${
+                          color === option && "!font-bold !text-black"
                         }`}
-                        style={{
-                          backgroundColor: colorToHex(option) || "transparent",
-                        }}
-                      ></span>
-                      {option}
-                    </label>
-                  ))}
+                      >
+                        <input
+                          type="radio"
+                          name="color"
+                          value={option}
+                          checked={color === option}
+                          onChange={(e) => setColor(e.target.value)}
+                          className="hidden"
+                        />
+                        <span
+                          className={`w-3 h-3 rounded-full border-2 ${
+                            color === option &&
+                            "border-border-secondary !h-6 !w-6"
+                          }`}
+                          style={{
+                            backgroundColor:
+                              colorToHex(option) || "transparent",
+                          }}
+                        ></span>
+                        {option}
+                      </label>
+                    )
+                  )}
                 </div>
               </div>
-            )}
 
-            {/* Size selection */}
-            {Array.isArray(product.sizes) && product.sizes.length > 0 && (
+              {/* Size selection */}
               <div className="flex flex-col gap-4 my-8">
-                <p>Select Size :</p>
+                <p className="mb-2">Select Size :</p>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((item, index) => (
+                  {result?.product?.sizes?.map((item: any, index: number) => (
                     <div
                       className={`p-2 h-[45px] w-[45px] bg-gray-200 flex items-center justify-center cursor-pointer text-sm poppins transition-all ${
                         item === size
@@ -239,79 +205,87 @@ const ProductDetails = () => {
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* Add to Cart + Wishlist */}
-            <div className="flex items-center gap-2 lg:max-w-xs w-full">
-              <Button
-                className="py-3.5 rounded-md bg-brand-neutral text-text-light w-full"
-                onClick={() =>
-                  addToCart(
-                    product._id,
-                    size,
-                    color,
-                    product.name,
-                    product.price,
-                    product.imageUrls?.[0] ??
-                      "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg"
-                  )
-                }
-              >
-                ADD TO CART
-              </Button>
-              <div
-                className="px-3 py-3 border-2 border-brand-neutral rounded-lg cursor-pointer"
-                onClick={() => manageWishLists(product)}
-              >
-                {wishLists.find((wish: any) => wish._id === product._id) ? (
-                  <RiHeartFill className="text-2xl text-brand-neutral" />
-                ) : (
-                  <RiHeartLine className="text-2xl text-brand-neutral" />
-                )}
+              <div className="flex items-center gap-2 lg:max-w-xs w-full">
+                <Button
+                  className="py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full"
+                  onClick={() =>
+                    addToCart(
+                      result?.product?._id,
+                      size,
+                      color,
+                      result?.product?.name,
+                      result?.product?.price,
+                      result?.product?.imageUrls[0]
+                    )
+                  }
+                >
+                  ADD TO CART
+                </Button>
+                <div
+                  className={`px-3 py-3 border-2 border-brand-neutral rounded-lg flex items-center justify-center cursor-pointer flex-1`}
+                  onClick={() => manageWishLists(result?.product)}
+                >
+                  {wishLists.find(
+                    (wish: any) => wish._id === result?.product._id
+                  ) ? (
+                    <RiHeartFill className="text-2xl text-brand-neutral" />
+                  ) : (
+                    <RiHeartLine className="text-2xl text-brand-neutral" />
+                  )}
+                </div>
+              </div>
+              <hr className="mt-8 sm:w-4/5" />
+              <div className="text-base text-text-secondary mt-5 flex flex-col gap-1">
+                <p>100% Original product.</p>
+                <p className="mt-5 text-gray-500">
+                  {result?.product?.description}
+                </p>
               </div>
             </div>
+          </div>
 
-            <hr className="mt-8 sm:w-4/5" />
-            <div className="text-base text-text-secondary mt-5 flex flex-col gap-1">
-              <p>100% Original product.</p>
-              <p className="mt-5 text-gray-500">{product.description}</p>
-            </div>
+          {/* Description and Review Section */}
+          <div className="mt-20">
+            <Reviews id={id} />
+          </div>
+          {/* Related products */}
+          <div className="mt-20">
+            <RelatedProducts category={result?.product?.category} id={id} />
           </div>
         </div>
-
-        {/* Reviews + Related Products */}
-        <div className="mt-20">
-          <Reviews id={id!} />
-        </div>
-        <div className="mt-20">
-          <RelatedProducts category={product.category} id={id!} />
-        </div>
-      </div>
+      )}
     </section>
   );
 };
 
-const SampleNextArrow = ({ onClick }: any) => (
-  <div
-    className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -right-3 sm:-right-6 top-[45%] absolute z-10 cursor-pointer"
-    onClick={onClick}
-  >
-    <button className="next rotate-180">
-      <BiArrowBack className="text-text-primary" />
-    </button>
-  </div>
-);
+// Rest of the component code remains the same...
+const SampleNextArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <div
+      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -right-3 sm:-right-6 top-[45%] absolute z-10 cursor-pointer"
+      onClick={onClick}
+    >
+      <button className="next rotate-180">
+        <BiArrowBack className="text-text-primary" />
+      </button>
+    </div>
+  );
+};
 
-const SamplePrevArrow = ({ onClick }: any) => (
-  <div
-    className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -left-3 sm:-left-6 top-[45%] absolute z-10 cursor-pointer"
-    onClick={onClick}
-  >
-    <button className="prev">
-      <BiArrowBack className="text-text-primary" />
-    </button>
-  </div>
-);
+const SamplePrevArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <div
+      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -left-3 sm:-left-6 top-[45%] absolute z-10 cursor-pointer"
+      onClick={onClick}
+    >
+      <button className="prev">
+        <BiArrowBack className="text-text-primary" />
+      </button>
+    </div>
+  );
+};
 
 const Animation = () => (
   <div className="w-screen h-screen flex items-center justify-center bg-white">
