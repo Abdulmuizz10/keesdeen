@@ -73,11 +73,11 @@ const Cart: React.FC = () => {
                   className="flex items-start justify-between py-3 my-2 border-b border-border-secondary gap-6 lg:gap-10"
                 >
                   {/* Left section: image + details */}
-                  <div className="flex items-center gap-6 lg:gap-8 flex-1">
+                  <div className="flex items-center gap-3 lg:gap-8 flex-1">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-24 h-24 lg:w-32 lg:h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+                      className="w-22 h-24 lg:w-32 lg:h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
                     />
 
                     <div className="flex flex-col">
@@ -104,7 +104,7 @@ const Cart: React.FC = () => {
                           <Minus className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
                         </button>
 
-                        <span className="mx-4 text-base md:text-lg lg:text-xl font-semibold text-text-primary">
+                        <span className="mx-3 sm:mx-4 text-base md:text-lg lg:text-xl font-semibold text-text-primary">
                           {item.quantity}
                         </span>
 
@@ -120,7 +120,7 @@ const Cart: React.FC = () => {
 
                   {/* Right section: price + delete */}
                   <div className="flex flex-col items-end justify-between h-full">
-                    <p className="text-lg md:text-xl lg:text-2xl font-semibold text-text-primary">
+                    <p className="text-base md:text-xl lg:text-2xl font-semibold text-text-primary">
                       {formatAmountDefault(
                         currency,
                         item.price * item.quantity
@@ -143,7 +143,7 @@ const Cart: React.FC = () => {
         </div>
 
         {cartData.length > 0 && (
-          <div className="flex justify-end mt-40">
+          <div className="flex justify-end mt-20">
             <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
               <CartTotal />
               <div className="w-full text-end mt-5 poppins">

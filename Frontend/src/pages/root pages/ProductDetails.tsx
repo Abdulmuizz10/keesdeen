@@ -41,7 +41,7 @@ const ProductDetails = () => {
           setResult(response.data);
         }
       } catch (error) {
-        setError("Unable to get product.");
+        setError("Unable to get product!");
       } finally {
         setAnimation(false);
       }
