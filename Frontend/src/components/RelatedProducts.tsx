@@ -46,7 +46,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
         </h2>
       </div>
       <div className="grid gird-cols grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xxl:grid-cols-5 gap-4 gap-y-6">
-        {products.length > 0 ? (
+        {products?.length > 0 ? (
           products?.slice(0, 8).map((product: any, index: number) => (
             <motion.div
               key={index}
@@ -63,7 +63,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
           ))
         ) : (
           <p className="text-gray-500">
-            {products.length < 0 ? " No related products!" : `${error}`}
+            {products?.length < 0 ? " No related products!" : `${error}`}
           </p>
         )}
       </div>
