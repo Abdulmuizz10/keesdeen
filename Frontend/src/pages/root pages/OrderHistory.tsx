@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
 import {
   Button,
@@ -9,16 +9,12 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import Axios from "axios";
-import { toast } from "react-toastify";
 import { URL } from "../../lib/constants";
-import { useShop } from "../../context/ShopContext";
-import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { formatAmountDefault } from "../../lib/utils";
 
 const OrderHistory: React.FC = () => {
-  const { guestEmail } = useShop();
-  const { user } = useContext(AuthContext);
   const [orders, setOrders] = useState<any[]>();
   const [loading, setLoading] = useState<boolean>(true);
   const [sortedOrders, setSortedOrders] = useState<any[]>([]);
@@ -27,42 +23,19 @@ const OrderHistory: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     const fetchOrderHistory = async () => {
-      setLoading(true);
-      if (guestEmail) {
-        try {
-          const response = await Axios.get(
-            `${URL}/orders/guest/orders?guest=${guestEmail}`,
-            {
-              validateStatus: (status) => status < 600,
-            }
-          );
-          if (response.status === 200) {
-            setOrders(response.data);
-            setLoading(false);
-          } else {
-            toast(response.data.message);
-            setLoading(false);
-          }
-        } catch (error) {
-          toast.error("Error fetching order");
-        }
-      } else if (user) {
-        try {
-          const response = await Axios.get(`${URL}/orders/profile/orders`, {
-            withCredentials: true,
-          });
-          setOrders(response.data);
-          setLoading(false);
-        } catch (error) {
-          toast.error("Error fetching order");
-          setLoading(false);
-        }
-      } else {
-        toast("No previous orders!");
+      try {
+        const response = await Axios.get(`${URL}/orders/profile/orders`, {
+          withCredentials: true,
+        });
+        setOrders(response.data);
+        setLoading(false);
+      } catch (error) {
+        toast.error("Error fetching order");
+        setLoading(false);
       }
     };
     fetchOrderHistory();
-  }, [guestEmail]);
+  }, []);
 
   // Sort orders whenever the `sortType` or `orders` change
   useEffect(() => {
@@ -159,9 +132,20 @@ const OrderHistory: React.FC = () => {
                     <OrderCard order={order} key={index} />
                   ))
                 ) : (
-                  <p className="text-center text-gray-500">
-                    No order history available.
-                  </p>
+                  <div className="flex flex-col items-center justify-center gap-4 mt-20">
+                    <p className="text-base sm:text-md text-center text-text-secondary">
+                      You haven’t placed any orders yet. Start shopping to place
+                      your first one!
+                    </p>
+
+                    <Link to="/collections/shop_all">
+                      <Button
+                        className={`w-full my-4 sm:w-fit active:bg-brand-neutral/50 bg-brand-neutral text-text-light border-none rounded-md`}
+                      >
+                        Shop Now
+                      </Button>
+                    </Link>
+                  </div>
                 )
               ) : (
                 <div className="w-full flex justify-center">

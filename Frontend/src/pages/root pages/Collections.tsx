@@ -30,16 +30,16 @@ const Collections: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Axios.get(`${URL}/products/search-results`, {
+        const response = await Axios.get(`${URL}/products/search-results`, {
           validateStatus: (status) => status < 600,
           params: { query: name },
         });
-        if (res.status === 200) {
-          setProducts(res.data);
-          setFilteredProducts(res.data);
+        if (response.status === 200) {
+          setProducts(response.data);
+          setFilteredProducts(response.data);
         }
       } catch (error) {
-        setError("Unable to get products!");
+        setError("Network error, unable to get products!");
       } finally {
         setLoading(false);
       }
@@ -166,7 +166,7 @@ const Collections: React.FC = () => {
                 showFilter ? "" : "hidden"
               } xl:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-3">Product Type</p>
+              <p className="text-base md:text-md pb-3">Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {["Active Wear", "Fitness Accessories"].map((wear, index) => (
                   <p className="flex gap-2" key={index}>
@@ -349,12 +349,16 @@ const Collections: React.FC = () => {
                       key={index}
                     />
                   ))
+                ) : error ? (
+                  <div className="col-span-4">
+                    <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
+                      {error}
+                    </p>
+                  </div>
                 ) : (
                   <div className="col-span-4">
                     <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                      {filteredProducts.length < 0
-                        ? "Products not available!"
-                        : `${error}`}
+                      Products not available!
                     </p>
                   </div>
                 )}

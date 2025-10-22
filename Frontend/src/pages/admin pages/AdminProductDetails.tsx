@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
 import Axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { formatAmountDefault } from "../../lib/utils";
 
 const AdminProductDetails = () => {

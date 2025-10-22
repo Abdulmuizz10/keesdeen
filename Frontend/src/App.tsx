@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 // Libraries
+import { Toaster } from "sonner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Hooks
@@ -32,9 +31,8 @@ import OrderHistory from "./pages/root pages/OrderHistory";
 import OrderDetails from "./pages/root pages/OrderDetails";
 
 // Auth Pages
-import { Login7 } from "./pages/auth pages/Login";
-import { Signup7 } from "./pages/auth pages/SignUp";
-import { GuestSignUp } from "./pages/auth pages/GuestSignUp";
+import { SignIn } from "./pages/auth pages/SignIn";
+import { SignUp } from "./pages/auth pages/SignUp";
 import { ForgetPassword } from "./pages/auth pages/ForgetPassword";
 import { ResetPassword } from "./pages/auth pages/ResetPassword";
 
@@ -78,7 +76,7 @@ const App: React.FC = () => {
 
   return (
     <div className="overflow-x-hidden ">
-      <ToastContainer />
+      <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
       <AnimatePresence mode="wait">
         {animation && <Animation />}
       </AnimatePresence>
@@ -106,9 +104,8 @@ const App: React.FC = () => {
 
           {/* Auth Routes */}
           <Route element={<AuthLayout animation={animation} />}>
-            <Route path="/auth/login" element={<Login7 />} />
-            <Route path="/auth/signUp" element={<Signup7 />} />
-            <Route path="/auth/guest-signUp" element={<GuestSignUp />} />
+            <Route path="/auth/Sign_in" element={<SignIn />} />
+            <Route path="/auth/sign_up" element={<SignUp />} />
             <Route path="/auth/forget_password" element={<ForgetPassword />} />
             <Route
               path="/auth/reset_password/:token"

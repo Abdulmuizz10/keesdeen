@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { FaRegCopy } from "react-icons/fa";
 import { useShop } from "../../context/ShopContext";
 import { Link } from "react-router-dom";

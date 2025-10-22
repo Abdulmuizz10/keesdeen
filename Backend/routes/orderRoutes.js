@@ -1,7 +1,6 @@
 import express from "express";
 import {
   createOrderController,
-  linkGuestOrdersController,
   getAllOrdersController,
   getOrdersByPage,
   getPendingOrders,
@@ -10,9 +9,7 @@ import {
   // updateOrderToPaidController,
   updateOrderStatusController,
   getOrdersByUserController,
-  getOrdersByGuestController,
   getOrderByUserController,
-  getOrderByGuestController,
 } from "../controllers/orderControllers.js";
 
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
@@ -21,8 +18,6 @@ const router = express.Router();
 
 // Create a new order
 router.post("/", createOrderController);
-router.post("/link-guest/orders", linkGuestOrdersController);
-
 router.get("/", verifyUser, authorizeAdmin, getAllOrdersController);
 router.get("/page/orders", verifyUser, authorizeAdmin, getOrdersByPage);
 router.get(
@@ -44,13 +39,7 @@ router.patch(
   authorizeAdmin,
   updateOrderStatusController
 );
-
-// Get orders for a specific user or guest
 router.get("/profile/orders", verifyUser, getOrdersByUserController);
-router.get("/guest/orders", getOrdersByGuestController);
-
-// Get order for a specific user or guest
 router.get("/profile/order/:id", verifyUser, getOrderByUserController);
-router.get("/guest/order/:id", getOrderByGuestController);
 
 export default router;

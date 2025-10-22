@@ -61,7 +61,7 @@ import {
 import { mainLogo } from "../assets";
 import { Link } from "react-router-dom";
 import Axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { currency, URL } from "../lib/constants";
 import { useShop } from "../context/ShopContext";
 import { IoPeopleOutline } from "react-icons/io5";

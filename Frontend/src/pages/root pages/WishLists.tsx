@@ -17,7 +17,7 @@ const WishLists: React.FC = () => {
 
   return (
     <section className="px-[5%] py-24 md:py-30" ref={ref}>
-      <div className="container">
+      <div className="">
         <div className="mb-2 md:mb-5">
           <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Wishlists

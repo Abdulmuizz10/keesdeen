@@ -6,14 +6,12 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { URL } from "../lib/constants";
 
 // Define the context type
 interface ShopContextType {
   cartItems: any;
-  guestEmail: any;
-  setGuestEmail: any;
   setCartItems: any;
   addToCart: any;
   getCartCount: any;
@@ -23,6 +21,8 @@ interface ShopContextType {
   wishLists: any;
   setWishLists: any;
   manageWishLists: any;
+  savedAddresses: any;
+  setSavedAddresses: any;
   // currentCurrency: any;
   // fetchExchangeRates: any;
   // setCurrency: any;
@@ -49,10 +49,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [adminLoader, setAdminLoader] = useState(false);
-  const [guestEmail, setGuestEmail] = useState<String>(() => {
-    const storedGuestEmail = localStorage.getItem("guestEmail");
-    return storedGuestEmail ? JSON.parse(storedGuestEmail) : "";
-  });
   const [cartItems, setCartItems] = useState<any>(() => {
     const storedCart = localStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : {};
@@ -61,10 +57,25 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     const storedWishLists = localStorage.getItem("wishLists");
     return storedWishLists ? JSON.parse(storedWishLists) : [];
   });
-
+  const [savedAddresses, setSavedAddresses] = useState(() => {
+    const storedAddresses = localStorage.getItem("savedAddresses");
+    return storedAddresses ? JSON.parse(storedAddresses) : [];
+  });
   const [deliveryFee, setDeliveryFee] = useState<any>();
   const [discountPercent, setDiscountPercent] = useState<any>();
   const [change, setChange] = useState<boolean>(true);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  useEffect(() => {
+    localStorage.setItem("wishLists", JSON.stringify(wishLists));
+  }, [wishLists]);
+
+  useEffect(() => {
+    localStorage.setItem("savedAddresses", JSON.stringify(savedAddresses));
+  }, [savedAddresses]);
 
   useEffect(() => {
     const handleGetUtility = async () => {
@@ -81,18 +92,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
 
     handleGetUtility();
   }, [change]);
-
-  useEffect(() => {
-    localStorage.setItem("guestEmail", JSON.stringify(guestEmail));
-  }, [guestEmail]);
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  useEffect(() => {
-    localStorage.setItem("wishLists", JSON.stringify(wishLists));
-  }, [wishLists]);
 
   const addToCart = async (
     itemId: string,
@@ -275,8 +274,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   return (
     <ShopContext.Provider
       value={{
-        guestEmail,
-        setGuestEmail,
         cartItems,
         setCartItems,
         addToCart,
@@ -287,6 +284,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         wishLists,
         setWishLists,
         manageWishLists,
+        savedAddresses,
+        setSavedAddresses,
         // currentCurrency,
         // fetchExchangeRates,
         // setCurrency,

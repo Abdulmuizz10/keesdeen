@@ -7,7 +7,7 @@ import { FaTiktok } from "react-icons/fa";
 import { Link } from "react-router-dom";
 // import CurrencySwitcher from "./CurrencySwitcher";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import Axios from "axios";
 import { URL } from "../lib/constants";
 
@@ -96,7 +96,7 @@ export const Footer1 = (props: Footer1Props) => {
               <img
                 src={logo.src}
                 alt={logo.alt}
-                className="inline-block w-[150px] md:w-[200px]"
+                className="inline-block w-[130px] sm:w-[200px]"
               />
             </a>
             <p className="mb-5 md:mb-6">{newsletterDescription}</p>

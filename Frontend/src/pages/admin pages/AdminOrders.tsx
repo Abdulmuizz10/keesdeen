@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaRegCopy } from "react-icons/fa";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { formatAmountDefault } from "../../lib/utils";
 

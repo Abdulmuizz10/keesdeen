@@ -80,7 +80,6 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
             src={image ? product.imageUrls[1] : product.imageUrls[0]}
             alt="Product"
             className="w-full h-auto"
-            loading="lazy"
           />
         </Link>
       </div>

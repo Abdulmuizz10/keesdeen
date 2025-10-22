@@ -61,10 +61,18 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
               <ProductCard product={product} loading={loading} key={index} />
             </motion.div>
           ))
+        ) : error ? (
+          <div className="col-span-4">
+            <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
+              {error}
+            </p>
+          </div>
         ) : (
-          <p className="text-gray-500">
-            {products?.length < 0 ? " No related products!" : `${error}`}
-          </p>
+          <div className="col-span-4">
+            <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
+              No related products!
+            </p>
+          </div>
         )}
       </div>
     </div>

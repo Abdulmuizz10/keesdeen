@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 // import { formatAmount } from "../../lib/utils";
 import Axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { currency, URL } from "../../lib/constants";
 import { formatAmountDefault } from "../../lib/utils";
@@ -132,7 +132,7 @@ const AdminNewArrivals: React.FC = () => {
                           onChange={(e) =>
                             handleStatusChange(product._id, e.target.value)
                           }
-                          className="border border-gray-300  p-1 focus:ring-none"
+                          className="w-4/5 border border-gray-300 p-1 focus:ring-none"
                         >
                           <option value="">Select status</option>
                           <option value={"isNewArrival"}>Yes</option>

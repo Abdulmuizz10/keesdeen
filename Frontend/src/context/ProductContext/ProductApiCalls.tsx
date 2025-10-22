@@ -1,6 +1,6 @@
 import axios from "axios";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 // Create a new product
 export const createProduct = async (

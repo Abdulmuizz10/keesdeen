@@ -1,7 +1,7 @@
 import axios from "axios";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
-import { showOrderSummary } from "../../components/SweatOrderPopUP";
+import { toast } from "sonner";
+import { showOrderSummary } from "../../components/SweatOrderModal";
 
 // Create a new order
 export const createOrder = async (

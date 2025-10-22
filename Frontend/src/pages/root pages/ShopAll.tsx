@@ -28,15 +28,15 @@ const ShopAll: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await Axios.get(`${URL}/products`, {
+        const response = await Axios.get(`${URL}/products`, {
           validateStatus: (status) => status < 600,
         });
-        if (res.status === 200) {
-          setProducts(res.data);
-          setFilteredProducts(res.data);
+        if (response.status === 200) {
+          setProducts(response.data);
+          setFilteredProducts(response.data);
         }
       } catch (error) {
-        setError("Unable to get products!");
+        setError("Network error, unable to get products!");
       } finally {
         setLoading(false);
       }
@@ -130,7 +130,7 @@ const ShopAll: React.FC = () => {
 
   return (
     <section className="px-[5%] py-24 md:py-30">
-      <div className="container">
+      <div className="">
         <div className="mb-2 md:mb-5">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Shop All
@@ -163,7 +163,7 @@ const ShopAll: React.FC = () => {
                   showFilter ? "" : "hidden"
                 } xl:block shadow-medium rounded`}
               >
-                <p className="text-base md:text-md pb-3">Product Type</p>
+                <p className="text-base md:text-md pb-3">Type</p>
                 <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                   {["Active Wear", "Fitness Accessories"].map((wear, index) => (
                     <p className="flex gap-2" key={index}>
@@ -347,12 +347,16 @@ const ShopAll: React.FC = () => {
                         key={index}
                       />
                     ))
+                  ) : error ? (
+                    <div className="col-span-4">
+                      <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
+                        {error}
+                      </p>
+                    </div>
                   ) : (
                     <div className="col-span-4">
                       <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                        {filteredProducts.length < 0
-                          ? "Products not available!"
-                          : `${error}`}
+                        Products not available!
                       </p>
                     </div>
                   )}

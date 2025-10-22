@@ -13,7 +13,6 @@ const createAndSendToken = (user, res) => {
     process.env.SECRET_KEY,
     { expiresIn: "30d" }
   );
-
   const cookieDomain =
     process.env.NODE_ENV === "production"
       ? "keesdeen-api.vercel.app"
@@ -21,7 +20,7 @@ const createAndSendToken = (user, res) => {
 
   res.cookie("authToken", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production" ? true : false,
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
     domain: cookieDomain,
@@ -43,11 +42,11 @@ const signUp = async (req, res) => {
   try {
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res
+        .status(400)
+        .json({ message: "An account with this email already exists." });
     }
-
     const hashedPassword = await bcrypt.hash(password, 12);
-
     const newUser = await UserModel.create({
       firstName,
       lastName,
@@ -58,7 +57,6 @@ const signUp = async (req, res) => {
 
     // Send welcome email
     await sendWelcomeEmail(email, firstName, "signup");
-
     return createAndSendToken(newUser, res);
   } catch (error) {
     res
@@ -71,22 +69,17 @@ const signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
     const existingUser = await UserModel.findOne({ email }).select("+password");
-
     if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Invalid email or password." });
     }
-
     const isPasswordCorrect = await bcrypt.compare(
       password,
       existingUser.password
     );
-
     if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Incorrect email or password" });
+      return res.status(400).json({ message: "Invalid email or password" });
     }
-
     await sendWelcomeEmail(email, existingUser.firstName, "signin");
-
     return createAndSendToken(existingUser, res);
   } catch (error) {
     res
@@ -97,7 +90,6 @@ const signIn = async (req, res) => {
 
 const googleSignIn = async (req, res) => {
   const { googleToken } = req.body;
-
   try {
     const response = await axios.get(
       "https://www.googleapis.com/oauth2/v2/userinfo",
@@ -107,7 +99,6 @@ const googleSignIn = async (req, res) => {
         },
       }
     );
-
     const {
       email,
       given_name: firstName,
@@ -115,7 +106,6 @@ const googleSignIn = async (req, res) => {
     } = response.data;
 
     let user = await UserModel.findOne({ email });
-
     if (!user) {
       user = await UserModel.create({
         firstName,
@@ -164,11 +154,7 @@ const forgotPassword = async (req, res) => {
       expiresIn: "1h",
     });
 
-    const resetUrl = `${
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:5173/"
-        : process.env.FRONTEND_URL
-    }/auth/reset_password/${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/auth/reset_password/${resetToken}`;
     const message = `Click here to reset your password: ${resetUrl}`;
 
     await sendResetEmailLink({

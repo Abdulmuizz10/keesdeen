@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Country, State } from "country-state-city";
 import { formatAmountDefault } from "../../lib/utils";
 
@@ -100,8 +100,6 @@ const AdminOrderDetails: React.FC = () => {
     shippingAddress,
     billingAddress,
     email,
-    guestOrder,
-    guestEmail,
     orderedItems,
     totalPrice,
     shippingPrice,
@@ -166,17 +164,6 @@ const AdminOrderDetails: React.FC = () => {
           {shippingAddress.addressLineTwo || ""}, {shippingAddress.zipCode},{" "}
           {shippingAddress.state}, {shippingAddress.country}.
         </p>
-        {guestOrder && (
-          <>
-            <p className="text-gray-800">
-              <span className="font-medium">Guest order:</span>{" "}
-              {guestOrder && "Yes"}
-            </p>
-            <p className="text-gray-800">
-              <span className="font-medium">Guest Email:</span> {guestEmail}
-            </p>
-          </>
-        )}
       </div>
 
       {/* Order Items */}

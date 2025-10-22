@@ -7,16 +7,13 @@ import {
 } from "./AuthActions";
 import { Dispatch } from "react";
 import { URL } from "../../lib/constants";
-
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 // Type definition for the login function
-export const Login = async (
+export const SignInAccount = async (
   user: any,
   dispatch: Dispatch<any>,
   navigate: any,
-  guestEmail: any,
-  setGuestEmail: any,
   setLoading: any
 ): Promise<void> => {
   dispatch(AccessStart());
@@ -28,22 +25,8 @@ export const Login = async (
 
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
-      if (res.data) {
-        const user = res.data.id;
-        const email = res.data.email;
-        const userInfo = { user, email };
-        const expect = await axios.post(
-          `${URL}/orders/link-guest/orders`,
-          userInfo
-        );
-        if (expect) {
-          if (guestEmail) {
-            setGuestEmail("");
-          }
-        }
-        navigate("/");
-        setLoading(false);
-      }
+      navigate("/");
+      setLoading(false);
     } else {
       dispatch(AccessFailure());
       setLoading(false);
@@ -55,12 +38,10 @@ export const Login = async (
   }
 };
 
-export const SignUp = async (
+export const SignUpAccount = async (
   user: any,
   dispatch: Dispatch<any>,
   navigate: any,
-  guestEmail: any,
-  setGuestEmail: any,
   setLoading: any
 ): Promise<void> => {
   dispatch(AccessStart());
@@ -71,22 +52,8 @@ export const SignUp = async (
     });
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
-      if (res.data) {
-        const user = res.data.id;
-        const email = res.data.email;
-        const userInfo = { user, email };
-        const expect = await axios.post(
-          `${URL}/orders/link-guest/orders`,
-          userInfo
-        );
-        if (expect) {
-          if (guestEmail) {
-            setGuestEmail("");
-          }
-        }
-        navigate("/");
-        setLoading(false);
-      }
+      navigate("/");
+      setLoading(false);
     } else {
       dispatch(AccessFailure());
       setLoading(false);

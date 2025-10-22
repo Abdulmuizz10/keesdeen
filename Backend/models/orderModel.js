@@ -64,13 +64,6 @@ const orderSchema = new mongoose.Schema(
     billingSameAsShipping: { type: Boolean, default: true },
     shippingPrice: { type: Number, required: true, default: 0.0 },
     totalPrice: { type: Number, required: true, default: 0.0 },
-    guestOrder: { type: Boolean, required: true, default: false },
-    guestEmail: {
-      type: String,
-      required: function () {
-        return this.guestOrder;
-      },
-    },
     paidAt: { type: Date, required: false },
     isDelivered: {
       type: String,

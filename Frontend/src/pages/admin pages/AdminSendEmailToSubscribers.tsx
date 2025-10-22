@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useShop } from "../../context/ShopContext";
 
 const AdminSendEmailToSubscribers: React.FC = () => {

@@ -4,7 +4,7 @@ import { FaRegPenToSquare } from "react-icons/fa6";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { deleteProduct } from "../../context/ProductContext/ProductApiCalls";
 import { formatAmountDefault } from "../../lib/utils";
 import { useShop } from "../../context/ShopContext";

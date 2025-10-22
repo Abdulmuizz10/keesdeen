@@ -203,7 +203,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                   name="name"
                   value={newReview.name}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none"
                   required
                 />
               </div>
@@ -217,7 +217,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                   name="rating"
                   value={newReview.rating}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none"
                   required
                   min="1"
                   max="5"
@@ -232,7 +232,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                   name="comment"
                   value={newReview.comment}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none"
                   rows={4}
                   required
                 ></textarea>

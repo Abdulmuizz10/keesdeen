@@ -5,6 +5,7 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
 import { RiHeartLine } from "react-icons/ri";
 import { RiHeartFill } from "react-icons/ri";
 import { BiArrowBack } from "react-icons/bi";
+import { ShoppingBag } from "lucide-react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -23,7 +24,7 @@ const ProductDetails = () => {
   const { addToCart, manageWishLists, wishLists } = useShop();
   const [size, setSize] = useState<string>();
   const [color, setColor] = useState<string>();
-  const [animation, setAnimation] = useState<boolean>(true);
+  const [animation, setAnimation] = useState<boolean>(false);
   const [error, setError] = useState("");
 
   if (!id) {
@@ -32,6 +33,7 @@ const ProductDetails = () => {
   }
 
   useEffect(() => {
+    setAnimation(true);
     const fetchData = async () => {
       try {
         const response = await Axios.get(`${URL}/products/${id}`, {
@@ -39,6 +41,8 @@ const ProductDetails = () => {
         });
         if (response.status === 200) {
           setResult(response.data);
+        } else {
+          setError("Product do not exist!");
         }
       } catch (error) {
         setError("Unable to get product!");
@@ -89,7 +93,7 @@ const ProductDetails = () => {
     <section className="px-[5%] py-24 md:py-30">
       {result ? (
         <div className="container">
-          <div className="flex gap-10 flex-col lg:flex-row">
+          <div className="flex flex-col gap-10 lg:flex-row">
             {/* Product images */}
             <div className="flex-1 w-full lg:w-1/2">
               <Slider {...settings}>
@@ -161,7 +165,7 @@ const ProductDetails = () => {
               {/* Color selection */}
               <div className="flex flex-col gap-4 my-8">
                 <p className="mb-2">Select Color :</p>
-                <div className="flex flex-wrap gap-5 md:gap-7 lg:gap-10 items-center">
+                <div className="flex flex-wrap gap-3 md:gap-5 lg:gap-7 items-center">
                   {result?.product?.colors?.map(
                     (option: any, index: number) => (
                       <label
@@ -216,7 +220,7 @@ const ProductDetails = () => {
               </div>
               <div className="flex items-center gap-2 lg:max-w-xs w-full">
                 <Button
-                  className="py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full"
+                  className="py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full poppins"
                   onClick={() =>
                     addToCart(
                       result?.product?._id,
@@ -228,7 +232,7 @@ const ProductDetails = () => {
                     )
                   }
                 >
-                  ADD TO CART
+                  Add To Cart <ShoppingBag />
                 </Button>
                 <div
                   className={`px-3 py-3 border-2 border-brand-neutral rounded-lg flex items-center justify-center cursor-pointer flex-1`}
@@ -264,7 +268,7 @@ const ProductDetails = () => {
         </div>
       ) : (
         <div className="h-[65vh] flex items-center justify-center">
-          <p className="text-md">{error}</p>
+          <p className="text-base sm:text-xl">{error}</p>
         </div>
       )}
     </section>

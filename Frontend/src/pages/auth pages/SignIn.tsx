@@ -4,19 +4,19 @@ import React, { useContext, useState } from "react";
 import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
+import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Images, mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
-import { Login } from "../../context/AuthContext/AuthApiCalls";
+import { SignInAccount } from "../../context/AuthContext/AuthApiCalls";
 import { useGoogleLogin } from "@react-oauth/google";
 import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
 import { URL } from "../../lib/constants";
+import { toast } from "sonner";
 import Axios from "axios";
-import { toast } from "react-toastify";
-import { useShop } from "../../context/ShopContext";
 import Spinner from "../../components/Spinner";
 
 type ImageProps = {
@@ -28,6 +28,7 @@ type ImageProps = {
 type Props = {
   logo: ImageProps;
   title: string;
+  subTitle: string;
   description: string;
   logInButton: ButtonProps;
   logInWithGoogleButton: ButtonProps;
@@ -39,43 +40,36 @@ type Props = {
   };
 };
 
-export type Login7Props = React.ComponentPropsWithoutRef<"section"> &
+export type SignInProps = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
-export const Login7: React.FC = (props: Login7Props) => {
+export const SignIn: React.FC = (props: SignInProps) => {
   const {
     logo,
     title,
+    subTitle,
     logInButton,
     logInWithGoogleButton,
     image,
     signUpText,
     signUpLink,
   } = {
-    ...Login7Defaults,
+    ...SignInDefaults,
     ...props,
   } as Props;
 
-  const { guestEmail, setGuestEmail } = useShop();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [preference, setPreference] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { dispatch } = useContext(AuthContext);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    Login(
-      { email, password },
-      dispatch,
-      navigate,
-      guestEmail,
-      setGuestEmail,
-      setLoading
-    );
+    SignInAccount({ email, password }, dispatch, navigate, setLoading);
   };
 
   const googleLogin = useGoogleLogin({
@@ -94,22 +88,8 @@ export const Login7: React.FC = (props: Login7Props) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          if (res.data) {
-            const user = res.data.id;
-            const email = res.data.email;
-            const userInfo = { user, email };
-            const expect = await Axios.post(
-              `${URL}/orders/link-guest/orders`,
-              userInfo
-            );
-            if (expect) {
-              if (guestEmail) {
-                setGuestEmail("");
-              }
-            }
-            navigate("/");
-            setLoading(false);
-          }
+          navigate("/");
+          setLoading(false);
         } else {
           dispatch(AccessFailure());
           setLoading(false);
@@ -130,7 +110,7 @@ export const Login7: React.FC = (props: Login7Props) => {
   return (
     <section className="bg-background-light relative">
       {loading && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
+        <div className="fixed inset-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
           <Spinner />
         </div>
       )}
@@ -143,9 +123,8 @@ export const Login7: React.FC = (props: Login7Props) => {
         <div className="relative mx-[5vw] flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="container mb-6 max-w-lg text-center md:mb-8">
-              <h1 className="mb-5 text-5xl font-bold md:mb-1 text-gradient">
-                {title}
-              </h1>
+              <h1 className="mb-5 text-4xl font-bold md:mb-1">{title}</h1>
+              <p className="mb-5 text-base text-gradient">{subTitle}</p>
             </div>
             <form
               className="grid grid-cols-1 gap-6 poppins"
@@ -162,22 +141,36 @@ export const Login7: React.FC = (props: Login7Props) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-neutral-300 rounded"
+                  className="border-neutral-300 rounded bg-white"
                 />
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="password" className="mb-2">
                   Password
                 </Label>
-                <Input
-                  placeholder="password"
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="border-neutral-300 rounded"
-                />
+                <div className="flex relative">
+                  <Input
+                    placeholder="password"
+                    type={preference ? "password" : "text"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="border-neutral-300 rounded bg-white"
+                  />
+
+                  {preference === true ? (
+                    <Eye
+                      className="absolute top-2.5 right-3.5 cursor-pointer"
+                      onClick={() => setPreference(false)}
+                    />
+                  ) : (
+                    <EyeOff
+                      className="absolute top-2.5 right-3.5 cursor-pointer"
+                      onClick={() => setPreference(true)}
+                    />
+                  )}
+                </div>
               </div>
 
               <Link to="/auth/forget_password" className="text-end">
@@ -228,19 +221,20 @@ export const Login7: React.FC = (props: Login7Props) => {
   );
 };
 
-export const Login7Defaults: Login7Props = {
+export const SignInDefaults: SignInProps = {
   logo: {
     url: "/",
     src: mainLogo,
     alt: "Logo text",
   },
-  title: "Log in",
+  title: "Welcome back to keesdeen!",
+  subTitle: "Please enter your details to sign in your account!",
   logInButton: {
-    title: "Log in",
+    title: "Sign in",
   },
   logInWithGoogleButton: {
     variant: "secondary",
-    title: "Sign in with Google",
+    title: "Continue with Google",
     iconLeft: <BiLogoGoogle className="size-6" />,
   },
   // image: {
@@ -254,6 +248,6 @@ export const Login7Defaults: Login7Props = {
   signUpText: "Don't have an account?",
   signUpLink: {
     text: "Sign up",
-    url: "/auth/signUp",
+    url: "/auth/sign_up",
   },
 };

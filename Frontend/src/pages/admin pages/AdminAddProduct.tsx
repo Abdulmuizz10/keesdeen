@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createProduct } from "../../context/ProductContext/ProductApiCalls";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useShop } from "../../context/ShopContext";
 
 const popularColors = [
@@ -87,9 +87,7 @@ const AdminAddProduct: React.FC = () => {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
         setAdminLoader(false);
-        toast.success("Image uploaded!", {
-          position: "top-left", // Set position to top-left
-        });
+        toast.success("Image uploaded successfully!");
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
@@ -201,7 +199,7 @@ const AdminAddProduct: React.FC = () => {
                 placeholder="Product Name"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg transition-all focus:outline-none"
                 required
               />
             </div>
@@ -212,7 +210,7 @@ const AdminAddProduct: React.FC = () => {
                 placeholder="Product Brand"
                 value={productBrand}
                 onChange={(e) => setProductBrand(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg transition-all focus:outline-none"
               />
             </div>
           </div>
@@ -223,7 +221,7 @@ const AdminAddProduct: React.FC = () => {
               placeholder="Product Description"
               value={productDescription}
               onChange={(e) => setProductDescription(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+              className="w-full p-3 border border-gray-300 rounded-lg transition-all focus:outline-none"
               rows={3}
               required
             />
@@ -235,7 +233,7 @@ const AdminAddProduct: React.FC = () => {
               <select
                 value={productCategory}
                 onChange={(e) => setProductCategory(e.target.value)}
-                className="w-full p-3 border border-gray-300  transition-all bg-white rounded-lg"
+                className="w-full p-3 border border-gray-300  transition-all bg-white rounded-lg focus:outline-none"
                 required
               >
                 <option value=" ">Select Category</option>
@@ -295,7 +293,6 @@ const AdminAddProduct: React.FC = () => {
                 value={productType}
                 onChange={(e) => setProductType(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
-                required
               >
                 <option value="">Select Product Type</option>
                 <option value="Top wear">Top Wear</option>
@@ -310,7 +307,6 @@ const AdminAddProduct: React.FC = () => {
                 value={productSex}
                 onChange={(e) => setProductSex(e.target.value)}
                 className="w-full p-3 border border-gray-300 transition-all bg-white rounded-lg"
-                required
               >
                 <option value="">Select Product Sex</option>
                 <option value="Female">Female</option>
@@ -326,7 +322,7 @@ const AdminAddProduct: React.FC = () => {
                 placeholder="Product Previous Price Optional"
                 value={productPreviousPrice}
                 onChange={(e) => setProductPreviousPrice(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg focus:outline-none"
               />
             </div>
 
@@ -337,7 +333,7 @@ const AdminAddProduct: React.FC = () => {
                 placeholder="Product Price"
                 value={productPrice}
                 onChange={(e) => setProductPrice(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg focus:outline-none"
                 required
               />
             </div>
@@ -364,7 +360,7 @@ const AdminAddProduct: React.FC = () => {
                     "border-white !w-[10px] !h-[10px]"
                   }`}
                   style={{ backgroundColor: item.code }}
-                  onClick={() => handleColorToggle(item.code)}
+                  onClick={() => handleColorToggle(item.name)}
                 />
               </div>
             ))}

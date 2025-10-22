@@ -1,12 +1,3 @@
-import Axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import { URL } from "../../lib/constants";
-import Spinner from "../../components/Spinner";
-import { FaUserShield, FaTrashAlt, FaUser } from "react-icons/fa";
-import { useShop } from "../../context/ShopContext";
-import { useNavigate } from "react-router-dom";
 import {
   Button,
   Select,
@@ -15,6 +6,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
+import Axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { URL } from "../../lib/constants";
+import Spinner from "../../components/Spinner";
+import { FaUserShield, FaTrashAlt, FaUser } from "react-icons/fa";
+import { useShop } from "../../context/ShopContext";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { formatAmountDefault } from "../../lib/utils";
 
@@ -323,7 +323,7 @@ const AdminUserDetails: React.FC = () => {
 
         <div className="mt-6 flex justify-end gap-4">
           <button
-            className="px-6 py-3 w-full justify-center bg-brand-neutral text-white rounded-lg flex items-center gap-2 transition poppins"
+            className="px-6 py-3 w-full sm:w-fit justify-center bg-brand-neutral text-white rounded-lg flex items-center gap-2 transition poppins"
             onClick={() => handleDelete(user?._id)}
           >
             <FaTrashAlt /> Delete User

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Navbar7 } from "../components/Navbar";
+import { Navbar } from "../components/Navbar";
 import { Footer1 } from "../components/Footer";
 import SearchModal from "../components/SearchModal";
 import { Truck } from "lucide-react";
@@ -28,7 +28,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, animation }) => {
       <SearchModal />
       <div className={`${isActive && "hidden transition-[1s]"}`}>
         <div className={`${animation ? "opacity-0" : " opacity-100"}`}>
-          <Navbar7 />
+          <Navbar />
           {children}
           <Outlet />
           <Link

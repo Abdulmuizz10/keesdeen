@@ -1,13 +1,8 @@
-"use client";
-
 import { useContext, useState } from "react";
-// import { useMediaQuery } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
-// import { RxChevronDown } from "react-icons/rx";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { mainLogo, smallLogo } from "../assets";
-
 import { Search, ShoppingBag, Heart, User } from "lucide-react";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
@@ -34,9 +29,9 @@ type Props = {
 export type Navbar7Props = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
-export const Navbar7 = (props: Navbar7Props) => {
+export const Navbar = (props: Navbar7Props) => {
   const { logo, navLinks } = {
-    ...Navbar7Defaults,
+    ...NavbarDefaults,
     ...props,
   } as Props;
 
@@ -48,12 +43,12 @@ export const Navbar7 = (props: Navbar7Props) => {
 
   return (
     <nav className="fixed z-[999] flex min-h-16 w-full items-center shadow-xxsmall bg-background-light px-[5%] md:min-h-18 bg-none">
-      <div className="mx-auto flex size-full max-w-full items-center justify-between">
+      <div className="mx-auto size-full max-w-full flex items-center justify-between">
         <Link to={`${logo.url}`}>
           <img
             src={logo.src}
             alt={logo.alt}
-            className="inline-block w-[150px] md:w-[200px]"
+            className="inline-block w-[130px] sm:w-[200px]"
           />
         </Link>
         <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 xl:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
@@ -144,7 +139,7 @@ export const Navbar7 = (props: Navbar7Props) => {
               </Link>
             ) : (
               <>
-                <Link to="/auth/login">
+                <Link to="/auth/sign_in">
                   <User
                     width={20}
                     height={20}
@@ -212,7 +207,7 @@ export const Navbar7 = (props: Navbar7Props) => {
             </Link>
           ) : (
             <>
-              <Link to="/auth/login">
+              <Link to="/auth/sign_in">
                 <User
                   width={20}
                   height={20}
@@ -311,131 +306,7 @@ export const Navbar7 = (props: Navbar7Props) => {
   );
 };
 
-// const SubMenu = ({
-//   title,
-//   megaMenu,
-//   isMobile,
-// }: {
-//   title: string;
-//   megaMenu: MegaMenuProps;
-//   isMobile: boolean;
-// }) => {
-//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-//   return (
-//     <div
-//       onMouseEnter={() => !isMobile && setIsDropdownOpen(true)}
-//       onMouseLeave={() => !isMobile && setIsDropdownOpen(false)}
-//     >
-//       <button
-//         className="relative flex w-full items-center justify-between whitespace-nowrap py-3 text-md lg:w-auto lg:justify-start lg:gap-2 lg:px-4 lg:py-6 lg:text-base"
-//         onClick={() => setIsDropdownOpen((prev) => !prev)}
-//       >
-//         <span className="text-text-primary text-md lg:text-base poppins hover:text-brand-primary">
-//           {title}
-//         </span>
-//         <motion.span
-//           animate={isDropdownOpen ? "rotated" : "initial"}
-//           variants={{
-//             rotated: { rotate: 180 },
-//             initial: { rotate: 0 },
-//           }}
-//           transition={{ duration: 0.3 }}
-//         >
-//           <RxChevronDown />
-//         </motion.span>
-//       </button>
-//       <AnimatePresence>
-//         {isDropdownOpen && (
-//           <motion.nav
-//             variants={{
-//               open: {
-//                 opacity: 1,
-//                 height: "var(--height-open, auto)",
-//               },
-//               close: {
-//                 opacity: 0,
-//                 height: "var(--height-close, 0)",
-//               },
-//             }}
-//             animate={isDropdownOpen ? "open" : "close"}
-//             initial="close"
-//             exit="close"
-//             transition={{ duration: 0.2 }}
-//             className="bottom-auto left-0 top-full w-full min-w-full max-w-full overflow-hidden bg-background-primary lg:absolute lg:w-screen lg:border-b lg:border-border-primary lg:px-[5%] lg:[--height-close:auto]"
-//           >
-//             <div className="mx-auto flex size-full max-w-full items-center justify-between">
-//               <div className="flex w-full flex-col lg:flex-row">
-//                 <div className="grid flex-1 grid-cols-1 content-start items-start gap-x-8 gap-y-6 py-4 sm:py-0 md:grid-cols-2 md:py-8 lg:auto-cols-fr lg:grid-cols-4 lg:content-stretch lg:items-stretch lg:gap-y-0">
-//                   {megaMenu.linkGroups.map((linkGroup, index) => (
-//                     <div
-//                       key={index}
-//                       className="grid auto-cols-fr grid-cols-1 grid-rows-[max-content_max-content_max-content_max-content_max-content] gap-y-2 md:gap-y-4"
-//                     >
-//                       <h4 className="text-2xl font-semibold leading-[1.3]">
-//                         {linkGroup.title}
-//                       </h4>
-//                       {linkGroup.subMenuLinks.map((subMenuLink, index) => (
-//                         <a
-//                           key={index}
-//                           href={subMenuLink.url}
-//                           className="grid w-full auto-cols-fr grid-cols-[max-content_1fr] items-start gap-x-3 py-2"
-//                           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-//                         >
-//                           {/* <div className="flex size-6 flex-col items-center justify-center">
-//                             <img
-//                               src={subMenuLink.image.src}
-//                               alt={subMenuLink.image.alt}
-//                               className="shrink-0"
-//                             />
-//                           </div> */}
-//                           <div
-//                             className="flex flex-col items-start justify-center"
-//                             onClick={() =>
-//                               setIsMobileMenuOpen(!isMobileMenuOpen)
-//                             }
-//                           >
-//                             <h5 className="font-medium">{subMenuLink.title}</h5>
-//                             <p className="hidden text-sm md:block">
-//                               {subMenuLink.description}
-//                             </p>
-//                           </div>
-//                         </a>
-//                       ))}
-//                     </div>
-//                   ))}
-//                 </div>
-//               </div>
-//             </div>
-//           </motion.nav>
-//         )}
-//       </AnimatePresence>
-//     </div>
-//   );
-// };
-
-// const RelumeLogo = (props: React.SVGProps<SVGSVGElement>) => {
-//   return (
-//     <svg
-//       width="currentWidth"
-//       height="currentHeight"
-//       viewBox="0 0 24 24"
-//       fill="none"
-//       xmlns="http://www.w3.org/2000/svg"
-//       {...props}
-//     >
-//       <path
-//         fill-rule="evenodd"
-//         clip-rule="evenodd"
-//         d="M20.73 7.12L20.59 6.87C20.4094 6.56769 20.1547 6.31643 19.85 6.14L13.14 2.27C12.8362 2.09375 12.4913 2.00062 12.14 2H11.85C11.4987 2.00062 11.1538 2.09375 10.85 2.27L4.14 6.15C3.83697 6.32526 3.58526 6.57697 3.41 6.88L3.27 7.13C3.09375 7.43384 3.00062 7.77874 3 8.13V15.88C3.00062 16.2313 3.09375 16.5762 3.27 16.88L3.41 17.13C3.58979 17.4295 3.84049 17.6802 4.14 17.86L10.86 21.73C11.1623 21.9099 11.5082 22.0033 11.86 22H12.14C12.4913 21.9994 12.8362 21.9063 13.14 21.73L19.85 17.85C20.156 17.6787 20.4087 17.426 20.58 17.12L20.73 16.87C20.9041 16.5653 20.9971 16.221 21 15.87V8.12C20.9994 7.76874 20.9063 7.42384 20.73 7.12ZM11.85 4H12.14L18 7.38L12 10.84L6 7.38L11.85 4ZM13 19.5L18.85 16.12L19 15.87V9.11L13 12.58V19.5Z"
-//         fill="currentColor"
-//       ></path>
-//     </svg>
-//   );
-// };
-
-export const Navbar7Defaults: Navbar7Props = {
+export const NavbarDefaults: Navbar7Props = {
   logo: {
     url: "/",
     src: mainLogo,

@@ -16,10 +16,7 @@ import utilityRoutes from "./routes/utilityRoutes.js";
 dotenv.config();
 
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? process.env.FRONTEND_URL
-      : "http://localhost:5173/",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 };
 
@@ -51,7 +48,7 @@ const PORT = process.env.PORT || 5000;
 const DATABASE_URL =
   process.env.NODE_ENV === "production"
     ? process.env.MONGO_DB_URL
-    : process.env.process.env.LOCAL_URL;
+    : process.env.LOCAL_URL;
 
 mongoose
   .connect(DATABASE_URL)

@@ -1,7 +1,7 @@
 import Axios from "axios";
 import React, { useEffect, useState } from "react";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { FaRegCopy } from "react-icons/fa";
 import Spinner from "../../components/Spinner";
 
@@ -57,9 +57,9 @@ const AdminSubscribers: React.FC = () => {
                 <th className="text-left p-4 border-b border-gray-300">
                   Email
                 </th>
-                <th className="text-left p-4 border-b border-gray-300">
-                  Subscription Date
-                </th>
+                <th className="text-left p-4 border-b border-gray-300">Date</th>
+
+                <th className="text-left p-4 border-b border-gray-300">Time</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +79,14 @@ const AdminSubscribers: React.FC = () => {
                   </td>
                   <td className="p-4">
                     {new Date(subscriber.createdAt).toLocaleString()}
+                  </td>
+
+                  <td className="p-4">
+                    {
+                      new Date(subscriber.createdAt)
+                        .toLocaleString()
+                        .split(",")[1]
+                    }
                   </td>
                 </tr>
               ))}

@@ -9,7 +9,7 @@ import { formatAmountDefault } from "../../lib/utils";
 import { currency } from "../../lib/constants";
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity, guestEmail } = useShop();
+  const { cartItems, updateQuantity } = useShop();
   const [cartData, setCartData] = useState<any[]>([]);
   const { user } = useContext(AuthContext);
 
@@ -52,7 +52,7 @@ const Cart: React.FC = () => {
 
   return (
     <section className="px-[5%] py-24 md:py-30">
-      <div className="container">
+      <div className="">
         <div className="mb-2 md:mb-5">
           <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Cart
@@ -144,17 +144,17 @@ const Cart: React.FC = () => {
 
         {cartData.length > 0 && (
           <div className="flex justify-end mt-20">
-            <div className="w-full md:w-1/2 border p-5 rounded-md border-border-secondary shadow-xxlarge">
+            <div className="w-full md:w-1/2 border p-5 rounded border-border-secondary">
               <CartTotal />
               <div className="w-full text-end mt-5 poppins">
-                {!user && !guestEmail ? (
-                  <Link to="/auth/guest-signUp">
+                {user ? (
+                  <Link to="/check_out">
                     <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
                       Proceed to checkout
                     </Button>
                   </Link>
                 ) : (
-                  <Link to="/check_out">
+                  <Link to="/auth/sign_up">
                     <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
                       Proceed to checkout
                     </Button>

@@ -25,16 +25,6 @@ const SearchModal: React.FC = () => {
       return;
     }
 
-    // try {
-    //   const { data } = await Axios.get(`${URL}/products/suggestions`, {
-    //     params: { query: searchQuery },
-    //   });
-    //   setResults(data.products);
-    //   setSuggestions(data.suggestions);
-    // } catch (error) {
-    //   console.error("Error searching for products:", error);
-    // }
-
     try {
       const { data } = await Axios.get(`${URL}/products/suggestions`, {
         params: { query: searchQuery },
@@ -42,7 +32,7 @@ const SearchModal: React.FC = () => {
       setProducts(data.products);
       setSuggestions(data.suggestions);
     } catch (error) {
-      setError("Unable to get products!");
+      setError("Network error, unable to get products!");
     } finally {
       setLoading(false);
     }
@@ -53,7 +43,7 @@ const SearchModal: React.FC = () => {
       variants={background}
       initial="initial"
       animate={isActive ? "open" : "closed"}
-      className={`bg-background-light h-[120vh] w-screen fixed top-0 left-0 right-0 bottom-0 z-[1000px] flex justify-center border-b border-border-secondary overflow-y-auto ${
+      className={`bg-white h-[120vh] w-screen fixed top-0 left-0 right-0 bottom-0 z-[1000px] flex justify-center border-b border-border-secondary overflow-y-auto ${
         searchQuery.length === 0 ? "items-center" : "items-start"
       }`}
     >
@@ -70,7 +60,7 @@ const SearchModal: React.FC = () => {
       />
 
       {isActive && (
-        <div className="container mt-10 px-9">
+        <div className="container mt-10 px-5 sm:px-10">
           <div className="w-full">
             <div className="w-full flex flex-col items-center">
               <div className="flex items-center justify-center w-full border-b border-border-secondary  outline-none gap-2">
@@ -135,12 +125,16 @@ const SearchModal: React.FC = () => {
                               key={index}
                             />
                           ))
+                        ) : error ? (
+                          <div className="col-span-4">
+                            <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
+                              {error}
+                            </p>
+                          </div>
                         ) : (
                           <div className="col-span-4">
                             <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                              {products.length < 0
-                                ? "Products not available!"
-                                : `${error}`}
+                              Products not available!
                             </p>
                           </div>
                         )}

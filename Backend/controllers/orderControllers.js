@@ -116,21 +116,6 @@ const createOrderController = async (req, res) => {
   }
 };
 
-const linkGuestOrdersController = async (req, res) => {
-  const { user, email } = req.body;
-  try {
-    const existingUser = await userModel.findOne({ email: email });
-    if (existingUser) {
-      await OrderModel.updateMany({ email }, { user });
-      res
-        .status(200)
-        .json({ message: "All your orders are linked successfully!" });
-    }
-  } catch (error) {
-    res.status(500).json({ message: "Error linking guest orders", error });
-  }
-};
-
 // Get all orders (Admin use)
 const getAllOrdersController = async (req, res) => {
   try {
@@ -170,13 +155,15 @@ const getPendingOrders = async (req, res) => {
     const limit = 20;
     const skip = (page - 1) * limit;
 
-    const orders = await OrderModel.find({ isDelivered: { $ne: "Delivered" } }) // Use $ne (not equal) operator to exclude 'Delivered' orders
+    // Using $ne (not equal) operator to exclude 'Delivered' orders
+    const orders = await OrderModel.find({ isDelivered: { $ne: "Delivered" } })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
     const totalProducts = await OrderModel.countDocuments({
       isDelivered: { $ne: "Delivered" },
-    }); // Count documents excluding 'Delivered' orders
+    });
+    // Count documents excluding 'Delivered' orders
     const totalPages = Math.ceil(totalProducts / limit);
     res.status(200).json({ orders, totalPages });
   } catch (error) {
@@ -289,36 +276,7 @@ const getOrdersByUserController = async (req, res) => {
   }
 };
 
-const getOrdersByGuestController = async (req, res) => {
-  const { guest } = req.query;
-  if (!guest) {
-    return res.status(400).json({ message: "Guest   required" });
-  }
-  try {
-    const orders = await OrderModel.find({ guestEmail: guest }).sort({
-      createdAt: -1,
-    });
-    if (!orders.length) {
-      return res.status(404).json({ message: "No Previous orders" });
-    }
-    res.status(200).json(orders);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching orders" });
-  }
-};
-
 const getOrderByUserController = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const order = await OrderModel.findById(id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
-    res.status(200).json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const getOrderByGuestController = async (req, res) => {
   const { id } = req.params;
   try {
     const order = await OrderModel.findById(id);
@@ -331,7 +289,6 @@ const getOrderByGuestController = async (req, res) => {
 
 export {
   createOrderController,
-  linkGuestOrdersController,
   getAllOrdersController,
   getOrdersByPage,
   getPendingOrders,
@@ -339,7 +296,5 @@ export {
   getOrderByIdController,
   updateOrderStatusController,
   getOrdersByUserController,
-  getOrdersByGuestController,
   getOrderByUserController,
-  getOrderByGuestController,
 };

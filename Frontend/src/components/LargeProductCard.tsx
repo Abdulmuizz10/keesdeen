@@ -42,7 +42,6 @@ const LargeProductCard: React.FC<ProductProps> = ({ product, loading }) => {
           src={product?.imageUrls[0]}
           alt={`${product.name} - New Arrival`}
           className="aspect-square size-full object-cover"
-          loading="lazy"
         />
         <div className="mt-2">
           <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">

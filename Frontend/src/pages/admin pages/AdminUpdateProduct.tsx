@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { updateProduct } from "../../context/ProductContext/ProductApiCalls";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
@@ -91,9 +91,7 @@ const AdminUpdateProduct: React.FC = () => {
         const updatedImages = [...productImages];
         updatedImages[index] = data.secure_url;
         setAdminLoader(false);
-        toast("Image uploaded!", {
-          position: "top-left", // Set position to top-left
-        });
+        toast.success("Image uploaded successfully!");
         setProductImages(updatedImages.slice(0, 5));
       }
     } catch (error) {
@@ -206,7 +204,7 @@ const AdminUpdateProduct: React.FC = () => {
                 placeholder="Product Name"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg transition-all focus:outline-none"
               />
             </div>
             <div className="w-full space-y-2">
@@ -216,7 +214,7 @@ const AdminUpdateProduct: React.FC = () => {
                 placeholder="Product Brand"
                 value={productBrand}
                 onChange={(e) => setProductBrand(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg transition-all focus:outline-none"
               />
             </div>
           </div>
@@ -227,7 +225,7 @@ const AdminUpdateProduct: React.FC = () => {
               placeholder="Product Description"
               value={productDescription}
               onChange={(e) => setProductDescription(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg transition-all"
+              className="w-full p-3 border border-gray-300 rounded-lg transition-all focus:outline-none"
               rows={3}
             />
           </div>
@@ -324,7 +322,7 @@ const AdminUpdateProduct: React.FC = () => {
                 placeholder="Product Previous Price Optional"
                 value={productPreviousPrice}
                 onChange={(e) => setProductPreviousPrice(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg focus:outline-none"
               />
             </div>
 
@@ -335,7 +333,7 @@ const AdminUpdateProduct: React.FC = () => {
                 placeholder="Product Price"
                 value={productPrice}
                 onChange={(e) => setProductPrice(e.target.value)}
-                className="w-full p-3 border border-gray-300 transition-all rounded-lg"
+                className="w-full p-3 border border-gray-300 transition-all rounded-lg focus:outline-none"
               />
             </div>
           </div>

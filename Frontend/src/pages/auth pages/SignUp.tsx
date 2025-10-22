@@ -4,10 +4,11 @@ import React, { useContext, useState } from "react";
 import { Button, Input, Label } from "@relume_io/relume-ui";
 import type { ButtonProps } from "@relume_io/relume-ui";
 import { BiLogoGoogle } from "react-icons/bi";
+import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Images, mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
-import { SignUp } from "../../context/AuthContext/AuthApiCalls";
+import { SignUpAccount } from "../../context/AuthContext/AuthApiCalls";
 import { useGoogleLogin } from "@react-oauth/google";
 import Axios from "axios";
 
@@ -15,10 +16,9 @@ import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
-import { URL } from "../../lib/constants";
-import { useShop } from "../../context/ShopContext";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
+import { URL } from "../../lib/constants";
 
 type ImageProps = {
   url?: string;
@@ -29,6 +29,7 @@ type ImageProps = {
 type Props = {
   logo: ImageProps;
   title: string;
+  subTitle: string;
   description: string;
   signUpButton: ButtonProps;
   signUpWithGoogleButton: ButtonProps;
@@ -40,41 +41,41 @@ type Props = {
   };
 };
 
-export type Signup7Props = React.ComponentPropsWithoutRef<"section"> &
+export type SignUpProps = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
-export const Signup7: React.FC = (props: Signup7Props) => {
+export const SignUp: React.FC = (props: SignUpProps) => {
   const {
     logo,
     title,
+    subTitle,
     signUpButton,
     signUpWithGoogleButton,
     image,
     logInText,
     logInLink,
   } = {
-    ...Signup7Defaults,
+    ...SignUpDefaults,
     ...props,
   } as Props;
 
-  const { guestEmail, setGuestEmail } = useShop();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [preference, setPreference] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
+
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    SignUp(
+    SignUpAccount(
       { firstName, lastName, email, password },
       dispatch,
       navigate,
-      guestEmail,
-      setGuestEmail,
       setLoading
     );
   };
@@ -92,22 +93,8 @@ export const Signup7: React.FC = (props: Signup7Props) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          if (res.data) {
-            const user = res.data.id;
-            const email = res.data.email;
-            const userInfo = { user, email };
-            const expect = await Axios.post(
-              `${URL}/orders/link-guest/orders`,
-              userInfo
-            );
-            if (expect) {
-              if (guestEmail) {
-                setGuestEmail("");
-              }
-            }
-            navigate("/");
-            setLoading(false);
-          }
+          navigate("/");
+          setLoading(false);
         } else {
           dispatch(AccessFailure());
           setLoading(false);
@@ -141,10 +128,8 @@ export const Signup7: React.FC = (props: Signup7Props) => {
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="mb-6 text-center">
-              <h1 className="mb-5 text-5xl font-bold text-neutral-800 md:mb-1 text-gradient">
-                {title}
-              </h1>
-              {/* <p className="text-neutral-600 md:text-md">{description}</p> */}
+              <h1 className="mb-5 text-4xl font-bold md:mb-1">{title}</h1>
+              <p className="mb-5 text-base text-gradient">{subTitle}</p>
             </div>
             <form
               className="grid grid-cols-1 gap-3 poppins"
@@ -152,7 +137,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
             >
               <div className="grid w-full items-center">
                 <Label htmlFor="name" className="mb-2 text-neutral-700">
-                  First name
+                  First Name
                 </Label>
                 <Input
                   placeholder="First name"
@@ -161,12 +146,12 @@ export const Signup7: React.FC = (props: Signup7Props) => {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="border-neutral-300 rounded"
+                  className="border-neutral-300 rounded bg-white"
                 />
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="name" className="mb-2 text-neutral-700">
-                  Last name
+                  Last Name
                 </Label>
                 <Input
                   placeholder="Last name"
@@ -175,7 +160,7 @@ export const Signup7: React.FC = (props: Signup7Props) => {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="border-neutral-300 rounded"
+                  className="border-neutral-300 rounded bg-white"
                 />
               </div>
               <div className="grid w-full items-center">
@@ -189,22 +174,36 @@ export const Signup7: React.FC = (props: Signup7Props) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-neutral-300 rounded"
+                  className="border-neutral-300 rounded bg-white"
                 />
               </div>
               <div className="grid w-full items-center">
                 <Label htmlFor="password" className="mb-2 text-neutral-700">
                   Password
                 </Label>
-                <Input
-                  placeholder="password"
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="border-neutral-300 rounded"
-                />
+                <div className="flex relative">
+                  <Input
+                    placeholder="password"
+                    type={preference ? "password" : "text"}
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="border-neutral-300 rounded bg-white"
+                  />
+
+                  {preference === true ? (
+                    <Eye
+                      className="absolute top-2.5 right-3.5 cursor-pointer"
+                      onClick={() => setPreference(false)}
+                    />
+                  ) : (
+                    <EyeOff
+                      className="absolute top-2.5 right-3.5 cursor-pointer"
+                      onClick={() => setPreference(true)}
+                    />
+                  )}
+                </div>
               </div>
               <div className="grid-col-1 grid gap-4">
                 <Button
@@ -248,20 +247,20 @@ export const Signup7: React.FC = (props: Signup7Props) => {
   );
 };
 
-export const Signup7Defaults: Signup7Props = {
+export const SignUpDefaults: SignUpProps = {
   logo: {
     url: "/",
     src: mainLogo,
     alt: "Logo text",
   },
-  title: "Sign up",
-  // description: "Join us to explore our exclusive collection.",
+  title: "Create your Keesdeen account",
+  subTitle: "Join our community to start shopping your favorite styles today!",
   signUpButton: {
     title: "Sign up",
   },
   signUpWithGoogleButton: {
     variant: "secondary",
-    title: "Sign in with Google",
+    title: "Continue with Google",
     iconLeft: <BiLogoGoogle className="size-6" />,
   },
   // image: {
@@ -274,7 +273,7 @@ export const Signup7Defaults: Signup7Props = {
   },
   logInText: "Already have an account?",
   logInLink: {
-    text: "Log in",
-    url: "/auth/login",
+    text: "Sign in",
+    url: "/auth/sign_in",
   },
 };

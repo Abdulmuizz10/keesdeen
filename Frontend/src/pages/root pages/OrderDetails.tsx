@@ -1,29 +1,23 @@
-import Axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Spinner from "../../components/Spinner";
+import { toast } from "sonner";
+import Axios from "axios";
 import { URL } from "../../lib/constants";
-import { toast } from "react-toastify";
 import { Country, State } from "country-state-city";
 import { formatAmountDefault } from "../../lib/utils";
-import { useShop } from "../../context/ShopContext";
 
 const OrderDetails: React.FC = () => {
   const { id } = useParams();
-  const { guestEmail: guest } = useShop();
   const [loading, setLoading] = useState<boolean>(true);
   const [order, setOrder] = useState<any>();
 
   const fetchData = async () => {
     try {
-      const endpoint = guest
-        ? `${URL}/orders/guest/order/${id}`
-        : `${URL}/orders/profile/order/${id}`;
-      const headers = !guest
-        ? {
-            withCredentials: true,
-          }
-        : {};
+      const endpoint = `${URL}/orders/profile/order/${id}`;
+      const headers = {
+        withCredentials: true,
+      };
 
       const response = await Axios.get(endpoint, headers);
       const fetchedOrder = response.data;
@@ -87,13 +81,11 @@ const OrderDetails: React.FC = () => {
     isDelivered,
     deliveredAt,
     createdAt,
-    guestOrder,
-    guestEmail,
   } = order;
 
   return (
     <section className="px-[5%] py-24 md:py-30">
-      <div className="container mx-auto bg-white rounded-lg overflow-hidden">
+      <div className="mx-auto bg-white rounded-lg overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-gray-200 text-md space-y-2">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
@@ -114,16 +106,6 @@ const OrderDetails: React.FC = () => {
             <span className="font-medium">Placed on:</span>{" "}
             {new Date(createdAt).toLocaleString()}
           </p>
-          {guestOrder && (
-            <>
-              <p className="mt-1 text-gray-600">
-                <span className="font-medium">Ordered as guest:</span> Yes
-              </p>
-              <p className="mt-1 text-gray-600">
-                <span className="font-medium">Guest email:</span> {guestEmail}
-              </p>
-            </>
-          )}
         </div>
 
         {/* Customer Information */}
