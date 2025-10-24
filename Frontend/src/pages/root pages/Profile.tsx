@@ -239,7 +239,7 @@ const OrderHistory = () => {
 const Addresses = () => {
   const { savedAddresses, setSavedAddresses } = useShop();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 5;
 
   // Pagination logic
   const totalPages = Math.ceil(savedAddresses.length / itemsPerPage);
@@ -421,7 +421,6 @@ const SavedCards = () => {
       "Are you sure you want to delete this card?"
     );
     if (!confirmDelete) return;
-
     const updated = cards.filter((card) => card.id !== id);
     setCards(updated);
     toast.success("Card deleted successfully!");
