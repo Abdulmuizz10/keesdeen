@@ -61,8 +61,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     const storedAddresses = localStorage.getItem("savedAddresses");
     return storedAddresses ? JSON.parse(storedAddresses) : [];
   });
-  const [deliveryFee, setDeliveryFee] = useState<any>();
-  const [discountPercent, setDiscountPercent] = useState<any>();
+  const [deliveryFee, setDeliveryFee] = useState<any>(0);
+  const [discountPercent, setDiscountPercent] = useState<any>(0);
   const [change, setChange] = useState<boolean>(true);
 
   useEffect(() => {

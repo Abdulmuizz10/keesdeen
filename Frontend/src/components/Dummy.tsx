@@ -727,155 +727,470 @@ const Check: React.FC = ({}) => {
 
 export default Check;
 
-// import React, { useEffect, useState } from "react";
-// import { useShop } from "../context/ShopContext";
-// import { formatAmountDefault } from "../lib/utils";
-// import { currency } from "../lib/constants";
+// // import React, { useEffect, useState } from "react";
+// // import { useShop } from "../context/ShopContext";
+// // import { formatAmountDefault } from "../lib/utils";
+// // import { currency } from "../lib/constants";
 
-// const OrderSummary: React.FC = () => {
-//   const { cartItems } = useShop();
-//   const [summaryData, setSummaryData] = useState<any[]>([]);
+// // const OrderSummary: React.FC = () => {
+// //   const { cartItems } = useShop();
+// //   const [summaryData, setSummaryData] = useState<any[]>([]);
 
-//   useEffect(() => {
-//     const data: any[] = [];
-//     for (const itemId in cartItems) {
-//       const item = cartItems[itemId];
-//       for (const variantKey in item.variants) {
-//         const quantity = item.variants[variantKey];
-//         if (quantity > 0) {
-//           const [size, color] = variantKey.split("-");
-//           data.push({
-//             id: itemId,
-//             name: item.name,
-//             price: item.price,
-//             image: item.image,
-//             size,
-//             color,
-//             quantity,
-//           });
-//         }
-//       }
-//     }
-//     setSummaryData(data);
-//   }, [cartItems]);
+// //   useEffect(() => {
+// //     const data: any[] = [];
+// //     for (const itemId in cartItems) {
+// //       const item = cartItems[itemId];
+// //       for (const variantKey in item.variants) {
+// //         const quantity = item.variants[variantKey];
+// //         if (quantity > 0) {
+// //           const [size, color] = variantKey.split("-");
+// //           data.push({
+// //             id: itemId,
+// //             name: item.name,
+// //             price: item.price,
+// //             image: item.image,
+// //             size,
+// //             color,
+// //             quantity,
+// //           });
+// //         }
+// //       }
+// //     }
+// //     setSummaryData(data);
+// //   }, [cartItems]);
 
-//   const subtotal = summaryData.reduce(
-//     (acc, item) => acc + item.price * item.quantity,
-//     0
-//   );
+// //   const subtotal = summaryData.reduce(
+// //     (acc, item) => acc + item.price * item.quantity,
+// //     0
+// //   );
 
-//   const shipping = subtotal > 0 ? 0 : 0;
-//   const tax = 0;
-//   const total = subtotal + shipping + tax;
+// //   const shipping = subtotal > 0 ? 0 : 0;
+// //   const tax = 0;
+// //   const total = subtotal + shipping + tax;
+
+// //   return (
+// //     <div className="">
+// //       {/* Header */}
+// //       {/* <div className="mb-10 text-center">
+// //         <p className="text-gray-500 text-base md:text-lg">
+// //           Review your order before completing checkout.
+// //         </p>
+// //       </div> */}
+
+// //       {/* Order items */}
+// //       <div className="space-y-6">
+// //         {summaryData.length === 0 ? (
+// //           <p className="text-center text-gray-500 text-lg">
+// //             No items to display.
+// //           </p>
+// //         ) : (
+// //           summaryData.map((item, index) => (
+// //             <div
+// //               key={index}
+// //               className="flex flex-col md:flex-row items-start justify-between gap-5 border-b border-border-secondary pb-5"
+// //             >
+// //               {/* Left: Image */}
+// //               <div className="flex items-center gap-5 flex-1">
+// //                 <img
+// //                   src={item.image}
+// //                   alt={item.name}
+// //                   className="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow-sm"
+// //                 />
+
+// //                 {/* Details */}
+// //                 <div className="flex flex-col space-y-1">
+// //                   <h3 className="text-lg md:text-xl font-semibold text-gray-900 bricolage-grotesque">
+// //                     {item.name}
+// //                   </h3>
+
+// //                   <p className="text-gray-500 text-sm md:text-base">
+// //                     Size:{" "}
+// //                     <span className="text-gray-800 font-medium">
+// //                       {item.size}
+// //                     </span>{" "}
+// //                     | Color:{" "}
+// //                     <span className="text-gray-800 font-medium">
+// //                       {item.color}
+// //                     </span>
+// //                   </p>
+
+// //                   <p className="text-gray-500 text-sm md:text-base">
+// //                     Quantity:{" "}
+// //                     <span className="text-gray-800 font-medium">
+// //                       {item.quantity}
+// //                     </span>
+// //                   </p>
+// //                 </div>
+// //               </div>
+
+// //               {/* Right: Price */}
+// //               <div className="flex items-center md:items-end justify-between md:flex-col md:text-right w-full md:w-auto">
+// //                 <span className="text-lg md:text-xl font-semibold text-gray-900">
+// //                   {formatAmountDefault(currency, item.price * item.quantity)}
+// //                 </span>
+// //               </div>
+// //             </div>
+// //           ))
+// //         )}
+// //       </div>
+
+// //       {/* Summary totals */}
+// //       {summaryData.length > 0 && (
+// //         <div className="mt-5 border border-border-secondary rounded shadow-lg p-6 md:p-8 bg-white space-y-4">
+// //           <h3 className="text-2xl font-semibold text-gray-900 bricolage-grotesque">
+// //             Order Summery
+// //           </h3>
+
+// //           <div className="space-y-3 text-gray-700">
+// //             <div className="flex justify-between text-sm md:text-base">
+// //               <span>Subtotal</span>
+// //               <span className="text-gray-800 font-medium">
+// //                 {formatAmountDefault(currency, subtotal)}
+// //               </span>
+// //             </div>
+// //             <div className="flex justify-between text-sm md:text-base">
+// //               <span>Shipping</span>
+// //               <span className="text-gray-800 font-medium">
+// //                 {shipping > 0
+// //                   ? formatAmountDefault(currency, shipping)
+// //                   : "Free"}
+// //               </span>
+// //             </div>
+// //             <div className="flex justify-between text-sm md:text-base">
+// //               <span>Estimated Tax</span>
+// //               <span className="text-gray-800 font-medium">
+// //                 {formatAmountDefault(currency, tax)}
+// //               </span>
+// //             </div>
+// //           </div>
+
+// //           <div className="border-t border-gray-200 my-4" />
+
+// //           <div className="flex justify-between items-center text-lg md:text-xl font-semibold text-gray-900">
+// //             <span>Total</span>
+// //             <span className="text-gray-800 font-medium">
+// //               {formatAmountDefault(currency, total)}
+// //             </span>
+// //           </div>
+// //         </div>
+// //       )}
+// //     </div>
+// //   );
+// // };
+
+// // export default OrderSummary;
+
+// import React, { useState } from "react";
+// import { motion } from "framer-motion";
+// import { CreditCard, MapPin, X } from "lucide-react";
+// import { Button } from "@relume_io/relume-ui";
+// import { Country, State } from "country-state-city";
+// import PhoneInput from "react-phone-input-2";
+// import "react-phone-input-2/lib/style.css";
+
+// interface SetShowModalProps {
+//   setShowModal: (value: boolean) => void;
+// }
+
+// const Modal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
+//   const [deliverySelectedCountry, setDeliverySelectedCountry] =
+//     useState<any>("");
+//   const [deliverySelectedState, setDeliverySelectedState] = useState<any>("");
+//   const [billingSelectedCountry, setBillingSelectedCountry] = useState<any>("");
+//   const [billingSelectedState, setBillingSelectedState] = useState<any>("");
+//   const [sameAsDelivery, setSameAsDelivery] = useState(false);
+
+//   const handleBillingCheckbox = () => {
+//     setSameAsDelivery(!sameAsDelivery);
+//   };
 
 //   return (
-//     <div className="">
-//       {/* Header */}
-//       {/* <div className="mb-10 text-center">
-//         <p className="text-gray-500 text-base md:text-lg">
-//           Review your order before completing checkout.
-//         </p>
-//       </div> */}
-
-//       {/* Order items */}
-//       <div className="space-y-6">
-//         {summaryData.length === 0 ? (
-//           <p className="text-center text-gray-500 text-lg">
-//             No items to display.
+//     <div className="fixed inset-0 h-screen flex items-center justify-center !z-50">
+//       <div
+//         className="w-full h-full fixed inset-0 bg-black/50"
+//         onClick={() => setShowModal(false)}
+//       />
+//       <motion.div
+//         initial={{ opacity: 0, y: 100 }}
+//         animate={{ opacity: 1, y: 0 }}
+//         exit={{ opacity: 0, y: 100 }}
+//         transition={{ duration: 0.3 }}
+//         className="relative h-[70vh] w-[90%] sm:w-3/5 overflow-y-auto bg-white border border-border-secondary rounded-md p-10 no-scrollbar"
+//       >
+//         {/* Header */}
+//         <div className="mb-10 text-center">
+//           <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-1">
+//             Address
+//           </h3>
+//           <p className="text-gray-500 text-sm md:text-base">
+//             Please create and save your address.
 //           </p>
-//         ) : (
-//           summaryData.map((item, index) => (
-//             <div
-//               key={index}
-//               className="flex flex-col md:flex-row items-start justify-between gap-5 border-b border-border-secondary pb-5"
-//             >
-//               {/* Left: Image */}
-//               <div className="flex items-center gap-5 flex-1">
-//                 <img
-//                   src={item.image}
-//                   alt={item.name}
-//                   className="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow-sm"
+//         </div>
+//         <X
+//           className="absolute top-3 right-5 cursor-pointer"
+//           onClick={() => setShowModal(false)}
+//         />
+
+//         <form className="flex flex-col gap-5">
+//           <div>
+//             <div className="flex gap-3">
+//               <MapPin />
+//               <h2 className="text-xl font-semibold mb-4">Delivery Address</h2>
+//             </div>
+//             <div className="grid grid-cols-2 gap-5 w-full poppins">
+//               <div className="relative w-full mb-1 max-sm:col-span-2">
+//                 <label>First Name</label>
+//                 <input
+//                   type="text"
+//                   placeholder="First name"
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
 //                 />
+//               </div>
+//               <div className="relative w-full mb-1 max-sm:col-span-2">
+//                 <label>Last Name</label>
+//                 <input
+//                   type="text"
+//                   placeholder="Last name"
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                 />
+//               </div>
+//               <div className="relative w-full mb-1 col-span-2">
+//                 <label>Email Address</label>
+//                 <input
+//                   type="text"
+//                   placeholder="example@gmail.com"
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                 />
+//               </div>
+//               <div className="relative w-full mb-1 max-sm:col-span-2">
+//                 <label>Country</label>
+//                 <select
+//                   value={deliverySelectedCountry}
+//                   onChange={(e) => setDeliverySelectedCountry(e.target.value)}
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-3"
+//                 >
+//                   <option value="">Select country</option>
+//                   {Country.getAllCountries().map((country) => (
+//                     <option key={country.isoCode} value={country.isoCode}>
+//                       {country.name}
+//                     </option>
+//                   ))}
+//                 </select>
+//               </div>
+//               <div className="relative w-full mb-1 max-sm:col-span-2">
+//                 <label>State / Province</label>
+//                 <select
+//                   value={deliverySelectedState}
+//                   onChange={(e) => setDeliverySelectedState(e.target.value)}
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-3"
+//                 >
+//                   <option value="">Select state / province</option>
+//                   {State.getStatesOfCountry(deliverySelectedCountry).map(
+//                     (state) => (
+//                       <option key={state.isoCode} value={state.isoCode}>
+//                         {state.name}
+//                       </option>
+//                     )
+//                   )}
+//                 </select>
+//               </div>
 
-//                 {/* Details */}
-//                 <div className="flex flex-col space-y-1">
-//                   <h3 className="text-lg md:text-xl font-semibold text-gray-900 bricolage-grotesque">
-//                     {item.name}
-//                   </h3>
+//               {/* address */}
+//               <div className="relative w-full mb-1 max-md:col-span-2">
+//                 <label>Address Line One</label>
+//                 <input
+//                   type="text"
+//                   placeholder="Address line one"
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                 />
+//               </div>
+//               <div className="relative w-full mb-1 max-md:col-span-2">
+//                 <div className="flex items-center gap-1">
+//                   <label>Address Line Two </label>
+//                   <span className="hidden md:flex">(optional)</span>
+//                 </div>
+//                 <input
+//                   type="text"
+//                   placeholder="Address line two optional"
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md  focus:outline-none mt-3"
+//                 />
+//               </div>
+//               {/* Phone Number */}
+//               <div className="relative w-full mb-1 max-md:col-span-2">
+//                 <label>Phone Number</label>
+//                 <PhoneInput
+//                   country="gb"
+//                   value={"deliveryPhoneNumber"}
+//                   onChange={(phone) => {}}
+//                   containerStyle={{
+//                     width: "100%",
+//                     borderRadius: "0.375rem",
+//                     marginTop: "12px",
+//                   }}
+//                   inputStyle={{
+//                     width: "100%",
+//                     border: "1px solid #afafaf",
+//                     padding: "1.5rem 3rem",
+//                     borderRadius: "0.375rem",
+//                   }}
+//                 />
+//               </div>
+//               {/* Zip Code */}
+//               <div className="relative w-full mb-1 max-md:col-span-2">
+//                 <label>Zip Code / Postal code</label>
+//                 <input
+//                   type="text"
+//                   placeholder="Zip code / Postal code"
+//                   maxLength={12} // Preventing user input beyond 12 characters
+//                   className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//           <div className="col-span-2 flex items-center gap-2">
+//             <input
+//               type="checkbox"
+//               id="billingSameAsShipping"
+//               checked={sameAsDelivery}
+//               onChange={handleBillingCheckbox}
+//               className="h-5 w-5 cursor-pointer"
+//             />
+//             <label
+//               htmlFor="billingSameAsShipping"
+//               className="text-[14px] sm:text-base cursor-pointer"
+//             >
+//               Billing address same as delivery address
+//             </label>
+//           </div>
+//           {!sameAsDelivery ? (
+//             <div>
+//               <div className="flex gap-3">
+//                 <CreditCard />
+//                 <h2 className="text-xl font-semibold mb-4">Billing Address</h2>
+//               </div>
 
-//                   <p className="text-gray-500 text-sm md:text-base">
-//                     Size:{" "}
-//                     <span className="text-gray-800 font-medium">
-//                       {item.size}
-//                     </span>{" "}
-//                     | Color:{" "}
-//                     <span className="text-gray-800 font-medium">
-//                       {item.color}
-//                     </span>
-//                   </p>
+//               <div className="grid grid-cols-2 gap-5 w-full poppins">
+//                 <div className="relative w-full mb-1 max-sm:col-span-2">
+//                   <label>First Name</label>
+//                   <input
+//                     type="text"
+//                     placeholder="First name"
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                   />
+//                 </div>
+//                 <div className="relative w-full mb-1 max-sm:col-span-2">
+//                   <label>Last Name</label>
+//                   <input
+//                     type="text"
+//                     placeholder="Last name"
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                   />
+//                 </div>
+//                 <div className="relative w-full mb-1 col-span-2">
+//                   <label>Email Address</label>
+//                   <input
+//                     type="text"
+//                     placeholder="example@gmail.com"
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                   />
+//                 </div>
+//                 <div className="relative w-full mb-1 max-sm:col-span-2">
+//                   <label>Country</label>
+//                   <select
+//                     value={billingSelectedCountry}
+//                     onChange={(e) => setBillingSelectedCountry(e.target.value)}
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-3"
+//                   >
+//                     <option value="">Select country</option>
+//                     {Country.getAllCountries().map((country) => (
+//                       <option key={country.isoCode} value={country.isoCode}>
+//                         {country.name}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
 
-//                   <p className="text-gray-500 text-sm md:text-base">
-//                     Quantity:{" "}
-//                     <span className="text-gray-800 font-medium">
-//                       {item.quantity}
-//                     </span>
-//                   </p>
+//                 <div className="relative w-full mb-1 max-sm:col-span-2">
+//                   <label>State / Province</label>
+//                   <select
+//                     value={billingSelectedState}
+//                     onChange={(e) => setBillingSelectedState(e.target.value)}
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-3"
+//                     autoComplete="no"
+//                   >
+//                     <option value="">Select State / Province</option>
+//                     {State.getStatesOfCountry(billingSelectedCountry).map(
+//                       (state) => (
+//                         <option key={state.isoCode} value={state.isoCode}>
+//                           {state.name}
+//                         </option>
+//                       )
+//                     )}
+//                   </select>
+//                 </div>
+
+//                 {/* address */}
+//                 <div className="relative w-full mb-1 max-md:col-span-2">
+//                   <label>Address Line One</label>
+//                   <input
+//                     type="text"
+//                     placeholder="Address line one"
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                   />
+//                 </div>
+
+//                 <div className="relative w-full mb-1 max-md:col-span-2">
+//                   <div className="flex items-center gap-1">
+//                     <label>Address Line Two </label>
+//                     <span className="hidden md:flex">(optional)</span>
+//                   </div>
+//                   <input
+//                     type="text"
+//                     placeholder="Address line two optional"
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md  focus:outline-none mt-3"
+//                   />
+//                 </div>
+//                 {/* Phone Number */}
+//                 <div className="relative w-full mb-1 max-md:col-span-2">
+//                   <label>Phone Number</label>
+//                   <PhoneInput
+//                     country="gb"
+//                     value={"deliveryPhoneNumber"}
+//                     onChange={(phone) => {}}
+//                     containerStyle={{
+//                       width: "100%",
+//                       borderRadius: "0.375rem",
+//                       marginTop: "12px",
+//                     }}
+//                     inputStyle={{
+//                       width: "100%",
+//                       border: "1px solid #afafaf",
+//                       padding: "1.5rem 3rem",
+//                       borderRadius: "0.375rem",
+//                     }}
+//                   />
+//                 </div>
+//                 {/* Zip Code */}
+//                 <div className="relative w-full mb-1 max-md:col-span-2">
+//                   <label>Zip Code / Postal code</label>
+//                   <input
+//                     type="text"
+//                     placeholder="Zip code / Postal code"
+//                     maxLength={12} // Preventing user input beyond 12 characters
+//                     className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-3"
+//                   />
 //                 </div>
 //               </div>
-
-//               {/* Right: Price */}
-//               <div className="flex items-center md:items-end justify-between md:flex-col md:text-right w-full md:w-auto">
-//                 <span className="text-lg md:text-xl font-semibold text-gray-900">
-//                   {formatAmountDefault(currency, item.price * item.quantity)}
-//                 </span>
-//               </div>
 //             </div>
-//           ))
-//         )}
-//       </div>
+//           ) : null}
 
-//       {/* Summary totals */}
-//       {summaryData.length > 0 && (
-//         <div className="mt-5 border border-border-secondary rounded shadow-lg p-6 md:p-8 bg-white space-y-4">
-//           <h3 className="text-2xl font-semibold text-gray-900 bricolage-grotesque">
-//             Order Summery
-//           </h3>
-
-//           <div className="space-y-3 text-gray-700">
-//             <div className="flex justify-between text-sm md:text-base">
-//               <span>Subtotal</span>
-//               <span className="text-gray-800 font-medium">
-//                 {formatAmountDefault(currency, subtotal)}
-//               </span>
-//             </div>
-//             <div className="flex justify-between text-sm md:text-base">
-//               <span>Shipping</span>
-//               <span className="text-gray-800 font-medium">
-//                 {shipping > 0
-//                   ? formatAmountDefault(currency, shipping)
-//                   : "Free"}
-//               </span>
-//             </div>
-//             <div className="flex justify-between text-sm md:text-base">
-//               <span>Estimated Tax</span>
-//               <span className="text-gray-800 font-medium">
-//                 {formatAmountDefault(currency, tax)}
-//               </span>
-//             </div>
-//           </div>
-
-//           <div className="border-t border-gray-200 my-4" />
-
-//           <div className="flex justify-between items-center text-lg md:text-xl font-semibold text-gray-900">
-//             <span>Total</span>
-//             <span className="text-gray-800 font-medium">
-//               {formatAmountDefault(currency, total)}
-//             </span>
-//           </div>
-//         </div>
-//       )}
+//           <Button className="bg-brand-neutral text-white rounded-md py-3 px-10 w-full text-base poppins">
+//             Save Address
+//           </Button>
+//         </form>
+//       </motion.div>
 //     </div>
 //   );
 // };
 
-// export default OrderSummary;
+// export default Modal;

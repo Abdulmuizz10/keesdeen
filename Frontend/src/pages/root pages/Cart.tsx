@@ -81,7 +81,7 @@ const Cart: React.FC = () => {
                     />
 
                     <div className="flex flex-col">
-                      <h3 className="text-base md:text-xl lg:text-2xl font-semibold text-text-primary bricolage-grotesque">
+                      <h3 className="text-base sm:text-xl lg:text-2xl font-semibold text-text-primary bricolage-grotesque">
                         {item.name}
                       </h3>
 

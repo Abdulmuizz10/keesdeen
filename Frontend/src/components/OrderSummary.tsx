@@ -55,7 +55,7 @@ const OrderSummary: React.FC = () => {
       </div>
 
       {/* Order Items */}
-      <div className="space-y-6 pt-5">
+      <div className="space-y-6">
         {summaryData.length === 0 ? (
           <p className="text-center text-gray-500 text-lg">
             No items to display.
@@ -77,7 +77,7 @@ const OrderSummary: React.FC = () => {
 
                   {/* Details */}
                   <div className="flex flex-col space-y-1">
-                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 bricolage-grotesque">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 bricolage-grotesque">
                       {item.name}
                     </h3>
 
@@ -131,37 +131,8 @@ const OrderSummary: React.FC = () => {
 
       {/* Summary totals */}
       {summaryData.length > 0 && (
-        <div className="mt-5 border border-border-secondary rounded shadow-lg p-6 md:p-8 bg-white space-y-4">
-          <h3 className="text-2xl font-semibold text-gray-900 bricolage-grotesque">
-            Order Details
-          </h3>
-
-          <div className="space-y-3 text-gray-700">
-            <div className="flex justify-between text-sm md:text-base">
-              <span>Subtotal</span>
-              <span className="text-gray-800 font-medium">
-                {formatAmountDefault(currency, subtotal)}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm md:text-base">
-              <span>Shipping</span>
-              <span className="text-gray-800 font-medium">
-                {shipping > 0
-                  ? formatAmountDefault(currency, shipping)
-                  : "Free"}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm md:text-base">
-              <span>Estimated Tax</span>
-              <span className="text-gray-800 font-medium">
-                {formatAmountDefault(currency, tax)}
-              </span>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200 my-4" />
-
-          <div className="flex justify-between items-center text-lg md:text-xl font-semibold text-gray-900">
+        <div className="mt-5 rounded shadow-lg bg-white border-b border-gray-200">
+          <div className="flex justify-between items-center text-lg md:text-xl font-semibold text-gray-900 my-3">
             <span>Total</span>
             <span className="text-gray-800 font-medium">
               {formatAmountDefault(currency, total)}
