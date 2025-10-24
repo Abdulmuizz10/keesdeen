@@ -77,7 +77,7 @@ const OrderSummary: React.FC = () => {
 
                   {/* Details */}
                   <div className="flex flex-col space-y-1">
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 bricolage-grotesque">
+                    <h3 className="text-base sm:text-xl font-semibold text-gray-900 bricolage-grotesque">
                       {item.name}
                     </h3>
 
