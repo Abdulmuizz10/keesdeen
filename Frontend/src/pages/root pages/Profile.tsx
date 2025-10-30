@@ -2,11 +2,12 @@ import { Button } from "@relume_io/relume-ui";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import LogOutButton from "../../components/LogOutButton";
-import { useShop } from "../../context/ShopContext";
 import { Pencil, Trash2, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Country, State } from "country-state-city";
 import { toast } from "sonner";
+import Axios from "axios";
+import { URL } from "../../lib/constants";
 
 export interface UserProfile {
   id: string;
@@ -42,7 +43,7 @@ const Profile: React.FC = () => {
         </div>
         {/* Profile Section */}
         <div className="pt-5 pb-10">
-          <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center sm:gap-3 lg:gap-5">
             <div className="w-24 h-24 rounded-full border bg-brand-neutral flex items-center justify-center text-text-light text-3xl lg:text-4xl">
               {user?.firstName.split("")[0]}
             </div>
@@ -63,7 +64,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        <div>
+        <div className="mb-60">
           <div className="w-full flex justify-center">
             {tabStatus.map((item: any, index) => (
               <Button
@@ -80,7 +81,7 @@ const Profile: React.FC = () => {
           <div className="mt-10">{tabComponents[tab]}</div>
         </div>
 
-        <div className="w-full flex justify-end mt-10 lg:mt-14">
+        <div className="w-full flex justify-end">
           <LogOutButton />
         </div>
       </div>
@@ -89,147 +90,134 @@ const Profile: React.FC = () => {
 };
 
 const OrderHistory = () => {
-  const [orders, setOrders] = useState<
-    { id: string; date: string; total: string; status: string; items: number }[]
-  >([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // You can adjust this
+  const [orders, setOrders] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  useEffect(() => {
-    const fakeOrders = [
-      {
-        id: "ORD-001",
-        date: "2025-10-10",
-        total: "$249.99",
-        status: "Delivered",
-        items: 3,
-      },
-      {
-        id: "ORD-002",
-        date: "2025-09-27",
-        total: "$89.50",
-        status: "In Transit",
-        items: 1,
-      },
-      {
-        id: "ORD-003",
-        date: "2025-08-15",
-        total: "$129.00",
-        status: "Cancelled",
-        items: 2,
-      },
-      {
-        id: "ORD-004",
-        date: "2025-07-20",
-        total: "$179.99",
-        status: "Delivered",
-        items: 4,
-      },
-      {
-        id: "ORD-005",
-        date: "2025-06-11",
-        total: "$59.99",
-        status: "Delivered",
-        items: 1,
-      },
-      {
-        id: "ORD-005",
-        date: "2025-06-11",
-        total: "$59.99",
-        status: "Delivered",
-        items: 6,
-      },
-      {
-        id: "ORD-005",
-        date: "2025-06-11",
-        total: "$59.99",
-        status: "Delivered",
-        items: 3,
-      },
-    ];
-
-    setOrders(fakeOrders);
-  }, []);
-
-  // Pagination logic
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    try {
+      const response = await Axios.get(
+        `${URL}/orders/profile/pagination-orders?page=${page}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        setOrders(response.data.orders);
+        setTotalPages(response.data.totalPages);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (error) {
+      toast.error("Error fetching orders. Please refresh the page");
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
+
+  // Fetch data from backend
+
   return (
     <section className="w-full">
-      <div>
-        {currentOrders.map((order) => (
+      {loading ? (
+        Array.from({ length: 5 }).map((_, index: number) => (
           <div
-            key={order.id}
-            className="flex flex-col sm:flex-row sm:items-center justify-between py-10 sm:px-5 border-b border-border-secondary hover:bg-gray-50 transition-all duration-200"
+            key={index}
+            className="gap-4 py-10 sm:px-5 border-b border-border-secondary transition-all duration-200"
           >
-            <div className="space-y-1">
-              <p className="text-sm text-gray-500">Order ID</p>
-              <p className="font-semibold text-gray-900">{order.id}</p>
-              <p className="text-sm text-gray-600">
-                {order.items} {order.items > 1 ? "items" : "item"} •{" "}
-                {order.date}
-              </p>
-            </div>
-
-            <div className="mt-4 sm:mt-0 flex flex-col sm:items-end gap-2">
-              <span
-                className={`text-sm font-medium ${
-                  order.status === "Delivered"
-                    ? "text-green-600"
-                    : order.status === "Cancelled"
-                    ? "text-red-600"
-                    : "text-yellow-600"
-                }`}
-              >
-                {order.status}
-              </span>
-              <p className="font-semibold text-gray-900">{order.total}</p>
-              <Button className="mt-4 bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full text-base poppins">
-                More details
-              </Button>
+            {/* Address Details */}
+            <div className="space-y-1 text-gray-700">
+              <div className="h-6 bg-gray-200 animate-pulse" />
+              <div className="h-6 bg-gray-200 animate-pulse" />
+              <div className="h-6 bg-gray-200 animate-pulse" />
+              <div className="h-6 bg-gray-200 animate-pulse" />
             </div>
           </div>
-        ))}
-      </div>
+        ))
+      ) : orders.length > 0 ? (
+        orders?.map((order: any, index: number) => {
+          return (
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row sm:items-center justify-between py-10 sm:px-5 border-b border-border-secondary hover:bg-gray-50 transition-all duration-200"
+            >
+              <div className="space-y-1">
+                <p className="text-sm text-gray-500">Order ID</p>
+                <p className="font-semibold text-gray-900">{order._id}</p>
+                <p className="text-sm text-gray-600">
+                  {order.items} {order.items > 1 ? "items" : "item"} •{" "}
+                  {new Date(order.paidAt).toLocaleString()}
+                </p>
+              </div>
+              <div className="mt-4 sm:mt-0 flex flex-col sm:items-end gap-2">
+                <span
+                  className={`text-sm font-medium ${
+                    order.isDelivered === "Delivered"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
+                >
+                  {order.isDelivered}
+                </span>
+                <p className="font-semibold text-gray-900">{order.total}</p>
+                <Link
+                  to={`/order_details/${order._id}`}
+                  className="w-full md:w-auto max-sm:mt-5"
+                >
+                  <Button className="mt-4 bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full text-base poppins">
+                    More details
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          );
+        })
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-4 mt-20">
+          <p className="text-base sm:text-md text-center text-text-secondary">
+            You haven’t placed any orders yet. Start shopping to place your
+            first one!
+          </p>
 
-      {orders.length === 0 && (
-        <p className="text-center text-gray-500 mt-10">
-          No order history available.
-        </p>
+          <Link to="/collections/shop_all">
+            <Button className="`w-full my-4 sm:w-fit active:bg-brand-neutral/50 bg-brand-neutral text-text-light border-none rounded-md poppins">
+              Shop Now
+            </Button>
+          </Link>
+        </div>
       )}
 
-      {/* Pagination Controls */}
-      {orders.length > itemsPerPage && (
-        <div className="flex justify-center items-center gap-3 mt-8">
-          <Button
+      {/* Pagination */}
+      {orders.length > 4 && (
+        <div className="flex justify-end mt-30 gap-3 poppins">
+          <button
+            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 rounded-md"
+            onClick={() => {
+              setCurrentPage((prev) => Math.max(prev - 1, 1));
+            }}
           >
-            Prev
-          </Button>
+            Previous
+          </button>
 
-          <span className="text-sm font-medium text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <Button
+          <button
+            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
+              currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 rounded-md"
+            onClick={() => {
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+            }}
           >
             Next
-          </Button>
+          </button>
         </div>
       )}
     </section>
@@ -237,124 +225,131 @@ const OrderHistory = () => {
 };
 
 const Addresses = () => {
-  const { savedAddresses, setSavedAddresses } = useShop();
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [address, setAddress] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Pagination logic
-  const totalPages = Math.ceil(savedAddresses.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentAddresses = savedAddresses.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  // Delete function
-  const handleDeleteAddress = (id: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this address?"
-    );
-    if (!confirmed) return;
-    const updatedAddresses = savedAddresses.filter(
-      (addr: any) => addr.id !== id
-    );
-    setSavedAddresses(updatedAddresses);
-    toast.success("Address deleted successfully!");
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.get(`${URL}/address/get-address`, {
+        withCredentials: true,
+      });
+      if (response.status === 200) {
+        setAddress(response.data);
+      }
+    } catch (error) {
+      toast.error("Error fetching address. Please refresh the page");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Fetch data from backend
+
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this address?"
+    );
+    if (confirmDelete) {
+      setLoading(true);
+      try {
+        const response = await Axios.delete(
+          `${URL}/address/${id}/delete-address`,
+          {
+            withCredentials: true,
+            validateStatus: (status: any) => status < 600,
+          }
+        );
+        if (response.status === 200) {
+          fetchData();
+          toast.success(response.data.message);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          toast.error(response.data.message || "Something went wrong");
+        }
+      } catch (err) {
+        toast.error("Address can't be deleted!");
+      }
     }
   };
 
   return (
     <section className="w-full">
-      {currentAddresses.length > 0 ? (
-        <div>
-          {currentAddresses.map((address: any) => {
-            const { deliveryAddress } = address;
-            const countryName =
-              Country.getCountryByCode(deliveryAddress.country)?.name ||
-              deliveryAddress.country;
-            const stateName =
-              State.getStateByCodeAndCountry(
-                deliveryAddress.state,
-                deliveryAddress.country
-              )?.name || deliveryAddress.state;
-            return (
-              <div
-                key={address.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-10 sm:px-5 border-b border-border-secondary hover:bg-gray-50 transition-all duration-200"
-              >
-                {/* Address Details */}
-                <div className="space-y-1 text-gray-700">
-                  <p className="font-semibold text-gray-900">
-                    {deliveryAddress.firstName} {deliveryAddress.lastName}
-                  </p>
-                  <p className="text-sm">{deliveryAddress.address1}</p>
-                  {deliveryAddress.address2 && (
-                    <p className="text-sm">{deliveryAddress.address2}</p>
-                  )}
-                  <p className="text-sm">
-                    {stateName}, {countryName}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {deliveryAddress.phone}
-                  </p>
-                </div>
+      {loading ? (
+        Array.from({ length: 5 }).map((_, index: number) => (
+          <div
+            key={index}
+            className="gap-4 py-10 sm:px-5 border-b border-border-secondary transition-all duration-200"
+          >
+            {/* Address Details */}
+            <div className="space-y-1 text-gray-700">
+              <div className="h-6 bg-gray-200 animate-pulse" />
+              <div className="h-6 bg-gray-200 animate-pulse" />
+              <div className="h-6 bg-gray-200 animate-pulse" />
+              <div className="h-6 bg-gray-200 animate-pulse" />
+            </div>
+          </div>
+        ))
+      ) : address.length > 0 ? (
+        address?.map((address: any, index: number) => {
+          const { shippingAddress } = address;
+          const countryName =
+            Country.getCountryByCode(shippingAddress.country)?.name ||
+            shippingAddress.country;
+          const stateName =
+            State.getStateByCodeAndCountry(
+              shippingAddress.state,
+              shippingAddress.country
+            )?.name || shippingAddress.state;
 
-                {/* Icons */}
-                <div className="flex items-center gap-4 sm:gap-6">
-                  <Link
-                    to={`/update-address/${address.id}`}
-                    className="text-gray-600 hover:text-black transition"
-                    title="Update address"
-                  >
-                    <Pencil size={20} />
-                  </Link>
-                  <button
-                    onClick={() => handleDeleteAddress(address.id)}
-                    className="text-gray-600 hover:text-red-600 transition"
-                    title="Delete address"
-                  >
-                    <Trash2 size={20} className="text-text-error" />
-                  </button>
-                </div>
+          return (
+            <div
+              key={index}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-10 sm:px-5 border-b border-border-secondary hover:bg-gray-50 transition-all duration-200"
+            >
+              {/* Address Details */}
+              <div className="space-y-1 text-gray-700">
+                <p className="font-semibold text-gray-900">
+                  {shippingAddress.firstName} {shippingAddress.lastName}
+                </p>
+                <p className="text-sm">{shippingAddress.address1}</p>
+                {shippingAddress.address2 && (
+                  <p className="text-sm">{shippingAddress.address2}</p>
+                )}
+                <p className="text-sm">
+                  {stateName}, {countryName}
+                </p>
+                <p className="text-sm text-gray-500">{shippingAddress.phone}</p>
               </div>
-            );
-          })}
-        </div>
+
+              {/* Icons */}
+              <div className="flex items-center gap-4 sm:gap-6">
+                <Link
+                  to={`/update-address/${address.id}`}
+                  className="text-gray-600 hover:text-black transition"
+                  title="Update address"
+                >
+                  <Pencil size={20} />
+                </Link>
+                <button
+                  onClick={() => handleDelete(address._id)}
+                  className="text-gray-600 hover:text-red-600 transition"
+                  title="Delete address"
+                >
+                  <Trash2 size={20} className="text-text-error" />
+                </button>
+              </div>
+            </div>
+          );
+        })
       ) : (
-        <p className="text-center text-gray-500">No saved addresses found.</p>
-      )}
-
-      {/* Pagination */}
-      {savedAddresses.length > itemsPerPage && (
-        <div className="flex justify-center items-center gap-3 mt-8">
-          <Button
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}
-            className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 rounded-md"
-          >
-            Prev
-          </Button>
-
-          <span className="text-sm font-medium text-gray-600">
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <Button
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}
-            className="px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-50 rounded-md"
-          >
-            Next
-          </Button>
-        </div>
+        <p className="text-base sm:text-xl text-center">
+          No Address available.
+        </p>
       )}
     </section>
   );

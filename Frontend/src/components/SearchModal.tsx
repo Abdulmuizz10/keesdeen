@@ -26,9 +26,12 @@ const SearchModal: React.FC = () => {
     }
 
     try {
-      const { data } = await Axios.get(`${URL}/products/suggestions`, {
-        params: { query: searchQuery },
-      });
+      const { data } = await Axios.get(
+        `${URL}/products/search/suggestions-products`,
+        {
+          params: { query: searchQuery },
+        }
+      );
       setProducts(data.products);
       setSuggestions(data.suggestions);
     } catch (error) {
@@ -100,7 +103,10 @@ const SearchModal: React.FC = () => {
                     </div>
                     <ul className="flex flex-col gap-2">
                       {suggestions.map((suggestion: any, index: number) => (
-                        <Link to={`/collections/${suggestion}`} key={index}>
+                        <Link
+                          to={`/collections/search/${suggestion}`}
+                          key={index}
+                        >
                           <li className="poppins text-md md:text-xl text-gray-500">
                             {suggestion}
                           </li>

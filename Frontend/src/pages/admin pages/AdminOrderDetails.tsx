@@ -144,7 +144,7 @@ const AdminOrderDetails: React.FC = () => {
       {/* Customer Information */}
       <div className="p-6 border-b text-md space-y-2">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-          Delivery information
+          Shipping information
         </h2>
         <p className="text-gray-800">
           <span className="font-medium">Name:</span> {shippingAddress.firstName}{" "}

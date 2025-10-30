@@ -1,64 +1,289 @@
 import ProductModel from "../models/productModel.js";
 
-// Create a new product
-const createProductController = async (req, res) => {
-  try {
-    const product = new ProductModel(req.body);
-    const savedProduct = await product.save();
-    res.status(200).json(savedProduct);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+// Client Controllers
 
-// Get all products
-const getAllProductsController = async (req, res) => {
+// Home
+const getHomeBestSellersController = async (req, res) => {
   try {
-    const products = await ProductModel.find().sort({ createdAt: -1 });
+    const products = await ProductModel.aggregate([
+      { $match: { bestSeller: true } },
+      { $sort: { createdAt: -1 } },
+      { $limit: 50 },
+      { $sample: { size: 12 } },
+    ]);
+
+    if (!products.length) {
+      return res.status(200).json({
+        message: "No best sellers found yet",
+        products: [],
+      });
+    }
+
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: "Error fetching best sellers",
+      error: error.message,
+    });
   }
 };
 
-const getProductsByPage = async (req, res) => {
+const getHomeCollectionsController = async (req, res) => {
+  try {
+    const products = await ProductModel.aggregate([{ $sample: { size: 12 } }]);
+
+    if (!products.length) {
+      return res.status(200).json({
+        success: true,
+        message: "No products available yet",
+        products: [],
+      });
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch random products",
+      error: error.message,
+    });
+  }
+};
+
+const getHomeNewArrivalsController = async (req, res) => {
+  try {
+    const products = await ProductModel.aggregate([
+      { $match: { newArrival: true } },
+      { $sort: { createdAt: -1 } },
+      { $limit: 50 },
+      { $sample: { size: 12 } },
+    ]);
+
+    if (!products.length) {
+      return res.status(200).json({
+        success: true,
+        message: "No new arrivals found yet",
+        products: [],
+      });
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching new arrivals",
+      error: error.message,
+    });
+  }
+};
+
+// Collections
+const getCollectionsShopAllController = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 20;
+    const limit = parseInt(req.query.limit) || 12;
     const skip = (page - 1) * limit;
 
-    const products = await ProductModel.find()
-      .sort({ createdAt: -1 })
+    const filters = {};
+
+    if (req.query.category) {
+      const categories = req.query.category.split(",");
+      filters.category = { $in: categories };
+    }
+
+    if (req.query.size) {
+      const sizes = req.query.size.split(",");
+      filters.sizes = { $in: sizes };
+    }
+
+    if (req.query.color) {
+      const colors = req.query.color.split(",");
+      filters.colors = { $in: colors };
+    }
+
+    let sort = {};
+    if (req.query.sort === "low-high") sort.price = 1;
+    else if (req.query.sort === "high-low") sort.price = -1;
+
+    const products = await ProductModel.find(filters)
+      .sort(sort)
       .skip(skip)
       .limit(limit);
-    const totalProducts = await ProductModel.countDocuments();
-    const totalPages = Math.ceil(totalProducts / limit);
 
-    res.status(200).json({ products, totalPages });
+    const total = await ProductModel.countDocuments(filters);
+
+    res.status(200).json({
+      products,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: "Error fetching products",
+      error: error.message,
+    });
   }
 };
 
-// Get a single product by ID
-// const getProductByIdController = async (req, res) => {
-//   try {
-//     const product = await ProductModel.findById(req.params.id);
-//     if (!product) return res.status(404).json({ message: "Product not found" });
-//     res.status(200).json(product);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-const getProductByIdController = async (req, res) => {
+const getCollectionsNewArrivalsController = async (req, res) => {
   try {
-    const product = await ProductModel.findById(req.params.id);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
 
+    const filters = {};
+
+    if (req.query.category) {
+      const categories = req.query.category.split(",");
+      filters.category = { $in: categories };
+    }
+
+    if (req.query.size) {
+      const sizes = req.query.size.split(",");
+      filters.sizes = { $in: sizes };
+    }
+
+    if (req.query.color) {
+      const colors = req.query.color.split(",");
+      filters.colors = { $in: colors };
+    }
+
+    let sort = {};
+    if (req.query.sort === "low-high") sort.price = 1;
+    else if (req.query.sort === "high-low") sort.price = -1;
+
+    const products = await ProductModel.find({ newArrival: true })
+      .find(filters)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await ProductModel.countDocuments(filters);
+
+    res.status(200).json({
+      products,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching products",
+      error: error.message,
+    });
+  }
+};
+
+const getCollectionsActiveWearController = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+
+    const filters = {};
+
+    if (req.query.subcategory) {
+      const subcategory = req.query.subcategory.split(",");
+      filters.subcategory = { $in: subcategory };
+    }
+
+    if (req.query.size) {
+      const sizes = req.query.size.split(",");
+      filters.sizes = { $in: sizes };
+    }
+
+    if (req.query.color) {
+      const colors = req.query.color.split(",");
+      filters.colors = { $in: colors };
+    }
+
+    // Sorting logic
+    let sort = {};
+    if (req.query.sort === "low-high") sort.price = 1;
+    else if (req.query.sort === "high-low") sort.price = -1;
+
+    const query = { category: "Active Wear", ...filters };
+
+    const products = await ProductModel.find(query)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await ProductModel.countDocuments(query);
+
+    res.status(200).json({
+      products,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching products",
+      error: error.message,
+    });
+  }
+};
+
+const getCollectionsFitnessAccessoriesController = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+
+    const filters = {};
+
+    if (req.query.subcategory) {
+      const subcategory = req.query.subcategory.split(",");
+      filters.subcategory = { $in: subcategory };
+    }
+
+    if (req.query.size) {
+      const sizes = req.query.size.split(",");
+      filters.sizes = { $in: sizes };
+    }
+
+    if (req.query.color) {
+      const colors = req.query.color.split(",");
+      filters.colors = { $in: colors };
+    }
+
+    // Sorting logic
+    let sort = {};
+    if (req.query.sort === "low-high") sort.price = 1;
+    else if (req.query.sort === "high-low") sort.price = -1;
+
+    const query = { category: "Fitness Accessories", ...filters };
+
+    const products = await ProductModel.find(query)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await ProductModel.countDocuments(query);
+
+    res.status(200).json({
+      products,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching products",
+      error: error.message,
+    });
+  }
+};
+
+const getCollectionsProductByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await ProductModel.findById(id);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     // Calculate total stars, average rating, and total reviews
     const totalStars = product.reviews.reduce(
       (sum, review) => sum + (review.rating || 0),
@@ -77,21 +302,39 @@ const getProductByIdController = async (req, res) => {
   }
 };
 
-const getCollections = async (req, res) => {
+const addProductReviewController = async (req, res) => {
   try {
-    const products = await ProductModel.aggregate([{ $sample: { size: 12 } }]);
+    const { id } = req.params;
+    const product = await ProductModel.findById(id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
-    res.status(200).json(products);
+    product.reviews.push(req.body);
+    await product.save();
+    res.status(200).json({ message: "Thanks for the review!" });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch random products.",
-      error: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-const searchProductsWithSuggestions = async (req, res) => {
+const getCollectionsRelatedProductByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await ProductModel.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const relatedProducts = await ProductModel.find({
+      _id: { $ne: product._id }, // Exclude the current product
+      category: product.category,
+    }).limit(12);
+    res.status(200).json(relatedProducts);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const searchSuggestionsWithProductsController = async (req, res) => {
   try {
     const { query } = req.query;
 
@@ -121,7 +364,7 @@ const searchProductsWithSuggestions = async (req, res) => {
   }
 };
 
-const getProductsSearchResults = async (req, res) => {
+const searchProductsResultsController = async (req, res) => {
   try {
     const { query } = req.query;
 
@@ -197,14 +440,67 @@ const getProductsSearchResults = async (req, res) => {
   }
 };
 
-// Update a product by ID
-const updateProductController = async (req, res) => {
+// Admin Controllers
+const adminCreateProductController = async (req, res) => {
   try {
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
+    const product = new ProductModel(req.body);
+    const savedProduct = await product.save();
+    res.status(200).json(savedProduct);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const adminGetProductsByPaginationController = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const products = await ProductModel.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await ProductModel.countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({ products, totalPages });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const adminGetProductByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await ProductModel.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    // Calculate total stars, average rating, and total reviews
+    // const totalStars = product.reviews.reduce(
+    //   (sum, review) => sum + (review.rating || 0),
+    //   0
+    // );
+    // const totalReviews = product.reviews.length;
+    // const averageRating = totalReviews > 0 ? totalStars / totalReviews : 0;
+
+    res.status(200).json(
+      product
+      // averageRating: averageRating.toFixed(1),
+      // totalReviews,
     );
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const adminUpdateProductController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updatedProduct = await ProductModel.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
     if (!updatedProduct)
       return res.status(404).json({ message: "Product not found" });
     res.status(200).json(updatedProduct);
@@ -213,8 +509,7 @@ const updateProductController = async (req, res) => {
   }
 };
 
-// Delete a product by ID
-const deleteProductController = async (req, res) => {
+const adminDeleteProductController = async (req, res) => {
   try {
     const deletedProduct = await ProductModel.findByIdAndDelete(req.params.id);
     if (!deletedProduct)
@@ -225,103 +520,7 @@ const deleteProductController = async (req, res) => {
   }
 };
 
-// Add a review to a product
-const addReviewController = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = await ProductModel.findById(id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
-
-    product.reviews.push(req.body);
-    const updatedProduct = await product.save();
-
-    res.status(200).json(updatedProduct);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Update a review by product ID and review ID
-// export const updateReview = async (req, res) => {
-//   try {
-//     const { id, reviewId } = req.params;
-//     const product = await ProductModel.findById(id);
-//     if (!product) return res.status(404).json({ message: "Product not found" });
-
-//     const review = product.reviews.id(reviewId);
-//     if (!review) return res.status(404).json({ message: "Review not found" });
-
-//     review.set(req.body);
-//     const updatedProduct = await product.save();
-//     res.status(200).json(updatedProduct);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// Delete a review by product ID and review ID
-// export const deleteReview = async (req, res) => {
-//   try {
-//     const { id, reviewId } = req.params;
-//     const product = await ProductModel.findById(id);
-//     if (!product) return res.status(404).json({ message: "Product not found" });
-
-//     const review = product.reviews.id(reviewId);
-//     if (!review) return res.status(404).json({ message: "Review not found" });
-
-//     review.remove();
-//     const updatedProduct = await product.save();
-//     res.status(200).json(updatedProduct);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-const getBestSellerProducts = async (req, res) => {
-  try {
-    const products = await ProductModel.find({ bestSeller: true }).sort({
-      createdAt: -1,
-    });
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const getNewArrivalProducts = async (req, res) => {
-  try {
-    const products = await ProductModel.find({ newArrival: true }).sort({
-      createdAt: -1,
-    });
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const getActiveWearProducts = async (req, res) => {
-  try {
-    const products = await ProductModel.find({ category: "Active Wear" }).sort({
-      createdAt: -1,
-    });
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const getFitnessAccessoriesProducts = async (req, res) => {
-  try {
-    const products = await ProductModel.find({
-      category: "Fitness Accessories",
-    }).sort({ createdAt: -1 });
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const updateProductToBestSeller = async (req, res) => {
+const adminUpdateProductToBestSellerController = async (req, res) => {
   let { status } = req.body;
 
   // Convert the 'status' string to a boolean
@@ -353,7 +552,7 @@ const updateProductToBestSeller = async (req, res) => {
   }
 };
 
-const updateProductToNewArrival = async (req, res) => {
+const adminUpdateProductToNewArrivalController = async (req, res) => {
   let { status } = req.body;
 
   // Convert the 'status' string to a boolean
@@ -386,20 +585,24 @@ const updateProductToNewArrival = async (req, res) => {
 };
 
 export {
-  createProductController,
-  getAllProductsController,
-  getProductsByPage,
-  getProductByIdController,
-  getCollections,
-  searchProductsWithSuggestions,
-  getProductsSearchResults,
-  updateProductController,
-  deleteProductController,
-  addReviewController,
-  getBestSellerProducts,
-  getNewArrivalProducts,
-  getActiveWearProducts,
-  getFitnessAccessoriesProducts,
-  updateProductToBestSeller,
-  updateProductToNewArrival,
+  getHomeBestSellersController,
+  getHomeCollectionsController,
+  getHomeNewArrivalsController,
+  getCollectionsShopAllController,
+  getCollectionsNewArrivalsController,
+  getCollectionsActiveWearController,
+  getCollectionsFitnessAccessoriesController,
+  getCollectionsProductByIdController,
+  addProductReviewController,
+  getCollectionsRelatedProductByIdController,
+  searchSuggestionsWithProductsController,
+  searchProductsResultsController,
+  //////
+  adminCreateProductController,
+  adminGetProductsByPaginationController,
+  adminGetProductByIdController,
+  adminUpdateProductController,
+  adminDeleteProductController,
+  adminUpdateProductToBestSellerController,
+  adminUpdateProductToNewArrivalController,
 };

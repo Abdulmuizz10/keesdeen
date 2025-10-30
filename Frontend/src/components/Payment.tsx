@@ -1,11 +1,14 @@
 import React, { useContext, useState } from "react";
 import { Button } from "@relume_io/relume-ui";
+import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { formatAmountDefault } from "../lib/utils";
 import { currency, URL } from "../lib/constants";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
 import Axios from "axios";
 import { toast } from "sonner";
+import { showOrderSummary } from "./SweatOrderModal";
+import { useNavigate } from "react-router-dom";
 
 interface PaymentProps {
   setLoading: any;
@@ -15,13 +18,12 @@ interface PaymentProps {
 interface OrderData {
   user: any;
   email: any;
+  sourceId: any;
   currency: string;
   coupon: string;
   orderedItems: any;
-  Address: {
-    deliveryAddress: any;
-    billingAddress: any;
-  };
+  shippingAddress: any;
+  billingAddress: any;
   shippingPrice: number;
   totalPrice: number;
   paidAt: string;
@@ -33,16 +35,18 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
   const [discount, setDiscount] = useState<number>(0);
   const {
     getCartAmount,
-    deliveryFee,
+    shippingFee,
     discountPercent,
-    // setCartItems,
+    setCartItems,
     getCartDetailsForOrder,
     // currentCurrency,
   } = useShop();
   const subtotal = getCartAmount();
   const discountAmount = (subtotal / 100) * discount;
-  const finalTotal = subtotal - discountAmount + deliveryFee;
+  const finalTotal = subtotal - discountAmount + shippingFee;
   const orderedItems = getCartDetailsForOrder();
+  const navigate = useNavigate();
+
   const applyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -68,26 +72,43 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     }
   };
 
-  const today = new Date().toISOString();
-
-  if (address) {
-    const orderData: OrderData = {
-      user: user ? user.id : null,
-      email: user.email,
-      currency: currency,
-      coupon,
-      orderedItems,
-      Address: {
-        deliveryAddress: address.deliveryAddress,
+  const onPaymentSuccess = async (token: string) => {
+    const today = new Date().toISOString();
+    if (token) {
+      const order: OrderData = {
+        user: user.id,
+        email: user.email,
+        sourceId: token,
+        currency: currency,
+        coupon,
+        orderedItems,
+        shippingAddress: address.shippingAddress,
         billingAddress: address.billingAddress,
-      },
-      shippingPrice: deliveryFee,
-      totalPrice: finalTotal,
-      paidAt: today,
-    };
+        shippingPrice: shippingFee,
+        totalPrice: finalTotal,
+        paidAt: today,
+      };
 
-    console.log(orderData);
-  }
+      try {
+        const response = await Axios.post(`${URL}/orders/create-order`, order, {
+          withCredentials: true,
+          validateStatus: (status) => status < 600,
+        });
+        if (response.status === 200) {
+          showOrderSummary(response.data);
+          console.log(response.data);
+          toast.success("Order placed successfully!");
+          setCartItems({});
+          navigate("/collections/shop_all");
+        }
+      } catch (error) {
+        toast.error("Order submission failed. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    } else {
+    }
+  };
 
   return (
     <div className="w-full">
@@ -128,9 +149,9 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
 
           <div className="flex justify-between text-sm md:text-base">
-            <span>Delivery Fee:</span>
+            <span>Shipping Fee:</span>
             <span className="text-gray-800 font-medium">
-              {formatAmountDefault(currency, deliveryFee)}
+              {formatAmountDefault(currency, shippingFee)}
             </span>
           </div>
         </div>
@@ -149,10 +170,10 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               id="coupon"
               value={coupon}
               onChange={(e) => setCoupon(e.target.value)}
-              className="border border-border-secondary px-2 py-2 w-full rounded-md focus:outline-none"
+              className="border border-border-secondary px-2 py-2 w-full rounded focus:outline-none"
               placeholder="Enter coupon code"
             />
-            <Button className="w-full bg-brand-neutral text-text-light px-2 py-2 rounded-md poppins border-none">
+            <Button className="w-full bg-brand-neutral text-text-light px-2 py-2 rounded poppins border-none">
               Apply
             </Button>
           </form>
@@ -166,6 +187,46 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             {formatAmountDefault(currency, finalTotal)}
           </span>
         </div>
+      </div>
+      <div className="mt-10">
+        <PaymentForm
+          // applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
+          // locationId={"LNS0B6E8H9C06"}
+          applicationId={import.meta.env.VITE_SQUARE_APP_ID}
+          locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
+          cardTokenizeResponseReceived={(tokenResult: any) => {
+            if (address) {
+              setLoading(true);
+              if (tokenResult.errors) {
+                toast.error("Payment failed. Please try again.");
+                setLoading(false);
+              } else {
+                onPaymentSuccess(tokenResult.token);
+              }
+            } else {
+              toast.error("Please select address before checkout.");
+              setLoading(false);
+              return;
+            }
+          }}
+        >
+          <CreditCard
+            buttonProps={{
+              css: {
+                backgroundColor: "#3d3d3d",
+                fontSize: "16px",
+                color: "#fff",
+                // "&:hover": {
+                //   backgroundColor: "#374151",
+                // },
+                fontFamily: "poppins",
+              },
+            }}
+          >
+            Pay {/* ... */}
+            {formatAmountDefault(currency, finalTotal)}
+          </CreditCard>
+        </PaymentForm>
       </div>
     </div>
   );

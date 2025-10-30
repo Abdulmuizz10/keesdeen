@@ -21,8 +21,8 @@ interface ShopContextType {
   wishLists: any;
   setWishLists: any;
   manageWishLists: any;
-  savedAddresses: any;
-  setSavedAddresses: any;
+  savedAddress: any;
+  setSavedAddress: any;
   // currentCurrency: any;
   // fetchExchangeRates: any;
   // setCurrency: any;
@@ -32,8 +32,8 @@ interface ShopContextType {
   setIsActive: any;
   adminLoader: any;
   setAdminLoader: any;
-  deliveryFee: any;
-  setDeliveryFee: any;
+  shippingFee: any;
+  setShippingFee: any;
   discountPercent: any;
   setDiscountPercent: any;
   change: any;
@@ -57,11 +57,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     const storedWishLists = localStorage.getItem("wishLists");
     return storedWishLists ? JSON.parse(storedWishLists) : [];
   });
-  const [savedAddresses, setSavedAddresses] = useState(() => {
-    const storedAddresses = localStorage.getItem("savedAddresses");
-    return storedAddresses ? JSON.parse(storedAddresses) : [];
-  });
-  const [deliveryFee, setDeliveryFee] = useState<any>(0);
+  const [savedAddress, setSavedAddress] = useState<any>([]);
+  const [shippingFee, setShippingFee] = useState<any>(0);
   const [discountPercent, setDiscountPercent] = useState<any>(0);
   const [change, setChange] = useState<boolean>(true);
 
@@ -74,23 +71,18 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   }, [wishLists]);
 
   useEffect(() => {
-    localStorage.setItem("savedAddresses", JSON.stringify(savedAddresses));
-  }, [savedAddresses]);
-
-  useEffect(() => {
-    const handleGetUtility = async () => {
+    const getUtility = async () => {
       try {
-        const response = await Axios.get(`${URL}/utility/delivery-discount`, {
+        const response = await Axios.get(`${URL}/utility/shipping-discount`, {
           withCredentials: true,
         });
-        setDeliveryFee(response.data.deliveryFee);
-        setDiscountPercent(response.data.discount);
-      } catch (error) {
-        toast.error("Error getting utilities");
-      }
+        if (response.status === 200) {
+          setShippingFee(response.data.shippingFee);
+          setDiscountPercent(response.data.discount);
+        }
+      } catch (error) {}
     };
-
-    handleGetUtility();
+    getUtility();
   }, [change]);
 
   const addToCart = async (
@@ -284,8 +276,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         wishLists,
         setWishLists,
         manageWishLists,
-        savedAddresses,
-        setSavedAddresses,
+        savedAddress,
+        setSavedAddress,
         // currentCurrency,
         // fetchExchangeRates,
         // setCurrency,
@@ -295,8 +287,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         setIsActive,
         adminLoader,
         setAdminLoader,
-        deliveryFee,
-        setDeliveryFee,
+        shippingFee,
+        setShippingFee,
         discountPercent,
         setDiscountPercent,
         change,

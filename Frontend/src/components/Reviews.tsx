@@ -9,10 +9,10 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import { Review } from "../lib/types";
-import { createReview } from "../context/ProductContext/ProductApiCalls";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import Axios from "axios";
 import { URL } from "../lib/constants";
+import { toast } from "sonner";
 
 interface ReviewsProps {
   // currentReviews: Review[];
@@ -27,7 +27,9 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await Axios.get(`${URL}/products/${id}`);
+      const response = await Axios.get(
+        `${URL}/products/collections/product/${id}`
+      );
       setReviews(response.data.product.reviews);
     };
     fetchData();
@@ -47,21 +49,29 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
     setNewReview((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const today = new Date().toISOString();
-
     setReviews([...reviews, { ...newReview, date: today }]);
-    createReview(
-      { ...newReview, date: today, user: user ? user.id : null },
-      id
-    );
-    setNewReview({
-      name: "",
-      rating: 0,
-      comment: "",
-      date: "",
-    });
+
+    try {
+      const response = await Axios.post<any>(
+        `${URL}/products/collections/product/${id}/reviews`,
+        { ...newReview, date: today, user: user ? user.id : null }
+      );
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        setNewReview({
+          name: "",
+          rating: 0,
+          comment: "",
+          date: "",
+        });
+      }
+    } catch (err) {
+      toast.error("Something wrong. Couldn't submit review!");
+    }
   };
 
   const sortReviews = () => {
@@ -203,7 +213,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                   name="name"
                   value={newReview.name}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none"
                   required
                 />
               </div>
@@ -217,7 +227,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                   name="rating"
                   value={newReview.rating}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none"
                   required
                   min="1"
                   max="5"
@@ -232,7 +242,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
                   name="comment"
                   value={newReview.comment}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none"
                   rows={4}
                   required
                 ></textarea>

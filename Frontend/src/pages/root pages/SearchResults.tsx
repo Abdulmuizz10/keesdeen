@@ -14,7 +14,7 @@ import Axios from "axios";
 import { URL } from "../../lib/constants";
 import ProductCard from "../../components/ProductCard";
 
-const Collections: React.FC = () => {
+const SearchResults: React.FC = () => {
   const { name } = useParams();
   const { isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
@@ -30,10 +30,13 @@ const Collections: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await Axios.get(`${URL}/products/search-results`, {
-          validateStatus: (status) => status < 600,
-          params: { query: name },
-        });
+        const response = await Axios.get(
+          `${URL}/products/search/search-results`,
+          {
+            validateStatus: (status) => status < 600,
+            params: { query: name },
+          }
+        );
         if (response.status === 200) {
           setProducts(response.data);
           setFilteredProducts(response.data);
@@ -136,7 +139,7 @@ const Collections: React.FC = () => {
       <div className="container">
         <div className="mb-2 md:mb-5">
           <h2 className="text-2xl font-bold bricolage-grotesque">
-            results for: "{name}"
+            Results for: "{name}"
           </h2>
         </div>
         <div
@@ -371,4 +374,4 @@ const Collections: React.FC = () => {
   );
 };
 
-export default Collections;
+export default SearchResults;

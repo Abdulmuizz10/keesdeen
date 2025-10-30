@@ -6,7 +6,7 @@ const utilitySchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    deliveryFee: {
+    shippingFee: {
       type: Number,
       default: 0,
       required: false,

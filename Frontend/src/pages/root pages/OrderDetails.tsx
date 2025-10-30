@@ -14,7 +14,7 @@ const OrderDetails: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const endpoint = `${URL}/orders/profile/order/${id}`;
+      const endpoint = `${URL}/orders/profile/orders/${id}`;
       const headers = {
         withCredentials: true,
       };
@@ -111,7 +111,7 @@ const OrderDetails: React.FC = () => {
         {/* Customer Information */}
         <div className="p-6">
           <h2 className="text-lg font-semibold text-gray-800">
-            Delivery information
+            Shipping information
           </h2>
           <div className="mt-4 space-y-2 text-md">
             <p className=" text-gray-600">

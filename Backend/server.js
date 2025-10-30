@@ -11,6 +11,7 @@ import usersRoutes from "./routes/usersRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import subscriberRoutes from "./routes/subscriberRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
 import utilityRoutes from "./routes/utilityRoutes.js";
 
 dotenv.config();
@@ -39,6 +40,7 @@ app.use("/users", usersRoutes);
 app.use("/products", productRoutes);
 app.use("/orders", orderRoutes);
 app.use("/subscribers", subscriberRoutes);
+app.use("/address", addressRoutes);
 app.use("/utility", utilityRoutes);
 
 // app.use("/create-payment", paymentRoutes);

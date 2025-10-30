@@ -13,12 +13,12 @@ import Axios from "axios";
 import { URL } from "../../lib/constants";
 import ProductCard from "../../components/ProductCard";
 
-const NewArrivals: React.FC = () => {
+const ActiveWears: React.FC = () => {
   const { isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
 
   // Filter + sort states
-  const [category, setCategory] = useState<string[]>([]);
+  const [subCategory, setSubCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
   const [sortType, setSortType] = useState<string>("relevant");
@@ -36,12 +36,12 @@ const NewArrivals: React.FC = () => {
     setLoading(true);
     try {
       const response = await Axios.get(
-        `${URL}/products/collections/new-arrivals`,
+        `${URL}/products/collections/active-wears`,
         {
           params: {
             page,
             limit: 12,
-            category: category.join(","),
+            subcategory: subCategory.join(","),
             size: sizeCategory.join(","),
             color: colorCategory.join(","),
             sort:
@@ -68,11 +68,11 @@ const NewArrivals: React.FC = () => {
   // Fetch whenever filters, sort, or page changes
   useEffect(() => {
     fetchProducts();
-  }, [category, sizeCategory, colorCategory, sortType, page]);
+  }, [subCategory, sizeCategory, colorCategory, sortType, page]);
 
-  const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const toggleSubCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setCategory((prev) =>
+    setSubCategory((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
         : [...prev, value]
@@ -98,7 +98,7 @@ const NewArrivals: React.FC = () => {
   };
 
   const clearFilters = () => {
-    setCategory([]);
+    setSubCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
     checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
@@ -110,7 +110,7 @@ const NewArrivals: React.FC = () => {
       <div className="flex-1">
         <div className="mb-2 md:mb-5">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
-            New Arrivals
+            Active Wears
           </h2>
         </div>
 
@@ -142,13 +142,20 @@ const NewArrivals: React.FC = () => {
             >
               <p className="text-base md:text-md pb-3">Type</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-                {["Active Wear", "Fitness Accessories"].map((wear, index) => (
+                {[
+                  "Modest Workout Tops",
+                  "Joggers & Bottoms",
+                  "Complete Active Wear Sets",
+                  "High-Support Sports Bras",
+                  "Sports Hijabs",
+                  "Burkinis / Swimwear",
+                ].map((wear, index) => (
                   <p className="flex gap-2" key={index}>
                     <input
                       type="checkbox"
                       className="w-3 cursor-pointer"
                       value={wear}
-                      onChange={toggleCategory}
+                      onChange={toggleSubCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
                       }}
@@ -258,7 +265,7 @@ const NewArrivals: React.FC = () => {
           {/* Right side products */}
           <div className="w-full">
             <div className="flex justify-between text-base items-center">
-              <p className="text-base md:text-md">Arrivals</p>
+              <p className="text-base md:text-md">Collections</p>
 
               <p className="info-text hidden xl:flex">
                 Showing page {page} of {pages}
@@ -355,4 +362,4 @@ const NewArrivals: React.FC = () => {
   );
 };
 
-export default NewArrivals;
+export default ActiveWears;

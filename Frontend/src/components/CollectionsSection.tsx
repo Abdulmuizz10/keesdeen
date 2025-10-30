@@ -6,15 +6,15 @@ import Axios from "axios";
 import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
 
-type Gallery5Props = React.ComponentPropsWithoutRef<"section"> & {
+type CollectionsSectionProps = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
   description?: string;
 };
 
-export const Gallery5 = ({
+const CollectionsSection = ({
   heading = "Collections",
   description = "Discover the latest additions to our collections.",
-}: Gallery5Props) => {
+}: CollectionsSectionProps) => {
   // const { currentCurrency } = useShop();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,19 +26,17 @@ export const Gallery5 = ({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await Axios.get(`${URL}/products/collections`, {
+        const res = await Axios.get(`${URL}/products/home/collections`, {
           validateStatus: (status) => status < 600,
         });
         if (res.status === 200) {
           setProducts(res.data);
           setLoading(false);
         } else {
-          // toast.error(res.data.message || "Something went wrong");
           setLoading(false);
         }
         if (isMounted) setLoading(false);
       } catch (error) {
-        // toast.error("An unexpected error occurred. Please try again.");
         setLoading(false);
       }
     };
@@ -86,3 +84,5 @@ export const Gallery5 = ({
     </section>
   );
 };
+
+export default CollectionsSection;

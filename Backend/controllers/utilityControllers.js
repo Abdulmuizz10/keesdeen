@@ -37,13 +37,13 @@ const getUtility = async (req, res) => {
     if (!utility) {
       return res.status(200).json({
         couponCode: "",
-        deliveryFee: 0,
+        shippingFee: 0,
         discount: 0,
       });
     }
     const response = {
       couponCode: utility.couponCode,
-      deliveryFee: utility.deliveryFee ?? 0,
+      shippingFee: utility.shippingFee ?? 0,
       discount: utility.discount ?? 0,
     };
     res.status(200).json(response);
@@ -52,17 +52,17 @@ const getUtility = async (req, res) => {
   }
 };
 
-const getDeliveryAndDiscount = async (req, res) => {
+const getShippingAndDiscount = async (req, res) => {
   try {
     const utility = await UtilityModel.findOne();
     if (!utility) {
       return res.status(200).json({
-        deliveryFee: 0,
+        shippingFee: 0,
         discount: 0,
       });
     }
     const response = {
-      deliveryFee: utility.deliveryFee ?? 0,
+      shippingFee: utility.shippingFee ?? 0,
       discount: utility.discount ?? 0,
     };
     res.status(200).json(response);
@@ -87,6 +87,6 @@ export {
   createUtility,
   applyCoupon,
   getUtility,
-  getDeliveryAndDiscount,
+  getShippingAndDiscount,
   updateUtility,
 };

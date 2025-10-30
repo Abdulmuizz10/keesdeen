@@ -1,45 +1,79 @@
 import express from "express";
 import {
   createOrderController,
-  getAllOrdersController,
-  getOrdersByPage,
-  getPendingOrders,
-  getDeliveredOrders,
-  getOrderByIdController,
-  // updateOrderToPaidController,
-  updateOrderStatusController,
-  getOrdersByUserController,
-  getOrderByUserController,
+  getProfileOrdersByPageController,
+  getProfileOrderByIdController,
+  adminGetOrdersByPaginationController,
+  adminGetOrderByIdController,
+  adminGetPendingOrdersByPaginationController,
+  adminGetDeliveredOrdersByPaginationController,
+  adminUpdateOrderStatusController,
+  adminGetUserOrdersController,
+  adminGetUserOrderByIdController,
 } from "../controllers/orderControllers.js";
-
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 
 const router = express.Router();
 
-// Create a new order
-router.post("/", createOrderController);
-router.get("/", verifyUser, authorizeAdmin, getAllOrdersController);
-router.get("/page/orders", verifyUser, authorizeAdmin, getOrdersByPage);
+// client Routes
+router.post("/create-order", createOrderController);
+
 router.get(
-  "/page/pending-orders",
+  "/profile/pagination-orders",
+  verifyUser,
+  getProfileOrdersByPageController
+);
+
+router.get("/profile/order/:id", verifyUser, getProfileOrderByIdController);
+
+// Admin Routes
+router.get(
+  "/admin/pagination-orders",
   verifyUser,
   authorizeAdmin,
-  getPendingOrders
+  adminGetOrdersByPaginationController
 );
+
 router.get(
-  "/page/delivered-orders",
+  "/admin/order/:id",
   verifyUser,
   authorizeAdmin,
-  getDeliveredOrders
+  adminGetOrderByIdController
 );
-router.get("/:id", verifyUser, authorizeAdmin, getOrderByIdController);
+
+router.get(
+  "/admin/pagination-pending-orders",
+  verifyUser,
+  authorizeAdmin,
+  adminGetPendingOrdersByPaginationController
+);
+
+router.get(
+  "/admin/pagination-delivered-orders",
+  verifyUser,
+  authorizeAdmin,
+  adminGetDeliveredOrdersByPaginationController
+);
+
+router.get(
+  "/admin/user-orders/pagination-user-orders",
+  verifyUser,
+  authorizeAdmin,
+  adminGetUserOrdersController
+);
+
+router.get(
+  "/admin/user-orders/order/:id",
+  verifyUser,
+  authorizeAdmin,
+  adminGetUserOrderByIdController
+);
+
 router.patch(
-  "/:id/deliver",
+  "/admin/order/:id/status",
   verifyUser,
   authorizeAdmin,
-  updateOrderStatusController
+  adminUpdateOrderStatusController
 );
-router.get("/profile/orders", verifyUser, getOrdersByUserController);
-router.get("/profile/order/:id", verifyUser, getOrderByUserController);
 
 export default router;

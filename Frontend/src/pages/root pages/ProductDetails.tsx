@@ -36,9 +36,12 @@ const ProductDetails = () => {
     setAnimation(true);
     const fetchData = async () => {
       try {
-        const response = await Axios.get(`${URL}/products/${id}`, {
-          validateStatus: (status) => status < 600,
-        });
+        const response = await Axios.get(
+          `${URL}/products/collections/product/${id}`,
+          {
+            validateStatus: (status) => status < 600,
+          }
+        );
         if (response.status === 200) {
           setResult(response.data);
         } else {
@@ -97,16 +100,14 @@ const ProductDetails = () => {
             {/* Product images */}
             <div className="flex-1 w-full lg:w-1/2">
               <Slider {...settings}>
-                {result?.product?.imageUrls.map(
-                  (item: string, index: number) => (
-                    <img
-                      src={item}
-                      alt="product images"
-                      key={index}
-                      className="w-full h-full"
-                    />
-                  )
-                )}
+                {result.product.imageUrls.map((item: string, index: number) => (
+                  <img
+                    src={item}
+                    alt="product images"
+                    key={index}
+                    className="w-full h-full"
+                  />
+                ))}
               </Slider>
             </div>
 
@@ -121,14 +122,14 @@ const ProductDetails = () => {
               <div className="flex items-center gap-1 mt-2">
                 {[...Array(5)].map((_, index) => {
                   const ratingValue = index + 1; // Ratings are 1-based
-                  if (ratingValue <= Math.floor(result?.averageRating)) {
+                  if (ratingValue <= Math.floor(result.averageRating)) {
                     return (
                       <FaStar
                         key={index}
                         className="text-yellow-500 text-base"
                       />
                     ); // Full star
-                  } else if (ratingValue <= result?.averageRating) {
+                  } else if (ratingValue <= result.averageRating) {
                     return (
                       <FaStarHalfAlt
                         key={index}
@@ -145,20 +146,20 @@ const ProductDetails = () => {
                   }
                 })}
                 <p className="pl-1 text-md font-medium">
-                  ({result?.averageRating}) • {result?.totalReviews} reviews
+                  ({result.averageRating}) • {result.totalReviews} reviews
                 </p>
               </div>
               <div className="flex gap-2 items-center">
-                {result?.product.previousPrice && (
+                {result.product.previousPrice && (
                   <s className="mt-5 text-xl font-medium">
                     {formatAmountDefault(
                       currency,
-                      result?.product.previousPrice
+                      result.product.previousPrice
                     )}
                   </s>
                 )}
                 <p className="mt-5 text-2xl font-medium">
-                  {formatAmountDefault(currency, result?.product.price)}
+                  {formatAmountDefault(currency, result.product.price)}
                 </p>
               </div>
 
@@ -166,36 +167,33 @@ const ProductDetails = () => {
               <div className="flex flex-col gap-4 my-8">
                 <p className="mb-2">Select Color :</p>
                 <div className="flex flex-wrap gap-3 md:gap-5 lg:gap-7 items-center">
-                  {result?.product?.colors?.map(
-                    (option: any, index: number) => (
-                      <label
-                        key={index}
-                        className={`flex items-center gap-2 cursor-pointer text-gray-500 poppins ${
-                          color === option && "!font-bold !text-black"
+                  {result.product?.colors.map((option: any, index: number) => (
+                    <label
+                      key={index}
+                      className={`flex items-center gap-2 cursor-pointer text-gray-500 poppins ${
+                        color === option && "!font-bold !text-black"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="color"
+                        value={option}
+                        checked={color === option}
+                        onChange={(e) => setColor(e.target.value)}
+                        className="hidden"
+                      />
+                      <span
+                        className={`w-3 h-3 rounded-full border-2 ${
+                          color === option &&
+                          "border-border-secondary !h-6 !w-6"
                         }`}
-                      >
-                        <input
-                          type="radio"
-                          name="color"
-                          value={option}
-                          checked={color === option}
-                          onChange={(e) => setColor(e.target.value)}
-                          className="hidden"
-                        />
-                        <span
-                          className={`w-3 h-3 rounded-full border-2 ${
-                            color === option &&
-                            "border-border-secondary !h-6 !w-6"
-                          }`}
-                          style={{
-                            backgroundColor:
-                              colorToHex(option) || "transparent",
-                          }}
-                        ></span>
-                        {option}
-                      </label>
-                    )
-                  )}
+                        style={{
+                          backgroundColor: colorToHex(option) || "transparent",
+                        }}
+                      ></span>
+                      {option}
+                    </label>
+                  ))}
                 </div>
               </div>
 
@@ -203,7 +201,7 @@ const ProductDetails = () => {
               <div className="flex flex-col gap-4 my-8">
                 <p className="mb-2">Select Size :</p>
                 <div className="flex flex-wrap gap-2">
-                  {result?.product?.sizes?.map((item: any, index: number) => (
+                  {result.product.sizes.map((item: any, index: number) => (
                     <div
                       className={`p-2 h-[45px] w-[45px] bg-gray-200 flex items-center justify-center cursor-pointer text-sm poppins transition-all ${
                         item === size
@@ -223,12 +221,12 @@ const ProductDetails = () => {
                   className="py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full poppins"
                   onClick={() =>
                     addToCart(
-                      result?.product?._id,
+                      result.product._id,
                       size,
                       color,
-                      result?.product?.name,
-                      result?.product?.price,
-                      result?.product?.imageUrls[0]
+                      result.product.name,
+                      result.product.price,
+                      result.product.imageUrls[0]
                     )
                   }
                 >
@@ -236,10 +234,10 @@ const ProductDetails = () => {
                 </Button>
                 <div
                   className={`px-3 py-3 border-2 border-brand-neutral rounded-lg flex items-center justify-center cursor-pointer flex-1`}
-                  onClick={() => manageWishLists(result?.product)}
+                  onClick={() => manageWishLists(result.product)}
                 >
                   {wishLists.find(
-                    (wish: any) => wish._id === result?.product._id
+                    (wish: any) => wish._id === result.product._id
                   ) ? (
                     <RiHeartFill className="text-2xl text-brand-neutral" />
                   ) : (
@@ -251,7 +249,7 @@ const ProductDetails = () => {
               <div className="text-base text-text-secondary mt-5 flex flex-col gap-1">
                 <p>100% Original product.</p>
                 <p className="mt-5 text-gray-500">
-                  {result?.product?.description}
+                  {result.product.description}
                 </p>
               </div>
             </div>
@@ -263,7 +261,7 @@ const ProductDetails = () => {
           </div>
           {/* Related products */}
           <div className="mt-20">
-            <RelatedProducts category={result?.product?.category} id={id} />
+            <RelatedProducts id={id} />
           </div>
         </div>
       ) : (

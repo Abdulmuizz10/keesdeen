@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, MapPin, X } from "lucide-react";
 import { Button } from "@relume_io/relume-ui";
@@ -6,10 +6,15 @@ import { Country, State } from "country-state-city";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { toast } from "sonner";
-import { useShop } from "../context/ShopContext";
+import Axios from "axios";
+import { URL } from "../lib/constants";
+import { AuthContext } from "../context/AuthContext/AuthContext";
 
 interface SetShowModalProps {
   setShowModal: (value: boolean) => void;
+  savedAddress: any;
+  setSavedAddress: any;
+  handleSelectAddress: any;
 }
 
 interface Address {
@@ -24,10 +29,16 @@ interface Address {
   postalCode: string;
 }
 
-const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
-  const { savedAddresses, setSavedAddresses } = useShop();
-  // 🏠 Delivery Address State
-  const [deliveryAddress, setDeliveryAddress] = useState<Address>({
+const CreateAddressModal: React.FC<SetShowModalProps> = ({
+  setShowModal,
+  savedAddress,
+  setSavedAddress,
+  handleSelectAddress,
+}) => {
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState<boolean>(false);
+  // 🏠 shipping Address State
+  const [shippingAddress, setShippingAddress] = useState<Address>({
     firstName: "",
     lastName: "",
     email: "",
@@ -52,21 +63,21 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
     postalCode: "",
   });
 
-  const [sameAsDelivery, setSameAsDelivery] = useState(false);
+  const [sameAsShipping, setSameAsShipping] = useState(false);
 
-  // Copy delivery → billing when checked
+  // Copy shipping → billing when checked
   useEffect(() => {
-    if (sameAsDelivery) {
-      setBillingAddress(deliveryAddress);
+    if (sameAsShipping) {
+      setBillingAddress(shippingAddress);
     }
-  }, [sameAsDelivery, deliveryAddress]);
+  }, [sameAsShipping, shippingAddress]);
 
-  // ✅ Handle Delivery Input Change
-  const handleDeliveryChange = (
+  // ✅ Handle shipping Input Change
+  const handleShippingChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setDeliveryAddress((prev) => ({ ...prev, [name]: value }));
+    setShippingAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   // ✅ Handle Billing Input Change
@@ -78,7 +89,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
   };
 
   // ✅ Submit Handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Basic validation
@@ -94,15 +105,15 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
     ];
 
     const hasEmptyField = requiredFields.some(
-      (key) => !deliveryAddress[key as keyof Address]
+      (key) => !shippingAddress[key as keyof Address]
     );
 
     if (hasEmptyField) {
-      toast.error("Please fill all required delivery address fields.");
+      toast.error("Please fill all required shipping address fields.");
       return;
     }
 
-    if (!sameAsDelivery) {
+    if (!sameAsShipping) {
       const billingEmpty = requiredFields.some(
         (key) => !billingAddress[key as keyof Address]
       );
@@ -112,19 +123,28 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
       }
     }
 
-    const generateId = (): string => {
-      return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    };
-
     const addressData = {
-      id: generateId(),
-      deliveryAddress,
-      billingAddress: sameAsDelivery ? deliveryAddress : billingAddress,
+      user: user.id,
+      shippingAddress,
+      billingAddress: sameAsShipping ? shippingAddress : billingAddress,
     };
 
-    setSavedAddresses([...savedAddresses, addressData]);
-    toast.success("Address created successfully!");
-    setShowModal(false);
+    try {
+      const response = await Axios.post(`${URL}/address`, addressData, {
+        withCredentials: true,
+        validateStatus: (status: any) => status < 600,
+      });
+      if (response.status === 200) {
+        setSavedAddress([response.data, ...savedAddress]);
+        handleSelectAddress(response.data._id, response.data);
+        toast.success("Address created successfully!");
+        setShowModal(false);
+      }
+    } catch (error) {
+      toast.error("Network error, unable to get products!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -138,7 +158,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.95 }}
         transition={{ duration: 0.3 }}
-        className="relative h-[70vh] w-[90%] sm:w-3/5 overflow-y-auto bg-white border border-border-secondary rounded-md py-10 px-4 md:px-10 custom-scrollbar"
+        className="relative h-[70vh] w-[90%] sm:w-4/5 xl:w-3/5 overflow-y-auto bg-white border border-border-secondary rounded-md py-10 px-4 md:px-10 custom-scrollbar"
       >
         {/* Header */}
         <div className="mb-10 text-center">
@@ -155,11 +175,11 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
         />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* DELIVERY ADDRESS */}
+          {/* SHIPPING ADDRESS */}
           <div>
             <div className="flex gap-3 mb-5">
               <MapPin />
-              <h2 className="text-xl font-semibold">Delivery Address</h2>
+              <h2 className="text-xl font-semibold">Shipping Address</h2>
             </div>
 
             <div className="grid grid-cols-2 gap-5 w-full poppins">
@@ -168,11 +188,11 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>First Name</label>
                 <input
                   name="firstName"
-                  value={deliveryAddress.firstName}
-                  onChange={handleDeliveryChange}
+                  value={shippingAddress.firstName}
+                  onChange={handleShippingChange}
                   type="text"
                   placeholder="First name"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                  className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                 />
               </div>
 
@@ -180,11 +200,11 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>Last Name</label>
                 <input
                   name="lastName"
-                  value={deliveryAddress.lastName}
-                  onChange={handleDeliveryChange}
+                  value={shippingAddress.lastName}
+                  onChange={handleShippingChange}
                   type="text"
                   placeholder="Last name"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                  className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                 />
               </div>
 
@@ -193,11 +213,11 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>Email Address</label>
                 <input
                   name="email"
-                  value={deliveryAddress.email}
-                  onChange={handleDeliveryChange}
-                  type="text"
+                  value={shippingAddress.email}
+                  onChange={handleShippingChange}
+                  type="email"
                   placeholder="example@gmail.com"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                  className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                 />
               </div>
 
@@ -206,9 +226,9 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>Country</label>
                 <select
                   name="country"
-                  value={deliveryAddress.country}
-                  onChange={handleDeliveryChange}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-2"
+                  value={shippingAddress.country}
+                  onChange={handleShippingChange}
+                  className="border border-border-secondary px-2 py-3 w-full rounded bg-white mt-2"
                 >
                   <option value="">Select country</option>
                   {Country.getAllCountries().map((country) => (
@@ -223,12 +243,12 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>State / Province</label>
                 <select
                   name="state"
-                  value={deliveryAddress.state}
-                  onChange={handleDeliveryChange}
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-2"
+                  value={shippingAddress.state}
+                  onChange={handleShippingChange}
+                  className="border border-border-secondary px-2 py-3 w-full rounded bg-white mt-2"
                 >
                   <option value="">Select state / province</option>
-                  {State.getStatesOfCountry(deliveryAddress.country).map(
+                  {State.getStatesOfCountry(shippingAddress.country).map(
                     (state) => (
                       <option key={state.isoCode} value={state.isoCode}>
                         {state.name}
@@ -243,11 +263,11 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>Address Line One</label>
                 <input
                   name="address1"
-                  value={deliveryAddress.address1}
-                  onChange={handleDeliveryChange}
+                  value={shippingAddress.address1}
+                  onChange={handleShippingChange}
                   type="text"
                   placeholder="Address line one"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                  className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                 />
               </div>
 
@@ -258,11 +278,11 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 </div>
                 <input
                   name="address2"
-                  value={deliveryAddress.address2}
-                  onChange={handleDeliveryChange}
+                  value={shippingAddress.address2}
+                  onChange={handleShippingChange}
                   type="text"
                   placeholder="Address line two optional"
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md  focus:outline-none mt-2"
+                  className="border border-border-secondary px-2 py-3 w-full rounded  focus:outline-none mt-2"
                 />
               </div>
 
@@ -271,34 +291,35 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                 <label>Phone Number</label>
                 <PhoneInput
                   country="gb"
-                  value={deliveryAddress.phone}
+                  value={shippingAddress.phone}
                   onChange={(phone) =>
-                    setDeliveryAddress((prev) => ({ ...prev, phone }))
+                    setShippingAddress((prev) => ({ ...prev, phone }))
                   }
                   containerStyle={{
                     width: "100%",
                     borderRadius: "0.375rem",
-                    marginTop: "12px",
+                    marginTop: "8px",
                   }}
                   inputStyle={{
                     width: "100%",
                     border: "1px solid #afafaf",
                     padding: "1.5rem 3rem",
-                    borderRadius: "0.375rem",
+                    borderRadius: "4px",
+                    fontFamily: "poppins",
                   }}
                 />
               </div>
 
               <div className="relative w-full mb-1 max-md:col-span-2">
-                <label>Zip Code / Postal code</label>
+                <label>Postal code</label>
                 <input
                   name="postalCode"
-                  value={deliveryAddress.postalCode}
-                  onChange={handleDeliveryChange}
+                  value={shippingAddress.postalCode}
+                  onChange={handleShippingChange}
                   type="text"
-                  placeholder="Zip code / Postal code"
+                  placeholder="Postal code"
                   maxLength={12} // Preventing user input beyond 12 characters
-                  className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                  className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                 />
               </div>
             </div>
@@ -309,20 +330,20 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
             <input
               type="checkbox"
               id="billingSameAsShipping"
-              checked={sameAsDelivery}
-              onChange={() => setSameAsDelivery(!sameAsDelivery)}
+              checked={sameAsShipping}
+              onChange={() => setSameAsShipping(!sameAsShipping)}
               className="h-5 w-5 cursor-pointer"
             />
             <label
               htmlFor="billingSameAsShipping"
               className="text-[14px] sm:text-base cursor-pointer"
             >
-              Billing address same as delivery address
+              Billing address same as shipping address
             </label>
           </div>
 
           {/* BILLING ADDRESS */}
-          {!sameAsDelivery && (
+          {!sameAsShipping && (
             <div>
               <div className="flex gap-3 mb-5">
                 <CreditCard />
@@ -338,7 +359,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     onChange={handleBillingChange}
                     type="text"
                     placeholder="First name"
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                   />
                 </div>
 
@@ -350,7 +371,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     onChange={handleBillingChange}
                     type="text"
                     placeholder="Last name"
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                   />
                 </div>
 
@@ -360,9 +381,9 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     name="email"
                     value={billingAddress.email}
                     onChange={handleBillingChange}
-                    type="text"
+                    type="email"
                     placeholder="example@gmail.com"
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                   />
                 </div>
 
@@ -372,7 +393,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     name="country"
                     value={billingAddress.country}
                     onChange={handleBillingChange}
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded bg-white mt-2"
                   >
                     <option value="">Select country</option>
                     {Country.getAllCountries().map((country) => (
@@ -389,7 +410,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     name="state"
                     value={billingAddress.state}
                     onChange={handleBillingChange}
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md bg-white mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded bg-white mt-2"
                     autoComplete="no"
                   >
                     <option value="">Select State / Province</option>
@@ -412,7 +433,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     onChange={handleBillingChange}
                     type="text"
                     placeholder="Address line one"
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                   />
                 </div>
 
@@ -427,7 +448,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     onChange={handleBillingChange}
                     type="text"
                     placeholder="Address line two optional"
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md  focus:outline-none mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                   />
                 </div>
 
@@ -443,28 +464,29 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
                     containerStyle={{
                       width: "100%",
                       borderRadius: "0.375rem",
-                      marginTop: "12px",
+                      marginTop: "8px",
                     }}
                     inputStyle={{
                       width: "100%",
                       border: "1px solid #afafaf",
                       padding: "1.5rem 3rem",
-                      borderRadius: "0.375rem",
+                      borderRadius: "4px",
+                      fontFamily: "poppins",
                     }}
                   />
                 </div>
 
                 {/* Zip Code */}
                 <div className="relative w-full mb-1 max-md:col-span-2">
-                  <label>Zip Code / Postal code</label>
+                  <label>Postal code</label>
                   <input
                     name="postalCode"
                     value={billingAddress.postalCode}
                     onChange={handleBillingChange}
                     type="text"
-                    placeholder="Zip code / Postal code"
+                    placeholder="Postal code"
                     maxLength={12} // Preventing user input beyond 12 characters
-                    className="border border-border-secondary px-2 py-3 w-full rounded-md focus:outline-none mt-2"
+                    className="border border-border-secondary px-2 py-3 w-full rounded focus:outline-none mt-2"
                   />
                 </div>
               </div>
@@ -475,7 +497,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({ setShowModal }) => {
             type="submit"
             className="bg-brand-neutral text-white rounded-md py-3 px-10 w-full text-base poppins"
           >
-            Save Address
+            {loading ? "Loading..." : "Save Address"}
           </Button>
         </form>
       </motion.div>

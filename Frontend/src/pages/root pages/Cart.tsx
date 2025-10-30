@@ -85,7 +85,7 @@ const Cart: React.FC = () => {
                         {item.name}
                       </h3>
 
-                      <p className="text-sm md:text-base text-text-secondary mt-1">
+                      <p className="text-sm md:text-base text-gray-500 mt-1">
                         Size:{" "}
                         <span className="text-text-primary font-medium">
                           {item.size}

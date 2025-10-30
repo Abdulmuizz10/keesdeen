@@ -133,7 +133,7 @@ const Navigation = () => {
   const [order, setOrder] = useState<any>("");
   const [utility, setUtility] = useState<any>();
   const [utilityCouponCode, setUtilityCouponCode] = useState<string>("");
-  const [utilityDeliveryFee, setUtilityDeliveryFee] = useState<string>("");
+  const [utilityShippingFee, setUtilityShippingFee] = useState<string>("");
   const [utilityDiscount, setUtilityDiscount] = useState<string>("");
 
   const handleQuerySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -159,7 +159,7 @@ const Navigation = () => {
     const formData: Record<string, any> = {};
 
     if (utilityCouponCode) formData.couponCode = utilityCouponCode;
-    if (utilityDeliveryFee) formData.deliveryFee = utilityDeliveryFee;
+    if (utilityShippingFee) formData.shippingFee = utilityShippingFee;
     if (utilityDiscount) formData.discount = utilityDiscount;
     try {
       const response = await Axios.put(`${URL}/utility`, formData, {
@@ -465,7 +465,7 @@ const Navigation = () => {
                   <DialogContent className="w-full flex items-center justify-center max-w-sm bg-white py-6 px-8 rounded-lg">
                     <DialogHeader>
                       <DialogDescription className="text-lg font-medium mb-2 text-black">
-                        Set Delivery fee and Coupon code
+                        Set shipping fee and coupon code
                       </DialogDescription>
 
                       {/* Search Form */}
@@ -503,14 +503,14 @@ const Navigation = () => {
                         </div>
 
                         <p className="flex items-center gap-2">
-                          Delivery fee :{" "}
+                          Shipping fee :{" "}
                           <span className="font-medium">
                             {utilityLoading ? (
                               <div className="small-loader" />
                             ) : (
                               formatAmountDefault(
                                 currency,
-                                utility?.deliveryFee
+                                utility?.shippingFee
                               )
                             )}
                           </span>
@@ -518,17 +518,17 @@ const Navigation = () => {
                         <div className="flex items-center border rounded border-neutral-300 bg-gray-50 px-2">
                           <Input
                             type="number"
-                            placeholder="Delivery fee"
+                            placeholder="Shipping fee"
                             className="rounded poppins w-[330px] bg-gray-50 focus:outline-none border-none"
-                            value={utilityDeliveryFee}
+                            value={utilityShippingFee}
                             onChange={(e) =>
-                              setUtilityDeliveryFee(e.target.value)
+                              setUtilityShippingFee(e.target.value)
                             }
                           />
                           <FiX
                             className="text-xl cursor-pointer"
                             onClick={() => {
-                              setUtilityDeliveryFee("");
+                              setUtilityShippingFee("");
                             }}
                           />
                         </div>

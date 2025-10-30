@@ -115,15 +115,6 @@ export const updateProduct = async (
   }
 };
 
-export const createReview = async (reviewInfo: any, productId: string) => {
-  try {
-    await axios.post<any>(`${URL}/products/${productId}/reviews`, reviewInfo);
-    toast.success("Thanks for the review!");
-  } catch (err) {
-    toast.error("Something wrong. Couldn't submit a review!");
-  }
-};
-
 // Delete a product
 export const deleteProduct = async (id: any, setAdminLoader: any) => {
   setAdminLoader(true);

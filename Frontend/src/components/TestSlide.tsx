@@ -8,10 +8,10 @@ type Props = {
   headings: string[];
 };
 
-export type Banner13Props = React.ComponentPropsWithoutRef<"section"> &
+export type TextSlideProps = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
-export const Banner13 = (props: Banner13Props) => {
+const TextSlide = (props: TextSlideProps) => {
   const { headings } = {
     ...Banner13Defaults,
     ...props,
@@ -52,7 +52,9 @@ export const Banner13 = (props: Banner13Props) => {
   );
 };
 
-export const Banner13Defaults: Banner13Props = {
+export default TextSlide;
+
+export const Banner13Defaults: TextSlideProps = {
   headings: [
     "Keesdeen Keesdeen Keesdeen Keesdeen Keesdeen",
     "Keesdeen Keesdeen Keesdeen Keesdeen Keesdeen",

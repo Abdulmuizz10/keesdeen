@@ -8,10 +8,6 @@ export const createOrder = async (
   order: any,
   setLoading: any,
   setCartItems: any,
-  setDeliverySelectedCountry: any,
-  setDeliverySelectedState: any,
-  setBillingSelectedCountry: any,
-  setBillingSelectedState: any,
   navigate: any
 ) => {
   try {
@@ -24,10 +20,6 @@ export const createOrder = async (
       toast.success("Order placed successfully!");
       showOrderSummary(res.data);
       setCartItems({});
-      setDeliverySelectedCountry("");
-      setDeliverySelectedState("");
-      setBillingSelectedCountry("");
-      setBillingSelectedState("");
       navigate("/collections/shop_all");
     } else {
       setLoading(false);

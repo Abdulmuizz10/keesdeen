@@ -16,138 +16,110 @@ import ProductCard from "../../components/ProductCard";
 const FitnessAccessories: React.FC = () => {
   const { isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<any>([]);
-  const [category, setCategory] = useState<string[]>([]);
+
+  // Filter + sort states
+  const [subCategory, setSubCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
-  const [sortType, setSortType] = useState<string>("Relevance");
-  const [products, setProducts] = useState([]);
+  const [sortType, setSortType] = useState<string>("relevant");
+
+  // Data & pagination
+  const [products, setProducts] = useState<any[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [pages, setPages] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await Axios.get(
-          `${URL}/products/fitness-accessories`,
-          {
-            validateStatus: (status) => status < 600,
-          }
-        );
-        if (response.status === 200) {
-          setProducts(response.data);
-          setFilteredProducts(response.data);
-        }
-      } catch (error) {
-        setError("Network error, unable to get products!");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
-  const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (category.includes(e.target.value)) {
-      setCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setCategory((prev) => [...prev, e.target.value]);
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.get(
+        `${URL}/products/collections/fitness-accessories`,
+        {
+          params: {
+            page,
+            limit: 12,
+            subcategory: subCategory.join(","),
+            size: sizeCategory.join(","),
+            color: colorCategory.join(","),
+            sort:
+              sortType === "Low - High"
+                ? "low-high"
+                : sortType === "High - Low"
+                ? "high-low"
+                : "relevant",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setProducts(response.data.products);
+        setPages(response.data.pages);
+      }
+    } catch (error) {
+      setError("Network error, unable to get products!");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Fetch whenever filters, sort, or page changes
+  useEffect(() => {
+    fetchProducts();
+  }, [subCategory, sizeCategory, colorCategory, sortType, page]);
+
+  const toggleSubCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSubCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   const toggleSizeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (sizeCategory.includes(e.target.value)) {
-      setSizeCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setSizeCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setSizeCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   const toggleColorCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (colorCategory.includes(e.target.value)) {
-      setColorCategory((prev) =>
-        prev.filter((item) => item !== e.target.value)
-      );
-    } else {
-      setColorCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setColorCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
-
-  const applyFilter = () => {
-    let productsCopy = products;
-
-    if (category.length > 0) {
-      productsCopy = productsCopy.filter((item: any) =>
-        category.includes(item.subcategory)
-      );
-    }
-
-    if (sizeCategory.length > 0) {
-      productsCopy = productsCopy.filter((item: any) =>
-        item.sizes.some((s: string) => sizeCategory.includes(s))
-      );
-    }
-
-    if (colorCategory.length > 0) {
-      productsCopy = productsCopy.filter((item: any) =>
-        item.colors.some((c: string) => colorCategory.includes(c))
-      );
-    }
-
-    setFilteredProducts(productsCopy);
-  };
-
-  const sortProducts = () => {
-    let spCopy = filteredProducts.slice();
-
-    switch (sortType) {
-      case "Low - High":
-        setFilteredProducts(spCopy.sort((a: any, b: any) => a.price - b.price));
-        break;
-      case "High - Low":
-        setFilteredProducts(spCopy.sort((a: any, b: any) => b.price - a.price));
-        break;
-      default: {
-        applyFilter();
-        break;
-      }
-    }
-  };
-
-  useEffect(() => {
-    applyFilter();
-  }, [category, sizeCategory, colorCategory, products]);
-
-  useEffect(() => {
-    sortProducts();
-  }, [sortType]);
-
-  const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
   const clearFilters = () => {
-    setCategory([]);
+    setSubCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
     checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
+    setPage(1);
   };
 
   return (
-    <section className="px-[5%] py-24 md:py-30">
-      <div className="">
+    <section className="min-h-screen flex flex-col px-[5%] py-24 md:py-30">
+      <div className="flex-1">
         <div className="mb-2 md:mb-5">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
             Fitness Accessories
           </h2>
-          {/* <p className="md:text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </p> */}
         </div>
+
         <div
           className={`flex flex-col xl:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
             isActive && "opacity-0 transition-opacity"
           }`}
         >
-          {/* Left Side */}
+          {/* Left side filters */}
           <div className="min-w-60 poppins">
             <div
               className="flex items-center gap-2"
@@ -164,7 +136,7 @@ const FitnessAccessories: React.FC = () => {
             </div>
             {/* category Filter */}
             <div
-              className={`border border-border-secondary pl-5 py-3 mt-2 ${
+              className={`border border-border-secondary pl-5 py-3 mt-5 ${
                 showFilter ? "" : "hidden"
               } xl:block shadow-medium rounded`}
             >
@@ -182,7 +154,7 @@ const FitnessAccessories: React.FC = () => {
                       type="checkbox"
                       className="w-3 cursor-pointer"
                       value={wear}
-                      onChange={toggleCategory}
+                      onChange={toggleSubCategory}
                       ref={(el) => {
                         if (el) checkboxesRef.current.push(el);
                       }}
@@ -235,7 +207,7 @@ const FitnessAccessories: React.FC = () => {
                 showFilter ? "" : "hidden"
               } xl:block shadow-medium rounded`}
             >
-              <p className="text-base md:text-md pb-3">Colour</p>
+              <p className="text-base md:text-md pb-3">Color</p>
               <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
                 {[
                   { name: "Black", code: "#000000" },
@@ -275,6 +247,7 @@ const FitnessAccessories: React.FC = () => {
                 ))}
               </div>
             </div>
+
             <Button
               className={`my-4 w-full active:bg-brand-neutral/50 bg-brand-neutral text-text-light border-none rounded-md ${
                 showFilter ? "" : "hidden"
@@ -287,93 +260,102 @@ const FitnessAccessories: React.FC = () => {
               Clear filter
             </Button>
           </div>
-          {/* Right Side */}
+
+          {/* Right side products */}
           <div className="w-full">
-            <div className="flex-1 flex flex-col gap-5 w-full">
-              <div className="flex justify-between text-base items-center">
-                <p className="text-base md:text-md">Fitness Accessories</p>
-                {/* {Product Sort} */}
+            <div className="flex justify-between text-base items-center">
+              <p className="text-base md:text-md">Collections</p>
 
-                <p className="info-text hidden xl:flex">
-                  Showing 1 . {filteredProducts.length} of {products?.length}{" "}
-                  Products
-                </p>
+              <p className="info-text hidden xl:flex">
+                Showing page {page} of {pages}
+              </p>
 
-                <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
-                  <Select onValueChange={setSortType}>
-                    <SelectTrigger className="rounded-md">
-                      <SelectValue placeholder="Sort by price" />
-                    </SelectTrigger>
-                    <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                      <SelectItem
-                        value="relevant"
-                        className=" cursor-pointer hover:text-text-secondary"
-                      >
-                        Sort by: Relevance
-                      </SelectItem>
-                      <SelectItem
-                        value="Low - High"
-                        className=" cursor-pointer  hover:text-text-secondary"
-                      >
-                        Sort by: Low to High
-                      </SelectItem>
-                      <SelectItem
-                        value="High - Low"
-                        className=" cursor-pointer  hover:text-text-secondary"
-                      >
-                        Sort by: High to Low
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className=" max-w-[200px] w-full flex lg:hidden">
-                  <select
-                    className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
-                    onChange={(e) => setSortType(e.target.value)}
-                  >
-                    <option value="relevant">Sort by: Relevance</option>
-                    <option value="Low - High">Sort by: Low to High</option>
-                    <option value="High - Low">Sort by: High to Low</option>
-                  </select>
-                </div>
+              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
+                <Select onValueChange={setSortType}>
+                  <SelectTrigger className="rounded-md">
+                    <SelectValue placeholder="Sort by price" />
+                  </SelectTrigger>
+                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
+                    <SelectItem
+                      value="relevant"
+                      className=" cursor-pointer hover:text-text-secondary"
+                    >
+                      Sort by: Relevance
+                    </SelectItem>
+                    <SelectItem
+                      value="Low - High"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
+                      Sort by: Low to High
+                    </SelectItem>
+                    <SelectItem
+                      value="High - Low"
+                      className=" cursor-pointer  hover:text-text-secondary"
+                    >
+                      Sort by: High to Low
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {/* {Map Products} */}
-              <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
-                {loading ? (
-                  Array(21)
-                    .fill(null)
-                    .map((product: any, index: number) => (
-                      <ProductCard
-                        product={product}
-                        loading={loading}
-                        key={index}
-                      />
-                    ))
-                ) : filteredProducts.length > 0 ? (
-                  filteredProducts?.map((product: any, index: number) => (
-                    <ProductCard
-                      product={product}
-                      loading={loading}
-                      key={index}
-                    />
+              <div className="max-w-[200px] w-full flex justify-end lg:hidden">
+                <select
+                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
+                  onChange={(e) => setSortType(e.target.value)}
+                >
+                  <option value="relevant">Sort by: Relevance</option>
+                  <option value="Low - High">Sort by: Low to High</option>
+                  <option value="High - Low">Sort by: High to Low</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full my-5">
+              {loading ? (
+                Array(12)
+                  .fill(null)
+                  .map((_, index) => (
+                    <ProductCard key={index} product={null} loading={true} />
                   ))
-                ) : error ? (
-                  <div className="col-span-4">
-                    <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                      {error}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="col-span-4">
-                    <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                      Products not available!
-                    </p>
-                  </div>
-                )}
-              </div>
+              ) : products.length > 0 ? (
+                products.map((product: any) => (
+                  <ProductCard
+                    key={product._id}
+                    product={product}
+                    loading={loading}
+                  />
+                ))
+              ) : error ? (
+                <p className="col-span-4 text-center text-lg mt-10">{error}</p>
+              ) : (
+                <p className="col-span-4 text-center text-lg mt-10">
+                  No products found.
+                </p>
+              )}
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Pagination fixed to bottom */}
+      <div className="flex justify-center gap-4 mt-auto py-10 border-t border-border-secondary bg-white">
+        <button
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span className="px-3 py-2">
+          Page {page} of {pages}
+        </span>
+        <button
+          onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+          disabled={page === pages}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </section>
   );

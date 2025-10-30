@@ -18,10 +18,10 @@ import AuthLayout from "./layouts/AuthLayout";
 // Root Pages
 import Home from "./pages/root pages/Home";
 import ShopAll from "./pages/root pages/ShopAll";
-import ActiveWear from "./pages/root pages/ActiveWear";
+import ActiveWears from "./pages/root pages/ActiveWears";
 import FitnessAccessories from "./pages/root pages/FitnessAccessories";
 import ProductDetails from "./pages/root pages/ProductDetails";
-import Collections from "./pages/root pages/Collections";
+import SearchResults from "./pages/root pages/SearchResults";
 import Cart from "./pages/root pages/Cart";
 import Checkout from "./pages/root pages/CheckOut";
 import WishLists from "./pages/root pages/WishLists";
@@ -75,96 +75,118 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="overflow-x-hidden ">
+    <div>
       <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
-      <AnimatePresence mode="wait">
-        {animation && <Animation />}
-      </AnimatePresence>
-      <Router>
-        <Routes>
-          {/* Root Layout with common pages */}
-          <Route element={<RootLayouts animation={animation} />}>
-            <Route path="/" element={<Home animation={animation} />} />
-            <Route path="/collections/shop_all" element={<ShopAll />} />
-            <Route path="/collections/new_arrivals" element={<NewArrivals />} />
-            <Route path="/collections/Active_wear" element={<ActiveWear />} />
-            <Route
-              path="/collections/Fitness_accessories"
-              element={<FitnessAccessories />}
-            />
-            <Route path="/collections/:name" element={<Collections />} />
-            <Route path="/product_details/:id" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/wishlists" element={<WishLists />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/check_out" element={<Checkout />} />
-            <Route path="/order_history" element={<OrderHistory />} />
-            <Route path="/order_details/:id" element={<OrderDetails />} />
-          </Route>
 
-          {/* Auth Routes */}
-          <Route element={<AuthLayout animation={animation} />}>
-            <Route path="/auth/Sign_in" element={<SignIn />} />
-            <Route path="/auth/sign_up" element={<SignUp />} />
-            <Route path="/auth/forget_password" element={<ForgetPassword />} />
-            <Route
-              path="/auth/reset_password/:token"
-              element={<ResetPassword />}
-            />
-          </Route>
+      {animation ? (
+        <AnimatePresence mode="wait">
+          <Animation />
+        </AnimatePresence>
+      ) : (
+        <Router>
+          <Routes>
+            {/* Root Layout with common pages */}
+            <Route element={<RootLayouts />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/collections/shop_all" element={<ShopAll />} />
+              <Route
+                path="/collections/new_arrivals"
+                element={<NewArrivals />}
+              />
+              <Route
+                path="/collections/Active_wears"
+                element={<ActiveWears />}
+              />
+              <Route
+                path="/collections/Fitness_accessories"
+                element={<FitnessAccessories />}
+              />
+              <Route
+                path="/collections/search/:name"
+                element={<SearchResults />}
+              />
+              <Route path="/product_details/:id" element={<ProductDetails />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/wishlists" element={<WishLists />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/check_out" element={<Checkout />} />
+              <Route path="/order_history" element={<OrderHistory />} />
+              <Route path="/order_details/:id" element={<OrderDetails />} />
+            </Route>
 
-          {/* Admin Routes (Only accessible to admins) */}
-          {user?.isAdmin ? (
-            <Route element={<AdminLayout animation={animation} />}>
-              <Route path="/admin" element={<AdminHome />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
+            {/* Auth Routes */}
+            <Route element={<AuthLayout animation={animation} />}>
+              <Route path="/auth/Sign_in" element={<SignIn />} />
+              <Route path="/auth/sign_up" element={<SignUp />} />
               <Route
-                path="/admin/user_details/:id"
-                element={<AdminUserDetails />}
-              />
-              <Route path="/admin/products" element={<AdminProducts />} />
-              <Route
-                path="/admin/product_details/:id"
-                element={<AdminProductDetails />}
-              />
-              <Route path="/admin/orders" element={<AdminOrders />} />
-              <Route
-                path="/admin/pending_orders"
-                element={<AdminPendingOrders />}
+                path="/auth/forget_password"
+                element={<ForgetPassword />}
               />
               <Route
-                path="/admin/delivered_orders"
-                element={<AdminDeliveredOrders />}
-              />
-              <Route
-                path="/admin/order_details/:id"
-                element={<AdminOrderDetails />}
-              />
-              <Route path="/admin/add_product" element={<AdminAddProduct />} />
-              <Route
-                path="/admin/best_sellers"
-                element={<AdminBestSellers />}
-              />
-              <Route
-                path="/admin/new_arrivals"
-                element={<AdminNewArrivals />}
-              />
-              <Route path="/admin/subscribers" element={<AdminSubscribers />} />
-              <Route
-                path="/admin/email-to-subscribers"
-                element={<AdminSendEmailToSubscribers />}
-              />
-              <Route
-                path="/admin/update_product/:id"
-                element={<AdminUpdateProduct />}
+                path="/auth/reset_password/:token"
+                element={<ResetPassword />}
               />
             </Route>
-          ) : null}
 
-          {/* 404 Route */}
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </Router>
+            {/* Admin Routes (Only accessible to admins) */}
+            {user?.isAdmin ? (
+              <Route element={<AdminLayout animation={animation} />}>
+                <Route path="/admin" element={<AdminHome />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route
+                  path="/admin/user_details/:id"
+                  element={<AdminUserDetails />}
+                />
+                <Route path="/admin/products" element={<AdminProducts />} />
+                <Route
+                  path="/admin/product_details/:id"
+                  element={<AdminProductDetails />}
+                />
+                <Route path="/admin/orders" element={<AdminOrders />} />
+                <Route
+                  path="/admin/pending_orders"
+                  element={<AdminPendingOrders />}
+                />
+                <Route
+                  path="/admin/delivered_orders"
+                  element={<AdminDeliveredOrders />}
+                />
+                <Route
+                  path="/admin/order_details/:id"
+                  element={<AdminOrderDetails />}
+                />
+                <Route
+                  path="/admin/add_product"
+                  element={<AdminAddProduct />}
+                />
+                <Route
+                  path="/admin/best_sellers"
+                  element={<AdminBestSellers />}
+                />
+                <Route
+                  path="/admin/new_arrivals"
+                  element={<AdminNewArrivals />}
+                />
+                <Route
+                  path="/admin/subscribers"
+                  element={<AdminSubscribers />}
+                />
+                <Route
+                  path="/admin/email-to-subscribers"
+                  element={<AdminSendEmailToSubscribers />}
+                />
+                <Route
+                  path="/admin/update_product/:id"
+                  element={<AdminUpdateProduct />}
+                />
+              </Route>
+            ) : null}
+
+            {/* 404 Route */}
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </Router>
+      )}
     </div>
   );
 };
@@ -175,7 +197,7 @@ const Animation = () => {
       variants={appear}
       initial="open"
       exit="closed"
-      className="h-screen w-screen fixed inset-0 flex items-center justify-center bg-white z-50 transition-opacity"
+      className="h-screen w-screen fixed inset-0 flex items-center justify-center bg-white !z-50 transition-opacity"
     >
       <div>
         <img

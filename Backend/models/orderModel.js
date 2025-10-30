@@ -1,24 +1,25 @@
 import mongoose from "mongoose";
 
-const shippingSchema = new mongoose.Schema({
+const addressSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  email: { type: String, required: true },
   country: { type: String, required: true },
   state: { type: String, required: true },
-  addressLineOne: { type: String, required: true },
-  addressLineTwo: { type: String, required: false },
-  phoneNumber: { type: String, required: true },
-  zipCode: { type: String, required: true },
+  address1: { type: String, required: true },
+  address2: { type: String },
+  phone: { type: String, required: true },
+  postalCode: { type: String, required: true },
 });
 
-const billingSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  country: { type: String, required: true },
-  state: { type: String, required: true },
-  street: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
-  zipCode: { type: String, required: true },
+const orderedItemSchema = new mongoose.Schema({
+  name: String,
+  qty: Number,
+  image: String,
+  price: Number,
+  product: { type: mongoose.Schema.Types.ObjectId, ref: "ProductModel" },
+  size: String,
+  color: String,
 });
 
 const orderSchema = new mongoose.Schema(
@@ -26,51 +27,23 @@ const orderSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserModel",
-      required: function () {
-        return !this.guestOrder;
-      },
+      required: true,
     },
     email: { type: String, required: true },
-    sourceId: {
-      type: String,
-      required: function () {
-        return this.paidAt !== null;
-      },
-    },
     currency: { type: String, required: true },
-    coupon: { type: String, required: false },
-    orderedItems: [
-      {
-        name: { type: String, required: true },
-        qty: { type: Number, required: true },
-        image: { type: String, required: true },
-        price: { type: Number, required: true },
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "ProductModel",
-          required: true,
-        },
-        size: { type: String, required: true },
-        color: { type: String, required: true },
-      },
-    ],
-    shippingAddress: { type: shippingSchema, required: true },
-    billingAddress: {
-      type: billingSchema,
-      required: function () {
-        return !this.billingSameAsShipping;
-      },
-    },
-    billingSameAsShipping: { type: Boolean, default: true },
-    shippingPrice: { type: Number, required: true, default: 0.0 },
-    totalPrice: { type: Number, required: true, default: 0.0 },
-    paidAt: { type: Date, required: false },
+    coupon: { type: String },
+    orderedItems: [orderedItemSchema],
+    shippingAddress: { type: addressSchema, required: true },
+    billingAddress: { type: addressSchema, required: true },
+    shippingPrice: { type: Number, default: 0.0 },
+    totalPrice: { type: Number, default: 0.0 },
+    paidAt: { type: Date, default: null },
     isDelivered: {
       type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered"],
       default: "Pending",
     },
-    deliveredAt: { type: Date, required: false },
+    deliveredAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

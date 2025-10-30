@@ -1,10 +1,12 @@
+import mongoose from "mongoose";
 import OrderModel from "../models/orderModel.js";
 import { Client, Environment } from "square";
-import crypto from "crypto";
-import userModel from "../models/userModel.js";
 import dotenv from "dotenv";
-import { sendOrderConfirmationEmail } from "../lib/utils.js";
 dotenv.config();
+import {
+  sendGiftNotificationEmail,
+  sendOrderConfirmationEmail,
+} from "../lib/utils.js";
 
 function convertBigIntToString(obj) {
   if (typeof obj === "bigint") {
@@ -24,7 +26,10 @@ function convertBigIntToString(obj) {
 
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: Environment.Production,
+  environment:
+    process.env.NODE_ENV === "development"
+      ? Environment.Sandbox
+      : Environment.Production,
 });
 
 const paymentsApi = squareClient.paymentsApi;
@@ -36,8 +41,8 @@ const createOrderController = async (req, res) => {
       totalPrice,
       currency,
       orderedItems,
-      billingAddress,
       shippingAddress,
+      billingAddress,
       email,
     } = req.body;
 
@@ -46,13 +51,13 @@ const createOrderController = async (req, res) => {
       return res.status(400).json({ message: "Required fields are missing." });
     }
 
-    const address = billingAddress || shippingAddress;
+    const address = { shippingAddress, billingAddress };
     if (
       !address ||
-      !address.zipCode ||
-      !address.addressLineOne ||
-      !address.country ||
-      !address.state
+      !address.shippingAddress.postalCode ||
+      !address.shippingAddress.address1 ||
+      !address.shippingAddress.country ||
+      !address.shippingAddress.state
     ) {
       return res
         .status(400)
@@ -60,6 +65,7 @@ const createOrderController = async (req, res) => {
     }
 
     let paymentResult;
+
     try {
       const { result } = await paymentsApi.createPayment({
         sourceId,
@@ -70,10 +76,10 @@ const createOrderController = async (req, res) => {
         idempotencyKey: crypto.randomUUID(),
         locationId: process.env.SQUARE_LOCATION_ID,
         billingAddress: {
-          postalCode: address.zipCode,
-          addressLine1: address.addressLineOne,
-          administrativeDistrictLevel1: address.state,
-          country: address.country,
+          postalCode: address.billingAddress.postalCode,
+          address1: address.billingAddress.address1,
+          administrativeDistrictLevel1: address.billingAddress.state,
+          country: address.billingAddress.country,
         },
         buyerEmailAddress: email,
       });
@@ -81,7 +87,6 @@ const createOrderController = async (req, res) => {
       if (!result) {
         return res.status(400).json({ message: "Payment result is invalid." });
       }
-
       paymentResult = convertBigIntToString(result);
     } catch (paymentError) {
       return res.status(500).json({
@@ -104,6 +109,15 @@ const createOrderController = async (req, res) => {
         savedOrder._id
       );
 
+      if (shippingAddress.email !== email) {
+        await sendGiftNotificationEmail(
+          shippingAddress.email,
+          shippingAddress.firstName,
+          shippingAddress.lastName,
+          `${shippingAddress.firstName} ${shippingAddress.lastName}`
+        );
+      }
+
       return res.status(200).json({ ...savedOrder.toObject(), paymentResult });
     } catch (orderError) {
       return res.status(500).json({
@@ -116,20 +130,45 @@ const createOrderController = async (req, res) => {
   }
 };
 
-// Get all orders (Admin use)
-const getAllOrdersController = async (req, res) => {
+// user
+
+const getProfileOrdersByPageController = async (req, res) => {
+  const userId = new mongoose.Types.ObjectId(req.user.id);
   try {
-    const orders = await OrderModel.find().populate(
-      "user",
-      "firstName lastName email"
-    );
-    res.status(200).json(orders);
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const orders = await OrderModel.find({ user: userId })
+      .sort({
+        createdAt: -1,
+      })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await OrderModel.countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({ orders, totalPages });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const getOrdersByPage = async (req, res) => {
+const getProfileOrderByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await OrderModel.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Admin
+const adminGetOrdersByPaginationController = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
@@ -149,7 +188,20 @@ const getOrdersByPage = async (req, res) => {
   }
 };
 
-const getPendingOrders = async (req, res) => {
+const adminGetOrderByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await OrderModel.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    res.status(200).json(order);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const adminGetPendingOrdersByPaginationController = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
@@ -171,7 +223,7 @@ const getPendingOrders = async (req, res) => {
   }
 };
 
-const getDeliveredOrders = async (req, res) => {
+const adminGetDeliveredOrdersByPaginationController = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
@@ -191,14 +243,32 @@ const getDeliveredOrders = async (req, res) => {
   }
 };
 
-// Get an order by ID
-const getOrderByIdController = async (req, res) => {
+const adminGetUserOrdersController = async (req, res) => {
+  const userId = new mongoose.Types.ObjectId(req.user.id);
   try {
-    // const order = await OrderModel.findById(req.params.id).populate(
-    //   "user",
-    //   "firstName lastName email"
-    // );
-    const order = await OrderModel.findById(req.params.id);
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const orders = await OrderModel.find({ user: userId })
+      .sort({
+        createdAt: -1,
+      })
+      .skip(skip)
+      .limit(limit);
+    const totalProducts = await OrderModel.countDocuments();
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.status(200).json({ orders, totalPages });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const adminGetUserOrderByIdController = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await OrderModel.findById(id);
     if (!order) return res.status(404).json({ message: "Order not found" });
     res.status(200).json(order);
   } catch (error) {
@@ -206,30 +276,7 @@ const getOrderByIdController = async (req, res) => {
   }
 };
 
-// Update order to paid
-// export const updateOrderToPaidController = async (req, res) => {
-//   try {
-//     const order = await OrderModel.findById(req.params.id);
-//     if (!order) return res.status(404).json({ message: "Order not found" });
-
-//     order.isPaid = true;
-//     order.paidAt = new Date();
-//     order.paymentResult = {
-//       id: req.body.id,
-//       status: req.body.status,
-//       update_time: req.body.update_time,
-//       email_address: req.body.email_address,
-//     };
-
-//     const updatedOrder = await order.save();
-//     res.status(200).json(updatedOrder);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// Update order to delivered
-const updateOrderStatusController = async (req, res) => {
+const adminUpdateOrderStatusController = async (req, res) => {
   const { status } = req.body;
 
   const validStatuses = ["Pending", "Processing", "Shipped", "Delivered"];
@@ -242,7 +289,6 @@ const updateOrderStatusController = async (req, res) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-
     order.isDelivered = status;
 
     if (status === "Delivered") {
@@ -259,42 +305,15 @@ const updateOrderStatusController = async (req, res) => {
   }
 };
 
-// Get orders for a specific user
-const getOrdersByUserController = async (req, res) => {
-  const userId = req.user.id;
-  if (userId) {
-    try {
-      const orders = await OrderModel.find({ user: userId }).sort({
-        createdAt: -1,
-      }); // filter by user ID
-      res.status(200).json(orders);
-    } catch (error) {
-      res.status(500).json({ message: "Error getting orders" });
-    }
-  } else {
-    return res.status(400).json({ message: "User ID is missing or invalid" });
-  }
-};
-
-const getOrderByUserController = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const order = await OrderModel.findById(id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
-    res.status(200).json(order);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 export {
   createOrderController,
-  getAllOrdersController,
-  getOrdersByPage,
-  getPendingOrders,
-  getDeliveredOrders,
-  getOrderByIdController,
-  updateOrderStatusController,
-  getOrdersByUserController,
-  getOrderByUserController,
+  getProfileOrdersByPageController,
+  getProfileOrderByIdController,
+  adminGetOrdersByPaginationController,
+  adminGetOrderByIdController,
+  adminGetPendingOrdersByPaginationController,
+  adminGetDeliveredOrdersByPaginationController,
+  adminUpdateOrderStatusController,
+  adminGetUserOrdersController,
+  adminGetUserOrderByIdController,
 };

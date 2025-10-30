@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 
 const reviewSchema = mongoose.Schema(
   {
-    name: { type: String, required: false },
-    rating: { type: Number, required: false },
-    comment: { type: String, required: false },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
       ref: "UserModel",
     },
+    name: { type: String, required: false },
+    rating: { type: Number, required: false },
+    comment: { type: String, required: false },
     date: { type: Date, required: false },
   },
   { timestamps: true }

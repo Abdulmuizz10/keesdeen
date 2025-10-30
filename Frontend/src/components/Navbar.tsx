@@ -42,7 +42,7 @@ export const Navbar = (props: Navbar7Props) => {
   const { getCartCount, wishLists, isActive, setIsActive } = useShop();
 
   return (
-    <nav className="fixed z-[999] flex min-h-16 w-full items-center shadow-xxsmall bg-background-light px-[5%] md:min-h-18 bg-none">
+    <nav className="fixed top-0 inset-x-0 z-20 flex min-h-16 w-full items-center shadow-xxsmall bg-background-light px-[5%] md:min-h-18 bg-none">
       <div className="mx-auto size-full max-w-full flex items-center justify-between">
         <Link to={`${logo.url}`}>
           <img
@@ -150,7 +150,7 @@ export const Navbar = (props: Navbar7Props) => {
             )}
           </div>
         </div>
-        <div className="flex xl:hidden gap-2 items-center">
+        <div className="flex xl:hidden items-center gap-2 sm:gap-4">
           <Search
             width={20}
             height={20}
@@ -197,6 +197,7 @@ export const Navbar = (props: Navbar7Props) => {
           {user ? (
             <Link
               to="/profile"
+              className="hidden sm:flex"
               // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <User
@@ -207,7 +208,7 @@ export const Navbar = (props: Navbar7Props) => {
             </Link>
           ) : (
             <>
-              <Link to="/auth/sign_in">
+              <Link to="/auth/sign_in" className="hidden sm:flex">
                 <User
                   width={20}
                   height={20}
@@ -321,7 +322,7 @@ export const NavbarDefaults: Navbar7Props = {
     { title: "Home", url: "/" },
     { title: "Shop All", url: "/collections/shop_all" },
     { title: "New In", url: "/collections/new_arrivals" },
-    { title: "Active wear", url: "/collections/Active_wear" },
+    { title: "Active wears", url: "/collections/Active_wears" },
     { title: "Fitness Accessories", url: "/collections/Fitness_accessories" },
   ],
   buttons: [

@@ -1,29 +1,19 @@
 import React from "react";
-import { Header76 } from "../../components/Hero";
-import { Banner13 } from "../../components/TestSlide";
-import { Gallery21 } from "../../components/NewArrivalsSection";
-import { Gallery5 } from "../../components/CollectionSection";
-import { Gallery19 } from "../../components/BestSellerSection";
+import Hero from "../../components/Hero";
+import BestSellersSection from "../../components/BestSellersSection";
+import CollectionsSection from "../../components/CollectionsSection";
+import TextSlide from "../../components/TestSlide";
+import NewArrivalsSection from "../../components/NewArrivalsSection";
 
-interface HomeProps {
-  animation: Boolean;
-}
-
-const Home: React.FC<HomeProps> = ({ animation }) => {
+const Home: React.FC = () => {
   return (
-    <>
-      {!animation ? (
-        <>
-          <Header76 />
-          <Gallery19 />
-          <Banner13 />
-          <Gallery5 />
-          <Gallery21 />
-        </>
-      ) : (
-        <></>
-      )}
-    </>
+    <div className="overflow-none">
+      <Hero />
+      <BestSellersSection />
+      <TextSlide />
+      <CollectionsSection />
+      <NewArrivalsSection />
+    </div>
   );
 };
 

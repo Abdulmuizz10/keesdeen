@@ -1,52 +1,112 @@
 import express from "express";
 import {
-  createProductController,
-  getAllProductsController,
-  getProductsByPage,
-  getProductByIdController,
-  getCollections,
-  searchProductsWithSuggestions,
-  getProductsSearchResults,
-  updateProductController,
-  deleteProductController,
-  addReviewController,
-  getBestSellerProducts,
-  getNewArrivalProducts,
-  getActiveWearProducts,
-  getFitnessAccessoriesProducts,
-  updateProductToBestSeller,
-  updateProductToNewArrival,
+  getHomeBestSellersController,
+  getHomeCollectionsController,
+  getHomeNewArrivalsController,
+  getCollectionsShopAllController,
+  getCollectionsNewArrivalsController,
+  getCollectionsActiveWearController,
+  getCollectionsFitnessAccessoriesController,
+  getCollectionsProductByIdController,
+  addProductReviewController,
+  getCollectionsRelatedProductByIdController,
+  searchSuggestionsWithProductsController,
+  searchProductsResultsController,
+  adminCreateProductController,
+  adminGetProductsByPaginationController,
+  adminGetProductByIdController,
+  adminUpdateProductController,
+  adminDeleteProductController,
+  adminUpdateProductToBestSellerController,
+  adminUpdateProductToNewArrivalController,
 } from "../controllers/productControllers.js";
 
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 
 const router = express.Router();
 
-router.post("/", verifyUser, authorizeAdmin, createProductController);
-router.get("/", getAllProductsController);
-router.get("/collections", getCollections);
-router.get("/suggestions", searchProductsWithSuggestions);
-router.get("/search-results", getProductsSearchResults);
-router.get("/best-sellers", getBestSellerProducts);
-router.get("/new-arrivals", getNewArrivalProducts);
-router.get("/active-wears", getActiveWearProducts);
-router.get("/fitness-accessories", getFitnessAccessoriesProducts);
-router.get("/page/products", verifyUser, authorizeAdmin, getProductsByPage);
-router.get("/:id", getProductByIdController);
-router.patch(
-  "/update/:id/best-seller",
+// Client Routes
+router.get("/home/best-sellers", getHomeBestSellersController);
+
+router.get("/home/collections", getHomeCollectionsController);
+
+router.get("/home/new-arrivals", getHomeNewArrivalsController);
+
+router.get("/collections/shop-all", getCollectionsShopAllController);
+
+router.get("/collections/new-arrivals", getCollectionsNewArrivalsController);
+
+router.get("/collections/active-wears", getCollectionsActiveWearController);
+
+router.get(
+  "/collections/fitness-accessories",
+  getCollectionsFitnessAccessoriesController
+);
+
+router.get("/collections/product/:id", getCollectionsProductByIdController);
+
+router.post("/collections/product/:id/reviews", addProductReviewController);
+
+router.get(
+  "/collections/products/:id/related-products",
+  getCollectionsRelatedProductByIdController
+);
+
+router.get(
+  "/search/suggestions-products",
+  searchSuggestionsWithProductsController
+);
+
+router.get("/search/search-results", searchProductsResultsController);
+
+// Admin Routes
+router.post(
+  "/admin/create-product",
   verifyUser,
   authorizeAdmin,
-  updateProductToBestSeller
+  adminCreateProductController
 );
-router.patch(
-  "/update/:id/new-arrival",
+
+router.get(
+  "/admin/pagination-products",
   verifyUser,
   authorizeAdmin,
-  updateProductToNewArrival
+  adminGetProductsByPaginationController
 );
-router.put("/:id", verifyUser, authorizeAdmin, updateProductController);
-router.delete("/:id", verifyUser, authorizeAdmin, deleteProductController);
-router.post("/:id/reviews", addReviewController);
+
+router.get(
+  "/admin/get-product/product/:id",
+  verifyUser,
+  authorizeAdmin,
+  adminGetProductByIdController
+);
+
+router.put(
+  "/admin/:id/update-product",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateProductController
+);
+
+router.delete(
+  "/admin/:id/delete-product",
+  verifyUser,
+  authorizeAdmin,
+  adminDeleteProductController
+);
+
+router.patch(
+  "/admin/update/:id/best-seller",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateProductToBestSellerController
+);
+
+router.patch(
+  "/admin/update/:id/new-arrival",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateProductToNewArrivalController
+);
 
 export default router;

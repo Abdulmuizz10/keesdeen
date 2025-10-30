@@ -26,10 +26,10 @@ const CheckOut: React.FC = () => {
             Checkout
           </h2>
           <p className="md:text-md pb-5">
-            Please provide delivery and billing information.
+            Please provide shipping and billing information.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:pt-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:pt-5">
           {/* Order Summary and Address component */}
           <div className="flex flex-col gap-10">
             <OrderSummary />

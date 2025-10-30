@@ -5,11 +5,10 @@ import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
 
 interface ProductListProps {
-  category: string;
   id: string;
 }
 
-const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
+const RelatedProducts: React.FC<ProductListProps> = ({ id }) => {
   const [products, setProducts] = useState<any>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -17,14 +16,14 @@ const RelatedProducts: React.FC<ProductListProps> = ({ category, id }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await Axios.get(`${URL}/products`, {
-          validateStatus: (status) => status < 600,
-        });
+        const response = await Axios.get(
+          `${URL}/products/collections/products/${id}/related-products`,
+          {
+            validateStatus: (status) => status < 600,
+          }
+        );
         if (response.status === 200) {
-          const relatedProducts = response.data
-            .filter((p: any) => p.category === category)
-            .filter((p: any) => p._id !== id);
-          setProducts(relatedProducts);
+          setProducts(response.data);
         }
       } catch (error) {
         setError("Unable to get products!");
