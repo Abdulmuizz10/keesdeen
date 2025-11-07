@@ -103,8 +103,10 @@ const Hero: React.FC = () => {
           {/* Subheadline */}
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl font-light tracking-wide">
             Discover the perfect blend of style and comfort.
-            <br />
-            Elevate your wardrobe with our latest collection.
+            <span className="hidden sm:flex">
+              <br />
+              Elevate your wardrobe with our latest collection.
+            </span>
           </p>
 
           {/* CTA Buttons */}
@@ -128,7 +130,7 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Slider Indicators */}
-        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex gap-3">
+        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 hidden sm:flex gap-3">
           {heroImages.map((_, index) => (
             <button
               key={index}
