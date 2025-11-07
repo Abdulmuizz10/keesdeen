@@ -102,9 +102,9 @@ const Hero: React.FC = () => {
 
           {/* Subheadline */}
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl font-light tracking-wide">
-            Discover the perfect blend of style and comfort.
+            Discover the perfect blend of style and comfort,
+            <br />
             <span className="hidden sm:flex">
-              <br />
               Elevate your wardrobe with our latest collection.
             </span>
           </p>

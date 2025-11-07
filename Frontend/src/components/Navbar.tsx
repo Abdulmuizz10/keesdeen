@@ -61,7 +61,7 @@ const Navbar = () => {
       {isHomePage ? (
         <nav
           className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-            isScrolled ? "bg-white shadow-xxsmall py-4" : "bg-transparent py-6"
+            isScrolled ? "bg-white shadow-xxsmall py-3" : "bg-transparent py-5"
           }`}
         >
           <div className="mx-auto px-6 lg:px-12">
@@ -292,7 +292,7 @@ const Navbar = () => {
             isScrolled ? "bg-white shadow-xxsmall" : "bg-transparent"
           }`}
         >
-          <div className="mx-auto px-6 lg:px-12 py-4">
+          <div className="mx-auto px-6 lg:px-12 py-3">
             <div className="flex items-center justify-between lg:grid lg:grid-cols-3 lg:gap-8">
               {/* Logo - Left */}
               <div className="flex items-center">
