@@ -63,7 +63,7 @@ const Hero: React.FC = () => {
   }, [heroImages.length]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full h-screen overflow-hidden py-20 sm:py-0">
       {/* Image Slider */}
       {heroImages.map((image, index) => (
         <div

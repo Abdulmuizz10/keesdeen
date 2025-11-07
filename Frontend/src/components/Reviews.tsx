@@ -115,7 +115,9 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
             {reviews?.length > 0 ? (
               <>
                 <div className="mb-6 sm:mb-4">
-                  <h2 className="text-2xl font-bold mb-4">All Reviews</h2>
+                  <h2 className="text-2xl font-bold mb-4">
+                    <span>All Reviews</span>
+                  </h2>
                   <div className="w-full md:w-1/2 mt-1">
                     <Select onValueChange={setSortOption}>
                       <SelectTrigger className="rounded-md">
@@ -200,7 +202,9 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
           </div>
         ) : (
           <div className="mx-auto shadow-md rounded-lg mt-10">
-            <h2 className="text-2xl font-bold mb-4">Customer Review</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              <span>Customer Review</span>
+            </h2>
 
             {/* Review Form */}
             <form onSubmit={handleSubmit} className="mb-8 poppins">
