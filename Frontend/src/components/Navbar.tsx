@@ -1,382 +1,634 @@
-import { useContext, useState } from "react";
-import type { ButtonProps } from "@relume_io/relume-ui";
-import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { mainLogo, smallLogo } from "../assets";
-import { Search, ShoppingBag, Heart, User } from "lucide-react";
+import { useContext, useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { mainLogo, mainLogoWhite } from "../assets";
+import {
+  Search,
+  ShoppingBag,
+  Heart,
+  User,
+  X,
+  Menu,
+  Shield,
+} from "lucide-react";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
-// import CurrencySwitcher from "./CurrencySwitcher";
 
-type ImageProps = {
-  url?: string;
-  src: string;
-  alt?: string;
-};
-
-type NavLink = {
-  url: string;
-  title: string;
-};
-
-type Props = {
-  logo: ImageProps;
-  mobileLogo: ImageProps;
-  navLinks: NavLink[];
-  buttons: ButtonProps[];
-};
-
-export type Navbar7Props = React.ComponentPropsWithoutRef<"section"> &
-  Partial<Props>;
-
-export const Navbar = (props: Navbar7Props) => {
-  const { logo, navLinks } = {
-    ...NavbarDefaults,
-    ...props,
-  } as Props;
-
+const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // const isMobile = useMediaQuery("(max-width: 991px)");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
 
   const { user } = useContext(AuthContext);
   const { getCartCount, wishLists, isActive, setIsActive } = useShop();
 
+  // Check if we're on home page
+  const isHomePage = location.pathname === "/";
+
+  // Handle scroll effect for background
+
+  useEffect(() => {
+    // If not on home page, always set scrolled to true
+    if (!isHomePage) {
+      setIsScrolled(true);
+    }
+
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHomePage]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+
   return (
-    <nav className="fixed top-0 inset-x-0 z-20 flex min-h-16 w-full items-center shadow-xxsmall bg-background-light px-[5%] md:min-h-18 bg-none">
-      <div className="mx-auto size-full max-w-full flex items-center justify-between">
-        <Link to={`${logo.url}`}>
-          <img
-            src={logo.src}
-            alt={logo.alt}
-            className="inline-block w-[130px] sm:w-[200px]"
-          />
-        </Link>
-        <div className="absolute hidden h-screen overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-24 pt-4 md:pb-0 lg:static lg:ml-6 xl:flex lg:h-auto lg:flex-1 lg:items-center lg:justify-between lg:border-none lg:bg-none lg:px-0 lg:pt-0">
-          <div className="flex flex-col items-center lg:flex-row">
-            {navLinks.map((navLink, index) => (
-              <div key={index}>
-                <Link
-                  to={navLink.url}
-                  className={`relative block w-auto py-3 text-md lg:inline-block lg:px-4 lg:py-6 lg:text-base poppins text-brand-neutral hover:text-brand-primary ${
-                    index === 0 ? "lg:hidden" : ""
-                  }`}
-                  onClick={() => {
-                    if (isActive === true) {
-                      setIsActive(!isActive);
-                    }
-                  }}
-                >
-                  {navLink.title}
-                </Link>
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="hidden lg:flex gap-2.5 items-center">
-              {/* <CurrencySwitcher color="white" /> */}
-              <Search
-                width={20}
-                height={20}
-                className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-                onClick={() => setIsActive(!isActive)}
-              />
-              <Link className="relative" to="/cart">
-                <ShoppingBag
-                  width={20}
-                  height={20}
-                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-                  onClick={() => {
-                    if (isActive === true) {
-                      setIsActive(!isActive);
-                    }
-                  }}
-                />
-                {getCartCount() > 0 && (
-                  <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
-                    {getCartCount()}
-                  </div>
-                )}
-              </Link>
-              <Link to="/wishlists" className="relative">
-                <Heart
-                  width={20}
-                  height={20}
-                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-                  onClick={() => {
-                    if (isActive === true) {
-                      setIsActive(!isActive);
-                    }
-                  }}
-                />
-                {wishLists.length > 0 && (
-                  <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
-                    {wishLists.length}
-                  </div>
-                )}
-              </Link>
-              {user?.isAdmin ? (
-                <div className="flex flex-col items-center">
-                  <Link
-                    to="/admin"
-                    className="relative block w-auto text-md lg:inline-block lg:px-1 lg:text-md poppins  text-brand-neutral hover:text-brand-primary"
-                  >
-                    Admin
-                  </Link>
-                  <div className="h-[3px] w-[90%] bg-brand-neutral" />
-                </div>
-              ) : (
-                <></>
-              )}
-              {/* big screen */}
-            </div>
-            {user ? (
-              <Link to="/profile">
-                <User
-                  width={20}
-                  height={20}
-                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-                />
-              </Link>
-            ) : (
-              <>
-                <Link to="/auth/sign_in">
-                  <User
-                    width={20}
-                    height={20}
-                    className="text-brand-neutral hover:text-brand-primary cursor-pointer"
+    <>
+      {isHomePage ? (
+        <nav
+          className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+            isScrolled ? "bg-white shadow-xxsmall py-4" : "bg-transparent py-6"
+          }`}
+        >
+          <div className="mx-auto px-6 lg:px-12">
+            <div className="flex items-center justify-between lg:grid lg:grid-cols-3 lg:gap-8">
+              {/* Logo - Left */}
+              <div className="flex items-center">
+                <Link to="/">
+                  <img
+                    src={isScrolled ? mainLogo : mainLogoWhite}
+                    alt="Logo"
+                    className="h-8 w-auto sm:h-10 lg:h-8 xl:h-10"
                   />
                 </Link>
-              </>
-            )}
-          </div>
-        </div>
-        <div className="flex xl:hidden items-center gap-2 sm:gap-4">
-          <Search
-            width={20}
-            height={20}
-            className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-            onClick={() => setIsActive(!isActive)}
-          />
-          <Link className="relative" to="/cart">
-            <ShoppingBag
-              width={20}
-              height={20}
-              className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-              onClick={() => {
-                if (isActive === true) {
-                  setIsActive(!isActive);
-                }
-              }}
-            />
-            {/* <div className="h-4 w-4 p-1 bg-background-alternative absolute top-0 -right-2 text-text-alternative rounded-full flex items-center justify-center text-sm">
-              {getCartCount()}
-            </div> */}
-            {getCartCount() > 0 && (
-              <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
-                {getCartCount()}
               </div>
-            )}
-          </Link>
-          <Link to="/wishlists" className="relative">
-            <Heart
-              width={20}
-              height={20}
-              className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-              onClick={() => {
-                if (isActive === true) {
-                  setIsActive(!isActive);
-                }
-              }}
-            />
-            {wishLists.length > 0 && (
-              <div className="absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
-                {wishLists.length}
-              </div>
-            )}
-          </Link>
-          {user ? (
-            <Link
-              to="/profile"
-              className="hidden sm:flex"
-              // onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <User
-                width={20}
-                height={20}
-                className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-              />
-            </Link>
-          ) : (
-            <>
-              <Link to="/auth/sign_in" className="hidden sm:flex">
-                <User
-                  width={20}
-                  height={20}
-                  className="text-brand-neutral hover:text-brand-primary cursor-pointer"
-                />
-              </Link>
-            </>
-          )}
-        </div>
 
-        <div className="flex items-center">
-          <div className="max-sm:hidden flex xl:hidden">
-            {/* <CurrencySwitcher color="white" /> */}
-          </div>
-          <button
-            className="-mr-2 flex size-12 cursor-pointer flex-col items-center justify-center xl:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            <motion.span
-              className="my-[3px] h-0.5 w-6 bg-black"
-              animate={isMobileMenuOpen ? ["open", "rotatePhase"] : "closed"}
-              variants={topLineVariants}
-            />
-            <motion.span
-              className="my-[3px] h-0.5 w-6 bg-black"
-              animate={isMobileMenuOpen ? "open" : "closed"}
-              variants={middleLineVariants}
-            />
-            <motion.span
-              className="my-[3px] h-0.5 w-6 bg-black"
-              animate={isMobileMenuOpen ? ["open", "rotatePhase"] : "closed"}
-              variants={bottomLineVariants}
-            />
-          </button>
-        </div>
-      </div>
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            variants={{
-              open: { height: "100dvh" },
-              close: { height: "auto" },
-            }}
-            animate={isMobileMenuOpen ? "open" : "close"}
-            initial="close"
-            exit="close"
-            className="absolute left-0 right-0 top-full w-full overflow-hidden lg:hidden"
-            transition={{ duration: 0.4 }}
-          >
-            <motion.div
-              variants={{
-                open: { y: 0 },
-                close: { y: "-100%" },
-              }}
-              animate={isMobileMenuOpen ? "open" : "close"}
-              initial="close"
-              exit="close"
-              transition={{ duration: 0.4 }}
-              className="absolute left-0 right-0 top-0 block h-[100dvh] overflow-auto border-b border-border-primary bg-background-light px-[5%] pb-8 pt-4"
-            >
-              <div className="flex flex-col">
-                {navLinks.map((navLink, index) => (
-                  <div key={index}>
-                    <Link
-                      to={navLink.url}
-                      className="block py-3 text-md poppins"
-                      onClick={() => {
-                        setIsMobileMenuOpen(!isMobileMenuOpen);
-                        if (isActive === true) {
-                          setIsActive(!isActive);
-                        }
-                      }}
-                    >
-                      {navLink.title}
-                    </Link>
-                  </div>
-                ))}
-                <div className="mt-6 flex flex-col items-stretch gap-4">
-                  {user?.isAdmin ? (
-                    <Link
-                      to="/admin"
-                      className="relative block w-auto text-md lg:inline-block lg:px-4 lg:text-base poppins  text-brand-neutral hover:text-brand-primary"
-                    >
-                      Admin
-                    </Link>
-                  ) : (
-                    <></>
-                  )}
+              {/* Nav Links - Center (Desktop Only) */}
+              <div className="hidden lg:flex items-center justify-center">
+                <div className="flex items-center gap-4 poppins">
+                  <Link
+                    to="/collections/shop_all"
+                    className={`text-sm font-medium hover:text-black transition-colors duration-200 ${
+                      isScrolled ? "text-text-primary" : "text-white"
+                    }`}
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    Shop All
+                  </Link>
+                  <Link
+                    to="/collections/new_arrivals"
+                    className={`text-sm font-medium hover:text-black transition-colors duration-200 ${
+                      isScrolled ? "text-text-primary" : "text-white"
+                    }`}
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    New In
+                  </Link>
+                  <Link
+                    to="/collections/Active_wears"
+                    className={`text-sm font-medium hover:text-black transition-colors duration-200 ${
+                      isScrolled ? "text-text-primary" : "text-white"
+                    }`}
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    Active Wears
+                  </Link>
+                  <Link
+                    to="/collections/Fitness_accessories"
+                    className={`text-sm font-medium hover:text-black transition-colors duration-200 ${
+                      isScrolled ? "text-text-primary" : "text-white"
+                    }`}
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    Accessories
+                  </Link>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+
+              {/* Icons - Right */}
+              <div className="flex items-center justify-end gap-4">
+                {/* Desktop Icons */}
+                <div className="hidden sm:flex items-center gap-4">
+                  <button
+                    onClick={() => setIsActive(!isActive)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    aria-label="Search"
+                  >
+                    <Search
+                      className={`w-5 h-5 ${
+                        isScrolled
+                          ? "text-text-primary"
+                          : "text-white hover:text-text-primary"
+                      }`}
+                    />
+                  </button>
+
+                  <Link
+                    to="/cart"
+                    className="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    <ShoppingBag
+                      className={`w-5 h-5 ${
+                        isScrolled
+                          ? "text-text-primary"
+                          : "text-white hover:text-text-primary"
+                      }`}
+                    />
+                    {getCartCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black text-white text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
+                        {getCartCount()}
+                      </span>
+                    )}
+                  </Link>
+
+                  <Link
+                    to="/wishlists"
+                    className="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    <Heart
+                      className={`w-5 h-5 ${
+                        isScrolled
+                          ? "text-text-primary"
+                          : "text-white hover:text-text-primary"
+                      }`}
+                    />
+                    {wishLists.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black text-white text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
+                        {wishLists.length}
+                      </span>
+                    )}
+                  </Link>
+
+                  {user?.isAdmin && (
+                    <Link
+                      to="/admin"
+                      className={`p-2 hover:bg-gray-100 rounded-full transition-colors duration-200 border-2 ${
+                        isScrolled ? "border-gray-700" : "text-white"
+                      }`}
+                      title="Admin Dashboard"
+                    >
+                      <Shield
+                        className={`w-5 h-5 ${
+                          isScrolled
+                            ? "text-text-primary"
+                            : "text-white hover:text-text-primary"
+                        }`}
+                      />
+                    </Link>
+                  )}
+
+                  {user ? (
+                    <Link
+                      to="/profile"
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    >
+                      <User
+                        className={`w-5 h-5 ${
+                          isScrolled
+                            ? "text-text-primary"
+                            : "text-white hover:text-text-primary"
+                        }`}
+                      />
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/auth/sign_in"
+                      className="px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-full transition-colors duration-200"
+                    >
+                      Sign In
+                    </Link>
+                  )}
+                </div>
+
+                {/* Mobile Icons */}
+                <div className="flex sm:hidden items-center gap-3">
+                  <button
+                    onClick={() => setIsActive(!isActive)}
+                    className="p-2"
+                    aria-label="Search"
+                  >
+                    <Search
+                      className={`w-5 h-5 ${
+                        isScrolled ? "text-text-primary" : "text-white"
+                      }`}
+                    />
+                  </button>
+
+                  <Link
+                    to="/cart"
+                    className="relative p-2"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    <ShoppingBag
+                      className={`w-5 h-5 ${
+                        isScrolled ? "text-text-primary" : "text-white"
+                      }`}
+                    />
+                    {getCartCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black text-white text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
+                        {getCartCount()}
+                      </span>
+                    )}
+                  </Link>
+                </div>
+
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  aria-label="Toggle menu"
+                >
+                  {isMobileMenuOpen ? (
+                    <X
+                      className={`w-5 h-5 ${
+                        isScrolled ? "text-text-primary" : "text-white"
+                      }`}
+                    />
+                  ) : (
+                    <Menu
+                      className={`w-5 h-5 ${
+                        isScrolled ? "text-text-primary" : "text-white"
+                      }`}
+                    />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      ) : (
+        <nav
+          className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+            isScrolled ? "bg-white shadow-xxsmall" : "bg-transparent"
+          }`}
+        >
+          <div className="mx-auto px-6 lg:px-12 py-4">
+            <div className="flex items-center justify-between lg:grid lg:grid-cols-3 lg:gap-8">
+              {/* Logo - Left */}
+              <div className="flex items-center">
+                <Link to="/">
+                  <img
+                    src={mainLogo}
+                    alt="Logo"
+                    className="h-8 w-auto sm:h-10 lg:h-8 xl:h-10"
+                  />
+                </Link>
+              </div>
+
+              {/* Nav Links - Center (Desktop Only) */}
+              <div className="hidden lg:flex items-center justify-center">
+                <div className="flex items-center gap-4 poppins">
+                  <Link
+                    to="/collections/shop_all"
+                    className="text-sm font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    Shop All
+                  </Link>
+                  <Link
+                    to="/collections/new_arrivals"
+                    className="text-sm font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    New In
+                  </Link>
+                  <Link
+                    to="/collections/Active_wears"
+                    className="text-sm font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    Active Wears
+                  </Link>
+                  <Link
+                    to="/collections/Fitness_accessories"
+                    className="text-sm font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    Accessories
+                  </Link>
+                </div>
+              </div>
+
+              {/* Icons - Right */}
+              <div className="flex items-center justify-end gap-4">
+                {/* Desktop Icons */}
+                <div className="hidden sm:flex items-center gap-4">
+                  <button
+                    onClick={() => setIsActive(!isActive)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    aria-label="Search"
+                  >
+                    <Search className="w-5 h-5 text-gray-700" />
+                  </button>
+
+                  <Link
+                    to="/cart"
+                    className="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    <ShoppingBag className="w-5 h-5 text-gray-700" />
+                    {getCartCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black text-white text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
+                        {getCartCount()}
+                      </span>
+                    )}
+                  </Link>
+
+                  <Link
+                    to="/wishlists"
+                    className="relative p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    <Heart className="w-5 h-5 text-gray-700" />
+                    {wishLists.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black text-white text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
+                        {wishLists.length}
+                      </span>
+                    )}
+                  </Link>
+
+                  {user?.isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200 border-2 border-gray-700"
+                      title="Admin Dashboard"
+                    >
+                      <Shield className="w-5 h-5 text-gray-700" />
+                    </Link>
+                  )}
+
+                  {user ? (
+                    <Link
+                      to="/profile"
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                    >
+                      <User className="w-5 h-5 text-gray-700" />
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/auth/sign_in"
+                      className="px-4 py-2 text-sm font-medium text-white bg-black hover:bg-gray-800 rounded-full transition-colors duration-200"
+                    >
+                      Sign In
+                    </Link>
+                  )}
+                </div>
+
+                {/* Mobile Icons */}
+                <div className="flex sm:hidden items-center gap-3">
+                  <button
+                    onClick={() => setIsActive(!isActive)}
+                    className="p-2"
+                    aria-label="Search"
+                  >
+                    <Search className="w-5 h-5 text-gray-700" />
+                  </button>
+
+                  <Link
+                    to="/cart"
+                    className="relative p-2"
+                    onClick={() => {
+                      if (isActive) setIsActive(false);
+                    }}
+                  >
+                    <ShoppingBag className="w-5 h-5 text-gray-700" />
+                    {getCartCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-black text-white text-xs font-semibold rounded-full h-5 w-5 flex items-center justify-center">
+                        {getCartCount()}
+                      </span>
+                    )}
+                  </Link>
+                </div>
+
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  aria-label="Toggle menu"
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="w-6 h-6 text-gray-700" />
+                  ) : (
+                    <Menu className="w-6 h-6 text-gray-700" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      )}
+
+      {/* Mobile Navigation */}
+      <MobileNavbar
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        user={user}
+        wishListCount={wishLists.length}
+        isActive={isActive}
+        setIsActive={setIsActive}
+      />
+    </>
   );
 };
 
-export const NavbarDefaults: Navbar7Props = {
-  logo: {
-    url: "/",
-    src: mainLogo,
-    alt: "Logo image",
-  },
-  mobileLogo: {
-    url: "/",
-    src: smallLogo,
-    alt: "Logo image",
-  },
-  navLinks: [
-    { title: "Home", url: "/" },
-    { title: "Shop All", url: "/collections/shop_all" },
-    { title: "New In", url: "/collections/new_arrivals" },
-    { title: "Active wears", url: "/collections/Active_wears" },
-    { title: "Fitness Accessories", url: "/collections/Fitness_accessories" },
-  ],
-  buttons: [
-    // {
-    //   title: "Button",
-    //   variant: "secondary",
-    //   size: "sm",
-    // },
-    {
-      title: "Login",
-      size: "sm",
-    },
-  ],
+// Mobile Navbar Component
+interface MobileNavbarProps {
+  isOpen: boolean;
+  onClose: () => void;
+  user: any;
+  wishListCount: number;
+  isActive: boolean;
+  setIsActive: (value: boolean) => void;
+}
+
+const MobileNavbar = ({
+  isOpen,
+  onClose,
+  user,
+  wishListCount,
+  isActive,
+  setIsActive,
+}: MobileNavbarProps) => {
+  return (
+    <div
+      className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 transform ${
+        isOpen ? "translate-x-0" : "translate-x-full"
+      }`}
+    >
+      {/* Backdrop */}
+      <div
+        className={`absolute inset-0 bg-black transition-opacity duration-300 ${
+          isOpen ? "opacity-50" : "opacity-0"
+        }`}
+        onClick={onClose}
+      />
+
+      {/* Sidebar */}
+      <div
+        className={`absolute top-0 right-0 h-full w-full max-w-sm bg-white shadow-2xl transform transition-transform duration-300 ease-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Navigation Links */}
+          <nav className="flex-1 overflow-y-auto p-6 mt-10">
+            <div className="space-y-1">
+              <Link
+                to="/"
+                className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
+                onClick={() => {
+                  onClose();
+                  if (isActive) setIsActive(false);
+                }}
+              >
+                Home
+              </Link>
+              <Link
+                to="/collections/shop_all"
+                className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
+                onClick={() => {
+                  onClose();
+                  if (isActive) setIsActive(false);
+                }}
+              >
+                Shop All
+              </Link>
+              <Link
+                to="/collections/new_arrivals"
+                className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
+                onClick={() => {
+                  onClose();
+                  if (isActive) setIsActive(false);
+                }}
+              >
+                New In
+              </Link>
+              <Link
+                to="/collections/Active_wears"
+                className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
+                onClick={() => {
+                  onClose();
+                  if (isActive) setIsActive(false);
+                }}
+              >
+                Active Wears
+              </Link>
+              <Link
+                to="/collections/Fitness_accessories"
+                className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
+                onClick={() => {
+                  onClose();
+                  if (isActive) setIsActive(false);
+                }}
+              >
+                Fitness Accessories
+              </Link>
+            </div>
+
+            {/* Divider */}
+            <div className="my-6 border-t" />
+
+            {/* Quick Actions */}
+            <div className="space-y-3">
+              <Link
+                to="/wishlists"
+                className="flex items-center justify-between px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                onClick={() => {
+                  onClose();
+                  if (isActive) setIsActive(false);
+                }}
+              >
+                <span className="flex items-center gap-3">
+                  <Heart className="w-5 h-5" />
+                  Wishlist
+                </span>
+                {wishListCount > 0 && (
+                  <span className="bg-black text-white text-xs font-semibold rounded-full h-6 w-6 flex items-center justify-center">
+                    {wishListCount}
+                  </span>
+                )}
+              </Link>
+
+              {user?.isAdmin && (
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  onClick={onClose}
+                >
+                  <Shield className="w-5 h-5" />
+                  Admin Dashboard
+                </Link>
+              )}
+            </div>
+          </nav>
+
+          {/* Footer */}
+          <div className="p-6 border-t bg-gray-50">
+            {user ? (
+              <Link
+                to="/profile"
+                className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                onClick={onClose}
+              >
+                <User className="w-5 h-5" />
+                My Account
+              </Link>
+            ) : (
+              <Link
+                to="/auth/sign_in"
+                className="block w-full px-4 py-3 text-center text-base font-medium text-white bg-black hover:bg-gray-800 rounded-lg transition-colors"
+                onClick={onClose}
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-const topLineVariants = {
-  open: {
-    translateY: 8,
-    transition: { delay: 0.1 },
-  },
-  rotatePhase: {
-    rotate: -45,
-    transition: { delay: 0.2 },
-  },
-  closed: {
-    translateY: 0,
-    rotate: 0,
-    transition: { duration: 0.2 },
-  },
-};
-
-const middleLineVariants = {
-  open: {
-    width: 0,
-    transition: { duration: 0.1 },
-  },
-  closed: {
-    width: "1.5rem",
-    transition: { delay: 0.3, duration: 0.2 },
-  },
-};
-
-const bottomLineVariants = {
-  open: {
-    translateY: -8,
-    transition: { delay: 0.1 },
-  },
-  rotatePhase: {
-    rotate: 45,
-    transition: { delay: 0.2 },
-  },
-  closed: {
-    translateY: 0,
-    rotate: 0,
-    transition: { duration: 0.2 },
-  },
-};
+export default Navbar;

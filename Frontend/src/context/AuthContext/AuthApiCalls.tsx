@@ -52,7 +52,7 @@ export const SignUpAccount = async (
     });
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
-      navigate("/");
+      navigate("/cart");
       setLoading(false);
     } else {
       dispatch(AccessFailure());

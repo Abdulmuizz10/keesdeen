@@ -47,11 +47,11 @@ const CollectionsSection = ({
   }, []);
 
   return (
-    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28" ref={ref}>
+    <section className="placing" ref={ref}>
       <div className="container">
         <div className="rb-12 mb-12 text-center md:mb-18 lg:mb-20">
           <h2 className="rb-5 mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl text-gradient">
-            {heading}
+            <span>{heading}</span>
           </h2>
           <p className="md:text-md text-text-primary">{description}</p>
         </div>

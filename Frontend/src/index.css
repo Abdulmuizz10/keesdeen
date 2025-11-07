@@ -5,43 +5,25 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .placing {
+    @apply mx-auto px-6 lg:px-12 my-24 md:my-30;
+  }
+}
+
+* {
+  font-family: "poppins", sans-serif;
+}
+
 body {
   /* background: #ececec; */
   background: #ffffff;
-}
-
-/* .text-gradient {
-  background: linear-gradient(90deg, #000000, #04b96d, #db5d14);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-} */
-
-.bricolage-grotesque {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 600;
-  font-style: normal;
-  font-variation-settings: "wdth" 100;
 }
 
 .poppins {
   font-family: "poppins", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
-  font-style: normal;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-strong,
-option {
-  font-family: "Bricolage Grotesque", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 100;
   font-style: normal;
 }
 

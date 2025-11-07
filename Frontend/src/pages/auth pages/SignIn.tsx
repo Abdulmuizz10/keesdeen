@@ -123,7 +123,9 @@ export const SignIn: React.FC = (props: SignInProps) => {
         <div className="relative mx-[5vw] flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="container mb-6 max-w-lg text-center md:mb-8">
-              <h1 className="mb-5 text-4xl font-bold md:mb-1">{title}</h1>
+              <h1 className="mb-5 text-4xl font-bold md:mb-1">
+                <span>{title}</span>
+              </h1>
               <p className="mb-5 text-base text-gradient">{subTitle}</p>
             </div>
             <form

@@ -106,11 +106,11 @@ const ActiveWears: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col px-[5%] py-24 md:py-30">
+    <section className="placing">
       <div className="flex-1">
         <div className="mb-2 md:mb-5">
-          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
-            Active Wears
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+            <span>Active Wears</span>
           </h2>
         </div>
 

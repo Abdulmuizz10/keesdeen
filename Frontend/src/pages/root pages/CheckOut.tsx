@@ -14,7 +14,7 @@ const CheckOut: React.FC = () => {
   }, []);
 
   return (
-    <section className="px-[5%] py-24 md:py-30">
+    <section className="placing">
       {loading && (
         <div className="fixed top-0 left-0 right-0 bottom-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
           <Spinner />
@@ -22,8 +22,8 @@ const CheckOut: React.FC = () => {
       )}
       <div>
         <div className="mb-5 border-b border-border-secondary">
-          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
-            Checkout
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+            <span>Checkout</span>
           </h2>
           <p className="md:text-md pb-5">
             Please provide shipping and billing information.

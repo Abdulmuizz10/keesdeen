@@ -93,7 +93,7 @@ const ProductDetails = () => {
   return animation ? (
     <Animation />
   ) : (
-    <section className="px-[5%] py-24 md:py-30">
+    <section className="placing">
       {result ? (
         <div className="container">
           <div className="flex flex-col gap-10 lg:flex-row">
@@ -114,8 +114,8 @@ const ProductDetails = () => {
             {/* Product Details */}
             <div className="flex-1 w-full">
               <div className="mb-2 md:mb-4">
-                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl bricolage-grotesque">
-                  {result.product.name}
+                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl">
+                  <span>{result.product.name}</span>
                 </h2>
                 <p>{result.product.brand}</p>
               </div>

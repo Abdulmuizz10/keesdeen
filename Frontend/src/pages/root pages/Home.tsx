@@ -9,12 +9,10 @@ const Home: React.FC = () => {
   return (
     <div>
       <Hero />
-      <div className="overflow-hidden">
-        <BestSellersSection />
-        <TextSlide />
-        <CollectionsSection />
-        <NewArrivalsSection />
-      </div>
+      <BestSellersSection />
+      <TextSlide />
+      <CollectionsSection />
+      <NewArrivalsSection />
     </div>
   );
 };

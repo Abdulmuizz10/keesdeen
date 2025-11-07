@@ -44,7 +44,7 @@ const TextSlide = (props: TextSlideProps) => {
               }
             )}
           >
-            {heading}
+            <span>{heading}</span>
           </motion.h1>
         ))}
       </div>

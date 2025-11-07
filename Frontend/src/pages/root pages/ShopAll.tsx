@@ -103,11 +103,11 @@ const ShopAll: React.FC = () => {
   };
 
   return (
-    <section className="min-h-screen flex flex-col px-[5%] py-24 md:py-30">
+    <section className="placing">
       <div className="flex-1">
         <div className="mb-2 md:mb-5">
-          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
-            Shop All
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+            <span>Shop All</span>
           </h2>
         </div>
 
@@ -331,7 +331,10 @@ const ShopAll: React.FC = () => {
       {/* Pagination fixed to bottom */}
       <div className="flex justify-center gap-4 mt-auto py-10 border-t border-border-secondary bg-white">
         <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          onClick={() => {
+            setPage((prev) => Math.max(prev - 1, 1));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           disabled={page === 1}
           className="px-4 py-2 border rounded disabled:opacity-50"
         >
@@ -341,7 +344,10 @@ const ShopAll: React.FC = () => {
           Page {page} of {pages}
         </span>
         <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+          onClick={() => {
+            setPage((prev) => Math.min(prev + 1, pages));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           disabled={page === pages}
           className="px-4 py-2 border rounded disabled:opacity-50"
         >

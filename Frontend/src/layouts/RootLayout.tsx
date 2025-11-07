@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Navbar } from "../components/Navbar";
+import Navbar from "../components/Navbar";
 import { Footer1 } from "../components/Footer";
 import SearchModal from "../components/SearchModal";
 import { User } from "lucide-react";

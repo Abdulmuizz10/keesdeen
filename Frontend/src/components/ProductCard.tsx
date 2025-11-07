@@ -61,7 +61,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
       onMouseOver={() => setImage(true)}
       onMouseLeave={() => setImage(false)}
     >
-      <div className="absolute top-3 right-3 z-50 cursor-pointer">
+      <div className="absolute top-3 right-3 z-30 cursor-pointer">
         {wishLists.find((wish: any) => wish._id === product._id) ? (
           <RiHeartFill
             onClick={() => manageWishLists(product)}
@@ -84,8 +84,8 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
         </Link>
       </div>
       <div className="p-4 text-center">
-        <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
-          {product.name}
+        <h3 className="text-md xl:text-lg font-semibold text-gray-800">
+          <span>{product.name}</span>
         </h3>
         <div className="flex gap-2 items-center justify-center">
           {product.previousPrice && (

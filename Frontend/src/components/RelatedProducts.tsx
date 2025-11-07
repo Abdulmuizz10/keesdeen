@@ -41,7 +41,7 @@ const RelatedProducts: React.FC<ProductListProps> = ({ id }) => {
     <div className="my-10" ref={ref}>
       <div className="rb-12 mb-12 md:mb-5">
         <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
-          Related Products
+          <span>Related Products</span>
         </h2>
       </div>
       <div className="grid gird-cols grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xxl:grid-cols-5 gap-4 gap-y-6">

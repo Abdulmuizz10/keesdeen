@@ -1,168 +1,150 @@
-import { Button } from "@relume_io/relume-ui";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Images } from "../assets";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { useRef } from "react";
-import clsx from "clsx";
 
-type ImageProps = {
-  src: string;
-  alt?: string;
-};
+interface HeroImage {
+  url: string;
+  tagline: string;
+}
 
-type Props = {
-  heading: string;
-  description: string;
-  images: ImageProps[];
-};
+const Hero: React.FC = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-export type HeroProps = React.ComponentPropsWithoutRef<"section"> &
-  Partial<Props>;
+  // State array for hero images - will be fetched from backend later
+  // const [heroImages] = useState<HeroImage[]>([
+  //   {
+  //     url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
+  //     tagline: "Limitless",
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop",
+  //     tagline: "Fearless",
+  //   },
+  //   {
+  //     url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&h=900&fit=crop",
+  //     tagline: "Boundless",
+  //   },
+  // ]);
 
-const Hero = (props: HeroProps) => {
-  const { heading, description, images } = {
-    ...Header80Defaults,
-    ...props,
-  } as Props;
+  const [heroImages] = useState<HeroImage[]>([
+    {
+      url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
+      tagline: "Limitless",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop",
+      tagline: "Fearless",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&h=900&fit=crop",
+      tagline: "Boundless",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1600&h=900&fit=crop",
+      tagline: "Bold",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&h=900&fit=crop",
+      tagline: "Dynamic",
+    },
+  ]);
 
-  const transformRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: transformRef });
-  const animatedScrollYProgress = useSpring(scrollYProgress, {
-    bounce: 0,
-  });
-  const yFirst = useTransform(
-    animatedScrollYProgress,
-    [0, 1],
-    ["0vh", "-87.5vh"]
-  );
-  const ySecond = useTransform(
-    animatedScrollYProgress,
-    [0, 1],
-    ["0vh", "-39.6vh"]
-  );
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % heroImages.length);
+        setIsTransitioning(false);
+      }, 500);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   return (
-    <section
-      ref={transformRef}
-      className="relative h-[150vh] px-[5%] md:h-[300vh]"
-    >
-      <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="absolute bottom-0 left-0 right-auto top-0 z-10">
-          <motion.div
-            className="flex flex-col gap-[26vw] pt-[70vh]"
-            style={{ y: yFirst }}
-          >
-            {images.slice(0, 4).map((image, index) => (
-              <div
-                key={index}
-                className={clsx("relative h-[35vw] pt-[120%] sm:h-auto", {
-                  "w-[30vw] md:w-[28vw] lg:w-[22vw]": index === 0,
-                  "left-[52vw] mt-[-46vw] w-[30vw] md:w-[28vw] lg:left-[58vw] lg:w-[22vw]":
-                    index === 1,
-                  "left-[4vw] mt-[-5vw] w-[28vw] md:w-[26vw] lg:w-[20vw]":
-                    index === 2,
-                  "left-[64vw] mt-[-45vw] w-[26vw] md:w-[24vw] lg:w-[18vw]":
-                    index === 3,
-                })}
-              >
-                <img
-                  src={image.src}
-                  className="absolute inset-0 size-full object-cover"
-                  alt={image.alt}
-                />
-              </div>
-            ))}
-          </motion.div>
-        </div>
-        <motion.div
-          className="absolute bottom-0 left-auto right-0 top-0 z-0"
-          style={{ y: ySecond }}
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Image Slider */}
+      {heroImages.map((image, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            index === currentIndex ? "opacity-100" : "opacity-0"
+          }`}
         >
-          <div className="flex flex-col gap-[26vw] pt-[70vh]">
-            {images.slice(4).map((image, index) => (
-              <div
-                key={index}
-                className={clsx(
-                  "relative h-[35vw] pt-[120%] opacity-75 sm:h-auto",
-                  {
-                    "w-[28vw] md:w-[26vw] lg:w-[20vw]": index === 0,
-                    "right-[50vw] mt-[-44vw] w-[26vw] md:w-[24vw] lg:right-[54vw] lg:w-[18vw]":
-                      index === 1,
-                  }
-                )}
-              >
-                <img
-                  src={image.src}
-                  className="absolute inset-0 size-full object-cover"
-                  alt={image.alt}
-                />
-              </div>
-            ))}
-          </div>
-        </motion.div>
-        <div className="container relative flex h-full max-w-lg items-center pb-24 pt-16 text-center md:pt-24 lg:py-28">
-          <div>
-            <h1 className="mb-5 text-6xl font-bold md:mb-6 md:text-9xl lg:text-10xl">
-              {heading}
-            </h1>
-            <p className="relative z-20 md:text-md ">{description}</p>
-            <div className="relative z-20 mt-6 flex items-center justify-center gap-x-4 md:mt-8">
-              {[
-                { route: "/collections/new_arrivals", text: "New arrivals" },
-                { route: "/collections/shop_all", text: "Shop now" },
-              ].map((link, index) => (
-                <Link to={link.route} key={index}>
-                  <Button
-                    className={`${
-                      index === 0
-                        ? "!text-text-primary !border-border-primary"
-                        : "bg-brand-primary border-brand-primary"
-                    } text-text-light poppins rounded-md`}
-                  >
-                    {link.text}
-                  </Button>
-                </Link>
-              ))}
-            </div>
+          <img
+            src={image.url}
+            alt={`Hero ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ))}
+
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-start justify-center h-full max-w-7xl mx-auto px-6 sm:px-12">
+        <div className="space-y-6">
+          {/* Main Headline */}
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight">
+            <span className="block">Be</span>
+            <span
+              className={`block transition-all duration-500 ${
+                isTransitioning
+                  ? "opacity-0 translate-y-4"
+                  : "opacity-100 translate-y-0"
+              }`}
+            >
+              {heroImages[currentIndex].tagline}
+            </span>
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl font-light tracking-wide">
+            Discover the perfect blend of style and comfort.
+            <br />
+            Elevate your wardrobe with our latest collection.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col w-full sm:w-fit sm:flex-row gap-4 pt-8">
+            <Link to={"/collections/shop_all"}>
+              <button className="group relative px-8 py-4 bg-white text-black font-semibold text-base sm:text-lg overflow-hidden transition-all duration-300 w-full">
+                <span className="relative z-10">Shop Now</span>
+                {/* <div className="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Shop Now
+              </span> */}
+              </button>
+            </Link>
+
+            <Link to={"/collections/new_arrivals"}>
+              <button className="px-8 py-4 border border-white text-white font-semibold text-base sm:text-lg hover:bg-white hover:text-black transition-all duration-300 w-full">
+                New Arrivals
+              </button>
+            </Link>
           </div>
         </div>
-        <div className="absolute inset-0 -z-10 mt-[35rem] md:mt-[100vh]" />
+
+        {/* Slider Indicators */}
+        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 flex gap-3">
+          {heroImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`transition-all duration-300 ${
+                index === currentIndex
+                  ? "w-12 h-1 bg-white"
+                  : "w-8 h-1 bg-white/40 hover:bg-white/60"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 
 export default Hero;
-
-export const Header80Defaults: HeroProps = {
-  heading: "Medium length hero heading goes here",
-  description:
-    "Discover our thoughtfully curated collection of modest activewear and fitness accessories, designed to empower your every move without compromising comfort or elegance.",
-  // "Discover our thoughtfully curated collection of modest activewear and fitness accessories, designed to empower your every move.",
-  images: [
-    {
-      src: Images.img_31,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_38,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_36,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_44,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_42,
-      alt: "Placeholder image",
-    },
-    {
-      src: Images.img_34,
-      alt: "Placeholder image",
-    },
-  ],
-};

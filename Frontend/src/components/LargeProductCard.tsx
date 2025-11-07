@@ -44,8 +44,8 @@ const LargeProductCard: React.FC<ProductProps> = ({ product, loading }) => {
           className="aspect-square size-full object-cover"
         />
         <div className="mt-2">
-          <h3 className="text-md xl:text-lg font-semibold text-gray-800 bricolage-grotesque">
-            {product.name}
+          <h3 className="text-md xl:text-lg font-semibold text-gray-800">
+            <span>{product.name}</span>
           </h3>
 
           <div className="flex gap-2 items-center justify-start">

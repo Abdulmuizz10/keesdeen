@@ -6,6 +6,7 @@ import orders from "./images/orders.webp";
 import card from "./images/creditcard.png";
 import animated_1 from "./animated_1.webp";
 import animated_2 from "./animated_2.webp";
+import placeholder from "./placeholder.svg";
 export { mainLogo, smallLogo, mainLogoWhite };
 
 import img_1 from "./product-images/p_img1.webp"; //
@@ -39,4 +40,5 @@ export const Images = {
   card,
   animated_1,
   animated_2,
+  placeholder,
 };

@@ -75,7 +75,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-hidden">
       <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
 
       {animation ? (

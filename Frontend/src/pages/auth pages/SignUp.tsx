@@ -93,7 +93,7 @@ export const SignUp: React.FC = (props: SignUpProps) => {
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          navigate("/");
+          navigate("/cart");
           setLoading(false);
         } else {
           dispatch(AccessFailure());
@@ -128,7 +128,9 @@ export const SignUp: React.FC = (props: SignUpProps) => {
         <div className="relative mx-5 flex items-center justify-center pb-16 pt-20 md:pb-20 md:pt-24 lg:py-20">
           <div className="container max-w-sm">
             <div className="mb-6 text-center">
-              <h1 className="mb-5 text-4xl font-bold md:mb-1">{title}</h1>
+              <h1 className="mb-5 text-4xl font-bold md:mb-1">
+                <span>{title}</span>
+              </h1>
               <p className="mb-5 text-base text-gradient">{subTitle}</p>
             </div>
             <form
@@ -254,7 +256,7 @@ export const SignUpDefaults: SignUpProps = {
     alt: "Logo text",
   },
   title: "Create your Keesdeen account",
-  subTitle: "Join our community to start shopping your favorite styles today!",
+  subTitle: "Join our community to start shopping today!",
   signUpButton: {
     title: "Sign up",
   },

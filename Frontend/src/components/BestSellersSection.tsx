@@ -51,11 +51,11 @@ const BestSellersSection: React.FC = () => {
 
   return (
     <section>
-      <div className="px-[5%] py-16 md:py-24 lg:py-28">
+      <div className="placing">
         <div className="container">
           <div className="mb-12 text-center md:mb-18 lg:mb-10">
-            <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl text-gradient">
-              Best Sellers
+            <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
+              <span>Best Sellers</span>
             </h2>
             <p className="md:text-md text-text-primary">
               Our Best Sellers: Where Modesty Meets Unmatched Style.

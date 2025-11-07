@@ -16,11 +16,11 @@ const WishLists: React.FC = () => {
   }, [wishLists]);
 
   return (
-    <section className="px-[5%] py-24 md:py-30" ref={ref}>
+    <section className="placing" ref={ref}>
       <div className="">
         <div className="mb-2 md:mb-5">
-          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
-            Wishlists
+          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl">
+            <span>Wishlists</span>
           </h2>
           <p className="md:text-md">Your wishlists.</p>
         </div>

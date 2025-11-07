@@ -34,11 +34,11 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <section id="profile" className="px-[5%] py-24 md:py-30">
+    <section className="placing">
       <div>
         <div>
-          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque">
-            Profile
+          <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
+            <span>Profile</span>
           </h2>
         </div>
         {/* Profile Section */}
