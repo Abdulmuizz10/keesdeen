@@ -67,15 +67,17 @@ const Profile: React.FC = () => {
         <div className="mb-60">
           <div className="w-full flex justify-center">
             {tabStatus.map((item: any, index) => (
-              <Button
-                className={`w-full transition-all poppins text-sm sm:text-base md:text-xl px-2 sm:px-0 ${
-                  item?.status === tab && "bg-brand-neutral text-white"
+              <div
+                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-sm sm:text-base md:text-xl px-2 sm:px-0 ${
+                  item?.status === tab
+                    ? "border-b-2 border-border-primary"
+                    : "border-b"
                 }`}
                 key={index}
                 onClick={() => setTab(item.status)}
               >
                 {item?.text}
-              </Button>
+              </div>
             ))}
           </div>
           <div className="mt-10">{tabComponents[tab]}</div>
@@ -156,7 +158,7 @@ const OrderHistory = () => {
               </div>
               <div className="mt-4 sm:mt-0 flex flex-col sm:items-end gap-2">
                 <span
-                  className={`text-sm font-medium ${
+                  className={`text-sm p-2 rounded lg:p-0 font-medium ${
                     order.isDelivered === "Delivered"
                       ? "bg-green-100 text-green-700"
                       : "bg-yellow-100 text-yellow-700"

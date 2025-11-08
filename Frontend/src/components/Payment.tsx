@@ -115,7 +115,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       {/* Header */}
       <div className="mb-5">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
-          Order Details
+          <span>Order Details</span>
         </h3>
         <p className="text-gray-500 text-sm md:text-base">
           Select or create a new address.

@@ -47,7 +47,7 @@ const OrderSummary: React.FC = () => {
       {/* Header */}
       <div className="mb-5">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
-          Order Summary
+          <span>Order Summary</span>
         </h3>
         <p className="text-gray-500 text-sm md:text-base">
           Review your order before completing checkout.

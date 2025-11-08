@@ -340,7 +340,10 @@ const FitnessAccessories: React.FC = () => {
       {/* Pagination fixed to bottom */}
       <div className="flex justify-center gap-4 mt-auto py-10 border-t border-border-secondary bg-white">
         <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          onClick={() => {
+            setPage((prev) => Math.max(prev - 1, 1));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           disabled={page === 1}
           className="px-4 py-2 border rounded disabled:opacity-50"
         >
@@ -350,7 +353,10 @@ const FitnessAccessories: React.FC = () => {
           Page {page} of {pages}
         </span>
         <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, pages))}
+          onClick={() => {
+            setPage((prev) => Math.max(prev - 1, 1));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
           disabled={page === pages}
           className="px-4 py-2 border rounded disabled:opacity-50"
         >

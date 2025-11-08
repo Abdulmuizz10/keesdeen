@@ -9,23 +9,6 @@ interface HeroImage {
 const Hero: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // State array for hero images - will be fetched from backend later
-  // const [heroImages] = useState<HeroImage[]>([
-  //   {
-  //     url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
-  //     tagline: "Limitless",
-  //   },
-  //   {
-  //     url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop",
-  //     tagline: "Fearless",
-  //   },
-  //   {
-  //     url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&h=900&fit=crop",
-  //     tagline: "Boundless",
-  //   },
-  // ]);
-
   const [heroImages] = useState<HeroImage[]>([
     {
       url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
@@ -85,7 +68,7 @@ const Hero: React.FC = () => {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-start justify-center h-full max-w-7xl mx-auto px-6 sm:px-12">
-        <div className="space-y-6">
+        <div className="space-y-2">
           {/* Main Headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight">
             <span className="block">Be</span>
@@ -95,6 +78,7 @@ const Hero: React.FC = () => {
                   ? "opacity-0 translate-y-4"
                   : "opacity-100 translate-y-0"
               }`}
+              style={{ fontSize: "clamp(3rem, 10vw, 12rem)" }}
             >
               {heroImages[currentIndex].tagline}
             </span>
@@ -105,7 +89,7 @@ const Hero: React.FC = () => {
             Discover the perfect blend of style and comfort,
             <br />
             <span className="hidden sm:flex">
-              Elevate your wardrobe with our latest collection.
+              Elevate yourself with our latest collection.
             </span>
           </p>
 

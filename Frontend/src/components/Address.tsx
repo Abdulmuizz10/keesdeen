@@ -49,7 +49,7 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
       {/* Header */}
       <div className="mb-5">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
-          Shipping Address
+          <span>Shipping Address</span>
         </h3>
         <p className="text-gray-500 text-sm md:text-base">
           Select or create a new address.
@@ -95,8 +95,10 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="text-base md:text-lg font-semibold text-gray-900">
-                        {shipping.firstName} {shipping.lastName}
+                      <h4 className="text-base md:text-lg font-semibold text-text-primary">
+                        <span>
+                          {shipping.firstName} {shipping.lastName}
+                        </span>
                       </h4>
                       <p className="text-gray-600 text-sm md:text-base">
                         {shipping.address1}
