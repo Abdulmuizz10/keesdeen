@@ -39,8 +39,8 @@ const RelatedProducts: React.FC<ProductListProps> = ({ id }) => {
 
   return (
     <div className="my-10" ref={ref}>
-      <div className="rb-12 mb-12 md:mb-5">
-        <h2 className="rb-5 mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl bricolage-grotesque text-gradient">
+      <div className="mb-12 md:mb-5">
+        <h2 className="mb-5 text-5xl font-bold md:mb-6">
           <span>Related Products</span>
         </h2>
       </div>

@@ -17,41 +17,41 @@ const WishLists: React.FC = () => {
 
   return (
     <section className="placing" ref={ref}>
-      <div className="">
-        <div className="mb-2 md:mb-5">
-          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl">
-            <span>Wishlists</span>
-          </h2>
-          <p className="md:text-md">Your wishlists.</p>
-        </div>
+      <div className="mb-10 border-b border-gray-200 pb-8">
+        <h1 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl">
+          <span>Wishlists</span>
+        </h1>
+        <p className="text-sm text-text-secondary">
+          {lists.length} {lists.length === 1 ? "item" : "items"}
+        </p>
+      </div>
 
-        <div className="mt-4 border-t">
-          {lists?.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
-              {lists?.map((product: any, index: number) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{
-                    opacity: isInView ? 1 : 0,
-                    y: isInView ? 0 : 50,
-                  }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeOut",
-                    delay: index * 0.8,
-                  }}
-                >
-                  <ProductCard product={product} loading={loading} />
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-4 text-base md:text-3xl text-text-secondary">
-              No products in your wishlist yet.
-            </p>
-          )}
-        </div>
+      <div>
+        {lists?.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
+            {lists?.map((product: any, index: number) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{
+                  opacity: isInView ? 1 : 0,
+                  y: isInView ? 0 : 50,
+                }}
+                transition={{
+                  duration: 0.8,
+                  ease: "easeOut",
+                  delay: index * 0.8,
+                }}
+              >
+                <ProductCard product={product} loading={loading} />
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-4 text-base md:text-3xl text-text-secondary">
+            No products in your wishlist yet.
+          </p>
+        )}
       </div>
     </section>
   );

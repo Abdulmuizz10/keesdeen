@@ -53,7 +53,7 @@ const SearchModal: React.FC = () => {
       <X
         width={20}
         height={20}
-        className="cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-6"
+        className="cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-10"
         onClick={() => {
           setIsActive(!isActive);
           setSearchQuery("");
@@ -95,7 +95,7 @@ const SearchModal: React.FC = () => {
                   <div className=" w-full lg:w-1/5">
                     <div className="w-full mb-4">
                       <div>
-                        <p className="text-black mb-3 font-medium">
+                        <p className="text-black mb-3 font-medium tracking-widest">
                           Suggestions
                         </p>
                         <div className="h-[1px] w-full bg-border-secondary" />
@@ -107,7 +107,7 @@ const SearchModal: React.FC = () => {
                           to={`/collections/search/${suggestion}`}
                           key={index}
                         >
-                          <li className="poppins text-md md:text-xl text-gray-500">
+                          <li className="poppins text-sm md:text-base text-gray-500">
                             {suggestion}
                           </li>
                         </Link>
@@ -117,7 +117,9 @@ const SearchModal: React.FC = () => {
                   <div className="w-full lg:w-4/5 max-md:mb-10">
                     <div className="w-full mb-5">
                       <div>
-                        <p className="text-black mb-3 font-medium">Products</p>
+                        <p className="text-black mb-3 font-medium tracking-widest">
+                          Products
+                        </p>
                         <div className="h-[1px] w-full bg-border-secondary" />
                       </div>
                     </div>

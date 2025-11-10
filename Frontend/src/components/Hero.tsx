@@ -12,23 +12,24 @@ const Hero: React.FC = () => {
   const [heroImages] = useState<HeroImage[]>([
     {
       url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
-      tagline: "Limitless",
+      tagline: "Boundless",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&h=900&fit=crop",
+      tagline: "Dynamic",
     },
     {
       url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop",
       tagline: "Fearless",
     },
+
     {
       url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&h=900&fit=crop",
-      tagline: "Boundless",
+      tagline: "Limitless",
     },
     {
       url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1600&h=900&fit=crop",
       tagline: "Bold",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&h=900&fit=crop",
-      tagline: "Dynamic",
     },
   ]);
 
@@ -64,7 +65,7 @@ const Hero: React.FC = () => {
       ))}
 
       {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/100" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-start justify-center h-full max-w-7xl mx-auto px-6 sm:px-12">
@@ -86,7 +87,7 @@ const Hero: React.FC = () => {
 
           {/* Subheadline */}
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl font-light tracking-wide">
-            Discover the perfect blend of style and comfort,
+            Discover the perfect blend of style and comfort
             <br />
             <span className="hidden sm:flex">
               Elevate yourself with our latest collection.

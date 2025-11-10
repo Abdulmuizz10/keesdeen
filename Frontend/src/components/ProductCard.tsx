@@ -84,26 +84,26 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
         </Link>
       </div>
       <div className="p-4 text-center">
-        <h3 className="text-md xl:text-lg font-semibold text-gray-800">
+        <h3 className="text-base xl:text-lg font-semibold text-gray-800">
           <span>{product.name}</span>
         </h3>
         <div className="flex gap-2 items-center justify-center">
           {product.previousPrice && (
-            <s className="text-gray-500">
+            <s className="text-sm text-gray-500">
               {formatAmountDefault(currency, product.previousPrice)}
             </s>
           )}
-          <p className="text-gray-500">
+          <p className="text-sm text-gray-500">
             {formatAmountDefault(currency, product.price)}
           </p>
         </div>
         <div className="mt-2">
-          <div className="flex flex-wrap gap-1 items-center justify-center">
+          <div className="flex flex-wrap gap-1.5 items-center justify-center">
             {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
               (size) => (
                 <button
                   key={size}
-                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] px-1 py-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] p-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
                     product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >

@@ -21,15 +21,15 @@ const CheckOut: React.FC = () => {
         </div>
       )}
       <div>
-        <div className="mb-5 border-b border-border-secondary">
+        <div className="mb-10 border-b border-gray-200 pb-8">
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
             <span>Checkout</span>
           </h2>
-          <p className="md:text-md pb-5">
+          <p className="text-sm text-text-secondary">
             Please provide shipping and billing information.
           </p>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:pt-5">
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-10">
           {/* Order Summary and Address component */}
           <div className="flex flex-col gap-10">
             <OrderSummary />

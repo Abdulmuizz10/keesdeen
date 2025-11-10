@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useShop } from "../../context/ShopContext";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import CartTotal from "../../components/CartTotal";
-import { Button } from "@relume_io/relume-ui";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { Link } from "react-router-dom";
 import { formatAmountDefault } from "../../lib/utils";
@@ -36,7 +35,6 @@ const Cart: React.FC = () => {
     setCartData(tempData);
   }, [cartItems]);
 
-  // handle increment and decrement
   const handleIncrease = (item: any) => {
     updateQuantity(item.id, item.size, item.color, item.quantity + 1);
   };
@@ -45,126 +43,141 @@ const Cart: React.FC = () => {
     if (item.quantity > 1) {
       updateQuantity(item.id, item.size, item.color, item.quantity - 1);
     } else {
-      // remove item if quantity reaches zero
       updateQuantity(item.id, item.size, item.color, 0);
     }
   };
 
   return (
     <section className="placing">
-      <div className="">
-        <div className="mb-2 md:mb-5">
-          <h2 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl">
-            <span>Cart</span>
-          </h2>
-          <p className="md:text-md">Your cart.</p>
+      {/* Header */}
+      <div className="mb-10 border-b border-gray-200 pb-8">
+        <h1 className="mb-2 text-5xl font-bold md:mb-4 md:text-7xl lg:text-8xl">
+          <span> Shopping Cart</span>
+        </h1>
+        <p className="text-sm text-text-secondary">
+          {cartData.length} {cartData.length === 1 ? "item" : "items"}
+        </p>
+      </div>
+
+      {cartData.length === 0 ? (
+        /* Empty State */
+        <div className="flex min-h-[40vh] flex-col items-center justify-center">
+          <p className="mb-8 text-center text-sm uppercase tracking-widest text-gray-400">
+            Your cart is empty
+          </p>
+          <Link
+            to="/collections/shop_all"
+            className="border-b border-gray-900 pb-1 text-sm uppercase tracking-widest transition-colors hover:border-gray-400 hover:text-gray-400"
+          >
+            Continue Shopping
+          </Link>
         </div>
+      ) : (
+        /* Grid Layout: Cart Items (3.5fr) | Cart Total (1.5fr) */
+        <div className="grid gap-12 lg:grid-cols-[3.5fr_1.5fr]">
+          {/* Cart Items - Left Side */}
+          <div className="space-y-8">
+            {cartData.map((item, index) => (
+              <div
+                key={index}
+                className="group flex gap-4 sm:gap-6 border-b border-gray-100 pb-8 transition-opacity hover:opacity-70"
+              >
+                {/* Product Image */}
+                <div className="h-full w-20 sm:h-32 sm:w-32 flex-shrink-0 overflow-hidden bg-gray-50">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
 
-        <div className="mt-4 border-t">
-          {cartData.length === 0 ? (
-            <p className="mt-4 text-base md:text-3xl text-text-secondary">
-              Your cart is empty.
-            </p>
-          ) : (
-            <div>
-              {cartData.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start justify-between py-3 my-2 border-b border-border-secondary gap-6 lg:gap-10"
-                >
-                  {/* Left section: image + details */}
-                  <div className="flex items-center gap-3 lg:gap-8 flex-1">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-22 h-24 lg:w-32 lg:h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
-                    />
-
-                    <div className="flex flex-col">
-                      <h3 className="text-base sm:text-xl lg:text-2xl font-semibold text-text-primary bricolage-grotesque">
-                        {item.name}
-                      </h3>
-
-                      <p className="text-sm md:text-base text-gray-500 mt-1">
-                        Size:{" "}
-                        <span className="text-text-primary font-medium">
-                          {item.size}
-                        </span>{" "}
-                        | Color:{" "}
-                        <span className="text-text-primary font-medium">
-                          {item.color}
-                        </span>
-                      </p>
-
-                      <div className="flex items-center mt-4">
-                        <button
-                          className="border flex items-center justify-center border-gray-300 rounded-md w-8 h-8 md:w-9 md:h-9 lg:w-12 lg:h-12 text-xl font-bold text-text-primary hover:bg-gray-100 transition"
-                          onClick={() => handleDecrease(item)}
-                        >
-                          <Minus className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
-                        </button>
-
-                        <span className="mx-3 sm:mx-4 text-base md:text-lg lg:text-xl font-semibold text-text-primary">
-                          {item.quantity}
-                        </span>
-
-                        <button
-                          className="border flex items-center justify-center border-gray-300 rounded-md w-8 h-8 md:w-9 md:h-9 lg:w-12 lg:h-12 text-xl font-bold text-text-primary hover:bg-gray-100 transition"
-                          onClick={() => handleIncrease(item)}
-                        >
-                          <Plus className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
-                        </button>
-                      </div>
-                    </div>
+                {/* Product Details */}
+                <div className="flex flex-1 flex-col justify-between">
+                  <div>
+                    <h3 className="mb-2 font-light tracking-tight">
+                      {item.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {item.size} / {item.color}
+                    </p>
                   </div>
 
-                  {/* Right section: price + delete */}
-                  <div className="flex flex-col items-end justify-between h-full">
-                    <p className="text-base md:text-xl lg:text-2xl font-semibold text-text-primary">
-                      {formatAmountDefault(
-                        currency,
-                        item.price * item.quantity
-                      )}
-                    </p>
+                  {/* Quantity Controls */}
+                  <div className="mt-2 sm:mt-4 flex items-center gap-4">
+                    <div className="flex items-center border border-gray-300">
+                      <button
+                        className="flex h-10 w-10 items-center justify-center transition-colors hover:bg-gray-100"
+                        onClick={() => handleDecrease(item)}
+                        aria-label="Decrease quantity"
+                      >
+                        <Minus size={16} strokeWidth={1.5} />
+                      </button>
 
-                    <Trash2
-                      width={24}
-                      height={24}
-                      className="mt-4 text-text-error cursor-pointer hover:text-red-700 transition"
+                      <span className="w-12 text-center text-sm">
+                        {item.quantity}
+                      </span>
+
+                      <button
+                        className="flex h-10 w-10 items-center justify-center transition-colors hover:bg-gray-100"
+                        onClick={() => handleIncrease(item)}
+                        aria-label="Increase quantity"
+                      >
+                        <Plus size={16} strokeWidth={1.5} />
+                      </button>
+                    </div>
+
+                    <button
+                      className="text-gray-400 transition-colors hover:text-red-600"
                       onClick={() =>
                         updateQuantity(item.id, item.size, item.color, 0)
                       }
-                    />
+                      aria-label="Remove item"
+                    >
+                      <Trash2 size={18} strokeWidth={1.5} />
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
 
-        {cartData.length > 0 && (
-          <div className="flex justify-end mt-20">
-            <div className="w-full md:w-1/2 border p-5 rounded border-border-secondary">
-              <CartTotal />
-              <div className="w-full text-end mt-5 poppins">
-                {user ? (
-                  <Link to="/check_out">
-                    <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
-                      Proceed to checkout
-                    </Button>
-                  </Link>
-                ) : (
-                  <Link to="/auth/sign_up">
-                    <Button className="w-full rounded-md active:bg-gray-700 bg-brand-neutral border-none text-text-light">
-                      Proceed to checkout
-                    </Button>
-                  </Link>
-                )}
+                {/* Price */}
+                <div className="text-right">
+                  <p className="text-sm font-light">
+                    {formatAmountDefault(currency, item.price * item.quantity)}
+                  </p>
+                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Cart Total - Right Side (Sticky) */}
+          <div className="lg:sticky lg:top-26 xl:top-28 lg:h-fit">
+            <div>
+              <h2 className="mb-8 text-xs font-medium uppercase tracking-widest text-gray-500">
+                Summary
+              </h2>
+
+              {/* Cart Total Component */}
+              <div className="mb-8">
+                <CartTotal />
+              </div>
+
+              {/* Checkout Button */}
+              <Link to={user ? "/check_out" : "/auth/sign_up"}>
+                <button className="w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
+                  Proceed to Checkout
+                </button>
+              </Link>
+
+              {/* Continue Shopping Link */}
+              <Link
+                to="/collections/shop_all"
+                className="mt-6 block text-center text-sm uppercase tracking-widest text-gray-500 transition-colors hover:text-gray-900"
+              >
+                Continue Shopping
+              </Link>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 };

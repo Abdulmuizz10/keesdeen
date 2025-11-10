@@ -51,7 +51,7 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
           <span>Shipping Address</span>
         </h3>
-        <p className="text-gray-500 text-sm md:text-base">
+        <p className="text-sm sm:text-base text-gray-500">
           Select or create a new address.
         </p>
       </div>
@@ -62,13 +62,11 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
           Array.from({ length: 2 }).map((_, index) => (
             <div
               key={index}
-              className="cursor-pointer border border-border-secondary hover:border-gray-300 rounded-xl p-3 sm:p-4 transition-all duration-300"
+              className="animate-pulse border-b border-gray-100 pb-6"
             >
-              <div className="flex flex-col gap-1">
-                <div className="h-6 bg-gray-200 animate-pulse" />
-                <div className="h-6 bg-gray-200 animate-pulse" />
-                <div className="h-6 bg-gray-200 animate-pulse" />
-              </div>
+              <div className="mb-2 h-4 w-1/4 bg-gray-200" />
+              <div className="mb-2 h-3 w-1/2 bg-gray-200" />
+              <div className="h-3 w-1/6 bg-gray-200" />
             </div>
           ))
         ) : displayedItems.length > 0 ? (
@@ -87,10 +85,10 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
                 <div
                   key={index}
                   onClick={() => handleSelectAddress(address._id, address)}
-                  className={`cursor-pointer border rounded-xl p-3 sm:p-4 transition-all duration-300 ${
+                  className={`cursor-pointer border p-3 sm:p-4 transition-all duration-300 ${
                     selectedAddress === address._id
                       ? "border-black shadow-md bg-gray-100"
-                      : "border-border-secondary hover:border-gray-300"
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   <div className="flex items-start justify-between">
@@ -106,17 +104,17 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
                         {stateName}, {countryName}
                       </p>
                       <p className="text-gray-500 text-sm mt-1">
-                        Phone: +{shipping.phone}
+                        +{shipping.phone}
                       </p>
                     </div>
 
                     {/* Selected Indicator */}
                     {selectedAddress === address._id ? (
-                      <span className="w-5 h-5 rounded-full bg-black border-2 border-black flex items-center justify-center mt-1">
-                        <span className="w-2 h-2 bg-white rounded-full" />
+                      <span className="w-5 h-5 bg-black border-2 border-black flex items-center justify-center mt-1">
+                        <span className="w-2 h-2 bg-white" />
                       </span>
                     ) : (
-                      <span className="w-5 h-5 rounded-full border border-gray-300 mt-1" />
+                      <span className="w-5 h-5 border border-gray-300 mt-1" />
                     )}
                   </div>
                 </div>
@@ -124,7 +122,7 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
             })}
 
             {/* Show More / Less Button */}
-            {savedAddress.length > 2 && (
+            {/* {savedAddress.length > 2 && (
               <div className="text-center mt-5">
                 <button
                   onClick={() => setShowAll(!showAll)}
@@ -143,15 +141,36 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
           <p className="text-center text-base sm:text-lg">
             No address available. Please create a new address.
           </p>
+        )} */}
+
+            {savedAddress.length > 2 && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="w-full border-b border-gray-300 pb-1 pt-2 text-sm uppercase tracking-widest text-gray-500 transition-colors hover:border-gray-900 hover:text-gray-900"
+              >
+                {showAll ? "Show Less" : `Show ${savedAddress.length - 2} More`}
+              </button>
+            )}
+          </>
+        ) : (
+          <p className="py-8 text-center text-sm uppercase tracking-widest text-gray-400">
+            No saved addresses
+          </p>
         )}
 
         {/* Add Address Button */}
         <button
-          className="w-full mt-5 border border-dashed border-gray-400 rounded py-3 flex items-center justify-center gap-2 text-gray-700 hover:text-black hover:border-black transition"
           onClick={() => setShowModal(true)}
+          className="group flex w-full items-center justify-center gap-2 border border-gray-300 py-4 transition-colors hover:border-gray-900 hover:bg-gray-50"
         >
-          <Plus className="w-5 h-5" />
-          <span className="text-sm font-medium">Add a new address</span>
+          <Plus
+            size={18}
+            strokeWidth={1.5}
+            className="text-gray-600 group-hover:text-gray-900"
+          />
+          <span className="text-sm uppercase tracking-widest text-gray-600 group-hover:text-gray-900">
+            Add New Address
+          </span>
         </button>
       </div>
 

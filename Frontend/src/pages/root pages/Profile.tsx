@@ -1,8 +1,7 @@
-import { Button } from "@relume_io/relume-ui";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import LogOutButton from "../../components/LogOutButton";
-import { Pencil, Trash2, CreditCard } from "lucide-react";
+import { Trash2, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Country, State } from "country-state-city";
 import { toast } from "sonner";
@@ -18,19 +17,19 @@ export interface UserProfile {
 
 const Profile: React.FC = () => {
   const { user } = useContext(AuthContext);
-  const [tab, setTab] = useState<string>("order_history");
+  const [tab, setTab] = useState<string>("orders");
 
   const tabStatus = [
-    { text: "Order History", status: "order_history" },
+    { text: "Orders", status: "orders" },
     { text: "Addresses", status: "addresses" },
     ,
-    { text: "Saved Cards", status: "saved_cards" },
+    { text: "Cards", status: "cards" },
   ];
 
   const tabComponents: Record<string, JSX.Element> = {
-    order_history: <OrderHistory />,
+    orders: <OrderHistory />,
     addresses: <Addresses />,
-    saved_cards: <SavedCards />,
+    cards: <SavedCards />,
   };
 
   return (
@@ -51,13 +50,13 @@ const Profile: React.FC = () => {
             <div className="flex flex-col max-md:items-center">
               <div className="flex items-center sm:gap-2 flex-col md:flex-row">
                 <h2 className="text-3xl font-semibold text-text-primary">
-                  {user?.firstName}
+                  <span>{user?.firstName}</span>
                 </h2>
                 <h2 className="text-3xl font-semibold text-text-primary">
-                  {user?.lastName}
+                  <span>{user?.lastName}</span>
                 </h2>
               </div>
-              <p className="text-gray-500 text-xs sm:text-base md:text-lg">
+              <p className="text-text-secondary text-xs sm:text-base">
                 {user?.email}
               </p>
             </div>
@@ -68,7 +67,7 @@ const Profile: React.FC = () => {
           <div className="w-full flex justify-center">
             {tabStatus.map((item: any, index) => (
               <div
-                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-sm sm:text-base md:text-xl px-2 sm:px-0 ${
+                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs sm:text-base px-2 sm:px-0 ${
                   item?.status === tab
                     ? "border-b-2 border-border-primary"
                     : "border-b"
@@ -91,9 +90,9 @@ const Profile: React.FC = () => {
   );
 };
 
-const OrderHistory = () => {
+const OrderHistory: React.FC = () => {
   const [orders, setOrders] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
 
@@ -122,113 +121,176 @@ const OrderHistory = () => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  // Fetch data from backend
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
-  return (
-    <section className="w-full">
-      {loading ? (
-        Array.from({ length: 5 }).map((_, index: number) => (
-          <div
-            key={index}
-            className="gap-4 py-10 sm:px-5 border-b border-border-secondary transition-all duration-200"
-          >
-            {/* Address Details */}
-            <div className="space-y-1 text-gray-700">
-              <div className="h-6 bg-gray-200 animate-pulse" />
-              <div className="h-6 bg-gray-200 animate-pulse" />
-              <div className="h-6 bg-gray-200 animate-pulse" />
-              <div className="h-6 bg-gray-200 animate-pulse" />
-            </div>
-          </div>
-        ))
-      ) : orders.length > 0 ? (
-        orders?.map((order: any, index: number) => {
-          return (
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Delivered":
+        return "text-green-600";
+      case "Pending":
+        return "text-amber-600";
+      case "Cancelled":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
+        <div className="mb-16">
+          <h1 className="text-2xl font-light tracking-tight md:text-3xl">
+            Order History
+          </h1>
+        </div>
+        <div className="space-y-8">
+          {Array.from({ length: 5 }).map((_, index: number) => (
             <div
               key={index}
-              className="flex flex-col sm:flex-row sm:items-center justify-between py-10 sm:px-5 border-b border-border-secondary hover:bg-gray-50 transition-all duration-200"
+              className="border-b border-gray-200 pb-8 animate-pulse"
             >
-              <div className="space-y-1">
-                <p className="text-sm text-gray-500">Order ID</p>
-                <p className="font-semibold text-gray-900">{order._id}</p>
-                <p className="text-sm text-gray-600">
-                  {order.items} {order.items > 1 ? "items" : "item"} •{" "}
-                  {new Date(order.paidAt).toLocaleString()}
-                </p>
-              </div>
-              <div className="mt-4 sm:mt-0 flex flex-col sm:items-end gap-2">
-                <span
-                  className={`text-sm p-2 rounded lg:p-0 font-medium ${
-                    order.isDelivered === "Delivered"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-                >
-                  {order.isDelivered}
-                </span>
-                <p className="font-semibold text-gray-900">{order.total}</p>
+              <div className="h-4 bg-gray-200 w-1/4 mb-4" />
+              <div className="h-3 bg-gray-200 w-1/3 mb-2" />
+              <div className="h-3 bg-gray-200 w-1/6" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
+      {orders.length > 0 ? (
+        <>
+          {/* Orders List */}
+          <div className="space-y-12">
+            {orders.map((order: any, index: number) => (
+              <div
+                key={index}
+                className="group border-b border-gray-100 pb-12 last:border-0 transition-opacity hover:opacity-70"
+              >
+                <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+                  <div>
+                    <h2 className="mb-2 font-light tracking-tight">
+                      Order - {order._id.slice(-8).toUpperCase()}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {formatDate(order.paidAt)}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-start gap-2 sm:items-end">
+                    <span
+                      className={`text-xs font-medium uppercase tracking-wider ${getStatusColor(
+                        order.isDelivered
+                      )}`}
+                    >
+                      {order.isDelivered}
+                    </span>
+                    <p className="text-sm font-light">{order.total}</p>
+                  </div>
+                </div>
+
+                {/* Order Items Preview */}
+                {order.orderedItems && order.orderedItems.length > 0 && (
+                  <div className="mb-6 flex gap-4 overflow-x-auto pb-2">
+                    {order.orderedItems
+                      .slice(0, 4)
+                      .map((item: any, i: number) => (
+                        <div
+                          key={i}
+                          className="h-20 w-20 flex-shrink-0 overflow-hidden bg-gray-50"
+                        >
+                          {item.image && (
+                            <img
+                              src={item.image}
+                              alt={item.name || "Product"}
+                              className="h-full w-full object-cover"
+                            />
+                          )}
+                        </div>
+                      ))}
+                    {order.orderedItems.length > 4 && (
+                      <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center bg-gray-50 text-xs text-gray-500">
+                        +{order.orderedItems.length - 4}
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <Link
                   to={`/order_details/${order._id}`}
-                  className="w-full md:w-auto max-sm:mt-5"
+                  className="inline-block border-b border-gray-900 pb-1 text-sm uppercase tracking-widest transition-colors hover:border-gray-400 hover:text-gray-400"
                 >
-                  <Button className="mt-4 bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full text-base poppins">
-                    More details
-                  </Button>
+                  View Details
                 </Link>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-16 flex items-center justify-between border-t border-gray-200 pt-8">
+              <button
+                className={`text-sm uppercase tracking-widest transition-colors ${
+                  currentPage === 1
+                    ? "cursor-not-allowed text-gray-300"
+                    : "text-gray-900 hover:text-gray-400"
+                }`}
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-gray-500">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                className={`text-sm uppercase tracking-widest transition-colors ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed text-gray-300"
+                    : "text-gray-900 hover:text-gray-400"
+                }`}
+                disabled={currentPage === totalPages}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+              >
+                Next
+              </button>
             </div>
-          );
-        })
+          )}
+        </>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-4 mt-20">
-          <p className="text-base sm:text-md text-center text-text-secondary">
-            You haven’t placed any orders yet. Start shopping to place your
-            first one!
+        /* Empty State */
+        <div className="flex min-h-[40vh] flex-col items-center justify-center">
+          <p className="mb-8 text-center text-sm uppercase tracking-widest text-gray-400">
+            No orders yet
           </p>
-
-          <Link to="/collections/shop_all">
-            <Button className="`w-full my-4 sm:w-fit active:bg-brand-neutral/50 bg-brand-neutral text-text-light border-none rounded-md poppins">
-              Shop Now
-            </Button>
+          <Link
+            to="/collections/shop_all"
+            className="border-b border-gray-900 pb-1 text-sm uppercase tracking-widest transition-colors hover:border-gray-400 hover:text-gray-400"
+          >
+            Start Shopping
           </Link>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {orders.length > 4 && (
-        <div className="flex justify-end mt-30 gap-3 poppins">
-          <button
-            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
-              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage((prev) => Math.max(prev - 1, 1));
-            }}
-          >
-            Previous
-          </button>
-
-          <button
-            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
-              currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={currentPage === totalPages}
-            onClick={() => {
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-            }}
-          >
-            Next
-          </button>
         </div>
       )}
     </section>
   );
 };
 
-const Addresses = () => {
+const Addresses: React.FC = () => {
   const [address, setAddress] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -249,8 +311,6 @@ const Addresses = () => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  // Fetch data from backend
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
@@ -279,79 +339,82 @@ const Addresses = () => {
     }
   };
 
-  return (
-    <section className="w-full">
-      {loading ? (
-        Array.from({ length: 5 }).map((_, index: number) => (
-          <div
-            key={index}
-            className="gap-4 py-10 sm:px-5 border-b border-border-secondary transition-all duration-200"
-          >
-            {/* Address Details */}
-            <div className="space-y-1 text-gray-700">
-              <div className="h-6 bg-gray-200 animate-pulse" />
-              <div className="h-6 bg-gray-200 animate-pulse" />
-              <div className="h-6 bg-gray-200 animate-pulse" />
-              <div className="h-6 bg-gray-200 animate-pulse" />
-            </div>
-          </div>
-        ))
-      ) : address.length > 0 ? (
-        address?.map((address: any, index: number) => {
-          const { shippingAddress } = address;
-          const countryName =
-            Country.getCountryByCode(shippingAddress.country)?.name ||
-            shippingAddress.country;
-          const stateName =
-            State.getStateByCodeAndCountry(
-              shippingAddress.state,
-              shippingAddress.country
-            )?.name || shippingAddress.state;
-
-          return (
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
+        <div className="space-y-8">
+          {Array.from({ length: 3 }).map((_, index: number) => (
             <div
               key={index}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-10 sm:px-5 border-b border-border-secondary hover:bg-gray-50 transition-all duration-200"
+              className="border-b border-gray-200 pb-8 animate-pulse"
             >
-              {/* Address Details */}
-              <div className="space-y-1 text-gray-700">
-                <p className="font-semibold text-gray-900">
-                  {shippingAddress.firstName} {shippingAddress.lastName}
-                </p>
-                <p className="text-sm">{shippingAddress.address1}</p>
-                {shippingAddress.address2 && (
-                  <p className="text-sm">{shippingAddress.address2}</p>
-                )}
-                <p className="text-sm">
-                  {stateName}, {countryName}
-                </p>
-                <p className="text-sm text-gray-500">{shippingAddress.phone}</p>
-              </div>
+              <div className="h-4 bg-gray-200 w-1/4 mb-3" />
+              <div className="h-3 bg-gray-200 w-1/3 mb-2" />
+              <div className="h-3 bg-gray-200 w-1/2 mb-2" />
+              <div className="h-3 bg-gray-200 w-1/6" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
-              {/* Icons */}
-              <div className="flex items-center gap-4 sm:gap-6">
-                <Link
-                  to={`/update-address/${address.id}`}
-                  className="text-gray-600 hover:text-black transition"
-                  title="Update address"
-                >
-                  <Pencil size={20} />
-                </Link>
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
+      {address.length > 0 ? (
+        <div className="space-y-12">
+          {address.map((addr: any, index: number) => {
+            const { shippingAddress } = addr;
+            const countryName =
+              Country.getCountryByCode(shippingAddress.country)?.name ||
+              shippingAddress.country;
+            const stateName =
+              State.getStateByCodeAndCountry(
+                shippingAddress.state,
+                shippingAddress.country
+              )?.name || shippingAddress.state;
+
+            return (
+              <div
+                key={index}
+                className="group flex items-start justify-between border-b border-gray-100 pb-12 transition-opacity hover:opacity-70"
+              >
+                {/* Address Details */}
+                <div className="space-y-1 text-sm leading-relaxed">
+                  <p className="font-light text-gray-900">
+                    {shippingAddress.firstName} {shippingAddress.lastName}
+                  </p>
+                  <p className="text-gray-600">{shippingAddress.address1}</p>
+                  {shippingAddress.address2 && (
+                    <p className="text-gray-600">{shippingAddress.address2}</p>
+                  )}
+                  <p className="text-gray-600">
+                    {stateName}, {countryName}
+                  </p>
+                  <p className="text-gray-600">{shippingAddress.postalCode}</p>
+                  <p className="pt-2 text-gray-600">+{shippingAddress.phone}</p>
+                </div>
+
+                {/* Delete Button */}
                 <button
-                  onClick={() => handleDelete(address._id)}
-                  className="text-gray-600 hover:text-red-600 transition"
+                  onClick={() => handleDelete(addr._id)}
+                  className="text-gray-400 transition-colors hover:text-red-600"
                   title="Delete address"
+                  aria-label="Delete address"
                 >
-                  <Trash2 size={20} className="text-text-error" />
+                  <Trash2 size={18} strokeWidth={1.5} />
                 </button>
               </div>
-            </div>
-          );
-        })
+            );
+          })}
+        </div>
       ) : (
-        <p className="text-base sm:text-xl text-center">
-          No Address available.
-        </p>
+        /* Empty State */
+        <div className="flex min-h-[40vh] flex-col items-center justify-center">
+          <p className="text-center text-sm uppercase tracking-widest text-gray-400">
+            No saved addresses
+          </p>
+        </div>
       )}
     </section>
   );

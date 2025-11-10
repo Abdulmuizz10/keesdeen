@@ -18,6 +18,7 @@ import AuthLayout from "./layouts/AuthLayout";
 // Root Pages
 import Home from "./pages/root pages/Home";
 import ShopAll from "./pages/root pages/ShopAll";
+import NewArrivals from "./pages/root pages/NewArrivals";
 import ActiveWears from "./pages/root pages/ActiveWears";
 import FitnessAccessories from "./pages/root pages/FitnessAccessories";
 import ProductDetails from "./pages/root pages/ProductDetails";
@@ -25,9 +26,7 @@ import SearchResults from "./pages/root pages/SearchResults";
 import Cart from "./pages/root pages/Cart";
 import Checkout from "./pages/root pages/CheckOut";
 import WishLists from "./pages/root pages/WishLists";
-import NewArrivals from "./pages/root pages/NewArrivals";
 import Profile from "./pages/root pages/Profile";
-import OrderHistory from "./pages/root pages/OrderHistory";
 import OrderDetails from "./pages/root pages/OrderDetails";
 
 // Auth Pages
@@ -75,7 +74,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="overflow-hidden">
+    <div>
       <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
 
       {animation ? (
@@ -110,7 +109,6 @@ const App: React.FC = () => {
               <Route path="/wishlists" element={<WishLists />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/check_out" element={<Checkout />} />
-              <Route path="/order_history" element={<OrderHistory />} />
               <Route path="/order_details/:id" element={<OrderDetails />} />
             </Route>
 

@@ -117,13 +117,13 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
           <span>Order Details</span>
         </h3>
-        <p className="text-gray-500 text-sm md:text-base">
-          Select or create a new address.
+        <p className="text-sm sm:text-base text-gray-500 ">
+          your order details.
         </p>
       </div>
 
       {/* Order Details List */}
-      <div className="mt-5 border border-border-secondary shadow-xxsmall px-3 py-5 md:p-5  bg-white space-y-5">
+      <div className="mt-5 border border-gray-200 shadow-xxsmall px-3 py-5 md:p-5  bg-white space-y-5">
         <div className="space-y-3 text-gray-700">
           <div className="flex justify-between text-sm md:text-base">
             <span>Subtotal:</span>

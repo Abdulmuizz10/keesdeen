@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useShop } from "../../context/ShopContext";
 import { FaStar, FaStarHalfAlt, FaRegStar } from "react-icons/fa";
-import { RiHeartLine } from "react-icons/ri";
-import { RiHeartFill } from "react-icons/ri";
+import { RiHeartLine, RiHeartFill } from "react-icons/ri";
+// import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BiArrowBack } from "react-icons/bi";
-import { ShoppingBag } from "lucide-react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Button } from "@relume_io/relume-ui";
 import RelatedProducts from "../../components/RelatedProducts";
 import Reviews from "../../components/Reviews";
 import Spinner from "../../components/Spinner";
@@ -45,7 +43,7 @@ const ProductDetails = () => {
         if (response.status === 200) {
           setResult(response.data);
         } else {
-          setError("Product do not exist!");
+          setError("Product does not exist!");
         }
       } catch (error) {
         setError("Unable to get product!");
@@ -95,83 +93,98 @@ const ProductDetails = () => {
   ) : (
     <section className="placing">
       {result ? (
-        <div className="container">
-          <div className="flex flex-col gap-10 lg:flex-row">
-            {/* Product images */}
-            <div className="flex-1 w-full lg:w-1/2">
+        <div>
+          {/* Product Grid */}
+          <div className="grid gap-12 lg:grid-cols-2">
+            {/* Product Images - Left */}
+            <div className="overflow-hidden">
               <Slider {...settings}>
                 {result.product.imageUrls.map((item: string, index: number) => (
-                  <img
-                    src={item}
-                    alt="product images"
-                    key={index}
-                    className="w-full h-full"
-                  />
+                  <div key={index} className="aspect-square">
+                    <img
+                      src={item}
+                      alt={`${result.product.name} - ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 ))}
               </Slider>
             </div>
 
-            {/* Product Details */}
-            <div className="flex-1 w-full">
-              <div className="mb-2 md:mb-4">
-                <h2 className="text-2xl font-bold mb-2 md:text-4xl lg:text-5xl">
-                  <span>{result.product.name}</span>
-                </h2>
-                <p>{result.product.brand}</p>
+            {/* Product Details - Right */}
+            <div className="flex flex-col">
+              {/* Brand */}
+              <p className="mb-2 text-xs uppercase tracking-widest text-gray-500">
+                {result.product.brand}
+              </p>
+
+              {/* Product Name */}
+              <h1 className="mb-4 text-2xl font-light tracking-tight md:text-3xl">
+                {result.product.name}
+              </h1>
+
+              {/* Reviews */}
+              <div className="mb-6 flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, index) => {
+                    const ratingValue = index + 1;
+                    if (ratingValue <= Math.floor(result.averageRating)) {
+                      return (
+                        <FaStar
+                          key={index}
+                          className="text-sm text-yellow-500"
+                        />
+                      );
+                    } else if (ratingValue <= result.averageRating) {
+                      return (
+                        <FaStarHalfAlt
+                          key={index}
+                          className="text-sm text-yellow-500"
+                        />
+                      );
+                    } else {
+                      return (
+                        <FaRegStar
+                          key={index}
+                          className="text-sm text-yellow-500"
+                        />
+                      );
+                    }
+                  })}
+                </div>
+                <span className="text-sm text-gray-500">
+                  {result.averageRating} ({result.totalReviews})
+                </span>
               </div>
-              <div className="flex items-center gap-1 mt-2">
-                {[...Array(5)].map((_, index) => {
-                  const ratingValue = index + 1; // Ratings are 1-based
-                  if (ratingValue <= Math.floor(result.averageRating)) {
-                    return (
-                      <FaStar
-                        key={index}
-                        className="text-yellow-500 text-base"
-                      />
-                    ); // Full star
-                  } else if (ratingValue <= result.averageRating) {
-                    return (
-                      <FaStarHalfAlt
-                        key={index}
-                        className="text-yellow-500 text-base"
-                      />
-                    ); // Half star
-                  } else {
-                    return (
-                      <FaRegStar
-                        key={index}
-                        className="text-yellow-500 text-base"
-                      />
-                    ); // Empty star
-                  }
-                })}
-                <p className="pl-1 text-md font-medium">
-                  ({result.averageRating}) • {result.totalReviews} reviews
-                </p>
-              </div>
-              <div className="flex gap-2 items-center">
+
+              {/* Price */}
+              <div className="mb-8 flex items-center gap-3">
                 {result.product.previousPrice && (
-                  <s className="mt-5 text-xl font-medium">
+                  <span className="text-sm text-gray-400 line-through">
                     {formatAmountDefault(
                       currency,
                       result.product.previousPrice
                     )}
-                  </s>
+                  </span>
                 )}
-                <p className="mt-5 text-2xl font-medium">
+                <span className="text-xl font-light">
                   {formatAmountDefault(currency, result.product.price)}
-                </p>
+                </span>
               </div>
 
-              {/* Color selection */}
-              <div className="flex flex-col gap-4 my-8">
-                <p className="mb-2">Select Color :</p>
-                <div className="flex flex-wrap gap-3 md:gap-5 lg:gap-7 items-center">
+              {/* Color Selection */}
+              <div className="mb-8 border-t border-gray-200 pt-8">
+                <p className="mb-4 text-xs uppercase tracking-widest text-gray-500">
+                  Color
+                </p>
+                <div className="flex flex-wrap gap-3">
                   {result.product?.colors.map((option: any, index: number) => (
                     <label
                       key={index}
-                      className={`flex items-center gap-2 cursor-pointer text-gray-500 poppins ${
-                        color === option && "!font-bold !text-black"
+                      className={`flex cursor-pointer items-center gap-2 text-sm transition-opacity ${
+                        color === option
+                          ? "opacity-100"
+                          : "opacity-50 hover:opacity-75"
                       }`}
                     >
                       <input
@@ -183,42 +196,46 @@ const ProductDetails = () => {
                         className="hidden"
                       />
                       <span
-                        className={`w-3 h-3 rounded-full border-2 ${
-                          color === option &&
-                          "border-border-secondary !h-6 !w-6"
+                        className={`h-6 w-6 border ${
+                          color === option
+                            ? "border-gray-900"
+                            : "border-gray-300"
                         }`}
                         style={{
                           backgroundColor: colorToHex(option) || "transparent",
                         }}
-                      ></span>
-                      {option}
+                      />
+                      <span className="text-gray-900">{option}</span>
                     </label>
                   ))}
                 </div>
               </div>
 
-              {/* Size selection */}
-              <div className="flex flex-col gap-4 my-8">
-                <p className="mb-2">Select Size :</p>
+              {/* Size Selection */}
+              <div className="mb-8 border-t border-gray-200 pt-8">
+                <p className="mb-4 text-xs uppercase tracking-widest text-gray-500">
+                  Size
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {result.product.sizes.map((item: any, index: number) => (
-                    <div
-                      className={`p-2 h-[45px] w-[45px] bg-gray-200 flex items-center justify-center cursor-pointer text-sm poppins transition-all ${
-                        item === size
-                          ? "border-2 border-border-primary"
-                          : "border border-border-secondary"
-                      }`}
+                    <button
                       key={index}
                       onClick={() => setSize(item)}
+                      className={`flex h-12 w-12 items-center justify-center border text-sm transition-colors ${
+                        item === size
+                          ? "border-gray-900 bg-gray-900 text-white"
+                          : "border-gray-300 bg-white text-gray-900 hover:border-gray-900"
+                      }`}
                     >
                       {item}
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
-              <div className="flex items-center gap-2 lg:max-w-xs w-full">
-                <Button
-                  className="py-3.5 rounded-md flex items-center justify-center bg-brand-neutral text-text-light border-none flex-4 w-full poppins"
+
+              {/* Action Buttons */}
+              <div className="mb-8 flex gap-3 border-t border-gray-200 pt-8">
+                <button
                   onClick={() =>
                     addToCart(
                       result.product._id,
@@ -229,56 +246,90 @@ const ProductDetails = () => {
                       result.product.imageUrls[0]
                     )
                   }
+                  className="flex-1 border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
                 >
-                  Add To Cart <ShoppingBag />
-                </Button>
-                <div
-                  className={`px-3 py-3 border-2 border-brand-neutral rounded-lg flex items-center justify-center cursor-pointer flex-1`}
+                  Add to Cart
+                </button>
+                <button
                   onClick={() => manageWishLists(result.product)}
+                  className="flex h-[52px] w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50"
+                  aria-label="Add to wishlist"
                 >
                   {wishLists.find(
                     (wish: any) => wish._id === result.product._id
                   ) ? (
-                    <RiHeartFill className="text-2xl text-brand-neutral" />
+                    <RiHeartFill className="text-xl text-gray-900" />
                   ) : (
-                    <RiHeartLine className="text-2xl text-brand-neutral" />
+                    <RiHeartLine className="text-xl text-gray-900" />
                   )}
-                </div>
+                </button>
               </div>
-              <hr className="mt-8 sm:w-4/5" />
-              <div className="text-base text-text-secondary mt-5 flex flex-col gap-1">
-                <p>100% Original product.</p>
-                <p className="mt-5 text-gray-500">
-                  {result.product.description}
+
+              {/* Description */}
+              <div className="border-t border-gray-200 pt-8 text-sm leading-relaxed text-gray-600">
+                <p className="mb-4 text-xs uppercase tracking-widest text-gray-500">
+                  Description
+                </p>
+                <p>{result.product.description}</p>
+                <p className="mt-4 text-xs text-gray-500">
+                  100% Original product
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Description and Review Section */}
-          <div className="mt-20">
+          {/* Reviews Section */}
+          <div className="mt-16 md:mt-24">
             <Reviews id={id} />
           </div>
-          {/* Related products */}
-          <div className="mt-20">
+
+          {/* Related Products */}
+          <div className="mt-16 md:mt-24">
             <RelatedProducts id={id} />
           </div>
         </div>
       ) : (
-        <div className="h-[65vh] flex items-center justify-center">
-          <p className="text-base sm:text-xl">{error}</p>
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <p className="text-sm uppercase tracking-widest text-gray-400">
+            {error}
+          </p>
         </div>
       )}
     </section>
   );
 };
 
-// Rest of the component code remains the same...
+// const SampleNextArrow = (props: any) => {
+//   const { onClick } = props;
+//   return (
+//     <button
+//       className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-gray-300 bg-white/90 transition-colors hover:border-gray-900 hover:bg-white"
+//       onClick={onClick}
+//       aria-label="Next image"
+//     >
+//       <ChevronRight size={20} strokeWidth={1.5} />
+//     </button>
+//   );
+// };
+
+// const SamplePrevArrow = (props: any) => {
+//   const { onClick } = props;
+//   return (
+//     <button
+//       className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-gray-300 bg-white/90 transition-colors hover:border-gray-900 hover:bg-white"
+//       onClick={onClick}
+//       aria-label="Previous image"
+//     >
+//       <ChevronLeft size={20} strokeWidth={1.5} />
+//     </button>
+//   );
+// };
+
 const SampleNextArrow = (props: any) => {
   const { onClick } = props;
   return (
     <div
-      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -right-3 sm:-right-6 top-[45%] absolute z-10 cursor-pointer"
+      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center right-2 top-[45%] absolute z-10 cursor-pointer"
       onClick={onClick}
     >
       <button className="next rotate-180">
@@ -292,7 +343,7 @@ const SamplePrevArrow = (props: any) => {
   const { onClick } = props;
   return (
     <div
-      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center -left-3 sm:-left-6 top-[45%] absolute z-10 cursor-pointer"
+      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center left-2 top-[45%] absolute z-10 cursor-pointer"
       onClick={onClick}
     >
       <button className="prev">
@@ -301,9 +352,8 @@ const SamplePrevArrow = (props: any) => {
     </div>
   );
 };
-
 const Animation = () => (
-  <div className="w-screen h-screen flex items-center justify-center bg-white">
+  <div className="flex h-screen items-center justify-center bg-white">
     <Spinner />
   </div>
 );
