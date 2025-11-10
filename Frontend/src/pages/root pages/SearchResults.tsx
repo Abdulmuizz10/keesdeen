@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import { RxChevronDown } from "react-icons/rx";
+import React, { useEffect, useState } from "react";
 import { useShop } from "../../context/ShopContext";
+import { X, SlidersHorizontal } from "lucide-react";
 import {
-  Button,
   Select,
   SelectContent,
   SelectItem,
@@ -18,353 +17,364 @@ const SearchResults: React.FC = () => {
   const { name } = useParams();
   const { isActive } = useShop();
   const [showFilter, setShowFilter] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState<any>([]);
+
+  // Filter + sort states
   const [category, setCategory] = useState<string[]>([]);
   const [sizeCategory, setSizeCategory] = useState<string[]>([]);
   const [colorCategory, setColorCategory] = useState<string[]>([]);
-  const [sortType, setSortType] = useState<string>("Relevance");
-  const [products, setProducts] = useState([]);
+  const [sortType, setSortType] = useState<string>("relevant");
+
+  // Data & pagination
+  const [products, setProducts] = useState<any[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [pages, setPages] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await Axios.get(
-          `${URL}/products/search/search-results`,
-          {
-            validateStatus: (status) => status < 600,
-            params: { query: name },
-          }
-        );
-        if (response.status === 200) {
-          setProducts(response.data);
-          setFilteredProducts(response.data);
+  const fetchProducts = async () => {
+    try {
+      const response = await Axios.get(
+        `${URL}/products/search/search-results`,
+        {
+          validateStatus: (status) => status < 600,
+          params: {
+            name,
+            page,
+            limit: 12,
+            category: category.join(","),
+            size: sizeCategory.join(","),
+            color: colorCategory.join(","),
+            sort:
+              sortType === "Low - High"
+                ? "low-high"
+                : sortType === "High - Low"
+                ? "high-low"
+                : "relevant",
+          },
         }
-      } catch (error) {
-        setError("Network error, unable to get products!");
-      } finally {
-        setLoading(false);
+      );
+      if (response.status === 200) {
+        setProducts(response.data.products);
+        setPages(response.data.pages);
+      }
+    } catch (error) {
+      setError("Network error, unable to get products!");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchProducts();
+  }, [category, sizeCategory, colorCategory, sortType, name, page]);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (showFilter && window.innerWidth < 1280) {
+        const sidebar = document.getElementById("filter-sidebar");
+        if (sidebar && !sidebar.contains(e.target as Node)) {
+          setShowFilter(false);
+        }
       }
     };
-    fetchData();
-  }, [name]);
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [showFilter]);
 
   const toggleCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (category.includes(e.target.value)) {
-      setCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   const toggleSizeCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (sizeCategory.includes(e.target.value)) {
-      setSizeCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setSizeCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setSizeCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
 
   const toggleColorCategory = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (colorCategory.includes(e.target.value)) {
-      setColorCategory((prev) =>
-        prev.filter((item) => item !== e.target.value)
-      );
-    } else {
-      setColorCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setColorCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
   };
-
-  const applyFilter = () => {
-    let productsCopy = products;
-
-    if (category.length > 0) {
-      productsCopy = productsCopy.filter((item: any) =>
-        category?.includes(item.category)
-      );
-    }
-
-    if (sizeCategory.length > 0) {
-      productsCopy = productsCopy.filter((item: any) =>
-        item.sizes.some((s: any) => sizeCategory.includes(s))
-      );
-    }
-
-    if (colorCategory.length > 0) {
-      productsCopy = productsCopy.filter((item: any) =>
-        item.colors.some((c: string) => colorCategory.includes(c))
-      );
-    }
-
-    setFilteredProducts(productsCopy);
-  };
-
-  const sortProducts = () => {
-    let spCopy = filteredProducts.slice();
-
-    switch (sortType) {
-      case "Low - High":
-        setFilteredProducts(spCopy.sort((a: any, b: any) => a.price - b.price));
-        break;
-      case "High - Low":
-        setFilteredProducts(spCopy.sort((a: any, b: any) => b.price - a.price));
-        break;
-      default: {
-        applyFilter();
-        break;
-      }
-    }
-  };
-
-  useEffect(() => {
-    applyFilter();
-  }, [category, sizeCategory, colorCategory]);
-
-  useEffect(() => {
-    sortProducts();
-  }, [sortType]);
-
-  const checkboxesRef = useRef<HTMLInputElement[]>([]);
 
   const clearFilters = () => {
     setCategory([]);
     setSizeCategory([]);
     setColorCategory([]);
-    checkboxesRef.current.forEach((checkbox) => (checkbox.checked = false));
+    setPage(1);
   };
+
+  const FilterContent = () => (
+    <div className="space-y-8">
+      {/* Category Filter */}
+      <div className="border-b border-gray-200 pb-6">
+        <h3 className="mb-4 text-xs uppercase tracking-widest text-gray-500">
+          Type
+        </h3>
+        <div className="space-y-3 text-sm">
+          {["Active Wear", "Fitness Accessories"].map((wear, index) => (
+            <label
+              key={index}
+              className="flex cursor-pointer items-center gap-3 text-gray-600 transition-colors hover:text-gray-900"
+            >
+              <input
+                type="checkbox"
+                className="h-4 w-4 cursor-pointer border-gray-300"
+                value={wear}
+                checked={category.includes(wear)}
+                onChange={toggleCategory}
+              />
+              {wear}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Size Filter */}
+      <div className="border-b border-gray-200 pb-6">
+        <h3 className="mb-4 text-xs uppercase tracking-widest text-gray-500">
+          Size
+        </h3>
+        <div className="grid grid-cols-3 gap-2">
+          {["XXS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"].map(
+            (size, index) => (
+              <label
+                key={index}
+                className="flex cursor-pointer items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
+              >
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 cursor-pointer border-gray-300"
+                  value={size}
+                  checked={sizeCategory.includes(size)}
+                  onChange={toggleSizeCategory}
+                />
+                {size}
+              </label>
+            )
+          )}
+        </div>
+      </div>
+
+      {/* Color Filter */}
+      <div className="border-b border-gray-200 pb-6">
+        <h3 className="mb-4 text-xs uppercase tracking-widest text-gray-500">
+          Color
+        </h3>
+        <div className="space-y-3 text-sm">
+          {[
+            { name: "Black", code: "#000000" },
+            { name: "White", code: "#FFFFFF" },
+            { name: "Gray", code: "#808080" },
+            { name: "Blue", code: "#0000FF" },
+            { name: "Red", code: "#FF0000" },
+            { name: "Green", code: "#008000" },
+            { name: "Yellow", code: "#FFFF00" },
+            { name: "Pink", code: "#FFC0CB" },
+            { name: "Brown", code: "#A52A2A" },
+            { name: "Beige", code: "#F5F5DC" },
+            { name: "Navy Blue", code: "#000080" },
+            { name: "Burgundy", code: "#800020" },
+            { name: "Sky Blue", code: "#87CEEB" },
+          ].map((color, index) => (
+            <label
+              key={index}
+              className="flex cursor-pointer items-center gap-3 text-gray-600 transition-colors hover:text-gray-900"
+            >
+              <input
+                type="checkbox"
+                className="h-4 w-4 cursor-pointer border-gray-300"
+                value={color.name}
+                checked={colorCategory.includes(color.name)}
+                onChange={toggleColorCategory}
+              />
+              <span
+                style={{ backgroundColor: color.code }}
+                className={`h-4 w-4 border ${
+                  color.name === "White"
+                    ? "border-gray-300"
+                    : "border-transparent"
+                }`}
+              />
+              {color.name}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Clear Button */}
+      <button
+        onClick={clearFilters}
+        className="w-full border border-gray-900 bg-gray-900 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+      >
+        Clear All
+      </button>
+    </div>
+  );
 
   return (
     <section className="placing">
-      <div className="mb-2 md:mb-5">
-        <h2 className="text-2xl font-bold">
+      {/* Header */}
+      <div className="mb-5 lg:mb-10 border-b border-gray-200 pb-8">
+        <h2 className="mb-5 text-xl md:text-5xl font-bold md:mb-6">
           <span>Results for: "{name}"</span>
         </h2>
+        <p className="text-sm text-text-secondary">
+          {products.length} {products.length > 1 ? "products" : "product"}
+        </p>
       </div>
+
+      {/* Overlay for mobile */}
+      {showFilter && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 xl:hidden" />
+      )}
+
+      {/* Main Content */}
       <div
-        className={`flex flex-col xl:flex-row gap-5 sm:gap-10 pt-5 border-t border-border-secondary ${
-          isActive && "opacity-0 transition-opacity"
-        }`}
+        className={`flex gap-12 ${isActive && "opacity-0 transition-opacity"}`}
       >
-        {/* Left Side */}
-        <div className="min-w-60">
-          <div
-            className="flex items-center gap-2"
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <p className="my-2 text-xl flex items-center cursor-pointer gap-2">
+        {/* Sidebar - Desktop: static, Mobile: slide-in */}
+        <aside
+          id="filter-sidebar"
+          className={`fixed left-0 top-0 z-50 lg:z-30 h-full w-80 overflow-y-auto bg-white p-6 transition-transform duration-300 xl:sticky xl:top-8 xl:block xl:h-fit xl:w-64 xl:translate-x-0 xl:p-0 ${
+            showFilter ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {/* Mobile Header */}
+          <div className="mb-8 flex items-center justify-between border-b border-gray-200 pb-6 xl:hidden">
+            <h2 className="text-lg font-light tracking-tight">Filters</h2>
+            <button
+              onClick={() => setShowFilter(false)}
+              className="text-gray-400 transition-colors hover:text-gray-900"
+            >
+              <X size={24} strokeWidth={1.5} />
+            </button>
+          </div>
+
+          <FilterContent />
+        </aside>
+
+        {/* Products Section */}
+        <div className="flex-1">
+          {/* Top Bar */}
+          <div className="mb-8 flex items-center justify-between">
+            {/* Filter Button - Mobile Only */}
+            <button
+              onClick={() => setShowFilter(true)}
+              className="flex items-center gap-2 border border-gray-300 px-4 py-2 text-sm uppercase tracking-widest text-gray-600 transition-colors hover:border-gray-900 hover:text-gray-900 xl:hidden"
+            >
+              <SlidersHorizontal size={16} strokeWidth={1.5} />
               Filters
+            </button>
+
+            {/* Page Info - Desktop Only */}
+            <p className="hidden text-sm text-gray-500 xl:block">
+              Page {page} of {pages}
             </p>
-            <RxChevronDown
-              className={`text-2xl xl:hidden ${showFilter ? "" : "rotate-180"}`}
-            />
-          </div>
 
-          {/* category Filter */}
-          <div
-            className={`border border-border-secondary pl-5 py-3 mt-2 ${
-              showFilter ? "" : "hidden"
-            } xl:block shadow-medium rounded`}
-          >
-            <p className="text-base md:text-md pb-3">Type</p>
-            <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-              {["Active Wear", "Fitness Accessories"].map((wear, index) => (
-                <p className="flex gap-2" key={index}>
-                  <input
-                    type="checkbox"
-                    className="w-3 cursor-pointer"
-                    value={wear}
-                    onChange={toggleCategory}
-                    ref={(el) => {
-                      if (el) checkboxesRef.current.push(el);
-                    }}
-                  />
-                  {wear}
-                </p>
-              ))}
+            {/* Sort Dropdown */}
+            <div className="w-48">
+              <Select onValueChange={setSortType} defaultValue="relevant">
+                <SelectTrigger className="border-gray-300 text-sm">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent className="border border-gray-300 bg-white">
+                  <SelectItem
+                    value="relevant"
+                    className="cursor-pointer text-sm hover:bg-gray-50"
+                  >
+                    Relevance
+                  </SelectItem>
+                  <SelectItem
+                    value="Low - High"
+                    className="cursor-pointer text-sm hover:bg-gray-50"
+                  >
+                    Price: Low to High
+                  </SelectItem>
+                  <SelectItem
+                    value="High - Low"
+                    className="cursor-pointer text-sm hover:bg-gray-50"
+                  >
+                    Price: High to Low
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {/* Size Filter */}
-          <div
-            className={`border border-border-secondary pl-5 py-3 mt-2 ${
-              showFilter ? "" : "hidden"
-            } xl:block shadow-medium rounded`}
-          >
-            <p className="text-base md:text-md pb-3">Size</p>
-            <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-              {[
-                "XXS",
-                "XS",
-                "S",
-                "M",
-                "L",
-                "XL",
-                "2XL",
-                "3XL",
-                "4XL",
-                "5XL",
-              ].map((size, index) => (
-                <p className="flex gap-2" key={index}>
-                  <input
-                    type="checkbox"
-                    className="w-3 cursor-pointer"
-                    value={size}
-                    onChange={toggleSizeCategory}
-                    ref={(el) => {
-                      if (el) checkboxesRef.current.push(el);
-                    }}
-                  />
-                  {size}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          {/* Color Filter */}
-          <div
-            className={`border border-border-secondary pl-5 py-3 mt-2 ${
-              showFilter ? "" : "hidden"
-            } xl:block shadow-medium rounded`}
-          >
-            <p className="text-base md:text-md pb-3">Colour</p>
-            <div className="flex flex-col gap-2 text-sm font-light text-text-primary">
-              {[
-                { name: "Black", code: "#000000" },
-                { name: "White", code: "#FFFFFF" },
-                { name: "Gray", code: "#808080" },
-                { name: "Blue", code: "#0000FF" },
-                { name: "Red", code: "#FF0000" },
-                { name: "Green", code: "#008000" },
-                { name: "Yellow", code: "#FFFF00" },
-                { name: "Pink", code: "#FFC0CB" },
-                { name: "Brown", code: "#A52A2A" },
-                { name: "Beige", code: "#F5F5DC" },
-                { name: "Navy Blue", code: "#000080" },
-                { name: "Burgundy", code: "#800020" },
-                { name: "Sky Blue", code: "#87CEEB" },
-              ].map((color, index) => (
-                <p className="flex gap-2 items-center" key={index}>
-                  <input
-                    type="checkbox"
-                    className="w-3 cursor-pointer"
-                    value={color.name}
-                    onChange={toggleColorCategory}
-                    ref={(el) => {
-                      if (el) checkboxesRef.current.push(el);
-                    }}
-                  />
-                  <div
-                    style={{ backgroundColor: color.code }}
-                    className={`h-3 w-3 rounded-full ${
-                      color.name === "White" || "Beige"
-                        ? "border border-border-primary"
-                        : ""
-                    }`}
-                  ></div>
-                  {color.name}
-                </p>
-              ))}
-            </div>
-          </div>
-          <Button
-            className={`my-4 w-full active:bg-gray-700 bg-brand-neutral text-text-light border-none rounded-md ${
-              showFilter ? "" : "hidden"
-            } xl:block`}
-            variant="primary"
-            onClick={() => {
-              clearFilters();
-            }}
-          >
-            Clear filter
-          </Button>
-        </div>
-        {/* Right Side */}
-        <div className="w-full">
-          <div className="flex-1 flex flex-col gap-5 w-full">
-            <div className="flex justify-between text-base items-center">
-              <p className="text-base md:text-md">All Collections</p>
-              {/* {Product Sort} */}
-
-              <p className="info-text hidden xl:flex">
-                Showing 1 . {filteredProducts.length} of {products?.length}{" "}
-                Products
-              </p>
-
-              <div className="md:max-w-xxs max-w-[200px] w-full hidden lg:flex">
-                <Select onValueChange={setSortType}>
-                  <SelectTrigger className="rounded-md">
-                    <SelectValue placeholder="Sort by price" />
-                  </SelectTrigger>
-                  <SelectContent className=" bg-background-light rounded-lg border border-border-secondary">
-                    <SelectItem
-                      value="relevant"
-                      className=" cursor-pointer hover:text-text-secondary"
-                    >
-                      Sort by: Relevance
-                    </SelectItem>
-                    <SelectItem
-                      value="Low - High"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: Low to High
-                    </SelectItem>
-                    <SelectItem
-                      value="High - Low"
-                      className=" cursor-pointer  hover:text-text-secondary"
-                    >
-                      Sort by: High to Low
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className=" max-w-[200px] w-full flex lg:hidden">
-                <select
-                  className="border-[0.5px] border-border-secondary bg-white py-2 px-4 rounded-sm"
-                  onChange={(e) => setSortType(e.target.value)}
-                >
-                  <option value="relevant">Sort by: Relevance</option>
-                  <option value="Low - High">Sort by: Low to High</option>
-                  <option value="High - Low">Sort by: High to Low</option>
-                </select>
-              </div>
-            </div>
-            {/* {Map Products} */}
-            <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 xxl:grid-cols-4 gap-4 gap-y-6 w-full">
-              {loading ? (
-                Array(21)
-                  .fill(null)
-                  .map((product: any, index: number) => (
-                    <ProductCard
-                      product={product}
-                      loading={loading}
-                      key={index}
-                    />
-                  ))
-              ) : filteredProducts.length > 0 ? (
-                filteredProducts?.map((product: any, index: number) => (
-                  <ProductCard
-                    product={product}
-                    loading={loading}
-                    key={index}
-                  />
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xxl:grid-cols-4">
+            {loading ? (
+              Array(12)
+                .fill(null)
+                .map((_, index) => (
+                  <ProductCard key={index} product={null} loading={true} />
                 ))
-              ) : error ? (
-                <div className="col-span-4">
-                  <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                    {error}
-                  </p>
-                </div>
-              ) : (
-                <div className="col-span-4">
-                  <p className="text-base sm:text-xl text-center mt-10 sm:mt-0">
-                    Products not available!
-                  </p>
-                </div>
-              )}
-            </div>
+            ) : products.length > 0 ? (
+              products.map((product: any) => (
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  loading={loading}
+                />
+              ))
+            ) : error ? (
+              <p className="col-span-full py-20 text-center text-sm uppercase tracking-widest text-gray-400">
+                {error}
+              </p>
+            ) : (
+              <p className="col-span-full py-20 text-center text-sm uppercase tracking-widest text-gray-400">
+                No products found
+              </p>
+            )}
           </div>
         </div>
+      </div>
+      {/* Pagination */}
+      <div className="mt-16 flex items-center justify-between border-t border-gray-200 pt-8">
+        <button
+          className={`text-sm uppercase tracking-widest transition-colors ${
+            page === 1
+              ? "cursor-not-allowed text-gray-300"
+              : "text-gray-900 hover:text-gray-400"
+          }`}
+          disabled={page === 1}
+          onClick={() => {
+            setPage((prev) => Math.max(prev - 1, 1));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          Previous
+        </button>
+        <span className="text-sm text-gray-500">
+          Page {page} of {pages}
+        </span>
+        <button
+          className={`text-sm uppercase tracking-widest transition-colors ${
+            page === pages
+              ? "cursor-not-allowed text-gray-300"
+              : "text-gray-900 hover:text-gray-400"
+          }`}
+          disabled={page === pages}
+          onClick={() => {
+            setPage((prev) => Math.min(prev + 1, pages));
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          Next
+        </button>
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 // Libraries
+import Lenis from "lenis";
 import { Toaster } from "sonner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -71,6 +72,14 @@ const App: React.FC = () => {
       setAnimation(false);
       window.scrollTo(0, 0);
     }, 6000);
+
+    // Initialize Lenis
+    const lenis = new Lenis();
+    function raf(time: any) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
   }, []);
 
   return (

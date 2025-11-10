@@ -364,79 +364,147 @@ const searchSuggestionsWithProductsController = async (req, res) => {
   }
 };
 
+// const searchProductsResultsController = async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 12;
+//     const skip = (page - 1) * limit;
+
+//     const filters = {};
+
+//     if (req.query.name) {
+//       // Trim and split words by spaces or punctuation
+//       const words = req.query.name.trim().split(/\s+/);
+//       // Create a regex that matches any of those words (case-insensitive)
+//       const regexPattern = words.map((word) => `(?=.*${word})`).join("") + ".*";
+
+//       filters.name = { $regex: words.join("|"), $options: "i" };
+//     }
+
+//     if (req.query.category) {
+//       const categories = req.query.category.split(",");
+//       filters.category = { $in: categories };
+//     }
+
+//     if (req.query.size) {
+//       const sizes = req.query.size.split(",");
+//       filters.size = { $in: sizes };
+//     }
+
+//     if (req.query.color) {
+//       const colors = req.query.color.split(",");
+//       filters.color = { $in: colors };
+//     }
+
+//     let sort = {};
+//     if (req.query.sort === "low-high") sort.price = 1;
+//     else if (req.query.sort === "high-low") sort.price = -1;
+
+//     const products = await ProductModel.find(filters)
+//       .sort(sort)
+//       .skip(skip)
+//       .limit(limit);
+
+//     const total = await ProductModel.countDocuments(filters);
+
+//     res.status(200).json({
+//       products,
+//       total,
+//       page,
+//       pages: Math.ceil(total / limit),
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error fetching products",
+//       error: error.message,
+//     });
+//   }
+// };
+
 const searchProductsResultsController = async (req, res) => {
   try {
-    const { query } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
 
-    if (!query) {
-      return res.status(400).json({ message: "Search query is required" });
+    const filters = {};
+
+    let searchQuery = null;
+    if (req.query.name) {
+      const words = req.query.name.trim().split(/\s+/);
+      const regexPattern = words.join("|");
+      searchQuery = req.query.name.trim().toLowerCase();
+      filters.name = { $regex: regexPattern, $options: "i" };
     }
 
-    // Split the query into words and filter out empty values
-    const words = query.trim().split(/\s+/).filter(Boolean);
-    const regexConditions = words.map((word) => ({
-      name: { $regex: new RegExp(word, "i") },
-    }));
-
-    // Perform the search
-    let products = await ProductModel.aggregate([
-      {
-        $match: {
-          $or: regexConditions, // Match products that contain at least one of the words
-        },
-      },
-      {
-        $addFields: {
-          matchCount: {
-            $size: {
-              $filter: {
-                input: words,
-                as: "word",
-                cond: {
-                  $regexMatch: {
-                    input: "$name",
-                    regex: { $concat: [".*", "$$word", ".*"] },
-                  },
-                },
-              },
-            },
-          },
-          startsWithMatch: {
-            $cond: [
-              {
-                $regexMatch: {
-                  input: "$name",
-                  regex: new RegExp(`^${query}`, "i"),
-                },
-              },
-              1,
-              0,
-            ],
-          },
-          exactMatch: {
-            $cond: [{ $eq: ["$name", query] }, 1, 0],
-          },
-        },
-      },
-      {
-        $sort: {
-          exactMatch: -1, // Prioritize exact matches first
-          startsWithMatch: -1, // Then names that start with the search query
-          matchCount: -1, // Then names with more matched words
-          name: 1, // Lastly, sort alphabetically
-        },
-      },
-    ]);
-
-    if (!products.length) {
-      return res
-        .status(404)
-        .json({ message: "No products found with a similar name." });
+    if (req.query.category) {
+      const categories = req.query.category.split(",");
+      filters.category = { $in: categories };
     }
 
-    res.status(200).json(products);
+    if (req.query.size) {
+      const sizes = req.query.size.split(",");
+      filters.size = { $in: sizes };
+    }
+
+    if (req.query.color) {
+      const colors = req.query.color.split(",");
+      filters.color = { $in: colors };
+    }
+
+    let sort = {};
+    if (req.query.sort === "low-high") sort.price = 1;
+    else if (req.query.sort === "high-low") sort.price = -1;
+
+    // Step 1: Find products
+    let products = await ProductModel.find(filters)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    const total = await ProductModel.countDocuments(filters);
+
+    // Step 2: If a name query exists, rank by closeness
+    if (searchQuery) {
+      products = products.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        const exactA = nameA === searchQuery;
+        const exactB = nameB === searchQuery;
+
+        // Exact match comes first
+        if (exactA && !exactB) return -1;
+        if (!exactA && exactB) return 1;
+
+        // Then matches that start with the search query
+        const startsA = nameA.startsWith(searchQuery);
+        const startsB = nameB.startsWith(searchQuery);
+        if (startsA && !startsB) return -1;
+        if (!startsA && startsB) return 1;
+
+        // Finally, by number of matching words
+        const wordCountA = searchQuery
+          .split(" ")
+          .filter((w) => nameA.includes(w)).length;
+        const wordCountB = searchQuery
+          .split(" ")
+          .filter((w) => nameB.includes(w)).length;
+        return wordCountB - wordCountA;
+      });
+    }
+
+    res.status(200).json({
+      products,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error. Please refresh the page." });
+    res.status(500).json({
+      message: "Error fetching products",
+      error: error.message,
+    });
   }
 };
 

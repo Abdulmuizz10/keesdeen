@@ -17,7 +17,6 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-
   const { user } = useContext(AuthContext);
   const { getCartCount, wishLists, isActive, setIsActive } = useShop();
 
@@ -516,6 +515,10 @@ const MobileNavbar = ({
         }`}
       >
         <div className="flex flex-col h-full">
+          <X
+            className="w-7 h-7 text-text-primary absolute top-7 right-7"
+            onClick={onClose}
+          />
           {/* Navigation Links */}
           <nav className="flex-1 overflow-y-auto p-6 mt-10">
             <div className="space-y-1">

@@ -5,6 +5,7 @@ import { useShop } from "../context/ShopContext";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "../context/AuthContext/AuthApiCalls";
 import Spinner from "./Spinner";
+import { LogOutIcon } from "lucide-react";
 
 const LogOutButton: React.FC = () => {
   const { setCartItems, setWishLists } = useShop();
@@ -24,10 +25,11 @@ const LogOutButton: React.FC = () => {
         </div>
       )}
       <Button
-        className="bg-brand-neutral text-white rounded-md py-3 px-10 max-sm:w-full text-base poppins"
+        className="w-fit border border-gray-900 bg-gray-900 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
         onClick={() => handleLogout()}
       >
         Log out
+        <LogOutIcon className="w-5 h-5" />
       </Button>
     </>
   );

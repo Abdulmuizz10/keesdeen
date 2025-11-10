@@ -376,7 +376,7 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
           {/* <h2 className="mb-4 text-lg font-light tracking-tight md:text-xl">
             Customer Reviews
           </h2> */}
-          <h2 className="mb-5 text-5xl font-bold md:mb-6">
+          <h2 className="mb-5 text-3xl md:text-5xl font-bold md:mb-6">
             <span>Customer Reviews</span>
           </h2>
           <div className="flex gap-3">

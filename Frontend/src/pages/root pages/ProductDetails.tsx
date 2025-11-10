@@ -173,7 +173,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Color Selection */}
-              <div className="mb-8 border-t border-gray-200 pt-8">
+              <div className="mb-8 border-t border-gray-100 pt-8">
                 <p className="mb-4 text-xs uppercase tracking-widest text-gray-500">
                   Color
                 </p>
@@ -212,7 +212,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Size Selection */}
-              <div className="mb-8 border-t border-gray-200 pt-8">
+              <div className="mb-8 border-t border-gray-100 pt-8">
                 <p className="mb-4 text-xs uppercase tracking-widest text-gray-500">
                   Size
                 </p>
@@ -234,7 +234,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="mb-8 flex gap-3 border-t border-gray-200 pt-8">
+              <div className="mb-8 flex gap-3 border-t border-gray-100 pt-8">
                 <button
                   onClick={() =>
                     addToCart(
