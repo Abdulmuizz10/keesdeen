@@ -1,7 +1,6 @@
 import axios from "axios";
 import { URL } from "../../lib/constants";
 import { toast } from "sonner";
-import { showOrderSummary } from "../../components/SweatOrderModal";
 
 // Create a new order
 export const createOrder = async (
@@ -18,7 +17,6 @@ export const createOrder = async (
     if (res.status === 200) {
       setLoading(false);
       toast.success("Order placed successfully!");
-      showOrderSummary(res.data);
       setCartItems({});
       navigate("/collections/shop_all");
     } else {
