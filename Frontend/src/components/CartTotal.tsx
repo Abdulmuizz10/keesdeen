@@ -12,7 +12,7 @@ const CartTotal: React.FC = () => {
           <p className="text-sm text-text-secondary tracking-wider">
             Subtotal:
           </p>
-          <p className="text-gray-800 font-medium">
+          <p className="text-text-primary">
             {formatAmountDefault(currency, getCartAmount())}
           </p>
         </div>

@@ -25,7 +25,7 @@ const CheckOut: React.FC = () => {
           <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
             <span>Checkout</span>
           </h2>
-          <p className="text-sm text-text-secondary">
+          <p className="text-sm text-gray-500">
             Please provide shipping and billing information.
           </p>
         </div>

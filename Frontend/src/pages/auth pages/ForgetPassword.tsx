@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { Button, Input, Label } from "@relume_io/relume-ui";
-import type { ButtonProps } from "@relume_io/relume-ui";
 import { Link, useNavigate } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { toast } from "sonner";
@@ -8,32 +6,9 @@ import Axios from "axios";
 import { URL } from "../../lib/constants";
 import Spinner from "../../components/Spinner";
 
-type ImageProps = {
-  url?: string;
-  src: string;
-  alt?: string;
-};
-
-type Props = {
-  logo: ImageProps;
-  title: string;
-  subTitle: string;
-  description: string;
-  signUpButton: ButtonProps;
-  image: ImageProps;
-};
-
-export type Signup7Props = React.ComponentPropsWithoutRef<"section"> &
-  Partial<Props>;
-
-export const ForgetPassword: React.FC = (props: Signup7Props) => {
-  const { logo, title, subTitle, signUpButton } = {
-    ...Signup7Defaults,
-    ...props,
-  } as Props;
+const ForgetPassword: React.FC = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,7 +24,7 @@ export const ForgetPassword: React.FC = (props: Signup7Props) => {
       );
       if (response.status === 200) {
         toast.success(response.data.message || "Request successful!");
-        navigate("/auth/login");
+        navigate("/auth/sign_in");
       }
     } catch (error) {
       toast.error("An unexpected error occurred. Please try again.");
@@ -59,67 +34,77 @@ export const ForgetPassword: React.FC = (props: Signup7Props) => {
   };
 
   return (
-    <section className="bg-background-light">
+    <section className="relative flex min-h-screen items-center justify-center bg-white">
+      {/* Loading Overlay */}
       {loading && (
-        <div className="fixed inset-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
+        <div className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center bg-black/50">
           <Spinner />
         </div>
       )}
-      <div className="relative min-h-screen flex items-center justify-center">
-        <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-[5%] md:h-18 lg:justify-between">
-          <Link to={logo.url}>
-            <img src={logo.src} alt={logo.alt} className="w-[150px] h-[30px]" />
-          </Link>
+
+      {/* Header Logo */}
+      <div className="absolute left-0 right-0 top-0 z-10 flex h-16 w-full items-center justify-center px-8 md:h-20">
+        <Link to="/">
+          <img src={mainLogo} alt="Logo" className="h-8 w-auto" />
+        </Link>
+      </div>
+
+      {/* Form Section */}
+      <div className="w-full max-w-sm px-8">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <h1 className="mb-3 text-2xl font-light tracking-tight md:text-3xl">
+            Forgot Password
+          </h1>
+          <p className="text-sm text-gray-500">
+            Enter your email to receive a password reset link
+          </p>
         </div>
-        <div className="max-w-sm w-full mx-5">
-          <div className="mb-6 text-center">
-            <h1 className="mb-5 text-4xl font-bold md:mb-1">{title}</h1>
-            <p className="mb-5 text-base">{subTitle}</p>
-          </div>
-          <form
-            className="grid grid-cols-1 gap-4 poppins"
-            onSubmit={handleSubmit}
-          >
-            <div className="grid w-full items-center">
-              <Label htmlFor="password" className="mb-2 text-neutral-700">
-                Enter your email
-              </Label>
 
-              <Input
-                type="email"
-                placeholder="example@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="border-neutral-300 rounded bg-white"
-              />
-            </div>
-
-            <Button
-              variant={signUpButton.variant}
-              size={signUpButton.size}
-              iconLeft={signUpButton.iconLeft}
-              iconRight={signUpButton.iconRight}
-              className="poppins rounded mt-2 bg-brand-neutral text-white"
+        {/* Form */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Email Field */}
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-2 block text-xs uppercase tracking-widest text-gray-500"
             >
-              {signUpButton.title}
-            </Button>
-          </form>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="example@gmail.com"
+              required
+              className="w-full border border-gray-300 bg-white px-4 py-3 text-sm focus:border-gray-900 focus:outline-none"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? "Sending..." : "Send Reset Link"}
+          </button>
+        </form>
+
+        {/* Back to Sign In Link */}
+        <div className="mt-8 text-center text-sm text-gray-500">
+          Remember your password?{" "}
+          <Link
+            to="/auth/sign_in"
+            className="text-gray-900 underline transition-colors hover:text-gray-600"
+          >
+            Sign in
+          </Link>
         </div>
       </div>
     </section>
   );
 };
 
-export const Signup7Defaults: Signup7Props = {
-  logo: {
-    url: "/",
-    src: mainLogo,
-    alt: "Logo text",
-  },
-  title: "Forgot Your Password?",
-  subTitle: "Submit your email and get a reset link to reset your password!",
-  signUpButton: {
-    title: "Submit",
-  },
-};
+export default ForgetPassword;

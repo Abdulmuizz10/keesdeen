@@ -71,14 +71,15 @@ const Navbar = () => {
                   <img
                     src={isScrolled ? mainLogo : mainLogoWhite}
                     alt="Logo"
-                    className="h-8 w-auto sm:h-10 lg:h-8 xl:h-10"
+                    // className="h-8 w-auto sm:h-10 lg:h-8 xl:h-10"
+                    className="h-8 md:h-10 w-full"
                   />
                 </Link>
               </div>
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-xs poppins">
+                <div className="flex items-center gap-4 text-xs tracking-wide">
                   <Link
                     to="/collections/shop_all"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
@@ -129,7 +130,7 @@ const Navbar = () => {
                       if (isActive) setIsActive(false);
                     }}
                   >
-                    Accessories
+                    Fitness Accessories
                   </Link>
                 </div>
               </div>
@@ -303,14 +304,14 @@ const Navbar = () => {
                   <img
                     src={mainLogo}
                     alt="Logo"
-                    className="h-8 w-auto sm:h-10 lg:h-8 xl:h-10"
+                    className="h-8 md:h-10 w-full"
                   />
                 </Link>
               </div>
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-xs poppins">
+                <div className="flex items-center gap-4 text-xs tracking-wide">
                   <Link
                     to="/collections/shop_all"
                     className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
@@ -345,7 +346,7 @@ const Navbar = () => {
                       if (isActive) setIsActive(false);
                     }}
                   >
-                    Accessories
+                    Fitness Accessories
                   </Link>
                 </div>
               </div>

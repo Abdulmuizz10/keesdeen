@@ -93,17 +93,17 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
                 >
                   <div className="flex items-start justify-between">
                     <div>
-                      <h4 className="text-base md:text-lg font-semibold text-text-primary">
+                      <h4 className="text-sm md:text-base font-semibold text-text-primary">
                         <span>
                           {shipping.firstName} {shipping.lastName}
                         </span>
                       </h4>
-                      <p className="text-gray-600 text-sm md:text-base">
+                      <p className="text-gray-400 text-xs mt-1">
                         {shipping.address1}
                         {shipping.address2 && `, ${shipping.address2}`},{" "}
                         {stateName}, {countryName}
                       </p>
-                      <p className="text-gray-500 text-sm mt-1">
+                      <p className="text-gray-400 text-xs mt-1">
                         +{shipping.phone}
                       </p>
                     </div>

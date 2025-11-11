@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { Button } from "@relume_io/relume-ui";
 import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
 import { formatAmountDefault } from "../lib/utils";
 import { currency, URL } from "../lib/constants";
@@ -7,7 +6,6 @@ import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
 import Axios from "axios";
 import { toast } from "sonner";
-import { showOrderSummary } from "./SweatOrderModal";
 import { useNavigate } from "react-router-dom";
 
 interface PaymentProps {
@@ -88,25 +86,25 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         totalPrice: finalTotal,
         paidAt: today,
       };
-
       try {
         const response = await Axios.post(`${URL}/orders/create-order`, order, {
           withCredentials: true,
           validateStatus: (status) => status < 600,
         });
         if (response.status === 200) {
-          showOrderSummary(response.data);
-          console.log(response.data);
+          // Navigate to confirmation page with order data
+          navigate("/order_confirmation", {
+            state: { orderData: response.data },
+          });
+
           toast.success("Order placed successfully!");
           setCartItems({});
-          navigate("/collections/shop_all");
         }
       } catch (error) {
         toast.error("Order submission failed. Please try again.");
       } finally {
         setLoading(false);
       }
-    } else {
     }
   };
 
@@ -123,42 +121,42 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       </div>
 
       {/* Order Details List */}
-      <div className="mt-5 border border-gray-200 shadow-xxsmall px-3 py-5 md:p-5  bg-white space-y-5">
-        <div className="space-y-3 text-gray-700">
-          <div className="flex justify-between text-sm md:text-base">
+      <div className="mt-5 border border-gray-200 px-3 py-5 md:p-5  bg-white space-y-5">
+        <div className="space-y-3 text-gray-500 text-sm">
+          <div className="flex justify-between">
             <span>Subtotal:</span>
-            <span className="text-gray-800 font-medium">
+            <span className="text-gray-700">
               {formatAmountDefault(currency, subtotal)}
             </span>
           </div>
 
           {discount > 0 && (
-            <div className="flex justify-between text-sm md:text-base">
+            <div className="flex justify-between">
               <span>Discount:</span>
-              <span className="text-gray-800 font-medium">
+              <span className="text-gray-700">
                 -{discount}% ({formatAmountDefault(currency, discountAmount)})
               </span>
             </div>
           )}
 
-          <div className="flex justify-between text-sm md:text-base">
+          <div className="flex justify-between">
             <span>Estimated Tax:</span>
-            <span className="text-gray-800 font-medium">
+            <span className="text-gray-700">
               {formatAmountDefault(currency, 20)}
             </span>
           </div>
 
-          <div className="flex justify-between text-sm md:text-base">
+          <div className="flex justify-between">
             <span>Shipping Fee:</span>
-            <span className="text-gray-800 font-medium">
+            <span className="text-gray-700">
               {formatAmountDefault(currency, shippingFee)}
             </span>
           </div>
         </div>
 
         <div className="poppins">
-          <label htmlFor="coupon" className="text-sm">
-            Coupon Code:
+          <label htmlFor="coupon" className="text-base">
+            Apply coupon code:
           </label>
 
           <form
@@ -170,20 +168,20 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               id="coupon"
               value={coupon}
               onChange={(e) => setCoupon(e.target.value)}
-              className="border border-border-secondary px-2 py-2 w-full rounded focus:outline-none"
+              className="border border-gray-300 text-sm px-2 py-2 w-full focus:outline-none"
               placeholder="Enter coupon code"
             />
-            <Button className="w-full bg-brand-neutral text-text-light px-2 py-2 rounded poppins border-none">
+            <button className="w-full border border-gray-900 bg-gray-900 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
               Apply
-            </Button>
+            </button>
           </form>
         </div>
 
         <div className="border-t border-gray-200 my-4" />
 
-        <div className="flex justify-between items-center text-lg md:text-xl font-semibold text-gray-900">
+        <div className="flex justify-between items-center text-sm md:text-base font-semibold text-gray-500">
           <span>Total:</span>
-          <span className="text-gray-800 font-medium">
+          <span className="text-gray-700 font-medium">
             {formatAmountDefault(currency, finalTotal)}
           </span>
         </div>
@@ -213,13 +211,14 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           <CreditCard
             buttonProps={{
               css: {
-                backgroundColor: "#3d3d3d",
-                fontSize: "16px",
+                backgroundColor: "#111827",
+                fontSize: "14px",
                 color: "#fff",
-                // "&:hover": {
-                //   backgroundColor: "#374151",
-                // },
-                fontFamily: "poppins",
+                "&:hover": {
+                  backgroundColor: "#1f2937",
+                },
+                borderRadius: "0px",
+                letterSpacing: "0.1em",
               },
             }}
           >

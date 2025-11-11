@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@relume_io/relume-ui";
+import { lenis } from "../../lib/useLenisScroll";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 import ProductCard from "../../components/ProductCard";
@@ -291,12 +292,12 @@ const ActiveWears: React.FC = () => {
             </p>
 
             {/* Sort Dropdown */}
-            <div className="w-48">
+            <div className="hidden sm:flex w-48">
               <Select onValueChange={setSortType} defaultValue="relevant">
                 <SelectTrigger className="border-gray-300 text-sm">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
-                <SelectContent className="border border-gray-300 bg-white">
+                <SelectContent className="border border-gray-300 bg-white sm:w-48 !z-40">
                   <SelectItem
                     value="relevant"
                     className="cursor-pointer text-sm hover:bg-gray-50"
@@ -317,6 +318,17 @@ const ActiveWears: React.FC = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="max-w-[200px] w-full flex justify-end sm:hidden">
+              <select
+                className="border-[0.5px] border-gray-300 bg-white py-2 px-4 text-sm uppercase tracking-wider text-gray-600 outline-none hover:border-gray-900 hover:text-gray-900"
+                onChange={(e) => setSortType(e.target.value)}
+              >
+                <option value="relevant">Relevance</option>
+                <option value="Low - High">Price: Low to High</option>
+                <option value="High - Low">Price: High to Low</option>
+              </select>
             </div>
           </div>
 
@@ -359,7 +371,11 @@ const ActiveWears: React.FC = () => {
           disabled={page === 1}
           onClick={() => {
             setPage((prev) => Math.max(prev - 1, 1));
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            if (lenis) {
+              lenis.scrollTo(0, { immediate: true });
+            } else {
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }
           }}
         >
           Previous
@@ -376,7 +392,11 @@ const ActiveWears: React.FC = () => {
           disabled={page === pages}
           onClick={() => {
             setPage((prev) => Math.min(prev + 1, pages));
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            if (lenis) {
+              lenis.scrollTo(0, { immediate: true });
+            } else {
+              window.scrollTo({ top: 0, behavior: "instant" });
+            }
           }}
         >
           Next

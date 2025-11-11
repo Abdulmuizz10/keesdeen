@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { Footer1 } from "../components/Footer";
+import { Footer } from "../components/Footer";
 import SearchModal from "../components/SearchModal";
 import { useShop } from "../context/ShopContext";
 
@@ -26,7 +26,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
       <Navbar />
       {children}
       <Outlet />
-      <Footer1 />
+      <Footer />
     </main>
   );
 };

@@ -26,16 +26,17 @@ import FitnessAccessories from "./pages/root pages/FitnessAccessories";
 import ProductDetails from "./pages/root pages/ProductDetails";
 import SearchResults from "./pages/root pages/SearchResults";
 import Cart from "./pages/root pages/Cart";
-import Checkout from "./pages/root pages/CheckOut";
 import WishLists from "./pages/root pages/WishLists";
+import Checkout from "./pages/root pages/CheckOut";
+import OrderConfirmation from "./pages/root pages/OrderConfirmation";
 import Profile from "./pages/root pages/Profile";
 import OrderDetails from "./pages/root pages/OrderDetails";
 
 // Auth Pages
-import { SignIn } from "./pages/auth pages/SignIn";
-import { SignUp } from "./pages/auth pages/SignUp";
-import { ForgetPassword } from "./pages/auth pages/ForgetPassword";
-import { ResetPassword } from "./pages/auth pages/ResetPassword";
+import SignIn from "./pages/auth pages/SignIn";
+import SignUp from "./pages/auth pages/SignUp";
+import ForgetPassword from "./pages/auth pages/ForgetPassword";
+import ResetPassword from "./pages/auth pages/ResetPassword";
 
 // Admin Pages
 import AdminHome from "./pages/admin pages/AdminHome";
@@ -113,6 +114,10 @@ const App: React.FC = () => {
               <Route path="/wishlists" element={<WishLists />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/check_out" element={<Checkout />} />
+              <Route
+                path="/order_confirmation"
+                element={<OrderConfirmation />}
+              />
               <Route path="/order_details/:id" element={<OrderDetails />} />
             </Route>
 

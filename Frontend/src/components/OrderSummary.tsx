@@ -33,113 +33,121 @@ const OrderSummary: React.FC = () => {
 
   const displayedItems = showAll ? summaryData : summaryData.slice(0, 2);
 
-  const subtotal = summaryData.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
+  // const subtotal = summaryData.reduce(
+  //   (acc, item) => acc + item.price * item.quantity,
+  //   0
+  // );
 
-  const shipping = subtotal > 0 ? 0 : 0;
-  const tax = 0;
-  const total = subtotal + shipping + tax;
+  // const shipping = subtotal > 0 ? 0 : 0;
+  // const tax = 0;
+  // const total = subtotal + shipping + tax;
 
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="mb-5">
+      <div className="mb-5 border-b border-gray-200 pb-5">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
           <span>Order Summary</span>
         </h3>
         <p className="text-sm sm:text-base text-gray-500 ">
-          Review your order before completing checkout.
+          Review your order before checkout
         </p>
       </div>
 
       {/* Order Items */}
       <div className="space-y-6">
         {summaryData.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">
-            No items to display.
+          <p className="py-8 text-center text-sm uppercase tracking-widest text-gray-400">
+            No items to display
           </p>
         ) : (
           <>
             {displayedItems.map((item, index) => (
               <div
                 key={index}
-                className="flex items-start justify-between gap-5 border-b border-border-secondary pb-3.5 sm:pb-5"
+                className="flex gap-6 border-b border-gray-100 pb-6 last:border-0"
               >
-                {/* Left: Image */}
-                <div className="flex items-center gap-5 flex-1">
+                {/* Image */}
+                <div className="h-24 w-24 flex-shrink-0 overflow-hidden bg-gray-50">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-20 h-20 object-cover rounded-lg border border-gray-200 shadow-sm"
+                    className="h-full w-full object-cover"
                   />
+                </div>
 
-                  {/* Details */}
-                  <div className="flex flex-col space-y-1">
-                    <h3 className="text-base sm:text-xl font-semibold text-gray-900 bricolage-grotesque">
+                {/* Details */}
+                <div className="flex flex-1 flex-col justify-between">
+                  <div>
+                    <h3 className="mb-1 font-light tracking-tight">
                       {item.name}
                     </h3>
-
-                    <p className="text-gray-500 text-sm md:text-base">
-                      Size:{" "}
-                      <span className="text-gray-800 font-medium">
-                        {item.size}
-                      </span>{" "}
-                      | Color:{" "}
-                      <span className="text-gray-800 font-medium">
-                        {item.color}
-                      </span>
+                    <p className="text-sm text-gray-500">
+                      {item.size} / {item.color}
                     </p>
-
-                    <p className="text-gray-500 text-sm md:text-base">
-                      Quantity:{" "}
-                      <span className="text-gray-800 font-medium">
-                        {item.quantity}
-                      </span>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Qty: {item.quantity}
                     </p>
                   </div>
                 </div>
 
-                {/* Right: Price */}
-                <div className="">
-                  <span className="text-base md:text-xl font-semibold text-gray-900">
+                {/* Price */}
+                <div className="text-right">
+                  <p className="text-sm font-light">
                     {formatAmountDefault(currency, item.price * item.quantity)}
-                  </span>
+                  </p>
                 </div>
               </div>
             ))}
 
-            {/* Show More / Less Button */}
+            {/* Show More / Less */}
             {summaryData.length > 2 && (
-              <div className="text-center mt-5">
-                <button
-                  onClick={() => setShowAll(!showAll)}
-                  className="text-sm md:text-base font-medium text-gray-800 underline hover:text-black transition poppins"
-                >
-                  {showAll
-                    ? "Show less"
-                    : `Show ${summaryData.length - 2} more item${
-                        summaryData.length - 2 > 1 ? "s" : ""
-                      }`}
-                </button>
-              </div>
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="w-full border-b border-gray-300 pb-1 pt-2 text-sm uppercase tracking-widest text-gray-500 transition-colors hover:border-gray-900 hover:text-gray-900"
+              >
+                {showAll ? "Show Less" : `Show ${summaryData.length - 2} More`}
+              </button>
             )}
           </>
         )}
       </div>
 
-      {/* Summary totals */}
-      {summaryData.length > 0 && (
-        <div className="mt-5 rounded shadow-lg bg-white border-b border-gray-200">
-          <div className="flex justify-between items-center text-lg md:text-xl font-semibold text-gray-900 my-3">
-            <span>Total</span>
-            <span className="text-gray-800 font-medium">
-              {formatAmountDefault(currency, total)}
-            </span>
+      {/* Summary Totals */}
+      {/* {summaryData.length > 0 && (
+        <div className="mt-8 border-t border-gray-200 pt-6">
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Subtotal</span>
+              <span className="font-light">
+                {formatAmountDefault(currency, subtotal)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Shipping</span>
+              <span className="font-light">
+                {shipping === 0
+                  ? "Free"
+                  : formatAmountDefault(currency, shipping)}
+              </span>
+            </div>
+            {tax > 0 && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">Tax</span>
+                <span className="font-light">
+                  {formatAmountDefault(currency, tax)}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between border-t border-gray-200 pt-3 font-light">
+              <span>Total</span>
+              <span className="text-base">
+                {formatAmountDefault(currency, total)}
+              </span>
+            </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

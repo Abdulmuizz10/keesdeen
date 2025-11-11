@@ -57,7 +57,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
 
   return (
     <div
-      className="max-w-xs mx-auto bg-white  shadow-large overflow-hidden relative z-[1px]"
+      className="max-w-xs mx-auto bg-white shadow-medium overflow-hidden relative z-10"
       onMouseOver={() => setImage(true)}
       onMouseLeave={() => setImage(false)}
     >
