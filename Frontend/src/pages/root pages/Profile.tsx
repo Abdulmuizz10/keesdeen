@@ -179,8 +179,11 @@ const OrderHistory: React.FC = () => {
               >
                 <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                   <div>
-                    <h2 className="mb-2 font-light tracking-tight">
+                    <h2 className="mb-2 font-light tracking-tight md:hidden">
                       Order - {order._id.slice(-8).toUpperCase()}
+                    </h2>
+                    <h2 className="mb-2 font-light tracking-tight hidden md:block">
+                      Order - {order._id.toUpperCase()}
                     </h2>
                     <p className="text-sm text-gray-500">
                       {formatDate(order.paidAt)}

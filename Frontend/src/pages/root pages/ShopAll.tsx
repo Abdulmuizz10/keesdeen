@@ -310,9 +310,9 @@ const ShopAll: React.FC = () => {
               </Select>
             </div>
 
-            <div className="max-w-[200px] w-full flex justify-end sm:hidden">
+            <div className="max-w-[150px] flex justify-end sm:hidden">
               <select
-                className="border-[0.5px] border-gray-300 bg-white py-2 px-4 text-sm uppercase tracking-wider text-gray-600 outline-none hover:border-gray-900 hover:text-gray-900"
+                className="w-full border-[0.5px] border-gray-300 bg-white py-2 px-4 text-sm uppercase tracking-widest text-gray-600 outline-none hover:border-gray-900 hover:text-gray-900"
                 onChange={(e) => setSortType(e.target.value)}
               >
                 <option value="relevant">Relevance</option>

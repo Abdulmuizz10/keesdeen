@@ -62,8 +62,11 @@ const OrderConfirmation: React.FC = () => {
         <div className="space-y-4">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Order ID</span>
-            <span className="font-light">
+            <span className="font-light md:hidden">
               {orderData._id.slice(-8).toUpperCase()}
+            </span>
+            <span className="font-light hidden md:block">
+              {orderData._id.toUpperCase()}
             </span>
           </div>
           <div className="flex justify-between text-sm">

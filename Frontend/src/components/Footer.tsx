@@ -334,7 +334,10 @@ export const Footer = (props: FooterProps) => {
             </p>
 
             {/* Newsletter Form */}
-            <form onSubmit={handleSubmit} className="mb-4 flex max-w-md gap-2">
+            <form
+              onSubmit={handleSubmit}
+              className="mb-4 flex flex-col sm:flex-row max-w-md gap-2"
+            >
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -417,11 +420,11 @@ export const FooterDefaults: FooterProps = {
       links: [
         { title: "Home", url: "/" },
         { title: "Shop All", url: "/collections/shop_all" },
-        { title: "New In", url: "/collections/new_arrivals" },
-        { title: "Active Wear", url: "/collections/Active_wears" },
+        { title: "New Arrivals", url: "/collections/new_arrivals" },
+        { title: "Active Wears", url: "/collections/active_wears" },
         {
           title: "Fitness Accessories",
-          url: "/collections/Fitness_accessories",
+          url: "/collections/fitness_accessories",
         },
       ],
     },

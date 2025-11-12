@@ -184,7 +184,7 @@ const ProductDetails = () => {
                       className={`flex cursor-pointer items-center gap-2 text-sm transition-opacity ${
                         color === option
                           ? "opacity-100"
-                          : "opacity-50 hover:opacity-75"
+                          : "opacity-40 hover:opacity-75"
                       }`}
                     >
                       <input

@@ -104,10 +104,10 @@ const Navbar = () => {
                       if (isActive) setIsActive(false);
                     }}
                   >
-                    New In
+                    New Arrivals
                   </Link>
                   <Link
-                    to="/collections/Active_wears"
+                    to="/collections/active_wears"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
                       isScrolled
                         ? "text-text-primary font-medium"
@@ -120,7 +120,7 @@ const Navbar = () => {
                     Active Wears
                   </Link>
                   <Link
-                    to="/collections/Fitness_accessories"
+                    to="/collections/fitness_accessories"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
                       isScrolled
                         ? "text-text-primary font-medium"
@@ -328,10 +328,10 @@ const Navbar = () => {
                       if (isActive) setIsActive(false);
                     }}
                   >
-                    New In
+                    New Arrivals
                   </Link>
                   <Link
-                    to="/collections/Active_wears"
+                    to="/collections/active_wears"
                     className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
                     onClick={() => {
                       if (isActive) setIsActive(false);
@@ -340,7 +340,7 @@ const Navbar = () => {
                     Active Wears
                   </Link>
                   <Link
-                    to="/collections/Fitness_accessories"
+                    to="/collections/fitness_accessories"
                     className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
                     onClick={() => {
                       if (isActive) setIsActive(false);
@@ -551,10 +551,10 @@ const MobileNavbar = ({
                   if (isActive) setIsActive(false);
                 }}
               >
-                New In
+                New Arrivals
               </Link>
               <Link
-                to="/collections/Active_wears"
+                to="/collections/active_wears"
                 className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
                 onClick={() => {
                   onClose();
@@ -564,7 +564,7 @@ const MobileNavbar = ({
                 Active Wears
               </Link>
               <Link
-                to="/collections/Fitness_accessories"
+                to="/collections/fitness_accessories"
                 className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-black rounded-lg transition-colors"
                 onClick={() => {
                   onClose();

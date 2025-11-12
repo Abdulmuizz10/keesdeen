@@ -86,8 +86,11 @@ const OrderDetails: React.FC = () => {
       <div className="mb-10 border-b border-gray-200 pb-8">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start">
           <div>
-            <h1 className="mb-2 text-2xl font-light tracking-tight md:text-3xl">
+            <h1 className="mb-2 text-2xl font-light tracking-tight md:text-3xl md:hidden">
               Order - {order._id.slice(-8).toUpperCase()}
+            </h1>
+            <h1 className="mb-2 text-2xl font-light tracking-tight md:text-3xl hidden md:block">
+              Order - {order._id.toUpperCase()}
             </h1>
             <p className="text-sm text-gray-500">
               Placed {formatDate(order.createdAt)}

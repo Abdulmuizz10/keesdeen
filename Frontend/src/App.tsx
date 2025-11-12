@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+
 // Libraries
 import { Toaster } from "sonner";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -14,8 +15,6 @@ import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
 // Components
-// import { Navbar7 } from "./components/Navbar";
-// import { Footer1 } from "./components/Footer";
 
 // Root Pages
 import Home from "./pages/root pages/Home";
@@ -204,13 +203,13 @@ const Animation = () => {
       variants={appear}
       initial="open"
       exit="closed"
-      className="h-screen w-screen fixed inset-0 flex items-center justify-center bg-white !z-50 transition-opacity"
+      className="h-screen fixed inset-0 flex items-center justify-center bg-white !z-50 transition-opacity"
     >
       <div>
         <img
           src={mainLogo}
           alt="Animation logo"
-          className="inline-block w-[200px] sm:w-[280px]  md:w-[350px]"
+          className="inline-block h-8 sm:h-10 w-full"
         />
       </div>
     </motion.div>
