@@ -3,7 +3,7 @@ import { AuthContext } from "../context/AuthContext/AuthContext";
 import { Button } from "@relume_io/relume-ui";
 import { useShop } from "../context/ShopContext";
 import { useNavigate } from "react-router-dom";
-import { LogOut } from "../context/AuthContext/AuthApiCalls";
+import { LogOutAccount } from "../context/AuthContext/AuthApiCalls";
 import Spinner from "./Spinner";
 import { LogOutIcon } from "lucide-react";
 
@@ -14,7 +14,7 @@ const LogOutButton: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    LogOut(setCartItems, setWishLists, navigate, dispatch, setLoading);
+    LogOutAccount(setCartItems, setWishLists, navigate, dispatch, setLoading);
   };
 
   return (

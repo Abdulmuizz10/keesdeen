@@ -60,7 +60,7 @@ const Navbar = () => {
       {isHomePage ? (
         <nav
           className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-            isScrolled ? "bg-white shadow-xxsmall py-3" : "bg-transparent py-5"
+            isScrolled ? "bg-white shadow-xxsmall py-4" : "bg-transparent py-5"
           }`}
         >
           <div className="mx-auto px-6 lg:px-12">
@@ -83,9 +83,7 @@ const Navbar = () => {
                   <Link
                     to="/collections/shop_all"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
-                      isScrolled
-                        ? "text-text-primary font-medium"
-                        : "text-white"
+                      isScrolled ? "text-text-primary" : "text-white"
                     }`}
                     onClick={() => {
                       if (isActive) setIsActive(false);
@@ -96,9 +94,7 @@ const Navbar = () => {
                   <Link
                     to="/collections/new_arrivals"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
-                      isScrolled
-                        ? "text-text-primary font-medium"
-                        : "text-white"
+                      isScrolled ? "text-text-primary" : "text-white"
                     }`}
                     onClick={() => {
                       if (isActive) setIsActive(false);
@@ -109,9 +105,7 @@ const Navbar = () => {
                   <Link
                     to="/collections/active_wears"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
-                      isScrolled
-                        ? "text-text-primary font-medium"
-                        : "text-white"
+                      isScrolled ? "text-text-primary" : "text-white"
                     }`}
                     onClick={() => {
                       if (isActive) setIsActive(false);
@@ -122,9 +116,7 @@ const Navbar = () => {
                   <Link
                     to="/collections/fitness_accessories"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
-                      isScrolled
-                        ? "text-text-primary font-medium"
-                        : "text-white"
+                      isScrolled ? "text-text-primary" : "text-white"
                     }`}
                     onClick={() => {
                       if (isActive) setIsActive(false);
@@ -199,7 +191,7 @@ const Navbar = () => {
                     <Link
                       to="/admin"
                       className={`p-2 hover:bg-gray-100 rounded-full transition-colors duration-200 border-2 ${
-                        isScrolled ? "border-gray-700" : "text-white"
+                        isScrolled ? "border-gray-700" : "border-white"
                       }`}
                       title="Admin Dashboard"
                     >
@@ -311,10 +303,10 @@ const Navbar = () => {
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-xs tracking-wide">
+                <div className="flex items-center gap-4 text-xs tracking-wider">
                   <Link
                     to="/collections/shop_all"
-                    className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    className="text-text-primary hover:text-text-secondary transition-colors duration-200"
                     onClick={() => {
                       if (isActive) setIsActive(false);
                     }}
@@ -323,7 +315,7 @@ const Navbar = () => {
                   </Link>
                   <Link
                     to="/collections/new_arrivals"
-                    className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    className="text-text-primary hover:text-text-secondary transition-colors duration-200"
                     onClick={() => {
                       if (isActive) setIsActive(false);
                     }}
@@ -332,7 +324,7 @@ const Navbar = () => {
                   </Link>
                   <Link
                     to="/collections/active_wears"
-                    className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    className="text-text-primary hover:text-text-secondary transition-colors duration-200"
                     onClick={() => {
                       if (isActive) setIsActive(false);
                     }}
@@ -341,7 +333,7 @@ const Navbar = () => {
                   </Link>
                   <Link
                     to="/collections/fitness_accessories"
-                    className="font-medium text-gray-700 hover:text-black transition-colors duration-200"
+                    className="text-text-primary hover:text-text-secondary transition-colors duration-200"
                     onClick={() => {
                       if (isActive) setIsActive(false);
                     }}

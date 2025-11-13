@@ -54,7 +54,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         { coupon },
         {
           withCredentials: true,
-          validateStatus: (status) => status < 600,
+          validateStatus: (status: any) => status < 600,
         }
       );
       if (response.status === 200) {
@@ -89,7 +89,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       try {
         const response = await Axios.post(`${URL}/orders/create-order`, order, {
           withCredentials: true,
-          validateStatus: (status) => status < 600,
+          validateStatus: (status: any) => status < 600,
         });
         if (response.status === 200) {
           // Navigate to confirmation page with order data

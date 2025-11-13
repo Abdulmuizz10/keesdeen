@@ -1,13 +1,15 @@
 import mainLogo from "./Main logo.png";
 import mainLogoWhite from "./Main logo white.png";
 import smallLogo from "./Fvaicon.png";
+import fvIcon from "./Fvaicon.png";
+import fvIconWhite from "./Fvaicon_white.png";
 import profile from "./images/profile.webp";
 import orders from "./images/orders.webp";
 import card from "./images/creditcard.png";
 import animated_1 from "./animated_1.webp";
 import animated_2 from "./animated_2.webp";
 import placeholder from "./placeholder.svg";
-export { mainLogo, smallLogo, mainLogoWhite };
+export { mainLogo, smallLogo, mainLogoWhite, fvIcon, fvIconWhite };
 
 import img_1 from "./product-images/p_img1.webp"; //
 import img_2_1 from "./product-images/p_img2_1.webp"; //

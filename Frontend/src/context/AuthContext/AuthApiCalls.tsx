@@ -65,7 +65,7 @@ export const SignUpAccount = async (
   }
 };
 
-export const LogOut = async (
+export const LogOutAccount = async (
   setCartItems: any,
   setWishLists: any,
   navigate: any,

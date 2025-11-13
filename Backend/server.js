@@ -5,6 +5,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
+dotenv.config();
+
 //routes
 import authRoutes from "./routes/authRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
@@ -13,8 +15,8 @@ import orderRoutes from "./routes/orderRoutes.js";
 import subscriberRoutes from "./routes/subscriberRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import utilityRoutes from "./routes/utilityRoutes.js";
-
-dotenv.config();
+import couponRoutes from "./routes/couponRoutes.js";
+import dashboardAnalyticsRoutes from "./routes/dashboardAnalyticsRoutes.js";
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
@@ -42,8 +44,8 @@ app.use("/orders", orderRoutes);
 app.use("/subscribers", subscriberRoutes);
 app.use("/address", addressRoutes);
 app.use("/utility", utilityRoutes);
-
-// app.use("/create-payment", paymentRoutes);
+app.use("/coupons", couponRoutes);
+app.use("/analytics", dashboardAnalyticsRoutes);
 
 //database initialization
 const PORT = process.env.PORT || 5000;

@@ -67,10 +67,10 @@ const Profile: React.FC = () => {
           <div className="w-full flex justify-center">
             {tabStatus.map((item: any, index) => (
               <div
-                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs sm:text-sm px-2 sm:px-0 ${
+                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs sm:text-sm uppercase tracking-wider px-2 sm:px-0 ${
                   item?.status === tab
                     ? "border-b-2 border-border-primary"
-                    : "border-b"
+                    : "border-b text-text-secondary"
                 }`}
                 key={index}
                 onClick={() => setTab(item.status)}

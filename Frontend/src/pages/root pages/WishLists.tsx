@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useShop } from "../../context/ShopContext";
 import ProductCard from "../../components/ProductCard";
+import { Link } from "react-router-dom";
 
 const WishLists: React.FC = () => {
   const { wishLists } = useShop();
@@ -27,9 +28,21 @@ const WishLists: React.FC = () => {
       </div>
 
       <div>
-        {lists?.length > 0 ? (
+        {lists.length === 0 ? (
+          <div className="flex min-h-[40vh] flex-col items-center justify-center">
+            <p className="mb-8 text-center text-sm uppercase tracking-widest text-gray-400">
+              Your wishlists is empty
+            </p>
+            <Link
+              to="/collections/shop_all"
+              className="border-b border-gray-900 pb-1 text-sm uppercase tracking-widest transition-colors hover:border-gray-400 hover:text-gray-400"
+            >
+              Continue Shopping
+            </Link>
+          </div>
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
-            {lists?.map((product: any, index: number) => (
+            {lists.map((product: any, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
@@ -47,10 +60,6 @@ const WishLists: React.FC = () => {
               </motion.div>
             ))}
           </div>
-        ) : (
-          <p className="mt-4 text-base md:text-3xl text-text-secondary">
-            No products in your wishlist yet.
-          </p>
         )}
       </div>
     </section>

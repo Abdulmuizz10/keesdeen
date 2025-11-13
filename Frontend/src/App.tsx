@@ -38,7 +38,6 @@ import ForgetPassword from "./pages/auth pages/ForgetPassword";
 import ResetPassword from "./pages/auth pages/ResetPassword";
 
 // Admin Pages
-import AdminHome from "./pages/admin pages/AdminHome";
 import AdminOrders from "./pages/admin pages/AdminOrders";
 import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
 import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
@@ -61,6 +60,7 @@ import ErrorPage from "./pages/root pages/ErrorPage";
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
+import AdminAnalytics from "./pages/admin pages/AdminAnalytics";
 
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
@@ -137,7 +137,7 @@ const App: React.FC = () => {
             {/* Admin Routes (Only accessible to admins) */}
             {user?.isAdmin ? (
               <Route element={<AdminLayout animation={animation} />}>
-                <Route path="/admin" element={<AdminHome />} />
+                <Route path="/admin" element={<AdminAnalytics />} />
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route
                   path="/admin/user_details/:id"
@@ -206,11 +206,7 @@ const Animation = () => {
       className="h-screen fixed inset-0 flex items-center justify-center bg-white !z-50 transition-opacity"
     >
       <div>
-        <img
-          src={mainLogo}
-          alt="Animation logo"
-          className="inline-block h-8 sm:h-10 w-full"
-        />
+        <img src={mainLogo} alt="Animation logo" className="h-10" />
       </div>
     </motion.div>
   );
