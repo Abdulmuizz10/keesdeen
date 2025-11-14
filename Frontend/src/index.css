@@ -12,17 +12,13 @@
 }
 
 /* Hide scrollbar for WebKit-based browsers */
-*::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 body {
   /* background: #ececec; */
   background: #ffffff;
-}
-
-body::-webkit-scrollbar {
-  display: none;
 }
 
 @layer utilities {
@@ -57,7 +53,7 @@ td {
   font-size: 11.7px;
 }
 
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 10px;
   background: #f1f1f1;
 }
@@ -69,7 +65,7 @@ td {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #9b9b9b;
-} */
+}
 
 /* Tailwind styles */
 .loader {

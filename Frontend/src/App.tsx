@@ -38,6 +38,7 @@ import ForgetPassword from "./pages/auth pages/ForgetPassword";
 import ResetPassword from "./pages/auth pages/ResetPassword";
 
 // Admin Pages
+import AdminAnalytics from "./pages/admin pages/AdminAnalytics";
 import AdminOrders from "./pages/admin pages/AdminOrders";
 import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
 import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
@@ -60,7 +61,6 @@ import ErrorPage from "./pages/root pages/ErrorPage";
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
-import AdminAnalytics from "./pages/admin pages/AdminAnalytics";
 
 // import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
@@ -150,11 +150,11 @@ const App: React.FC = () => {
                 />
                 <Route path="/admin/orders" element={<AdminOrders />} />
                 <Route
-                  path="/admin/pending_orders"
+                  path="/admin/orders/pending"
                   element={<AdminPendingOrders />}
                 />
                 <Route
-                  path="/admin/delivered_orders"
+                  path="/admin/orders/delivered"
                   element={<AdminDeliveredOrders />}
                 />
                 <Route

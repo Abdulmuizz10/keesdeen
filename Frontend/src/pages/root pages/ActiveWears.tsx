@@ -255,7 +255,7 @@ const ActiveWears: React.FC = () => {
         {/* Sidebar - Desktop: static, Mobile: slide-in */}
         <aside
           id="filter-sidebar"
-          className={`fixed left-0 top-0 z-50 lg:z-30 h-full w-80 overflow-y-auto bg-white p-6 transition-transform duration-300 xl:sticky xl:top-8 xl:block xl:h-fit xl:w-64 xl:translate-x-0 xl:p-0 ${
+          className={`fixed left-0 top-0 z-50 lg:z-30 h-full w-80 overflow-y-auto bg-white p-6 transition-transform duration-300 xl:sticky xl:top-16 xl:block xl:h-fit xl:w-64 xl:translate-x-0 xl:p-0 ${
             showFilter ? "translate-x-0" : "-translate-x-full"
           }`}
         >

@@ -11,7 +11,6 @@ import {
   Tag,
   ClipboardList,
   PackageCheck,
-  ArrowLeftRight,
   Mail,
   Send,
 } from "lucide-react";
@@ -96,14 +95,14 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/admin/analytics">
+                  <Link to="/admin">
                     <BarChart3 />
                     <span>Analytics</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              <SidebarMenuItem>
+              {/* <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to="/admin/transactions">
                     <ArrowLeftRight />
@@ -111,13 +110,13 @@ const AppSidebar = () => {
                   </Link>
                 </SidebarMenuButton>
                 <SidebarMenuBadge>+24</SidebarMenuBadge>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* === ORDERS COLLAPSIBLE === */}
-        <Collapsible defaultOpen className="group/collapsible">
+        <Collapsible className="group/collapsible">
           <SidebarGroup>
             <SidebarGroupLabel asChild>
               <CollapsibleTrigger>
@@ -158,55 +157,31 @@ const AppSidebar = () => {
           </SidebarGroup>
         </Collapsible>
 
-        {/* === PRODUCTS COLLAPSIBLE === */}
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger>
-                Products
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/admin/products">
-                        <Package />
-                        All Products
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/admin/products/add">
-                        <Plus />
-                        Add Product
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/admin/products">
-                        <Package />
-                        Best Sellers
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/admin/products">
-                        <Package />
-                        New Arrivals
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        {/* === PRODUCTS === */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Products</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/admin/products">
+                    <Package />
+                    All Products
+                  </Link>
+                </SidebarMenuButton>
+                <SidebarMenuBadge>44</SidebarMenuBadge>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/admin/products/add">
+                    <Plus />
+                    Add Product
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         {/* === CUSTOMERS === */}
         <SidebarGroup>
@@ -267,7 +242,7 @@ const AppSidebar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User /> {user.firstName} {user.lastName}
+                  <User /> {user.firstName}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>

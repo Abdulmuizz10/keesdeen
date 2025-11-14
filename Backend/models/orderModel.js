@@ -40,7 +40,7 @@ const orderSchema = new mongoose.Schema(
     paidAt: { type: Date, default: null },
     isDelivered: {
       type: String,
-      enum: ["Pending", "Processing", "Shipped", "Delivered"],
+      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
     deliveredAt: { type: Date, default: null },

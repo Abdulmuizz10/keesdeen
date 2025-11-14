@@ -179,7 +179,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
         <div className="border-t border-gray-200 my-4" />
 
-        <div className="flex justify-between items-center text-sm md:text-base font-semibold text-gray-500">
+        <div className="flex justify-between items-center text-sm md:text-base tracking-wider font-semibold text-gray-500">
           <span>Total:</span>
           <span className="text-gray-700 font-medium">
             {formatAmountDefault(currency, finalTotal)}
