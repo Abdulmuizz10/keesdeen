@@ -1,19 +1,25 @@
 import express from "express";
-
-const router = express.Router();
 import {
-  createUtility,
-  applyCoupon,
-  getUtility,
-  getShippingAndDiscount,
-  updateUtility,
+  adminCreateUtility,
+  adminGetUtility,
+  adminUpdateUtility,
 } from "../controllers/utilityControllers.js";
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 
-router.post("/", verifyUser, authorizeAdmin, createUtility);
-router.post("/apply-coupon", applyCoupon);
-router.get("/", verifyUser, authorizeAdmin, getUtility);
-router.get("/shipping-discount", getShippingAndDiscount);
-router.put("/", verifyUser, authorizeAdmin, updateUtility);
+const router = express.Router();
+
+router.post(
+  "/admin/create-utility",
+  verifyUser,
+  authorizeAdmin,
+  adminCreateUtility
+);
+router.get("/admin/get-utility", verifyUser, authorizeAdmin, adminGetUtility);
+router.patch(
+  "/admin/update-utility",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateUtility
+);
 
 export default router;

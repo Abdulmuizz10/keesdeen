@@ -1,6 +1,6 @@
 import UtilityModel from "../models/utilityModel.js";
 
-const createUtility = async (req, res) => {
+const adminCreateUtility = async (req, res) => {
   try {
     const utility = await UtilityModel.create(req.body);
     res.status(201).json(utility);
@@ -9,42 +9,16 @@ const createUtility = async (req, res) => {
   }
 };
 
-const applyCoupon = async (req, res) => {
-  try {
-    const couponCode = req.body.coupon;
-
-    if (!couponCode) {
-      return res.status(400).json({ message: "Coupon code is required" });
-    }
-
-    const existingCoupon = await UtilityModel.findOne({
-      couponCode: couponCode,
-    });
-
-    if (existingCoupon) {
-      return res.status(200).json({ message: "Coupon applied successfully!" });
-    } else {
-      return res.status(400).json({ message: "Invalid coupon!" });
-    }
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
-
-const getUtility = async (req, res) => {
+const adminGetUtility = async (req, res) => {
   try {
     const utility = await UtilityModel.findOne();
     if (!utility) {
       return res.status(200).json({
-        couponCode: "",
         shippingFee: 0,
-        discount: 0,
       });
     }
     const response = {
-      couponCode: utility.couponCode,
       shippingFee: utility.shippingFee ?? 0,
-      discount: utility.discount ?? 0,
     };
     res.status(200).json(response);
   } catch (error) {
@@ -52,26 +26,7 @@ const getUtility = async (req, res) => {
   }
 };
 
-const getShippingAndDiscount = async (req, res) => {
-  try {
-    const utility = await UtilityModel.findOne();
-    if (!utility) {
-      return res.status(200).json({
-        shippingFee: 0,
-        discount: 0,
-      });
-    }
-    const response = {
-      shippingFee: utility.shippingFee ?? 0,
-      discount: utility.discount ?? 0,
-    };
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const updateUtility = async (req, res) => {
+const adminUpdateUtility = async (req, res) => {
   try {
     const utility = await UtilityModel.findOneAndUpdate({}, req.body, {
       new: true,
@@ -83,10 +38,4 @@ const updateUtility = async (req, res) => {
   }
 };
 
-export {
-  createUtility,
-  applyCoupon,
-  getUtility,
-  getShippingAndDiscount,
-  updateUtility,
-};
+export { adminCreateUtility, adminGetUtility, adminUpdateUtility };

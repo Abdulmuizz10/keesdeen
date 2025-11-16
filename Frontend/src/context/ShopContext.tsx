@@ -1,4 +1,3 @@
-import Axios from "axios";
 import React, {
   createContext,
   useContext,
@@ -7,7 +6,6 @@ import React, {
   useEffect,
 } from "react";
 import { toast } from "sonner";
-import { URL } from "../lib/constants";
 
 // Define the context type
 interface ShopContextType {
@@ -69,21 +67,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     localStorage.setItem("wishLists", JSON.stringify(wishLists));
   }, [wishLists]);
-
-  useEffect(() => {
-    const getUtility = async () => {
-      try {
-        const response = await Axios.get(`${URL}/utility/shipping-discount`, {
-          withCredentials: true,
-        });
-        if (response.status === 200) {
-          setShippingFee(response.data.shippingFee);
-          setDiscountPercent(response.data.discount);
-        }
-      } catch (error) {}
-    };
-    getUtility();
-  }, [change]);
 
   const addToCart = async (
     itemId: string,

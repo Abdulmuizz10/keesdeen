@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Hooks
 import { useLenisScroll } from "./lib/useLenisScroll";
 import ScrollToTop from "./components/ScrollToTop";
+import { usePreloadImages } from "./lib/utils";
 
 // Layouts
 import RootLayouts from "./layouts/RootLayout";
@@ -48,8 +49,7 @@ import AdminCreateProduct from "./pages/admin pages/AdminCreateProduct";
 import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
 import AdminUsers from "./pages/admin pages/AdminUsers";
 import AdminUserDetails from "./pages/admin pages/AdminUserDetails";
-import AdminBestSellers from "./pages/admin pages/AdminBestSellers";
-import AdminNewArrivals from "./pages/admin pages/AdminNewArrivals";
+import AdminCoupons from "./pages/admin pages/AdminCoupons";
 import AdminSubscribers from "./pages/admin pages/AdminSubscribers";
 import AdminSendEmailToSubscribers from "./pages/admin pages/AdminSendEmailToSubscribers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
@@ -67,15 +67,26 @@ import { appear } from "./lib/anim";
 const App: React.FC = () => {
   const { user } = useContext(AuthContext);
   const [animation, setAnimation] = useState<Boolean>(true);
+  useLenisScroll();
+
+  const heroImages = [
+    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
+    "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&h=900&fit=crop",
+    "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop",
+    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&h=900&fit=crop",
+    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1600&h=900&fit=crop",
+  ];
+
+  const imagesLoaded = usePreloadImages(heroImages);
 
   useEffect(() => {
-    setTimeout(() => {
-      setAnimation(false);
-      window.scrollTo(0, 0);
-    }, 3000);
-  }, []);
-
-  useLenisScroll();
+    if (imagesLoaded) {
+      // give your animation time to finish (1s – 2s)
+      setTimeout(() => {
+        setAnimation(false), 3000;
+      });
+    }
+  }, [imagesLoaded]);
 
   return (
     <div>
@@ -164,19 +175,12 @@ const App: React.FC = () => {
                   path="/admin/products/update_product/:id"
                   element={<AdminUpdateProduct />}
                 />
-                <Route
-                  path="/admin/best_sellers"
-                  element={<AdminBestSellers />}
-                />
-                <Route
-                  path="/admin/new_arrivals"
-                  element={<AdminNewArrivals />}
-                />
                 <Route path="/admin/customers" element={<AdminUsers />} />
                 <Route
                   path="/admin/customers/customer_details/:id"
                   element={<AdminUserDetails />}
                 />
+                <Route path="/admin/coupons" element={<AdminCoupons />} />
                 <Route
                   path="/admin/subscribers"
                   element={<AdminSubscribers />}

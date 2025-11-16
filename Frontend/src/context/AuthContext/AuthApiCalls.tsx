@@ -42,6 +42,7 @@ export const SignUpAccount = async (
   user: any,
   dispatch: Dispatch<any>,
   navigate: any,
+  cartData: any,
   setLoading: any
 ): Promise<void> => {
   dispatch(AccessStart());
@@ -52,7 +53,11 @@ export const SignUpAccount = async (
     });
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
-      navigate("/cart");
+      if (cartData.length > 0) {
+        navigate("/check_out");
+      } else {
+        navigate("/");
+      }
       setLoading(false);
     } else {
       dispatch(AccessFailure());

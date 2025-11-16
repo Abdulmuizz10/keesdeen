@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BiLogoGoogle } from "react-icons/bi";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
 import { URL } from "../../lib/constants";
+import { useShop } from "@/context/ShopContext";
 
 const SignUp: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -22,6 +23,32 @@ const SignUp: React.FC = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const { cartItems } = useShop();
+  const [cartData, setCartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const tempData: any[] = [];
+    for (const itemId in cartItems) {
+      const item = cartItems[itemId];
+      for (const variantKey in item.variants) {
+        const quantity = item.variants[variantKey];
+        if (quantity > 0) {
+          const [size, color] = variantKey.split("-");
+          tempData.push({
+            id: itemId,
+            name: item.name,
+            price: item.price,
+            image: item.image,
+            size,
+            color,
+            quantity,
+          });
+        }
+      }
+    }
+    setCartData(tempData);
+  }, [cartItems]);
 
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -33,6 +60,7 @@ const SignUp: React.FC = () => {
       { firstName, lastName, email, password },
       dispatch,
       navigate,
+      cartData,
       setLoading
     );
   };

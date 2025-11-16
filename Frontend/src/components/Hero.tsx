@@ -60,6 +60,7 @@ const Hero: React.FC = () => {
             src={image.url}
             alt={`Hero ${index + 1}`}
             className="w-full h-full object-cover"
+            loading="eager"
           />
         </div>
       ))}

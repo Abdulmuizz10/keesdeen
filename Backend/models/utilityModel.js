@@ -2,16 +2,7 @@ import mongoose from "mongoose";
 
 const utilitySchema = new mongoose.Schema(
   {
-    couponCode: {
-      type: String,
-      required: false,
-    },
     shippingFee: {
-      type: Number,
-      default: 0,
-      required: false,
-    },
-    discount: {
       type: Number,
       default: 0,
       required: false,
