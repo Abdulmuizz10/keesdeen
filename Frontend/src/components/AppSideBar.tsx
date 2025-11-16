@@ -12,7 +12,7 @@ import {
   ClipboardList,
   PackageCheck,
   Mail,
-  Send,
+  // Send,
 } from "lucide-react";
 import {
   Sidebar,
@@ -222,14 +222,14 @@ const AppSidebar = () => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
-              <SidebarMenuItem>
+              {/* <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to="/admin/coupons">
                     <Send />
                     <span>Send Mails</span>
                   </Link>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

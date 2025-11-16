@@ -103,7 +103,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
               (size) => (
                 <button
                   key={size}
-                  className={`flex items-center justify-center border border-gray-300 rounded-sm text-gray-600 text-[10px] p-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
+                  className={`flex items-center justify-center border border-gray-300 text-gray-600 text-[10px] p-1 h-6 w-8 hover:bg-gray-100 transition poppins ${
                     product.sizes.includes(size) ? "" : "opacity-[0.3]"
                   }`}
                 >

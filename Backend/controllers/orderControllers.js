@@ -26,10 +26,11 @@ function convertBigIntToString(obj) {
 
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment:
-    process.env.NODE_ENV === "development"
-      ? Environment.Sandbox
-      : Environment.Production,
+  // environment:
+  //   process.env.NODE_ENV === "development"
+  //     ? Environment.Sandbox
+  //     : Environment.Production,
+  environment: Environment.Sandbox,
 });
 
 const paymentsApi = squareClient.paymentsApi;

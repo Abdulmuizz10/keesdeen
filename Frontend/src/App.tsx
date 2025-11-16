@@ -72,7 +72,7 @@ const App: React.FC = () => {
     setTimeout(() => {
       setAnimation(false);
       window.scrollTo(0, 0);
-    }, 6000);
+    }, 3000);
   }, []);
 
   useLenisScroll();

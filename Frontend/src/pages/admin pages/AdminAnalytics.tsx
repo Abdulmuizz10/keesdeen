@@ -1109,7 +1109,7 @@ const AdminAnalytics: React.FC = () => {
     prefix = "",
     suffix = "",
   }: any) => (
-    <div className="border p-6">
+    <div className="border p-4">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-xs uppercase text-muted-foreground tracking-wider">
@@ -1235,8 +1235,8 @@ const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Revenue & Orders Trend */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 rounded-none">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-1 sm:col-span-4 rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
               Revenue & Orders Overview
@@ -1336,7 +1336,7 @@ const AdminAnalytics: React.FC = () => {
         </Card>
 
         {/* Order Status Distribution */}
-        <Card className="col-span-3 rounded-none">
+        <Card className="col-span-1 sm:col-span-3 rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
               Order Status
@@ -1382,7 +1382,7 @@ const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Weekly Revenue & Hourly Activity */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
         <Card className="rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
@@ -1464,8 +1464,8 @@ const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Category Performance & Top Cities */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-3 rounded-none">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-1 sm:col-span-3 rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
               Category Performance
@@ -1497,7 +1497,7 @@ const AdminAnalytics: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="col-span-4 rounded-none">
+        <Card className="col-span-1 sm:col-span-4 rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
               Top Performing Cities
@@ -1543,8 +1543,8 @@ const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Top Products & Payment Methods */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4 rounded-none">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-1 sm:col-span-4 rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
               Top Selling Products
@@ -1583,7 +1583,7 @@ const AdminAnalytics: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3 rounded-none">
+        <Card className="col-span-1 sm:col-span-3 rounded-none">
           <CardHeader>
             <CardTitle className="text-2xl md:text-3xl font-light tracking-tight">
               Payment Methods
