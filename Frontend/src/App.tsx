@@ -83,8 +83,8 @@ const App: React.FC = () => {
     if (imagesLoaded) {
       // give your animation time to finish (1s – 2s)
       setTimeout(() => {
-        setAnimation(false), 3000;
-      });
+        setAnimation(false);
+      }, 3000);
     }
   }, [imagesLoaded]);
 
