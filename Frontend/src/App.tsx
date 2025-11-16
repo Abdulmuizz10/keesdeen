@@ -43,13 +43,13 @@ import AdminOrders from "./pages/admin pages/AdminOrders";
 import AdminPendingOrders from "./pages/admin pages/AdminPendingOrders";
 import AdminDeliveredOrders from "./pages/admin pages/AdminDeliveredOrders";
 import AdminOrderDetails from "./pages/admin pages/AdminOrderDetails";
-import AdminAddProduct from "./pages/admin pages/AdminAddProduct";
+import AdminProducts from "./pages/admin pages/AdminProducts";
+import AdminCreateProduct from "./pages/admin pages/AdminCreateProduct";
+import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
 import AdminUsers from "./pages/admin pages/AdminUsers";
 import AdminUserDetails from "./pages/admin pages/AdminUserDetails";
 import AdminBestSellers from "./pages/admin pages/AdminBestSellers";
 import AdminNewArrivals from "./pages/admin pages/AdminNewArrivals";
-import AdminUpdateProduct from "./pages/admin pages/AdminUpdateProduct";
-import AdminProducts from "./pages/admin pages/AdminProducts";
 import AdminSubscribers from "./pages/admin pages/AdminSubscribers";
 import AdminSendEmailToSubscribers from "./pages/admin pages/AdminSendEmailToSubscribers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
@@ -138,16 +138,6 @@ const App: React.FC = () => {
             {user?.isAdmin ? (
               <Route element={<AdminLayout animation={animation} />}>
                 <Route path="/admin" element={<AdminAnalytics />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route
-                  path="/admin/user_details/:id"
-                  element={<AdminUserDetails />}
-                />
-                <Route path="/admin/products" element={<AdminProducts />} />
-                <Route
-                  path="/admin/product_details/:id"
-                  element={<AdminProductDetails />}
-                />
                 <Route path="/admin/orders" element={<AdminOrders />} />
                 <Route
                   path="/admin/orders/pending"
@@ -158,12 +148,21 @@ const App: React.FC = () => {
                   element={<AdminDeliveredOrders />}
                 />
                 <Route
-                  path="/admin/order_details/:id"
+                  path="/admin/orders/order_details/:id"
                   element={<AdminOrderDetails />}
                 />
+                <Route path="/admin/products" element={<AdminProducts />} />
                 <Route
-                  path="/admin/add_product"
-                  element={<AdminAddProduct />}
+                  path="/admin/products/product_details/:id"
+                  element={<AdminProductDetails />}
+                />
+                <Route
+                  path="/admin/products/create_product"
+                  element={<AdminCreateProduct />}
+                />
+                <Route
+                  path="/admin/products/update_product/:id"
+                  element={<AdminUpdateProduct />}
                 />
                 <Route
                   path="/admin/best_sellers"
@@ -173,6 +172,11 @@ const App: React.FC = () => {
                   path="/admin/new_arrivals"
                   element={<AdminNewArrivals />}
                 />
+                <Route path="/admin/customers" element={<AdminUsers />} />
+                <Route
+                  path="/admin/customers/customer_details/:id"
+                  element={<AdminUserDetails />}
+                />
                 <Route
                   path="/admin/subscribers"
                   element={<AdminSubscribers />}
@@ -180,10 +184,6 @@ const App: React.FC = () => {
                 <Route
                   path="/admin/email-to-subscribers"
                   element={<AdminSendEmailToSubscribers />}
-                />
-                <Route
-                  path="/admin/update_product/:id"
-                  element={<AdminUpdateProduct />}
                 />
               </Route>
             ) : null}

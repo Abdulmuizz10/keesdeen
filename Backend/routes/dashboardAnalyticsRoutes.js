@@ -1,7 +1,7 @@
 import express from "express";
-import { getDashboardAnalytics } from "../controllers/dashboardAnalyticsControllers.js";
+import { getDashboardAnalyticsController } from "../controllers/dashboardAnalyticsControllers.js";
 const router = express.Router();
 
-router.get("/dashboard", getDashboardAnalytics);
+router.get("/dashboard", getDashboardAnalyticsController);
 
 export default router;

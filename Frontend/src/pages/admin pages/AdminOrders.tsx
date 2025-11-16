@@ -14,11 +14,13 @@ import {
   Search,
   Filter,
   Check,
+  ChevronDown,
 } from "lucide-react";
 import Axios from "axios";
 import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { Link } from "react-router-dom";
 
 // Types
 interface OrderItem {
@@ -54,87 +56,6 @@ interface Order {
   isDelivered: string;
   createdAt: string;
 }
-
-// Mock data for demo
-
-// const mockOrders: Order[] = [
-//   {
-//     _id: "69034a057bbaa179349031d8",
-//     email: "harrismuizz10@gmail.com",
-//     currency: "GBP",
-//     orderedItems: [
-//       {
-//         name: "Product 1",
-//         qty: 1,
-//         image:
-//           "https://res.cloudinary.com/dx2alxgiq/image/upload/v1760828800/product_images/tz8vxvplhvk6kgtcjxdk.png",
-//         price: 10,
-//         size: "S",
-//         color: "Gray",
-//         _id: "69034a057bbaa179349031d9",
-//       },
-//       {
-//         name: "Product 1",
-//         qty: 2,
-//         image:
-//           "https://res.cloudinary.com/dx2alxgiq/image/upload/v1760828800/product_images/tz8vxvplhvk6kgtcjxdk.png",
-//         price: 10,
-//         size: "L",
-//         color: "Blue",
-//         _id: "69034a057bbaa179349031da",
-//       },
-//     ],
-//     shippingAddress: {
-//       firstName: "Abdul Muizz",
-//       lastName: "Abdulrahaman",
-//       email: "harrismuizz10@gmail.com",
-//       country: "NG",
-//       state: "FC",
-//       address1: "NO 21 A",
-//       address2: "",
-//       phone: "2348067028516",
-//       postalCode: "111111",
-//     },
-//     totalPrice: 30,
-//     paidAt: "2025-10-30T11:20:35.041Z",
-//     isDelivered: "Pending",
-//     createdAt: "2025-10-30T11:20:37.269Z",
-//   },
-//   {
-//     _id: "69034a057bbaa179349031d9",
-//     email: "customer2@example.com",
-//     currency: "GBP",
-//     orderedItems: [
-//       {
-//         name: "Product 2",
-//         qty: 3,
-//         image:
-//           "https://res.cloudinary.com/dx2alxgiq/image/upload/v1760828800/product_images/tz8vxvplhvk6kgtcjxdk.png",
-//         price: 25,
-//         size: "M",
-//         color: "Black",
-//         _id: "69034a057bbaa179349031db",
-//       },
-//     ],
-//     shippingAddress: {
-//       firstName: "John",
-//       lastName: "Doe",
-//       email: "customer2@example.com",
-//       country: "UK",
-//       state: "London",
-//       address1: "123 High Street",
-//       address2: "",
-//       phone: "447123456789",
-//       postalCode: "SW1A 1AA",
-//     },
-//     totalPrice: 75,
-//     paidAt: "2025-10-29T14:30:00.000Z",
-//     isDelivered: "Delivered",
-//     createdAt: "2025-10-29T14:30:00.000Z",
-//   },
-// ];
-
-// Stat Card Component
 
 const StatCard = ({ title, value, icon: Icon, status }: any) => (
   <div className="bg-card border border-border p-6">
@@ -285,12 +206,13 @@ const AdminOrders: React.FC = () => {
 
     return (
       <span
-        className={`inline-flex items-center justify-center w-20 lg:w-24 h-10 text-xs font-medium border ${
+        className={`inline-flex items-center justify-center gap-3 w-24 lg:w-30 h-10 text-xs font-medium border ${
           styles[status as keyof typeof styles] ||
           "bg-muted text-muted-foreground"
         }`}
       >
         {status}
+        <ChevronDown className="h-4 w-4" />
       </span>
     );
   };
@@ -355,7 +277,7 @@ const AdminOrders: React.FC = () => {
                 </div>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-48 mr-10 rounded-none">
+              <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] mr-3 rounded-none">
                 {["All", "Pending", "Processing", "Delivered", "Cancelled"].map(
                   (status) => (
                     <DropdownMenuItem
@@ -364,7 +286,6 @@ const AdminOrders: React.FC = () => {
                       className="flex items-center justify-between"
                     >
                       {status}
-
                       {statusFilter === status && (
                         <Check className="h-4 w-4 text-primary" />
                       )}
@@ -429,15 +350,17 @@ const AdminOrders: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-6">
-                        <div>
-                          <div className="text-sm font-medium">
-                            {order.shippingAddress.firstName}{" "}
-                            {order.shippingAddress.lastName}
+                        <Link to={`/admin/orders/order_details/${order._id}`}>
+                          <div>
+                            <div className="text-sm font-medium">
+                              {order.shippingAddress.firstName}{" "}
+                              {order.shippingAddress.lastName}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {order.email}
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground">
-                            {order.email}
-                          </div>
-                        </div>
+                        </Link>
                       </td>
                       <td className="p-6">
                         <div className="flex items-center gap-2">
@@ -456,13 +379,11 @@ const AdminOrders: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-6">
-                        {/* {getStatusBadge(order.isDelivered)} */}
                         <DropdownMenu>
                           <DropdownMenuTrigger className="w-fit">
                             {getStatusBadge(order.isDelivered)}
                           </DropdownMenuTrigger>
-
-                          <DropdownMenuContent className="w-48 mr-24 rounded-none">
+                          <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] rounded-none">
                             {[
                               "All",
                               "Pending",
@@ -547,13 +468,17 @@ const AdminOrders: React.FC = () => {
 
                   <div className="space-y-2">
                     <div>
-                      <div className="text-sm font-medium">
-                        {order.shippingAddress.firstName}{" "}
-                        {order.shippingAddress.lastName}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {order.email}
-                      </div>
+                      <Link to={`/admin/orders/order_details/${order._id}`}>
+                        <div>
+                          <div className="text-sm font-medium">
+                            {order.shippingAddress.firstName}{" "}
+                            {order.shippingAddress.lastName}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {order.email}
+                          </div>
+                        </div>
+                      </Link>
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-border">

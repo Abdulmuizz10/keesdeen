@@ -19,6 +19,7 @@ import {
   adminDeleteProductController,
   adminUpdateProductToBestSellerController,
   adminUpdateProductToNewArrivalController,
+  adminUpdateProductAvailabilityController,
 } from "../controllers/productControllers.js";
 
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
@@ -75,7 +76,7 @@ router.get(
 );
 
 router.get(
-  "/admin/get-product/product/:id",
+  "/admin/get-product/:id",
   verifyUser,
   authorizeAdmin,
   adminGetProductByIdController
@@ -107,6 +108,13 @@ router.patch(
   verifyUser,
   authorizeAdmin,
   adminUpdateProductToNewArrivalController
+);
+
+router.patch(
+  "/admin/update/:id/availability",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateProductAvailabilityController
 );
 
 export default router;

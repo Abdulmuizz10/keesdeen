@@ -173,9 +173,9 @@ const AppSidebar = () => {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/admin/products/add">
+                  <Link to="/admin/products/create_product">
                     <Plus />
-                    Add Product
+                    Create Product
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

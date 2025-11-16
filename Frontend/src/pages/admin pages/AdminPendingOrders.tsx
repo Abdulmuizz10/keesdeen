@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Package, Search, Filter, Check } from "lucide-react";
+import { Package, Search, Filter, Check, ChevronDown } from "lucide-react";
 import Axios from "axios";
 import { URL } from "@/lib/constants";
 import { toast } from "sonner";
@@ -153,12 +153,13 @@ const AdminPendingOrders: React.FC = () => {
 
     return (
       <span
-        className={`inline-flex items-center justify-center w-20 lg:w-24 h-10 text-xs font-medium border ${
+        className={`inline-flex items-center justify-center gap-3 w-24 lg:w-30 h-10 text-xs font-medium border ${
           styles[status as keyof typeof styles] ||
           "bg-muted text-muted-foreground"
         }`}
       >
         {status}
+        <ChevronDown className="h-4 w-4" />
       </span>
     );
   };
@@ -200,7 +201,7 @@ const AdminPendingOrders: React.FC = () => {
                 </div>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-48 mr-10 rounded-none">
+              <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] mr-3 rounded-none">
                 {["All", "Pending", "Processing", "Cancelled"].map((status) => (
                   <DropdownMenuItem
                     key={status}
@@ -307,7 +308,7 @@ const AdminPendingOrders: React.FC = () => {
                             {getStatusBadge(order.isDelivered)}
                           </DropdownMenuTrigger>
 
-                          <DropdownMenuContent className="w-48 mr-24 rounded-none">
+                          <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] rounded-none">
                             {["All", "Pending", "Processing", "Cancelled"].map(
                               (status) => (
                                 <DropdownMenuItem
@@ -360,7 +361,7 @@ const AdminPendingOrders: React.FC = () => {
                         {getStatusBadge(order.isDelivered)}
                       </DropdownMenuTrigger>
 
-                      <DropdownMenuContent className="w-48 mr-10 rounded-none">
+                      <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] mr-5 rounded-none">
                         {[
                           "All",
                           "Pending",

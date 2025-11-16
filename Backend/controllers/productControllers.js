@@ -546,18 +546,18 @@ const adminGetProductByIdController = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
     // Calculate total stars, average rating, and total reviews
-    // const totalStars = product.reviews.reduce(
-    //   (sum, review) => sum + (review.rating || 0),
-    //   0
-    // );
-    // const totalReviews = product.reviews.length;
-    // const averageRating = totalReviews > 0 ? totalStars / totalReviews : 0;
-
-    res.status(200).json(
-      product
-      // averageRating: averageRating.toFixed(1),
-      // totalReviews,
+    const totalStars = product.reviews.reduce(
+      (sum, review) => sum + (review.rating || 0),
+      0
     );
+    const totalReviews = product.reviews.length;
+    const averageRating = totalReviews > 0 ? totalStars / totalReviews : 0;
+
+    res.status(200).json({
+      product,
+      averageRating: averageRating.toFixed(1), // Round to 2 decimal places
+      totalReviews,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -652,6 +652,41 @@ const adminUpdateProductToNewArrivalController = async (req, res) => {
   }
 };
 
+const adminUpdateProductAvailabilityController = async (req, res) => {
+  const { id } = req.params;
+  let { status } = req.body;
+
+  // Convert the 'status' string to a boolean
+  if (status === "isAvailable") {
+    status = true;
+  } else if (status === "notAvailable") {
+    status = false;
+  } else {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
+
+  try {
+    const product = await ProductModel.findById(id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Update the product availability status
+    product.isAvailable = status;
+    await product.save();
+
+    // Respond with an appropriate message
+    const message = status
+      ? "Product marked as available"
+      : "Product marked as unavailable";
+
+    res.status(200).json({ message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   getHomeBestSellersController,
   getHomeCollectionsController,
@@ -673,4 +708,5 @@ export {
   adminDeleteProductController,
   adminUpdateProductToBestSellerController,
   adminUpdateProductToNewArrivalController,
+  adminUpdateProductAvailabilityController,
 };

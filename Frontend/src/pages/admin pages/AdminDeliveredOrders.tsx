@@ -115,7 +115,7 @@ const AdminDeliveredOrders: React.FC = () => {
 
     return (
       <span
-        className={`inline-flex items-center justify-center w-20 lg:w-24 h-10 text-xs font-medium border ${
+        className={`inline-flex items-center justify-center gap-3 w-24 lg:w-30 h-10 text-xs font-medium border ${
           styles[status as keyof typeof styles] ||
           "bg-muted text-muted-foreground"
         }`}

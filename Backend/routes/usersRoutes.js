@@ -1,35 +1,48 @@
 import express from "express";
 import {
-  getUsers,
-  getUsersByPage,
-  findUser,
-  updateUser,
-  updateToAdmin,
-  deleteUser,
   getCurrentUserProfile,
-  updateCurrentUserProfile,
+  adminGetUsersByPagination,
+  adminGetUserById,
+  adminUpdateUser,
+  adminUpdateUserRole,
+  adminDeleteUser,
 } from "../controllers/usersControllers.js";
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 
 const router = express.Router();
 
-// ------- Static routes --------
 router.get("/profile", verifyUser, getCurrentUserProfile);
-router.patch("/update_profile", verifyUser, updateCurrentUserProfile);
-// ------- Data fetching routes -------
-router.get("/page/users", verifyUser, authorizeAdmin, getUsersByPage);
-router.get("/", verifyUser, authorizeAdmin, getUsers);
-// ------- Admin-specific actions -------
-router.put(
-  "/update-to-admin/:userId",
+
+// Admin
+router.get(
+  "/admin/pagination-users",
   verifyUser,
   authorizeAdmin,
-  updateToAdmin
+  adminGetUsersByPagination
 );
-// ------- Specific find route --------
-router.get("/find/:id", verifyUser, authorizeAdmin, findUser);
-// ------- Generic ID-based routes (ALWAYS LAST) --------
-router.put("/:id", verifyUser, authorizeAdmin, updateUser);
-router.delete("/:id", verifyUser, authorizeAdmin, deleteUser);
+router.get(
+  "/admin/find-user/:id",
+  verifyUser,
+  authorizeAdmin,
+  adminGetUserById
+);
+router.put(
+  "/admin/:id/update-user",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateUser
+);
+router.patch(
+  "/admin/:id/role",
+  verifyUser,
+  authorizeAdmin,
+  adminUpdateUserRole
+);
+router.delete(
+  "/admin/:id/delete-user",
+  verifyUser,
+  authorizeAdmin,
+  adminDeleteUser
+);
 
 export default router;

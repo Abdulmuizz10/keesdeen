@@ -33,16 +33,6 @@ const userSchema = new mongoose.Schema(
       enum: ["password", "google"], // Define possible authentication methods
       default: "password",
     },
-    // stripeCustomerId: { type: String, required: false },
-    // savedPaymentMethods: [
-    //   {
-    //     paymentMethodId: { type: String },
-    //     type: { type: String }, // e.g., "card"
-    //     last4: { type: String },
-    //     brand: { type: String },
-    //     createdAt: { type: Date, default: Date.now },
-    //   },
-    // ],
   },
   {
     timestamps: true,

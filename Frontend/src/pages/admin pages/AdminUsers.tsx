@@ -1,179 +1,697 @@
-import React, { useEffect, useRef, useState } from "react";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { toast } from "sonner";
-import { FaRegCopy } from "react-icons/fa";
-import { useShop } from "../../context/ShopContext";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+
+import {
+  Users,
+  Shield,
+  Search,
+  Filter,
+  Check,
+  Mail,
+  Calendar,
+  Key,
+  Globe,
+  Pencil,
+  Trash2,
+  Eye,
+} from "lucide-react";
+import Axios from "axios";
+import { URL } from "@/lib/constants";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+
+// Types
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isAdmin: boolean;
+  authMethod: "password" | "google";
+  createdAt: string;
+  updatedAt: string;
+}
+
+const StatCard = ({ title, value, icon: Icon, status }: any) => (
+  <div className="bg-card border border-border p-6">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm text-muted-foreground">{title}</p>
+        <p className="text-3xl font-light tracking-tight mt-2">{value}</p>
+      </div>
+      <div
+        className={`p-3 rounded-full ${
+          status === "admin"
+            ? "bg-purple-100"
+            : status === "google"
+            ? "bg-blue-100"
+            : status === "password"
+            ? "bg-green-100"
+            : "bg-muted"
+        }`}
+      >
+        <Icon
+          className={`h-5 w-5 ${
+            status === "admin"
+              ? "text-purple-600"
+              : status === "google"
+              ? "text-blue-600"
+              : status === "password"
+              ? "text-green-600"
+              : "text-muted-foreground"
+          }`}
+        />
+      </div>
+    </div>
+  </div>
+);
 
 const AdminUsers: React.FC = () => {
-  const [users, setUsers] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const { setAdminLoader } = useShop();
-  const scrollRef = useRef<any>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("All");
+  const [authFilter, setAuthFilter] = useState("All");
+
+  // Dialog state
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  // Edit form state
+  const [editForm, setEditForm] = useState({
+    isAdmin: false,
+  });
+
+  // Stats calculation
+  const stats = {
+    total: users?.length || 0,
+    admins: users?.filter((u) => u.isAdmin).length || 0,
+    googleAuth: users?.filter((u) => u.authMethod === "google").length || 0,
+    passwordAuth: users?.filter((u) => u.authMethod === "password").length || 0,
+  };
+
+  const fetchData = async (page: number) => {
+    setLoading(true);
+    try {
+      const response = await Axios.get(
+        `${URL}/users/admin/pagination-users?page=${page}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        setUsers(response.data.users);
+        setTotalPages(response.data.totalPages);
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  // Fetch data from backend
-  const fetchData = async (page: number) => {
+  const handleEditClick = (user: User) => {
+    setSelectedUser(user);
+    setEditForm({
+      isAdmin: user.isAdmin,
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (user: User) => {
+    setSelectedUser(user);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleUpdateUser = async () => {
+    if (!selectedUser) return;
+
     setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/users/page/users?page=${page}`, {
-        withCredentials: true,
-      });
-      setUsers(response.data.users);
-      setTotalPages(response.data.totalPages);
-      setLoading(false);
+      // Update role if changed
+      if (editForm.isAdmin !== selectedUser.isAdmin) {
+        const response = await Axios.patch(
+          `${URL}/users/admin/${selectedUser._id}/role`,
+          { isAdmin: editForm.isAdmin },
+          {
+            withCredentials: true,
+            validateStatus: (status: any) => status < 600,
+          }
+        );
+        if (response.status === 200) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message || "Something went wrong");
+        }
+      }
+
+      setEditDialogOpen(false);
+      fetchData(currentPage);
     } catch (error) {
-      toast.error("Error getting users!");
+      toast.error("Failed to update user");
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (userId: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-    if (confirmDelete) {
-      setAdminLoader(true);
-      try {
-        await Axios.delete(`${URL}/users/${userId}`, {
-          withCredentials: true,
-        });
-        toast.success("User deleted successfully!");
-        setAdminLoader(false);
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setLoading(true);
+    try {
+      const response = await Axios.delete(
+        `${URL}/users/admin/${selectedUser._id}/delete-user`,
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        toast.success("User deleted successfully");
+        setDeleteDialogOpen(false);
         fetchData(currentPage);
-      } catch (error) {
-        setAdminLoader(false);
-        toast.error("Error while deleting the user!");
+      }
+    } catch (error) {
+      toast.error("Failed to delete user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter users
+  useEffect(() => {
+    let filtered = [...users];
+
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (user) =>
+          user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user._id.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (roleFilter !== "All") {
+      if (roleFilter === "Admin") {
+        filtered = filtered.filter((user) => user.isAdmin);
+      } else if (roleFilter === "User") {
+        filtered = filtered.filter((user) => !user.isAdmin);
       }
     }
+
+    if (authFilter !== "All") {
+      filtered = filtered.filter(
+        (user) => user.authMethod === authFilter.toLowerCase()
+      );
+    }
+
+    setFilteredUsers(filtered);
+  }, [searchQuery, roleFilter, authFilter, users]);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
   };
 
-  const copyId = (text: string) => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        toast("User ID copied to clipboard!");
-      })
-      .catch(() => {
-        toast("Failed to copy transaction ID.");
-      });
+  const getRoleBadge = (isAdmin: boolean) => {
+    return (
+      <span
+        className={`inline-flex items-center justify-center  text-xs font-medium ${
+          isAdmin ? "text-green-300" : "text-muted-foreground"
+        }`}
+      >
+        {isAdmin ? "Admin" : "Customer"}
+      </span>
+    );
+  };
+
+  const getAuthBadge = (authMethod: string) => {
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium ${
+          authMethod === "google" ? "text-blue-300" : "text-green-300"
+        }`}
+      >
+        {authMethod === "google" ? (
+          <>
+            <Globe className="h-3 w-3" />
+            Google
+          </>
+        ) : (
+          <>
+            <Key className="h-3 w-3" />
+            Password
+          </>
+        )}
+      </span>
+    );
   };
 
   return (
-    <div className="w-full" ref={scrollRef}>
-      <div className="w-full bg-white p-6 rounded-lg">
-        <h3 className="text-xl font-semibold mb-4">All users</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full bg-white poppins">
-            <thead className="text-sm">
-              <tr className="bg-gray-100 font-extrabold">
-                <th className="text-left p-4 font-semibold">SN</th>
-                <th className="text-left p-4 font-semibold">User ID</th>
-                <th className="text-left p-4 font-semibold">Username</th>
-                <th className="text-left p-4 font-semibold">Email address</th>
-                <th className="text-left p-4 font-semibold">Admin</th>
-                <th className="text-left p-4 font-semibold">Date signed up</th>
-                <th className="text-left p-4 font-semibold">Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                Array.from({ length: 20 }).map((_, index) => (
-                  <tr key={index} className="border-b">
-                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                    <td className="p-6 h-6 bg-gray-200 animate-pulse" />
-                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                    <td className="p-4 h-6 bg-gray-200 animate-pulse" />
-                  </tr>
-                ))
-              ) : users.length > 0 ? (
-                users?.map((user: any, index: number) => (
-                  <tr
-                    key={index}
-                    className="border-b hover:bg-gray-50 transition-colors duration-150 text-sm"
+    <div className="flex-1 space-y-4 p-4 bg-background">
+      {/* HEADER */}
+      <div className="mb-5 border-b border-border pb-8">
+        <h1 className="text-2xl lg:text-5xl font-light tracking-tight mb-3">
+          Users Management
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          View and manage all registered users
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard title="Total Users" value={stats.total} icon={Users} />
+        <StatCard
+          title="Administrators"
+          value={stats.admins}
+          icon={Shield}
+          status="admin"
+        />
+        <StatCard
+          title="Google Auth"
+          value={stats.googleAuth}
+          icon={Globe}
+          status="google"
+        />
+        <StatCard
+          title="Password Auth"
+          value={stats.passwordAuth}
+          icon={Key}
+          status="password"
+        />
+      </div>
+
+      {/* Filters */}
+      <div className="bg-card border border-border p-6">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search by name, email, or user ID..."
+              className="w-full pl-10 pr-4 py-2.5 bg-background border border-input text-sm focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {/* Role Filter */}
+          <div className="relative">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="w-full">
+                <div className="relative flex items-center gap-2 pl-10 pr-8 py-2.5 bg-background border border-input text-sm cursor-pointer min-w-[150px]">
+                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <span>{roleFilter}</span>
+                </div>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="w-48 ml-4 rounded-none">
+                {["All", "Admin", "User"].map((role) => (
+                  <DropdownMenuItem
+                    key={role}
+                    onClick={() => setRoleFilter(role)}
+                    className="flex items-center justify-between"
                   >
-                    <td className="p-4">{index + 1}</td>
-                    <td className="p-4 flex gap-1 items-center">
-                      {user._id.split("").slice(0, 5)}...
-                      <FaRegCopy
-                        className="text-xl cursor-pointer"
-                        onClick={() => copyId(user._id)}
-                      />
-                    </td>
-                    <td className="p-4">
-                      <Link to={`/admin/user_details/${user._id}`}>
-                        {`${user.firstName} ${user.lastName}`}
-                      </Link>
-                    </td>
-                    <td className="p-4">{user.email}</td>
-                    <td className="p-4">
-                      {user.isAdmin ? (
-                        <span className="text-green-500 font-semibold">
-                          True
-                        </span>
-                      ) : (
-                        <span className="text-brand-secondary font-semibold">
-                          False
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-4">
-                      {new Date(user?.createdAt).toLocaleString()}
-                    </td>
-                    <td className="py-2 px-8">
-                      <RiDeleteBin5Line
-                        className="text-2xl cursor-pointer"
-                        onClick={() => handleDelete(user._id)}
-                      />
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <p className="text-base sm:text-xl py-5">No Users available</p>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    {role}
+                    {roleFilter === role && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        {/* Pagination Controls */}
-        <div className="flex justify-end mt-4 gap-3 poppins">
-          <button
-            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
-              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={currentPage === 1}
-            onClick={() => {
-              setCurrentPage((prev) => Math.max(prev - 1, 1));
-              scrollRef.current.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            Previous
-          </button>
+          {/* Auth Method Filter */}
+          <div className="relative">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="w-full">
+                <div className="relative flex items-center gap-2 pl-10 pr-8 py-2.5 bg-background border border-input text-sm cursor-pointer min-w-[150px]">
+                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <span>{authFilter}</span>
+                </div>
+              </DropdownMenuTrigger>
 
-          <button
-            className={`py-3 px-4 rounded-md bg-brand-neutral text-white ${
-              currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={currentPage === totalPages}
-            onClick={() => {
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-              scrollRef.current.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            Next
-          </button>
+              <DropdownMenuContent className="w-48 ml-4 rounded-none">
+                {["All", "Google", "Password"].map((auth) => (
+                  <DropdownMenuItem
+                    key={auth}
+                    onClick={() => setAuthFilter(auth)}
+                    className="flex items-center justify-between"
+                  >
+                    {auth}
+                    {authFilter === auth && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
+
+      {/* Users Table */}
+      <div className="bg-card border border-border">
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <Spinner className="size-6" />
+          </div>
+        ) : !filteredUsers || filteredUsers.length === 0 ? (
+          <div className="text-center py-24">
+            <Users className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-lg text-muted-foreground">No users found</p>
+          </div>
+        ) : (
+          <>
+            {/* Desktop Table */}
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full">
+                <thead className="border-b border-border">
+                  <tr>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      User
+                    </th>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Auth Method
+                    </th>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Joined Date
+                    </th>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user, index) => (
+                    <tr
+                      key={user._id}
+                      className={`border-b border-border hover:bg-muted/50 transition-colors ${
+                        index === filteredUsers.length - 1 ? "border-b-0" : ""
+                      }`}
+                    >
+                      <td className="p-6">
+                        <Link
+                          to={`/admin/customers/customer_details/${user._id}`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                              <span className="text-sm font-medium">
+                                {user.firstName.charAt(0).toUpperCase()}
+                                {user.lastName.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium">
+                                {user.firstName} {user.lastName}
+                              </div>
+                              <div className="text-xs text-muted-foreground font-mono">
+                                ID: {user._id.slice(-8).toUpperCase()}
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      </td>
+                      <td className="p-6">
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{user.email}</span>
+                        </div>
+                      </td>
+                      <td className="p-6">{getRoleBadge(user.isAdmin)}</td>
+                      <td className="p-6">{getAuthBadge(user.authMethod)}</td>
+                      <td className="p-6">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          {formatDate(user.createdAt)}
+                        </div>
+                      </td>
+                      <td className="p-6">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleEditClick(user)}
+                            className="p-2 hover:bg-muted rounded transition-colors"
+                            title="Update role"
+                          >
+                            <Pencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(user)}
+                            className="p-2 hover:bg-muted rounded transition-colors"
+                            title="Delete user"
+                          >
+                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-red-600" />
+                          </button>
+                          <Link
+                            to={`/admin/customers/customer_details/${user._id}`}
+                          >
+                            <button
+                              className="p-2 hover:bg-muted rounded transition-colors"
+                              title="View details"
+                            >
+                              <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                            </button>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="lg:hidden divide-y divide-border">
+              {filteredUsers.map((user) => (
+                <div
+                  key={user._id}
+                  className="p-6 hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-medium">
+                        {user.firstName.charAt(0).toUpperCase()}
+                        {user.lastName.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium mb-1">
+                        {user.firstName} {user.lastName}
+                      </div>
+                      <div className="text-xs text-muted-foreground mb-2">
+                        {user.email}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getRoleBadge(user.isAdmin)}
+                        {getAuthBadge(user.authMethod)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs pt-3 border-t border-border">
+                      <span className="text-muted-foreground">User ID:</span>
+                      <span className="font-mono">
+                        {user._id.slice(-12).toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Joined:</span>
+                      <span>{formatDate(user.createdAt)}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-3 border-t border-border">
+                      <button
+                        onClick={() => handleEditClick(user)}
+                        className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm bg-background border border-border hover:bg-muted transition-colors"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Update
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(user)}
+                        className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-sm bg-background border text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                      <Link
+                        to={`/admin/users/user_details/${user._id}`}
+                        className="flex-1"
+                      >
+                        <button className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 text-sm bg-foreground text-background hover:bg-foreground/90 transition-colors">
+                          <Eye className="h-4 w-4" />
+                          View
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Pagination */}
+        {!loading && filteredUsers && filteredUsers.length > 0 && (
+          <div className="mt-16 flex items-center justify-between border-t border-border pt-8 px-6 pb-6">
+            <button
+              className={`text-sm uppercase tracking-widest transition-colors ${
+                currentPage === 1
+                  ? "cursor-not-allowed text-muted-foreground"
+                  : "text-foreground hover:text-muted-foreground"
+              }`}
+              disabled={currentPage === 1}
+              onClick={() => {
+                setCurrentPage((prev) => Math.max(prev - 1, 1));
+                window.scrollTo({ top: 0, behavior: "instant" });
+              }}
+            >
+              Previous
+            </button>
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              className={`text-sm uppercase tracking-widest transition-colors ${
+                currentPage === totalPages
+                  ? "cursor-not-allowed text-muted-foreground"
+                  : "text-foreground hover:text-muted-foreground"
+              }`}
+              disabled={currentPage === totalPages}
+              onClick={() => {
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                window.scrollTo({ top: 0, behavior: "instant" });
+              }}
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] text-foreground">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-xl font-light tracking-tight">
+              Update User Role
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Update role for {selectedUser?.firstName} {selectedUser?.lastName}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-6 py-4 text-foreground">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label
+                  htmlFor="isAdmin"
+                  className="text-sm font-medium text-foreground"
+                >
+                  Administrator Access
+                </Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Grant full admin panel access
+                </p>
+              </div>
+              <Switch
+                id="isAdmin"
+                checked={editForm.isAdmin}
+                onCheckedChange={(checked) =>
+                  setEditForm({ ...editForm, isAdmin: checked })
+                }
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setEditDialogOpen(false)}
+              className="px-4 py-2 text-sm border border-border text-foreground hover:bg-muted transition-colors"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              onClick={handleUpdateUser}
+              className="px-4 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              Update User
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] text-foreground">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-xl font-light tracking-tight">
+              Delete User
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Are you sure you want to delete "{selectedUser?.firstName}{" "}
+              {selectedUser?.lastName}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <button
+              type="button"
+              onClick={() => setDeleteDialogOpen(false)}
+              className="px-4 py-2 text-sm border border-border text-foreground hover:bg-muted transition-colors"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDeleteUser}
+              className="px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 transition-colors"
+            >
+              Delete User
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
