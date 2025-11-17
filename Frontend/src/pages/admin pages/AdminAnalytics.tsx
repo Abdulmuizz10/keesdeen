@@ -1205,6 +1205,13 @@ const AdminAnalytics: React.FC = () => {
       {/* Secondary Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
+          title="Conversion Rate"
+          value={analytics.summaryCards.conversionRate}
+          change={analytics.summaryCards.conversionChange}
+          suffix="%"
+          icon={Percent}
+        />
+        <StatCard
           title="Products"
           value={analytics.summaryCards.totalProducts}
           icon={Package}
@@ -1219,13 +1226,7 @@ const AdminAnalytics: React.FC = () => {
           value={analytics.orders.pendingOrders}
           icon={Clock}
         />
-        <StatCard
-          title="Conversion Rate"
-          value={analytics.summaryCards.conversionRate}
-          change={analytics.summaryCards.conversionChange}
-          suffix="%"
-          icon={Percent}
-        />
+
         {/* <StatCard
           title="Retention Rate"
           value={analytics.userMetrics.userRetentionRate}

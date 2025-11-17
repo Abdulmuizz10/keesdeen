@@ -50,12 +50,9 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     null
   );
 
-  // Your existing state
   const subtotal = getCartAmount();
   const shippingFee = fee;
-  // Calculate discount amount based on applied coupon
   const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
-  // Calculate final total
   const finalTotal = Math.max(subtotal - discountAmount + shippingFee, 0);
 
   const orderedItems = getCartDetailsForOrder();
@@ -133,7 +130,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           validateStatus: (status: any) => status < 600,
         });
         if (response.status === 200) {
-          // Navigate to confirmation page with order data
           navigate("/order_confirmation", {
             state: { orderData: response.data },
           });
@@ -162,72 +158,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       </div>
 
       {/* Order Details List */}
-      {/* <div className="mt-5 border border-gray-200 px-3 py-5 md:p-5  bg-white space-y-5">
-        <div className="space-y-3 text-gray-500 text-sm">
-          <div className="flex justify-between">
-            <span>Subtotal:</span>
-            <span className="text-gray-700">
-              {formatAmountDefault(currency, subtotal)}
-            </span>
-          </div>
-
-          {discount > 0 && (
-            <div className="flex justify-between">
-              <span>Discount:</span>
-              <span className="text-gray-700">
-                -{discount}% ({formatAmountDefault(currency, discountAmount)})
-              </span>
-            </div>
-          )}
-
-          <div className="flex justify-between">
-            <span>Estimated Tax:</span>
-            <span className="text-gray-700">
-              {formatAmountDefault(currency, 20)}
-            </span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Shipping Fee:</span>
-            <span className="text-gray-700">
-              {formatAmountDefault(currency, shippingFee)}
-            </span>
-          </div>
-        </div>
-
-        <div className="poppins">
-          <label htmlFor="coupon" className="text-base">
-            Apply coupon code:
-          </label>
-
-          <form
-            className="grid grid-cols-[4fr_2fr] gap-2 mt-3"
-            onSubmit={applyCoupon}
-          >
-            <input
-              type="text"
-              id="coupon"
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              className="border border-gray-300 text-sm px-2 py-2 w-full focus:outline-none"
-              placeholder="Enter coupon code"
-            />
-            <button className="w-full border border-gray-900 bg-gray-900 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
-              Apply
-            </button>
-          </form>
-        </div>
-
-        <div className="border-t border-gray-200 my-4" />
-
-        <div className="flex justify-between items-center text-sm md:text-base tracking-wider font-semibold text-gray-500">
-          <span>Total:</span>
-          <span className="text-gray-700 font-medium">
-            {formatAmountDefault(currency, finalTotal)}
-          </span>
-        </div>
-      </div> */}
-
       <div className="mt-5 border border-gray-200 px-3 py-5 md:p-5 bg-white space-y-5">
         <div className="space-y-2 text-gray-500 text-sm">
           {/* Subtotal */}
