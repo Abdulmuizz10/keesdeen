@@ -200,10 +200,14 @@ const AdminCreateProduct: React.FC = () => {
     };
 
     try {
-      const res = await Axios.post(`${URL}/products/create-product`, formData, {
-        withCredentials: true,
-        validateStatus: (status: any) => status < 600,
-      });
+      const res = await Axios.post(
+        `${URL}/products/admin/create-product`,
+        formData,
+        {
+          withCredentials: true,
+          validateStatus: (status: any) => status < 600,
+        }
+      );
       if (res.status === 200) {
         toast.success("Product created successfully!");
         setProductName("");

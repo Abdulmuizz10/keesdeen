@@ -46,7 +46,7 @@ const SearchModal: React.FC = () => {
       variants={background}
       initial="initial"
       animate={isActive ? "open" : "closed"}
-      className={`bg-white h-[120vh] w-screen fixed inset-0 flex justify-center border-b border-border-secondary overflow-y-auto ${
+      className={`bg-white h-screen w-screen fixed inset-0 flex justify-center border-b border-border-secondary overflow-y-auto custom-scrollbar ${
         searchQuery.length === 0 ? "items-center" : "items-start"
       } ${isActive && "!z-50 "}`}
     >
@@ -66,7 +66,7 @@ const SearchModal: React.FC = () => {
         <div className="container mt-10 px-5 sm:px-10">
           <div className="w-full">
             <div className="w-full flex flex-col items-center">
-              <div className="flex items-center justify-center w-full border-b border-border-secondary  outline-none gap-2">
+              <div className="flex items-center justify-center w-full border-b border-gray-300  outline-none gap-2">
                 <Search
                   width={20}
                   height={20}
@@ -74,7 +74,7 @@ const SearchModal: React.FC = () => {
                 />
                 <input
                   type="text"
-                  className="w-full bg-transparent focus:outline-none py-2 poppins"
+                  className="w-full bg-transparent focus:outline-none py-2 poppins text-sm"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   placeholder="Search product..."
@@ -95,7 +95,7 @@ const SearchModal: React.FC = () => {
                   <div className=" w-full lg:w-1/5">
                     <div className="w-full mb-4">
                       <div>
-                        <p className="text-black mb-3 font-medium tracking-widest">
+                        <p className="text-black mb-3 tracking-wide">
                           Suggestions
                         </p>
                         <div className="h-[1px] w-full bg-border-secondary" />
@@ -107,7 +107,7 @@ const SearchModal: React.FC = () => {
                           to={`/collections/search/${suggestion}`}
                           key={index}
                         >
-                          <li className="poppins text-sm md:text-base text-gray-500">
+                          <li className="poppins text-sm text-gray-500">
                             {suggestion}
                           </li>
                         </Link>
@@ -117,7 +117,7 @@ const SearchModal: React.FC = () => {
                   <div className="w-full lg:w-4/5 max-md:mb-10">
                     <div className="w-full mb-5">
                       <div>
-                        <p className="text-black mb-3 font-medium tracking-widest">
+                        <p className="text-black mb-3 tracking-wide">
                           Products
                         </p>
                         <div className="h-[1px] w-full bg-border-secondary" />
