@@ -1161,7 +1161,7 @@ const AdminAnalytics: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 space-y-6 p-4 bg-background">
+    <div className="flex-1 space-y-4 p-4 bg-background">
       {/* HEADER */}
       <div className="mb-5 border-b border-border pb-8">
         <h1 className="text-2xl lg:text-5xl font-light tracking-tight mb-3">

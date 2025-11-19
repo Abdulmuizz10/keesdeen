@@ -79,7 +79,7 @@ const Navbar = () => {
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-xs tracking-wide">
+                <div className="flex items-center gap-4 text-sm tracking-wide">
                   <Link
                     to="/collections/shop_all"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
@@ -303,7 +303,7 @@ const Navbar = () => {
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-xs tracking-wider">
+                <div className="flex items-center gap-4 text-sm tracking-wider">
                   <Link
                     to="/collections/shop_all"
                     className="text-text-primary hover:text-text-secondary transition-colors duration-200"

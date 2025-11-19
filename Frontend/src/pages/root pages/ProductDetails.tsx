@@ -14,6 +14,8 @@ import Spinner from "../../components/Spinner";
 import { currency, URL } from "../../lib/constants";
 import Axios from "axios";
 import { formatAmountDefault } from "../../lib/utils";
+import { Share, ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -184,7 +186,7 @@ const ProductDetails = () => {
                       className={`flex cursor-pointer items-center gap-2 text-sm transition-opacity ${
                         color === option
                           ? "opacity-100"
-                          : "opacity-40 hover:opacity-75"
+                          : "opacity-45 hover:opacity-75"
                       }`}
                     >
                       <input
@@ -198,7 +200,7 @@ const ProductDetails = () => {
                       <span
                         className={`h-6 w-6 border ${
                           color === option
-                            ? "border-gray-900"
+                            ? "border-2 border-gray-900"
                             : "border-gray-300"
                         }`}
                         style={{
@@ -246,9 +248,9 @@ const ProductDetails = () => {
                       result.product.imageUrls[0]
                     )
                   }
-                  className="flex-1 border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+                  className="flex-1 flex items-center justify-center gap-2 border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
                 >
-                  Add to Cart
+                  Add to Cart <ShoppingBag width={20} height={20} />
                 </button>
                 <button
                   onClick={() => manageWishLists(result.product)}
@@ -258,10 +260,23 @@ const ProductDetails = () => {
                   {wishLists.find(
                     (wish: any) => wish._id === result.product._id
                   ) ? (
-                    <RiHeartFill className="text-xl text-gray-900" />
+                    <RiHeartFill className="text-2xl text-gray-900" />
                   ) : (
-                    <RiHeartLine className="text-xl text-gray-900" />
+                    <RiHeartLine className="text-2xl text-gray-900" />
                   )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/product_details/${result.product._id}`
+                    );
+                    toast.success("Product link copied!");
+                  }}
+                  className="flex h-[52px] w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50"
+                  aria-label="Add to wishlist"
+                >
+                  <Share width={20} height={20} />
                 </button>
               </div>
 

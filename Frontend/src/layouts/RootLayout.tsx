@@ -22,11 +22,16 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
 
   return (
     <main>
-      <SearchModal />
-      <Navbar />
-      {children}
-      <Outlet />
-      <Footer />
+      {isActive ? (
+        <SearchModal isActive={isActive} setIsActive={setIsActive} />
+      ) : (
+        <>
+          <Navbar />
+          {children}
+          <Outlet />
+          <Footer />
+        </>
+      )}
     </main>
   );
 };

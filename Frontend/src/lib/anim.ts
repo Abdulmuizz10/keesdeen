@@ -26,7 +26,7 @@ export const slideUp = {
   },
 };
 
-const transition = { duration: 1, ease: [0.76, 0, 0.24, 1] };
+const transition = { duration: 0.2, ease: [0.76, 0, 0.24, 1] };
 
 export const appear = {
   initial: {

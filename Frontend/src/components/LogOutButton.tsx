@@ -29,7 +29,7 @@ const LogOutButton: React.FC = () => {
         onClick={() => handleLogout()}
       >
         Log out
-        <LogOutIcon className="w-5 h-5" />
+        <LogOutIcon width={20} height={20} />
       </Button>
     </>
   );

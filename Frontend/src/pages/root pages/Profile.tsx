@@ -47,16 +47,16 @@ const Profile: React.FC = () => {
               {user?.firstName.split("")[0]}
             </div>
 
-            <div className="flex flex-col max-md:items-center">
+            <div className="flex flex-col gap-3 sm:gap-0 mt-3 max-md:items-center">
               <div className="flex items-center sm:gap-2 flex-col md:flex-row">
-                <h2 className="text-3xl font-semibold text-text-primary">
+                <h2 className="text-xl md:text-3xl font-semibold text-text-primary">
                   <span>{user?.firstName}</span>
                 </h2>
-                <h2 className="text-3xl font-semibold text-text-primary">
+                <h2 className="text-xl md:text-3xl font-semibold text-text-primary">
                   <span>{user?.lastName}</span>
                 </h2>
               </div>
-              <p className="text-text-secondary text-xs sm:text-base">
+              <p className="text-text-secondary text-sm sm:text-base">
                 {user?.email}
               </p>
             </div>
@@ -158,6 +158,11 @@ const OrderHistory: React.FC = () => {
             >
               <div className="h-4 bg-gray-200 w-1/4 mb-4" />
               <div className="h-3 bg-gray-200 w-1/3 mb-2" />
+              <div className="flex my-5 items-center gap-2">
+                {Array.from({ length: 4 }).map((_, index: number) => (
+                  <div className="h-20 w-20 bg-gray-200" key={index} />
+                ))}
+              </div>
               <div className="h-3 bg-gray-200 w-1/6" />
             </div>
           ))}
@@ -205,7 +210,7 @@ const OrderHistory: React.FC = () => {
                 {order.orderedItems && order.orderedItems.length > 0 && (
                   <div className="mb-6 flex gap-4 overflow-x-auto pb-2">
                     {order.orderedItems
-                      .slice(0, 4)
+                      .slice(0, 3)
                       .map((item: any, i: number) => (
                         <div
                           key={i}
@@ -214,15 +219,15 @@ const OrderHistory: React.FC = () => {
                           {item.image && (
                             <img
                               src={item.image}
-                              alt={item.name || "Product"}
+                              alt={"Product"}
                               className="h-full w-full object-cover"
                             />
                           )}
                         </div>
                       ))}
-                    {order.orderedItems.length > 4 && (
+                    {order.orderedItems.length > 3 && (
                       <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center bg-gray-50 text-xs text-gray-500">
-                        +{order.orderedItems.length - 4}
+                        +{order.orderedItems.length - 3}
                       </div>
                     )}
                   </div>

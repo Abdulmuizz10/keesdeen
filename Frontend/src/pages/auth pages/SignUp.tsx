@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { BiLogoGoogle } from "react-icons/bi";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Images, mainLogo } from "../../assets";
+import { mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { SignUpAccount } from "../../context/AuthContext/AuthApiCalls";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -258,13 +259,27 @@ const SignUp: React.FC = () => {
           </div>
         </div>
 
-        {/* Image Section */}
-        <div className="hidden bg-gray-50 lg:block">
-          <img
-            src={Images.animated_2}
-            alt="Sign up illustration"
-            className="h-full w-full object-cover"
-          />
+        {/* Animated Image Section */}
+        <div className="hidden bg-gray-50 lg:block relative overflow-hidden">
+          <div className="h-full w-full flex items-center justify-center">
+            <motion.img
+              src={mainLogo}
+              alt="logo"
+              className="w-auto h-20"
+              initial={{ x: 0, opacity: 0 }}
+              animate={{
+                x: [-500, -20, 0],
+                opacity: 1,
+              }}
+              transition={{
+                duration: 1.2,
+                times: [0, 0.6, 1],
+                ease: [0.43, 0.13, 0.23, 0.96],
+                repeat: Infinity,
+                repeatDelay: 2,
+              }}
+            />
+          </div>
         </div>
       </div>
     </section>

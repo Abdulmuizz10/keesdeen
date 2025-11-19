@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { background } from "../lib/anim";
-import { useShop } from "../context/ShopContext";
 import { Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import Axios from "axios";
 import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
 
-const SearchModal: React.FC = () => {
-  const { isActive, setIsActive } = useShop();
+interface searchModalProps {
+  isActive: boolean;
+  setIsActive: (value: boolean) => void;
+}
+
+const SearchModal: React.FC<searchModalProps> = ({ isActive, setIsActive }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [products, setProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
@@ -53,7 +56,7 @@ const SearchModal: React.FC = () => {
       <X
         width={20}
         height={20}
-        className="cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-10"
+        className="cursor-pointer text-text-primary my-2 absolute max-lg:top-2 max-lg:left-3 top-3 right-5"
         onClick={() => {
           setIsActive(!isActive);
           setSearchQuery("");
@@ -80,8 +83,8 @@ const SearchModal: React.FC = () => {
                   placeholder="Search product..."
                 />
                 <X
-                  width={20}
-                  height={20}
+                  width={15}
+                  height={15}
                   className="cursor-pointer text-text-primary my-2"
                   onClick={() => {
                     setSearchQuery("");
@@ -95,7 +98,7 @@ const SearchModal: React.FC = () => {
                   <div className=" w-full lg:w-1/5">
                     <div className="w-full mb-4">
                       <div>
-                        <p className="text-black mb-3 tracking-wide">
+                        <p className="text-gray-500 mb-3 tracking-wider uppercase">
                           Suggestions
                         </p>
                         <div className="h-[1px] w-full bg-border-secondary" />
@@ -117,7 +120,7 @@ const SearchModal: React.FC = () => {
                   <div className="w-full lg:w-4/5 max-md:mb-10">
                     <div className="w-full mb-5">
                       <div>
-                        <p className="text-black mb-3 tracking-wide">
+                        <p className="text-gray-500 mb-3 tracking-wider uppercase">
                           Products
                         </p>
                         <div className="h-[1px] w-full bg-border-secondary" />

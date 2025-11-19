@@ -12,7 +12,6 @@ import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
 
 const BestSellersSection: React.FC = () => {
-  // const { currentCurrency, formatAmount } = useShop();
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [_, setCurrent] = useState(0);
   const [products, setProducts] = useState([]);

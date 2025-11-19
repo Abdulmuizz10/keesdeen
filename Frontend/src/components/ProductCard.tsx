@@ -84,7 +84,7 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
         </Link>
       </div>
       <div className="p-4 text-center">
-        <h3 className="text-base xl:text-lg font-semibold text-gray-800">
+        <h3 className="text-base xl:text-md font-semibold text-gray-800">
           <span>{product.name}</span>
         </h3>
         <div className="flex gap-2 items-center justify-center">

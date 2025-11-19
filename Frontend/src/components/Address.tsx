@@ -98,12 +98,12 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
                           {shipping.firstName} {shipping.lastName}
                         </span>
                       </h4>
-                      <p className="text-gray-400 text-xs mt-1">
+                      <p className="text-gray-400 text-xs sm:text-sm mt-1">
                         {shipping.address1}
                         {shipping.address2 && `, ${shipping.address2}`},{" "}
                         {stateName}, {countryName}
                       </p>
-                      <p className="text-gray-400 text-xs mt-1">
+                      <p className="text-gray-400 text-xs sm:text-sm mt-1">
                         +{shipping.phone}
                       </p>
                     </div>
