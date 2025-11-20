@@ -107,6 +107,7 @@ const ProductDetails = () => {
                       src={item}
                       alt={`${result.product.name} - ${index + 1}`}
                       className="h-full w-full object-cover"
+                      loading="eager"
                     />
                   </div>
                 ))}

@@ -70,7 +70,7 @@ const Hero: React.FC = () => {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-start justify-center h-full max-w-7xl mx-auto px-6 sm:px-12">
-        <div className="space-y-2">
+        <div className="space-y-2 sm:space-y-1">
           {/* Main Headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight">
             <span className="block">Be</span>
@@ -98,12 +98,12 @@ const Hero: React.FC = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col w-full sm:w-fit sm:flex-row gap-4 pt-8">
             <Link to={"/collections/shop_all"}>
-              <button className="group relative px-8 py-4 bg-white text-black font-semibold text-base sm:text-lg overflow-hidden transition-all duration-300 w-full">
+              <button className="group relative px-8 py-4 bg-white text-black hover:text-white font-semibold text-base sm:text-lg overflow-hidden transition-all duration-300 w-full">
                 <span className="relative z-10">Shop Now</span>
-                {/* <div className="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Shop Now
-              </span> */}
+                <div className="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  Shop Now
+                </span>
               </button>
             </Link>
 

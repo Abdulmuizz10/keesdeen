@@ -29,10 +29,12 @@ const Navbar = () => {
     // If not on home page, always set scrolled to true
     if (!isHomePage) {
       setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
     }
 
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.pageYOffset > 0) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -60,13 +62,13 @@ const Navbar = () => {
       {isHomePage ? (
         <nav
           className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
-            isScrolled ? "bg-white shadow-xxsmall py-4" : "bg-transparent py-5"
+            isScrolled ? "bg-white shadow-xxsmall py-4" : "bg-transparent py-4"
           }`}
         >
           <div className="mx-auto px-6 lg:px-12">
-            <div className="flex items-center justify-between lg:grid lg:grid-cols-3 lg:gap-8">
+            <div className="flex items-center justify-between lg:grid lg:grid-cols-3">
               {/* Logo - Left */}
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <Link to="/">
                   <img
                     src={isScrolled ? mainLogo : mainLogoWhite}
@@ -79,7 +81,7 @@ const Navbar = () => {
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-sm tracking-wide">
+                <div className="flex items-center gap-4 text-sm tracking-wider font-light">
                   <Link
                     to="/collections/shop_all"
                     className={`hover:text-text-secondary transition-colors duration-200 ${
@@ -89,7 +91,7 @@ const Navbar = () => {
                       if (isActive) setIsActive(false);
                     }}
                   >
-                    Shop All
+                    All
                   </Link>
                   <Link
                     to="/collections/new_arrivals"
@@ -289,9 +291,9 @@ const Navbar = () => {
       ) : (
         <nav className="fixed top-0 inset-x-0 z-40 bg-white shadow-xxsmall py-4">
           <div className="mx-auto px-6 lg:px-12">
-            <div className="flex items-center justify-between lg:grid lg:grid-cols-3 lg:gap-8">
+            <div className="flex items-center justify-between lg:grid lg:grid-cols-3">
               {/* Logo - Left */}
-              <div className="flex items-center">
+              <div className="flex items-start">
                 <Link to="/">
                   <img
                     src={mainLogo}
@@ -303,7 +305,7 @@ const Navbar = () => {
 
               {/* Nav Links - Center (Desktop Only) */}
               <div className="hidden lg:flex items-center justify-center">
-                <div className="flex items-center gap-4 text-sm tracking-wider">
+                <div className="flex items-center gap-4 text-sm tracking-wider font-light">
                   <Link
                     to="/collections/shop_all"
                     className="text-text-primary hover:text-text-secondary transition-colors duration-200"
@@ -311,7 +313,7 @@ const Navbar = () => {
                       if (isActive) setIsActive(false);
                     }}
                   >
-                    Shop All
+                    All
                   </Link>
                   <Link
                     to="/collections/new_arrivals"

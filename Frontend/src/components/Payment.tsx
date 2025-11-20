@@ -199,7 +199,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         {/* Coupon Form - Only show if no coupon is applied */}
         {!appliedCoupon && (
           <div className="poppins">
-            <label htmlFor="coupon" className="text-base">
+            <label htmlFor="coupon" className="text-base tracking-wide">
               Apply coupon code:
             </label>
             <form
@@ -211,14 +211,14 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
                 id="coupon"
                 value={coupon}
                 onChange={(e) => setCoupon(e.target.value.toUpperCase())}
-                className="border border-gray-300 text-sm px-2 py-2 w-full focus:outline-none uppercase"
+                className="border border-gray-300 text-xs px-2 py-1 w-full focus:outline-none uppercase"
                 placeholder="Enter coupon code"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full border border-gray-900 bg-gray-900 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full border border-gray-900 bg-gray-900 py-2.5 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "..." : "Apply"}
               </button>
@@ -256,28 +256,32 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
       <div className="mt-10">
         <PaymentForm
-          // applicationId={"sandbox-sq0idb-vQRLXoHkdEECHbO5_h9o2A"}
-          // locationId={"LNS0B6E8H9C06"}
           applicationId={import.meta.env.VITE_SQUARE_APP_ID}
           locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
           cardTokenizeResponseReceived={(tokenResult: any) => {
-            if (address) {
-              setLoading(true);
-              if (tokenResult.errors) {
-                toast.error("Payment failed. Please try again.");
-                setLoading(false);
-              } else {
-                onPaymentSuccess(tokenResult.token);
-              }
-            } else {
+            if (!address) {
               toast.error("Please select address before checkout.");
+              return;
+            }
+
+            if (tokenResult.errors) {
+              toast.error("Payment failed. Please try again.");
               setLoading(false);
               return;
             }
+
+            setLoading(true);
+            onPaymentSuccess(tokenResult.token);
           }}
         >
           <CreditCard
             buttonProps={{
+              disabled: !address || loading,
+              onClick: () => {
+                if (!address) {
+                  toast.error("Please select address before checkout.");
+                }
+              },
               css: {
                 backgroundColor: "#111827",
                 fontSize: "14px",
@@ -290,8 +294,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               },
             }}
           >
-            Pay {/* ... */}
-            {formatAmountDefault(currency, finalTotal)}
+            Pay {formatAmountDefault(currency, finalTotal)}
           </CreditCard>
         </PaymentForm>
       </div>

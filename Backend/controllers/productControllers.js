@@ -106,6 +106,7 @@ const getCollectionsShopAllController = async (req, res) => {
     else if (req.query.sort === "high-low") sort.price = -1;
 
     const products = await ProductModel.find(filters)
+      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -155,6 +156,7 @@ const getCollectionsNewArrivalsController = async (req, res) => {
 
     const products = await ProductModel.find({ newArrival: true })
       .find(filters)
+      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -206,6 +208,7 @@ const getCollectionsActiveWearController = async (req, res) => {
     const query = { category: "Active Wear", ...filters };
 
     const products = await ProductModel.find(query)
+      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -257,6 +260,7 @@ const getCollectionsFitnessAccessoriesController = async (req, res) => {
     const query = { category: "Fitness Accessories", ...filters };
 
     const products = await ProductModel.find(query)
+      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -352,7 +356,9 @@ const searchSuggestionsWithProductsController = async (req, res) => {
         { subcategory: searchRegex },
         { type: searchRegex },
       ],
-    }).limit(12);
+    })
+      .sort({ createdAt: -1 })
+      .limit(12);
 
     const suggestions = [
       ...new Set(products.map((product) => product.name)),
@@ -363,63 +369,6 @@ const searchSuggestionsWithProductsController = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
-
-// const searchProductsResultsController = async (req, res) => {
-//   try {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 12;
-//     const skip = (page - 1) * limit;
-
-//     const filters = {};
-
-//     if (req.query.name) {
-//       // Trim and split words by spaces or punctuation
-//       const words = req.query.name.trim().split(/\s+/);
-//       // Create a regex that matches any of those words (case-insensitive)
-//       const regexPattern = words.map((word) => `(?=.*${word})`).join("") + ".*";
-
-//       filters.name = { $regex: words.join("|"), $options: "i" };
-//     }
-
-//     if (req.query.category) {
-//       const categories = req.query.category.split(",");
-//       filters.category = { $in: categories };
-//     }
-
-//     if (req.query.size) {
-//       const sizes = req.query.size.split(",");
-//       filters.size = { $in: sizes };
-//     }
-
-//     if (req.query.color) {
-//       const colors = req.query.color.split(",");
-//       filters.color = { $in: colors };
-//     }
-
-//     let sort = {};
-//     if (req.query.sort === "low-high") sort.price = 1;
-//     else if (req.query.sort === "high-low") sort.price = -1;
-
-//     const products = await ProductModel.find(filters)
-//       .sort(sort)
-//       .skip(skip)
-//       .limit(limit);
-
-//     const total = await ProductModel.countDocuments(filters);
-
-//     res.status(200).json({
-//       products,
-//       total,
-//       page,
-//       pages: Math.ceil(total / limit),
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Error fetching products",
-//       error: error.message,
-//     });
-//   }
-// };
 
 const searchProductsResultsController = async (req, res) => {
   try {
@@ -458,6 +407,7 @@ const searchProductsResultsController = async (req, res) => {
 
     // Step 1: Find products
     let products = await ProductModel.find(filters)
+      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
