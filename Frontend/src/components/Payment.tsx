@@ -1,5 +1,10 @@
-import React, { useContext, useState } from "react";
-import { CreditCard, PaymentForm } from "react-square-web-payments-sdk";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  CreditCard,
+  GooglePay,
+  ApplePay,
+  PaymentForm,
+} from "react-square-web-payments-sdk";
 import { formatAmountDefault } from "../lib/utils";
 import { X } from "lucide-react";
 import { currency, URL } from "../lib/constants";
@@ -71,7 +76,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         `${URL}/coupons/apply-coupon`,
         {
           code: coupon.toUpperCase(),
-          cartTotal: subtotal, // Send the current subtotal
+          cartTotal: subtotal,
         },
         {
           withCredentials: true,
@@ -80,15 +85,14 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       );
 
       if (response.status === 200 && response.data.success) {
-        // Store the applied coupon details
         setAppliedCoupon({
           code: coupon.toUpperCase(),
           discountAmount: response.data.discountAmount,
-          discountType: response.data.discountType || "fixed", // Get from response if available
-          discountValue: response.data.discountValue || 0, // Get from response if available
+          discountType: response.data.discountType || "fixed",
+          discountValue: response.data.discountValue || 0,
         });
         toast.success(response.data.message || "Coupon applied successfully!");
-        setCoupon(""); // Clear input after successful apply
+        setCoupon("");
       } else {
         toast.error(response.data.message || "Invalid coupon");
       }
@@ -116,7 +120,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         email: user.email,
         sourceId: token,
         currency: currency,
-        coupon,
+        coupon: appliedCoupon?.code || "",
         orderedItems,
         shippingAddress: address.shippingAddress,
         billingAddress: address.billingAddress,
@@ -145,6 +149,74 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     }
   };
 
+  // Create payment request for digital wallets
+  const createPaymentRequest = () => {
+    return {
+      countryCode: address?.shippingAddress?.country || "US",
+      currencyCode: currency,
+      total: {
+        amount: (finalTotal / 100).toFixed(2), // Convert cents to dollars
+        // amount: finalTotal,
+        label: "Total",
+      },
+      requestBillingContact: true,
+      requestShippingContact: false,
+    };
+  };
+
+  // Create verification details for SCA (Strong Customer Authentication)
+  const createVerificationDetails = () => {
+    if (!address?.billingAddress) return undefined;
+
+    return {
+      amount: (finalTotal / 100).toFixed(2),
+      // amount: finalTotal,
+      currencyCode: currency,
+      intent: "CHARGE" as const,
+      billingContact: {
+        givenName: address.billingAddress.firstName || "",
+        familyName: address.billingAddress.lastName || "",
+        email: user.email || "",
+        phone: address.billingAddress.phone || "",
+        addressLines: [
+          address.billingAddress.address1 || "",
+          address.billingAddress.address2 || "",
+        ].filter(Boolean),
+        city: address.billingAddress.city || "",
+        region: address.billingAddress.state || "",
+        postalCode: address.billingAddress.postalCode || "",
+        countryCode: address.billingAddress.country || "",
+      },
+    };
+  };
+
+  const [applePaySupported, setApplePaySupported] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const checkApplePay = async () => {
+      try {
+        // window.ApplePaySession may be undefined in non-Safari browsers
+        const ApplePaySessionAny = (window as any).ApplePaySession;
+        if (!ApplePaySessionAny) {
+          setApplePaySupported(false);
+          return;
+        }
+
+        // canMakePayments may return a Promise or boolean depending on environment
+        const canMake = ApplePaySessionAny.canMakePayments
+          ? await Promise.resolve(ApplePaySessionAny.canMakePayments())
+          : false;
+        setApplePaySupported(Boolean(canMake));
+      } catch (err) {
+        // Any errors => disable Apple Pay UI
+        setApplePaySupported(false);
+        console.error("Apple Pay check failed:", err);
+      }
+    };
+    checkApplePay();
+  }, []);
+
   return (
     <div className="w-full">
       {/* Header */}
@@ -152,8 +224,8 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
           <span>Order Details</span>
         </h3>
-        <p className="text-sm sm:text-base text-gray-500 ">
-          your order details.
+        <p className="text-sm sm:text-base text-gray-500">
+          Your order details.
         </p>
       </div>
 
@@ -254,18 +326,32 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         </div>
       </div>
 
+      {/* Payment Methods Section */}
       <div className="mt-10">
+        <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
+          <span> Choose Payment Method</span>
+        </h3>
+
         <PaymentForm
           applicationId={import.meta.env.VITE_SQUARE_APP_ID}
           locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
-          cardTokenizeResponseReceived={(tokenResult: any) => {
+          createPaymentRequest={createPaymentRequest}
+          createVerificationDetails={createVerificationDetails}
+          cardTokenizeResponseReceived={(
+            tokenResult: any
+            // verifiedBuyer?: any
+          ) => {
             if (!address) {
               toast.error("Please select address before checkout.");
               return;
             }
 
             if (tokenResult.errors) {
-              toast.error("Payment failed. Please try again.");
+              console.error("Payment errors:", tokenResult.errors);
+              const errorMessage =
+                tokenResult.errors[0]?.message ||
+                "Payment failed. Please try again.";
+              toast.error(errorMessage);
               setLoading(false);
               return;
             }
@@ -274,42 +360,100 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             onPaymentSuccess(tokenResult.token);
           }}
         >
-          <CreditCard
-            buttonProps={{
-              disabled: !address || loading,
-              onClick: () => {
-                if (!address) {
-                  toast.error("Please select address before checkout.");
-                }
-              },
-              css: {
-                backgroundColor: "#111827",
-                fontSize: "14px",
-                color: "#fff",
-                "&:hover": {
-                  backgroundColor: "#1f2937",
-                },
+          {/* Digital Wallets Section */}
+          <div className="space-y-3 mb-6">
+            <p className="text-sm sm:text-base text-gray-500">
+              Express Checkout:
+            </p>
+
+            {/* Apple Pay - Only visible if Safari/device supports it */}
+            {applePaySupported ? (
+              <ApplePay
+                buttonColor="black"
+                buttonType="buy"
+                buttonStyles={{
+                  height: "48px",
+                  borderRadius: "0px",
+                }}
+              />
+            ) : (
+              // optional: a friendly message or nothing
+              <div className="text-center text-xs text-gray-500">
+                Apple Pay not available in your browser
+              </div>
+            )}
+
+            {/* Google Pay */}
+            <GooglePay
+              buttonColor="black"
+              buttonType="buy"
+              buttonSizeMode="fill"
+              buttonStyles={{
+                height: "48px",
                 borderRadius: "0px",
-                letterSpacing: "0.1em",
-              },
-            }}
-          >
-            Pay {formatAmountDefault(currency, finalTotal)}
-          </CreditCard>
+              }}
+            />
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="px-4 text-sm text-gray-500">OR</span>
+            <div className="flex-1 border-t border-gray-300"></div>
+          </div>
+
+          {/* Credit Card Form */}
+          <div className="mt-6">
+            <p className="text-sm sm:text-base text-gray-500 mb-2">
+              Pay with Card:
+            </p>
+            <CreditCard
+              includeInputLabels
+              buttonProps={{
+                disabled: !address || loading,
+                onClick: () => {
+                  if (!address) {
+                    toast.error("Please select address before checkout.");
+                  }
+                },
+                css: {
+                  backgroundColor: "#111827",
+                  fontSize: "14px",
+                  color: "#fff",
+                  "&:hover": {
+                    backgroundColor: "#1f2937",
+                  },
+                  borderRadius: "0px",
+                  letterSpacing: "0.1em",
+                  padding: "16px",
+                  fontWeight: "600",
+                },
+              }}
+            >
+              Pay {formatAmountDefault(currency, finalTotal)}
+            </CreditCard>
+          </div>
         </PaymentForm>
+
+        {/* Security Badge */}
+        <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+          <svg
+            className="w-4 h-4"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <span>Secure payment powered by Square</span>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Payment;
-
-// firstName: string;
-// lastName: string;
-// email: string;
-// country: any;
-// state: any;
-// addressLineOne: string;
-// addressLineTwo: string;
-// phoneNumber: any;
-// zipCode: any;

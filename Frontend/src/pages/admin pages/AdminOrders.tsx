@@ -199,9 +199,10 @@ const AdminOrders: React.FC = () => {
   const getStatusBadge = (status: string) => {
     const styles = {
       Pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      Processing: "bg-blue-100 text-blue-800 border-blue-200",
+      Shipped: "bg-indigo-300 text-indigo-800 border-indigo-200",
       Delivered: "bg-green-100 text-green-800 border-green-200",
       Cancelled: "bg-red-100 text-red-800 border-red-200",
-      Processing: "bg-blue-100 text-blue-800 border-blue-200",
     };
 
     return (
@@ -278,20 +279,25 @@ const AdminOrders: React.FC = () => {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] mr-3 rounded-none">
-                {["All", "Pending", "Processing", "Delivered", "Cancelled"].map(
-                  (status) => (
-                    <DropdownMenuItem
-                      key={status}
-                      onClick={() => setStatusFilter(status)}
-                      className="flex items-center justify-between"
-                    >
-                      {status}
-                      {statusFilter === status && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
-                    </DropdownMenuItem>
-                  )
-                )}
+                {[
+                  "All",
+                  "Pending",
+                  "Processing",
+                  "Shipped",
+                  "Delivered",
+                  "Cancelled",
+                ].map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    onClick={() => setStatusFilter(status)}
+                    className="flex items-center justify-between"
+                  >
+                    {status}
+                    {statusFilter === status && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -388,6 +394,7 @@ const AdminOrders: React.FC = () => {
                               "All",
                               "Pending",
                               "Processing",
+                              "Shipped",
                               "Delivered",
                               "Cancelled",
                             ].map((status) => (
@@ -445,6 +452,7 @@ const AdminOrders: React.FC = () => {
                           "All",
                           "Pending",
                           "Processing",
+                          "Shipped",
                           "Delivered",
                           "Cancelled",
                         ].map((status) => (

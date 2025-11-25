@@ -7,14 +7,12 @@ import NewArrivalsSection from "../../components/NewArrivalsSection";
 
 const Home: React.FC = () => {
   return (
-    <div>
+    <div className="overflow-hidden">
       <Hero />
-      <div className="overflow-hidden">
-        <BestSellersSection />
-        <TextSlide />
-        <CollectionsSection />
-        <NewArrivalsSection />
-      </div>
+      <BestSellersSection />
+      <TextSlide />
+      <CollectionsSection />
+      <NewArrivalsSection />
     </div>
   );
 };
