@@ -1,17 +1,61 @@
 import express from "express";
-import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 import {
   createSubscriber,
-  getAllSubscribers,
-  sendEmailToSubscribers,
+  unSubscribeByToken,
+  adminGetAllSubscribers,
+  adminDeleteSubscriber,
+  adminCreateEmailCampaign,
+  adminSendEmailCampaign,
+  adminGetAllCampaigns,
+  adminGetCampaignAnalytics,
 } from "../controllers/subscriberControllers.js";
+import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 
 const router = express.Router();
 
-router.post("/", createSubscriber);
+// Subscriber routes
+router.post("/subscribe", createSubscriber);
+router.post("/unsubscribe/:token", unSubscribeByToken);
+router.get(
+  "/admin/get-all-subscribers",
+  verifyUser,
+  authorizeAdmin,
+  adminGetAllSubscribers
+);
+router.delete(
+  "/admin/:id/delete-subscriber",
+  verifyUser,
+  authorizeAdmin,
+  adminDeleteSubscriber
+);
 
-router.post("/send-email", verifyUser, authorizeAdmin, sendEmailToSubscribers);
+// Campaign routes
+router.post(
+  "/admin/campaigns/create-campaign",
+  verifyUser,
+  authorizeAdmin,
+  adminCreateEmailCampaign
+);
 
-router.get("/all-subscribers", verifyUser, authorizeAdmin, getAllSubscribers);
+router.post(
+  "/admin/campaigns/:campaignId/send",
+  verifyUser,
+  authorizeAdmin,
+  adminSendEmailCampaign
+);
+
+router.get(
+  "/admin/campaigns/get-all-campaigns",
+  verifyUser,
+  authorizeAdmin,
+  adminGetAllCampaigns
+);
+
+router.get(
+  "/admin/campaigns/analytics",
+  verifyUser,
+  authorizeAdmin,
+  adminGetCampaignAnalytics
+);
 
 export default router;

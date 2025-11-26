@@ -94,7 +94,7 @@ const Cart: React.FC = () => {
                 {/* Product Details */}
                 <div className="flex flex-1 flex-col justify-between">
                   <div>
-                    <h3 className="mb-1 sm:mb-2 font-light tracking-tight">
+                    <h3 className="sm:mb-2 font-light tracking-tight">
                       {item.name}
                     </h3>
                     <p className="text-sm text-gray-500">

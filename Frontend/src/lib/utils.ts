@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatAmountDefault(currency: any, amount: number): string {
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: currency,
     minimumFractionDigits: 2,

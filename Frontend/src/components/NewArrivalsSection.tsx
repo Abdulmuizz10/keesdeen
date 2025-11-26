@@ -98,8 +98,8 @@ const NewArrivalsSection: React.FC = () => {
                       </CarouselItem>
                     ))}
               </CarouselContent>
-              <CarouselPrevious className="hidden md:flex md:size-12 lg:size-14 bg-gray-200 border-2 border-gray-600" />
-              <CarouselNext className="hidden md:flex md:size-12 lg:size-14 bg-gray-200 border-2 border-gray-600" />
+              <CarouselPrevious className="hidden md:flex md:size-12 lg:size-14 bg-gray-200 border border-gray-600" />
+              <CarouselNext className="hidden md:flex md:size-12 lg:size-14 bg-gray-200 border border-gray-600" />
             </div>
           </Carousel>
         </div>

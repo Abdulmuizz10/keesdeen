@@ -89,27 +89,3 @@ const productSchema = new mongoose.Schema(
 const ProductModel = mongoose.model("ProductModel", productSchema);
 
 export default ProductModel;
-
-// "Modest Workout Tops",
-// "Joggers & Bottoms",
-// "Complete Active Wear Sets",
-// "High-Support Sports Bras",
-// "Sports Hijabs",
-// "Burkinis / Swimwear",
-
-// "Gym Essentials Kit",
-// "Workout Bag",
-// "Water Bottle",
-// "Sweat Towel",
-// "Athletic Socks",
-
-// "Black",
-// "Blue",
-// "Brown",
-// "Cream",
-// "Green",
-// "Grey",
-// "Pink",
-// "Purple",
-// "Red",
-// "White",

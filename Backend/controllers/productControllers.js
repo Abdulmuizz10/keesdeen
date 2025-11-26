@@ -106,7 +106,6 @@ const getCollectionsShopAllController = async (req, res) => {
     else if (req.query.sort === "high-low") sort.price = -1;
 
     const products = await ProductModel.find(filters)
-      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -156,7 +155,6 @@ const getCollectionsNewArrivalsController = async (req, res) => {
 
     const products = await ProductModel.find({ newArrival: true })
       .find(filters)
-      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -208,7 +206,6 @@ const getCollectionsActiveWearController = async (req, res) => {
     const query = { category: "Active Wear", ...filters };
 
     const products = await ProductModel.find(query)
-      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -260,7 +257,6 @@ const getCollectionsFitnessAccessoriesController = async (req, res) => {
     const query = { category: "Fitness Accessories", ...filters };
 
     const products = await ProductModel.find(query)
-      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -407,7 +403,6 @@ const searchProductsResultsController = async (req, res) => {
 
     // Step 1: Find products
     let products = await ProductModel.find(filters)
-      .sort({ createdAt: -1 })
       .sort(sort)
       .skip(skip)
       .limit(limit);

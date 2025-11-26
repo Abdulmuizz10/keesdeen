@@ -201,7 +201,7 @@ const ProductDetails = () => {
                       <span
                         className={`h-6 w-6 border ${
                           color === option
-                            ? "border-2 border-gray-900"
+                            ? "border-[1.5px] border-gray-900 scale-125"
                             : "border-gray-300"
                         }`}
                         style={{
@@ -315,37 +315,11 @@ const ProductDetails = () => {
   );
 };
 
-// const SampleNextArrow = (props: any) => {
-//   const { onClick } = props;
-//   return (
-//     <button
-//       className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-gray-300 bg-white/90 transition-colors hover:border-gray-900 hover:bg-white"
-//       onClick={onClick}
-//       aria-label="Next image"
-//     >
-//       <ChevronRight size={20} strokeWidth={1.5} />
-//     </button>
-//   );
-// };
-
-// const SamplePrevArrow = (props: any) => {
-//   const { onClick } = props;
-//   return (
-//     <button
-//       className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center border border-gray-300 bg-white/90 transition-colors hover:border-gray-900 hover:bg-white"
-//       onClick={onClick}
-//       aria-label="Previous image"
-//     >
-//       <ChevronLeft size={20} strokeWidth={1.5} />
-//     </button>
-//   );
-// };
-
 const SampleNextArrow = (props: any) => {
   const { onClick } = props;
   return (
     <div
-      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center right-2 top-[45%] absolute z-10 cursor-pointer"
+      className="bg-gray-200 border border-gray-600 w-14 h-14 rounded-full flex items-center justify-center right-2 top-[45%] absolute z-10 cursor-pointer"
       onClick={onClick}
     >
       <button className="next rotate-180">
@@ -359,7 +333,7 @@ const SamplePrevArrow = (props: any) => {
   const { onClick } = props;
   return (
     <div
-      className="bg-gray-200 border border-border-primary w-14 h-14 rounded-full flex items-center justify-center left-2 top-[45%] absolute z-10 cursor-pointer"
+      className="bg-gray-200 border border-gray-600 w-14 h-14 rounded-full flex items-center justify-center left-2 top-[45%] absolute z-10 cursor-pointer"
       onClick={onClick}
     >
       <button className="prev">

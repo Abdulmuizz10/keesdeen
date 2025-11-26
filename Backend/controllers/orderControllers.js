@@ -172,14 +172,6 @@ const createOrderController = async (req, res) => {
 
       // Convert BigInt values to strings for JSON serialization
       paymentResult = convertBigIntToString(result);
-
-      // Log successful payment (for debugging/monitoring)
-      // console.log("Payment successful:", {
-      //   paymentId: result.payment.id,
-      //   amount: amountInCents,
-      //   currency,
-      //   timestamp: new Date().toISOString(),
-      // });
     } catch (paymentError) {
       // Handle Square payment errors
       console.error("Payment processing failed:", paymentError);
@@ -202,10 +194,7 @@ const createOrderController = async (req, res) => {
       });
     }
 
-    // ===== ORDER CREATION =====
-
     try {
-      // Create order in your database
       const order = new OrderModel({
         ...req.body,
         paymentId: paymentResult.payment.id,
@@ -216,9 +205,6 @@ const createOrderController = async (req, res) => {
 
       const savedOrder = await order.save();
 
-      // ===== NOTIFICATIONS =====
-
-      // Send order confirmation email to buyer
       try {
         await sendOrderConfirmationEmail(
           email,
@@ -234,7 +220,6 @@ const createOrderController = async (req, res) => {
         // Don't fail the order if email fails
       }
 
-      // Send gift notification if shipping to different email
       if (shippingAddress.email && shippingAddress.email !== email) {
         try {
           await sendGiftNotificationEmail(
@@ -248,18 +233,6 @@ const createOrderController = async (req, res) => {
           // Don't fail the order if email fails
         }
       }
-
-      // Return success response
-      // return res.status(200).json({
-      //   success: true,
-      //   message: "Order created successfully",
-      //   order: savedOrder.toObject(),
-      //   payment: {
-      //     id: paymentResult.payment.id,
-      //     status: paymentResult.payment.status,
-      //     receiptUrl: paymentResult.payment.receiptUrl,
-      //   },
-      // });
 
       return res.status(200).json({ ...savedOrder.toObject(), paymentResult });
     } catch (orderError) {
