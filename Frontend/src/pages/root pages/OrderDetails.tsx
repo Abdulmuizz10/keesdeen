@@ -99,10 +99,10 @@ const OrderDetails: React.FC = () => {
           <div className="text-left md:text-right">
             <div
               className={`mb-1 inline-block text-xs font-medium uppercase tracking-wider ${getStatusColor(
-                order.isDelivered
+                order.status
               )}`}
             >
-              {order.isDelivered}
+              {order.status}
             </div>
             <p className="text-sm text-gray-500">
               Paid {formatDate(order.paidAt)}

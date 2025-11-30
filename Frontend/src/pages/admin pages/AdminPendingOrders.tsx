@@ -43,7 +43,7 @@ interface Order {
   shippingAddress: Address;
   totalPrice: number;
   paidAt: string;
-  isDelivered: string;
+  status: string;
   createdAt: string;
 }
 
@@ -123,7 +123,7 @@ const AdminPendingOrders: React.FC = () => {
     }
 
     if (statusFilter !== "All") {
-      filtered = filtered.filter((order) => order.isDelivered === statusFilter);
+      filtered = filtered.filter((order) => order.status === statusFilter);
     }
 
     setFilteredOrders(filtered);
@@ -302,10 +302,9 @@ const AdminPendingOrders: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-6">
-                        {/* {getStatusBadge(order.isDelivered)} */}
                         <DropdownMenu>
                           <DropdownMenuTrigger className="w-fit">
-                            {getStatusBadge(order.isDelivered)}
+                            {getStatusBadge(order.status)}
                           </DropdownMenuTrigger>
 
                           <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] rounded-none">
@@ -358,7 +357,7 @@ const AdminPendingOrders: React.FC = () => {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger className="w-fit">
-                        {getStatusBadge(order.isDelivered)}
+                        {getStatusBadge(order.status)}
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] mr-5 rounded-none">

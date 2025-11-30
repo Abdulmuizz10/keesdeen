@@ -68,7 +68,7 @@ interface Order {
   coupon: string;
   orderedItems: OrderItem[];
   totalPrice: number;
-  isDelivered: string;
+  status: string;
   createdAt: string;
   paidAt: string;
 }
@@ -234,9 +234,7 @@ const AdminUserDetails: React.FC = () => {
   // Calculate user statistics
   const totalSpent = orders.reduce((sum, order) => sum + order.totalPrice, 0);
   const totalOrders = orders.length;
-  const completedOrders = orders.filter(
-    (o) => o.isDelivered === "Delivered"
-  ).length;
+  const completedOrders = orders.filter((o) => o.status === "Delivered").length;
   const averageOrder = totalOrders > 0 ? totalSpent / totalOrders : 0;
 
   const sortedOrders = getSortedOrders();
@@ -482,10 +480,10 @@ const AdminUserDetails: React.FC = () => {
                       </div>
                       <span
                         className={`px-3 py-2 text-xs font-medium border ${getStatusColor(
-                          order.isDelivered
+                          order.status
                         )}`}
                       >
-                        {order.isDelivered}
+                        {order.status}
                       </span>
                     </div>
 

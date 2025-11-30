@@ -226,7 +226,7 @@ const AdminSubscribers: React.FC = () => {
     setNewCampaign((prev) => ({
       ...prev,
       image: file,
-      imagePreview: URL.createObjectURL(file),
+      imagePreview: window.URL.createObjectURL(file),
     }));
 
     uploadToCloudinary(file);
@@ -336,7 +336,7 @@ const AdminSubscribers: React.FC = () => {
     });
 
   return (
-    <div className="flex-1 p-4 space-y-4">
+    <div className="p-4 space-y-4">
       {/* HEADER */}
       <div className="mb-5 border-b border-border pb-8">
         <h1 className="text-2xl lg:text-5xl font-light tracking-tight mb-3">
@@ -385,7 +385,7 @@ const AdminSubscribers: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-3xl font-light">
                   {subscriberStats.total}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -410,7 +410,7 @@ const AdminSubscribers: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{analytics.totalSent}</div>
+                <div className="text-3xl font-light">{analytics.totalSent}</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   {analytics.totalCampaigns} total campaigns
                 </p>
@@ -433,7 +433,7 @@ const AdminSubscribers: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{analytics.openRate}%</div>
+                <div className="text-3xl font-light">{analytics.openRate}%</div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Average across campaigns
                 </p>
@@ -456,7 +456,9 @@ const AdminSubscribers: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{analytics.clickRate}%</div>
+                <div className="text-3xl font-light">
+                  {analytics.clickRate}%
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Average across campaigns
                 </p>

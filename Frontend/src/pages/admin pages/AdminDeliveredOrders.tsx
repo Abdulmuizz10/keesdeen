@@ -36,7 +36,7 @@ interface Order {
   shippingAddress: Address;
   totalPrice: number;
   paidAt: string;
-  isDelivered: string;
+  status: string;
   createdAt: string;
 }
 
@@ -234,9 +234,7 @@ const AdminDeliveredOrders: React.FC = () => {
                           {formatCurrency(order.totalPrice, order.currency)}
                         </div>
                       </td>
-                      <td className="p-6">
-                        {getStatusBadge(order.isDelivered)}
-                      </td>
+                      <td className="p-6">{getStatusBadge(order.status)}</td>
                       <td className="p-6">
                         <div className="text-sm text-muted-foreground">
                           {formatDate(order.createdAt)}
@@ -264,7 +262,7 @@ const AdminDeliveredOrders: React.FC = () => {
                         {formatDate(order.createdAt)}
                       </div>
                     </div>
-                    {getStatusBadge(order.isDelivered)}
+                    {getStatusBadge(order.status)}
                   </div>
 
                   <div className="space-y-2">

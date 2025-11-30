@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 // Hooks
 import { useLenisScroll } from "./lib/useLenisScroll";
 import ScrollToTop from "./components/ScrollToTop";
-import { usePreloadImages } from "./lib/utils";
 
 // Layouts
 import RootLayouts from "./layouts/RootLayout";
@@ -53,6 +52,7 @@ import AdminCoupons from "./pages/admin pages/AdminCoupons";
 import AdminSubscribers from "./pages/admin pages/AdminSubscribers";
 import AdminSendEmailToSubscribers from "./pages/admin pages/AdminSendEmailToSubscribers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
+import AdminSettings from "./pages/admin pages/AdminSettings";
 
 // 404 page
 import ErrorPage from "./pages/root pages/ErrorPage";
@@ -69,23 +69,11 @@ const App: React.FC = () => {
   const [animation, setAnimation] = useState<Boolean>(true);
   useLenisScroll();
 
-  const heroImages = [
-    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop",
-    "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&h=900&fit=crop",
-    "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop",
-    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&h=900&fit=crop",
-    "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1600&h=900&fit=crop",
-  ];
-
-  const imagesLoaded = usePreloadImages(heroImages);
-
   useEffect(() => {
-    if (imagesLoaded) {
-      setTimeout(() => {
-        setAnimation(false);
-      }, 3000);
-    }
-  }, [imagesLoaded]);
+    setTimeout(() => {
+      setAnimation(false);
+    }, 3000);
+  }, []);
 
   return (
     <div>
@@ -188,6 +176,7 @@ const App: React.FC = () => {
                   path="/admin/email-to-subscribers"
                   element={<AdminSendEmailToSubscribers />}
                 />
+                <Route path="/admin/settings" element={<AdminSettings />} />
               </Route>
             ) : null}
 

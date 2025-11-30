@@ -60,11 +60,11 @@ const getDashboardAnalyticsController = async (req, res) => {
       shippedOrders,
       cancelledOrders,
     ] = await Promise.all([
-      OrderModel.countDocuments({ isDelivered: "Delivered" }),
-      OrderModel.countDocuments({ isDelivered: "Pending" }),
-      OrderModel.countDocuments({ isDelivered: "Processing" }),
-      OrderModel.countDocuments({ isDelivered: "Shipped" }),
-      OrderModel.countDocuments({ isDelivered: "Cancelled" }),
+      OrderModel.countDocuments({ status: "Delivered" }),
+      OrderModel.countDocuments({ status: "Pending" }),
+      OrderModel.countDocuments({ status: "Processing" }),
+      OrderModel.countDocuments({ status: "Shipped" }),
+      OrderModel.countDocuments({ status: "Cancelled" }),
     ]);
 
     // 5. Average Order Value (AOV)

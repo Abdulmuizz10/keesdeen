@@ -253,10 +253,12 @@ const AppSidebar = () => {
                     Profile
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>
-                  <Settings className="h-[1.2rem] w-[1.2rem] mr-2" />
-                  Settings
-                </DropdownMenuItem>
+                <Link to="/admin/settings">
+                  <DropdownMenuItem>
+                    <Settings className="h-[1.2rem] w-[1.2rem] mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem onClick={() => handleLogout()}>
                   <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
                   Logout

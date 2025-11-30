@@ -53,7 +53,7 @@ interface Order {
   shippingAddress: Address;
   totalPrice: number;
   paidAt: string;
-  isDelivered: string;
+  status: string;
   createdAt: string;
 }
 
@@ -103,9 +103,9 @@ const AdminOrders: React.FC = () => {
   // Stats calculation
   const stats = {
     total: orders?.length || 0,
-    pending: orders?.filter((o) => o.isDelivered === "Pending").length || 0,
-    delivered: orders?.filter((o) => o.isDelivered === "Delivered").length || 0,
-    cancelled: orders?.filter((o) => o.isDelivered === "Cancelled").length || 0,
+    pending: orders?.filter((o) => o.status === "Pending").length || 0,
+    delivered: orders?.filter((o) => o.status === "Delivered").length || 0,
+    cancelled: orders?.filter((o) => o.status === "Cancelled").length || 0,
   };
 
   const fetchData = async (page: number) => {
@@ -175,7 +175,7 @@ const AdminOrders: React.FC = () => {
     }
 
     if (statusFilter !== "All") {
-      filtered = filtered.filter((order) => order.isDelivered === statusFilter);
+      filtered = filtered.filter((order) => order.status === statusFilter);
     }
 
     setFilteredOrders(filtered);
@@ -387,7 +387,7 @@ const AdminOrders: React.FC = () => {
                       <td className="p-6">
                         <DropdownMenu>
                           <DropdownMenuTrigger className="w-fit">
-                            {getStatusBadge(order.isDelivered)}
+                            {getStatusBadge(order.status)}
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] rounded-none">
                             {[
@@ -444,7 +444,7 @@ const AdminOrders: React.FC = () => {
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger className="w-fit">
-                        {getStatusBadge(order.isDelivered)}
+                        {getStatusBadge(order.status)}
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent className="w-48 mr-10 rounded-none">

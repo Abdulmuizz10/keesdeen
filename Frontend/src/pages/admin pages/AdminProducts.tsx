@@ -488,7 +488,7 @@ const AdminProducts: React.FC = () => {
                         <span
                           className={`font-medium ${
                             product.bestSeller
-                              ? "text-green-200"
+                              ? "text-green-300"
                               : "text-red-300"
                           }`}
                         >
@@ -499,7 +499,7 @@ const AdminProducts: React.FC = () => {
                         <span
                           className={`font-medium ${
                             product.newArrival
-                              ? "text-green-200"
+                              ? "text-green-300"
                               : "text-red-300"
                           }`}
                         >
@@ -603,7 +603,7 @@ const AdminProducts: React.FC = () => {
                         className={`inline-flex items-center gap-1 px-2 py-0.5 
                           ${
                             product.bestSeller
-                              ? "text-green-200"
+                              ? "text-green-300"
                               : "text-red-300"
                           }`}
                       >
@@ -619,7 +619,7 @@ const AdminProducts: React.FC = () => {
                         className={`inline-flex items-center gap-1 px-2 py-0.5 
                           ${
                             product.newArrival
-                              ? "text-green-200"
+                              ? "text-green-300"
                               : "text-red-300"
                           }`}
                       >

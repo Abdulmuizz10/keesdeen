@@ -186,12 +186,12 @@ const OrderCard = ({ order }: { order: any }) => {
           <p className="text-gray-500 text-base">Status:</p>
           <p
             className={`font-semibold px-2 py-1 rounded ${
-              order.isDelivered === "Delivered"
+              order.status === "Delivered"
                 ? "bg-green-100 text-green-700"
                 : "bg-yellow-100 text-yellow-700"
             }`}
           >
-            {order.isDelivered}
+            {order.status}
           </p>
         </div>
         <Link

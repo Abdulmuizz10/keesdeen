@@ -76,24 +76,3 @@ export const useInView = (ref: React.RefObject<HTMLElement>) => {
 
   return isInView;
 };
-
-export const usePreloadImages = (urls: string[]) => {
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    let count = 0;
-
-    urls.forEach((url) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = img.onerror = () => {
-        count++;
-        if (count === urls.length) {
-          setLoaded(true);
-        }
-      };
-    });
-  }, [urls]);
-
-  return loaded;
-};

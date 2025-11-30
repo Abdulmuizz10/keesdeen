@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import {
   sendGiftNotificationEmail,
   sendOrderConfirmationEmail,
+  sendOrderStatusEmail,
 } from "../lib/utils.js";
 
 dotenv.config();
@@ -195,12 +196,28 @@ const createOrderController = async (req, res) => {
     }
 
     try {
+      const payment = paymentResult.payment;
+
       const order = new OrderModel({
         ...req.body,
-        paymentId: paymentResult.payment.id,
-        paymentStatus: paymentResult.payment.status,
-        orderStatus: "processing",
-        createdAt: new Date().toISOString(),
+        paymentInfo: {
+          squarePaymentId: payment.id,
+          squareOrderId: payment.orderId,
+          paymentStatus: payment.status,
+          amountPaid: Number(payment.amountMoney.amount) / 100,
+          currency: payment.amountMoney.currency,
+          paidAt: payment.createdAt,
+          receiptUrl: payment.receiptUrl,
+          receiptNumber: payment.receiptNumber,
+          paymentSourceType: payment.sourceType,
+          cardBrand: payment.cardDetails?.card?.brand,
+          cardLast4: payment.cardDetails?.card?.last4,
+          cardStatus: payment.cardDetails?.status,
+          riskLevel: payment.riskEvaluation?.riskLevel,
+          customerSquareId: payment.customerId,
+          locationId: payment.locationId,
+        },
+        status: "Processing",
       });
 
       const savedOrder = await order.save();
@@ -413,12 +430,12 @@ const adminGetPendingOrdersByPaginationController = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Using $ne (not equal) operator to exclude 'Delivered' orders
-    const orders = await OrderModel.find({ isDelivered: { $ne: "Delivered" } })
+    const orders = await OrderModel.find({ status: { $ne: "Delivered" } })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
     const totalProducts = await OrderModel.countDocuments({
-      isDelivered: { $ne: "Delivered" },
+      status: { $ne: "Delivered" },
     });
     // Count documents excluding 'Delivered' orders
     const totalPages = Math.ceil(totalProducts / limit);
@@ -433,13 +450,13 @@ const adminGetDeliveredOrdersByPaginationController = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const skip = (page - 1) * limit;
-    const orders = await OrderModel.find({ isDelivered: "Delivered" })
+    const orders = await OrderModel.find({ status: "Delivered" })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
     const totalProducts = await OrderModel.countDocuments({
-      isDelivered: "Delivered",
+      status: "Delivered",
     });
     const totalPages = Math.ceil(totalProducts / limit);
     res.status(200).json({ orders, totalPages });
@@ -481,9 +498,50 @@ const adminGetUserOrderByIdController = async (req, res) => {
   }
 };
 
-const adminUpdateOrderStatusController = async (req, res) => {
-  const { status } = req.body;
+// const adminUpdateOrderStatusController = async (req, res) => {
+//   const { status } = req.body;
 
+//   const validStatuses = [
+//     "Pending",
+//     "Processing",
+//     "Shipped",
+//     "Delivered",
+//     "Cancelled",
+//   ];
+//   if (!validStatuses.includes(status)) {
+//     return res.status(400).json({ message: "Invalid status value" });
+//   }
+
+//   try {
+//     const order = await OrderModel.findById(req.params.id);
+//     if (!order) {
+//       return res.status(404).json({ message: "Order not found" });
+//     }
+//     order.status = status;
+
+//     if (status === "Shipped") {
+//       order.shippedAt = new Date();
+
+//     } else {
+//       order.shippedAt = null;
+//     }
+
+//     if (status === "Delivered") {
+//       order.deliveredAt = new Date();
+//     } else {
+//       order.deliveredAt = null;
+//     }
+
+//     // Save the updated order
+//     await order.save();
+//     res.status(200).json({ message: `Order status updated to ${status}` });
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to update order status" });
+//   }
+// };
+
+const adminUpdateOrderStatusController = async (req, res) => {
+  const { status } = req.body; // Added trackingNumber for shipped orders
   const validStatuses = [
     "Pending",
     "Processing",
@@ -491,16 +549,30 @@ const adminUpdateOrderStatusController = async (req, res) => {
     "Delivered",
     "Cancelled",
   ];
+
   if (!validStatuses.includes(status)) {
     return res.status(400).json({ message: "Invalid status value" });
   }
 
   try {
-    const order = await OrderModel.findById(req.params.id);
+    const order = await OrderModel.findById(req.params.id)
+      .populate("user") // Populate user to get email and name
+      .populate("orderedItems"); // Populate products for email details
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
-    order.isDelivered = status;
+
+    order.status = status;
+
+    if (status === "Shipped") {
+      order.shippedAt = new Date();
+      // if (trackingNumber) {
+      //   order.trackingNumber = trackingNumber;
+      // }
+    } else {
+      order.shippedAt = null;
+    }
 
     if (status === "Delivered") {
       order.deliveredAt = new Date();
@@ -510,8 +582,41 @@ const adminUpdateOrderStatusController = async (req, res) => {
 
     // Save the updated order
     await order.save();
-    res.status(200).json({ message: `Order status updated to ${status}` });
+
+    // Send email notification for Shipped or Delivered status
+    if (status === "Shipped" || status === "Delivered") {
+      try {
+        // Prepare items for email
+        const orderedItems = order.orderedItems.map((item) => ({
+          name: item.name,
+          qty: item.qty,
+          price: item.price,
+        }));
+
+        await sendOrderStatusEmail(
+          order.user.email,
+          order.user.firstName ||
+            order.shippingAddress?.firstName ||
+            "Valued Customer",
+          order._id,
+          status,
+          orderedItems,
+          order.totalPrice,
+          order.currency,
+          status === "Shipped"
+        );
+      } catch (emailError) {
+        console.error("Failed to send status email:", emailError);
+        // Don't fail the request if email fails
+      }
+    }
+
+    res.status(200).json({
+      message: `Order status updated to ${status}`,
+      order,
+    });
   } catch (error) {
+    console.error("Error updating order status:", error);
     res.status(500).json({ message: "Failed to update order status" });
   }
 };

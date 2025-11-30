@@ -38,12 +38,30 @@ const orderSchema = new mongoose.Schema(
     shippingPrice: { type: Number, default: 0.0 },
     totalPrice: { type: Number, default: 0.0 },
     paidAt: { type: Date, default: null },
-    isDelivered: {
+    status: {
       type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
       default: "Pending",
     },
     deliveredAt: { type: Date, default: null },
+    shippedAt: { type: Date, default: null },
+    paymentInfo: {
+      squarePaymentId: { type: String, required: true },
+      squareOrderId: { type: String },
+      paymentStatus: { type: String, required: true },
+      amountPaid: { type: Number, required: true },
+      currency: { type: String, required: true },
+      paidAt: { type: Date },
+      receiptUrl: { type: String },
+      receiptNumber: { type: String },
+      paymentSourceType: { type: String },
+      cardBrand: { type: String },
+      cardLast4: { type: String },
+      cardStatus: { type: String },
+      riskLevel: { type: String },
+      customerSquareId: { type: String },
+      locationId: { type: String },
+    },
   },
   { timestamps: true }
 );

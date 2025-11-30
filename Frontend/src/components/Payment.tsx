@@ -48,7 +48,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     setCartItems,
     getCartDetailsForOrder,
   } = useShop();
-
+  const [isPaying, setIsPaying] = useState(false);
   const [loading, _] = useState();
   const [coupon, setCoupon] = useState<string>("");
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(
@@ -144,6 +144,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       } catch (error) {
         toast.error("Order submission failed. Please try again.");
       } finally {
+        setIsPaying(false);
         setLoading(false);
       }
     }
@@ -216,6 +217,17 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     };
     checkApplePay();
   }, []);
+
+  useEffect(() => {
+    const blockNav = (e: BeforeUnloadEvent) => {
+      if (isPaying) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", blockNav);
+    return () => window.removeEventListener("beforeunload", blockNav);
+  }, [isPaying]);
 
   return (
     <div className="w-full">
@@ -337,26 +349,29 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
           createPaymentRequest={createPaymentRequest}
           createVerificationDetails={createVerificationDetails}
-          cardTokenizeResponseReceived={(
-            tokenResult: any
-            // verifiedBuyer?: any
-          ) => {
+          cardTokenizeResponseReceived={(tokenResult: any) => {
+            if (isPaying) return; // HARD BLOCK multiple clicks
+
+            setIsPaying(true);
+            setLoading(true);
+
             if (!address) {
               toast.error("Please select address before checkout.");
-              return;
-            }
-
-            if (tokenResult.errors) {
-              console.error("Payment errors:", tokenResult.errors);
-              const errorMessage =
-                tokenResult.errors[0]?.message ||
-                "Payment failed. Please try again.";
-              toast.error(errorMessage);
+              setIsPaying(false);
               setLoading(false);
               return;
             }
 
-            setLoading(true);
+            if (tokenResult.errors) {
+              const errorMessage =
+                tokenResult.errors[0]?.message ||
+                "Payment failed. Please try again.";
+              toast.error(errorMessage);
+              setIsPaying(false);
+              setLoading(false);
+              return;
+            }
+
             onPaymentSuccess(tokenResult.token);
           }}
         >
@@ -366,7 +381,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               Express Checkout:
             </p>
 
-            {/* Apple Pay - Only visible if Safari/device supports it */}
+            {/* Apple Pay */}
             {applePaySupported ? (
               <ApplePay
                 buttonColor="black"
@@ -374,10 +389,10 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
                 buttonStyles={{
                   height: "48px",
                   borderRadius: "0px",
+                  opacity: isPaying ? 0.6 : 1,
                 }}
               />
             ) : (
-              // optional: a friendly message or nothing
               <div className="text-center text-xs text-gray-500">
                 Apple Pay not available in your browser
               </div>
@@ -391,6 +406,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               buttonStyles={{
                 height: "48px",
                 borderRadius: "0px",
+                opacity: isPaying ? 0.6 : 1,
               }}
             />
           </div>
@@ -410,19 +426,17 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             <CreditCard
               includeInputLabels
               buttonProps={{
-                disabled: !address || loading,
+                disabled: !address || isPaying,
                 onClick: () => {
                   if (!address) {
                     toast.error("Please select address before checkout.");
                   }
                 },
                 css: {
-                  backgroundColor: "#111827",
+                  backgroundColor: isPaying ? "#9ca3af" : "#111827",
+                  cursor: isPaying ? "not-allowed" : "pointer",
                   fontSize: "14px",
                   color: "#fff",
-                  "&:hover": {
-                    backgroundColor: "#1f2937",
-                  },
                   borderRadius: "0px",
                   letterSpacing: "0.1em",
                   padding: "16px",
@@ -430,7 +444,9 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
                 },
               }}
             >
-              Pay {formatAmountDefault(currency, finalTotal)}
+              {isPaying
+                ? "Processing..."
+                : `Pay ${formatAmountDefault(currency, finalTotal)}`}
             </CreditCard>
           </div>
         </PaymentForm>

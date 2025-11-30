@@ -47,35 +47,15 @@ interface Coupon {
   updatedAt: string;
 }
 
-const StatCard = ({ title, value, icon: Icon, status }: any) => (
+const StatCard = ({ title, value, icon: Icon }: any) => (
   <div className="bg-card border border-border p-6">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className="text-3xl font-light tracking-tight mt-2">{value}</p>
       </div>
-      <div
-        className={`p-3 rounded-full ${
-          status === "active"
-            ? "bg-green-100"
-            : status === "percentage"
-            ? "bg-blue-100"
-            : status === "fixed"
-            ? "bg-purple-100"
-            : "bg-muted"
-        }`}
-      >
-        <Icon
-          className={`h-5 w-5 ${
-            status === "active"
-              ? "text-green-600"
-              : status === "percentage"
-              ? "text-blue-600"
-              : status === "fixed"
-              ? "text-purple-600"
-              : "text-muted-foreground"
-          }`}
-        />
+      <div className={`p-3 rounded-full bg-muted`}>
+        <Icon className={`h-5 w-5 text-muted-foreground`} />
       </div>
     </div>
   </div>

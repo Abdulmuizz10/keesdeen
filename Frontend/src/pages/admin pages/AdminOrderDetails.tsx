@@ -9,7 +9,6 @@ import {
 import {
   ArrowLeft,
   Package,
-  MapPin,
   CreditCard,
   Check,
   ChevronDown,
@@ -17,6 +16,14 @@ import {
   Phone,
   Calendar,
   Truck,
+  AlertCircle,
+  Shield,
+  Receipt,
+  ExternalLink,
+  Copy,
+  Sparkles,
+  User,
+  Building2,
 } from "lucide-react";
 import Axios from "axios";
 import { URL } from "@/lib/constants";
@@ -48,6 +55,24 @@ interface Address {
   postalCode: string;
 }
 
+interface PaymentInfo {
+  squarePaymentId: string;
+  squareOrderId?: string;
+  paymentStatus: string;
+  amountPaid: number;
+  currency: string;
+  paidAt?: string;
+  receiptUrl?: string;
+  receiptNumber?: string;
+  paymentSourceType?: string;
+  cardBrand?: string;
+  cardLast4?: string;
+  cardStatus?: string;
+  riskLevel?: string;
+  customerSquareId?: string;
+  locationId?: string;
+}
+
 interface Order {
   _id: string;
   user: string;
@@ -60,10 +85,12 @@ interface Order {
   shippingPrice: number;
   totalPrice: number;
   paidAt: string;
-  isDelivered: string;
+  status: string;
+  shippedAt: string | null;
   deliveredAt: string | null;
   createdAt: string;
   updatedAt: string;
+  paymentInfo?: PaymentInfo;
 }
 
 const AdminOrderDetails: React.FC = () => {
@@ -122,6 +149,11 @@ const AdminOrderDetails: React.FC = () => {
     }
   };
 
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} copied to clipboard`);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
@@ -141,21 +173,56 @@ const AdminOrderDetails: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     const colors = {
-      Pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
-      Processing: "bg-blue-50 text-blue-700 border-blue-200",
-      Delivered: "bg-green-50 text-green-700 border-green-200",
-      Cancelled: "bg-red-50 text-red-700 border-red-200",
+      Pending:
+        "bg-amber-50/50 text-amber-800 border-amber-200/60 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-900/40",
+
+      Processing:
+        "bg-sky-50/50 text-sky-800 border-sky-200/60 dark:bg-sky-950/30 dark:text-sky-300 dark:border-sky-900/40",
+
+      Shipped:
+        "bg-violet-50/50 text-violet-800 border-violet-200/60 dark:bg-violet-950/30 dark:text-violet-300 dark:border-violet-900/40",
+
+      Delivered:
+        "bg-emerald-50/50 text-emerald-800 border-emerald-200/60 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-900/40",
+
+      Cancelled:
+        "bg-rose-50/50 text-rose-800 border-rose-200/60 dark:bg-rose-950/30 dark:text-rose-300 dark:border-rose-900/40",
     };
+
     return (
       colors[status as keyof typeof colors] ||
       "bg-muted text-muted-foreground border-border"
     );
   };
 
+  const getRiskLevelColor = (level?: string) => {
+    if (!level) return "text-muted-foreground";
+    const colors = {
+      NORMAL: "text-green-600 dark:text-green-400",
+      MODERATE: "text-yellow-600 dark:text-yellow-400",
+      HIGH: "text-red-600 dark:text-red-400",
+    };
+    return colors[level as keyof typeof colors] || "text-muted-foreground";
+  };
+
+  const getCardBrandIcon = (brand?: string) => {
+    const brandLower = brand?.toLowerCase() || "";
+    if (brandLower.includes("visa")) return "💳";
+    if (brandLower.includes("mastercard")) return "💳";
+    if (brandLower.includes("amex")) return "💳";
+    return "💳";
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Spinner className="size-8" />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <div className="relative">
+          <Spinner className="size-12" />
+          <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5 text-foreground animate-pulse" />
+        </div>
+        <p className="text-sm text-muted-foreground animate-pulse">
+          Loading order details...
+        </p>
       </div>
     );
   }
@@ -163,7 +230,10 @@ const AdminOrderDetails: React.FC = () => {
   if (!order) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Order not found</p>
+        <div className="text-center space-y-4">
+          <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto" />
+          <p className="text-muted-foreground">Order not found</p>
+        </div>
       </div>
     );
   }
@@ -174,379 +244,653 @@ const AdminOrderDetails: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background p-4 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-5 border-b border-border pb-8">
-          <button
-            onClick={() => navigate("/admin/orders")}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Orders
-          </button>
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl lg:text-5xl font-light tracking-tight mb-3">
-                Order Details
+    <div className="p-4">
+      {/*Header */}
+      <div className="mb-5">
+        <button
+          onClick={() => navigate("/admin/orders")}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Orders
+        </button>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl lg:text-5xl font-light tracking-tight bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
+                Order #{order._id.slice(-8).toUpperCase()}
               </h1>
-              <p className="text-sm text-muted-foreground font-mono">
-                #{order._id.slice(-8).toUpperCase()}
-              </p>
+              <button
+                onClick={() => copyToClipboard(order._id, "Order ID")}
+                className="p-2 hover:bg-muted rounded-sm transition-colors"
+                title="Copy full order ID"
+              >
+                <Copy className="h-4 w-4 text-muted-foreground" />
+              </button>
             </div>
-            <div className="flex items-center gap-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger disabled={updating}>
-                  <div
-                    className={`inline-flex items-center gap-2 px-6 py-3 border transition-colors ${getStatusColor(
-                      order.isDelivered
-                    )} ${
-                      updating
-                        ? "opacity-50 cursor-not-allowed"
-                        : "cursor-pointer hover:opacity-80"
-                    }`}
-                  >
-                    <span className="text-sm font-medium">
-                      {order.isDelivered}
-                    </span>
-                    <ChevronDown className="h-4 w-4" />
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48 rounded-none">
-                  {["Pending", "Processing", "Delivered", "Cancelled"].map(
-                    (status) => (
-                      <DropdownMenuItem
-                        key={status}
-                        onClick={() => handleStatusChange(status)}
-                        className="flex items-center justify-between"
-                      >
-                        {status}
-                        {order.isDelivered === status && (
-                          <Check className="h-4 w-4 text-primary" />
-                        )}
-                      </DropdownMenuItem>
-                    )
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span>Placed {formatDate(order.createdAt)}</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                <span>{order.email}</span>
+              </div>
             </div>
           </div>
+
+          {/* Status Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger disabled={updating}>
+              <div
+                className={`inline-flex items-center gap-3 px-6 py-3 border-2 transition-all ${getStatusColor(
+                  order.status
+                )} ${
+                  updating
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer hover:opacity-80"
+                }`}
+              >
+                <span className="text-sm font-semibold tracking-wide">
+                  {order.status}
+                </span>
+                <ChevronDown className="h-4 w-4" />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] rounded-none">
+              {[
+                "Pending",
+                "Processing",
+                "Shipped",
+                "Delivered",
+                "Cancelled",
+              ].map((status) => (
+                <DropdownMenuItem
+                  key={status}
+                  onClick={() => handleStatusChange(status)}
+                  className="flex items-center justify-between py-3"
+                >
+                  <span className="font-medium">{status}</span>
+                  {order.status === status && (
+                    <Check className="h-4 w-4 text-primary" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Order Items */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <Package className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-light tracking-tight">
-                  Order Items
-                </h2>
-              </div>
+        <div className="h-px bg-gradient-to-r from-border via-border/50 to-transparent mt-8" />
+      </div>
 
-              <div className="space-y-4">
-                {order.orderedItems.map((item) => (
-                  <div
-                    key={item._id}
-                    className="flex gap-4 p-4 border border-border hover:bg-muted/30 transition-colors"
-                  >
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* Main Content - Left Side */}
+        <div className="xl:col-span-2 space-y-8">
+          {/* Order Items */}
+          <section className="border border-border bg-card">
+            <div className="flex items-center gap-3 p-3 border-b border-border">
+              <div className="p-2 bg-muted rounded-sm">
+                <Package className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-light">Order Items</h2>
+                <p className="text-xs text-muted-foreground">
+                  {order.orderedItems.length} item
+                  {order.orderedItems.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="divide-y divide-border">
+              {order.orderedItems.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex gap-4 p-3 hover:bg-muted/30 transition-colors group"
+                >
+                  <div className="relative w-24 h-24 flex-shrink-0 border border-border bg-muted/30 overflow-hidden">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-20 h-20 object-cover border border-border"
+                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
                     />
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium mb-2">{item.name}</h3>
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                        <span>Size: {item.size}</span>
-                        <span>Color: {item.color}</span>
-                        <span>Qty: {item.qty}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">
-                        {formatCurrency(item.price * item.qty, order.currency)}
-                      </p>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium mb-2 truncate">{item.name}</h3>
+                    <div className="flex flex-wrap gap-3 text-sm">
+                      <span className="text-muted-foreground text-xs">
+                        Size: {item.size}
+                      </span>
+                      <span className="text-muted-foreground text-xs">
+                        Color: {item.color}
+                      </span>
+                      <span className="text-muted-foreground text-xs">
+                        Qty: {item.qty}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </section>
+                  <div className="text-right flex flex-col justify-between">
+                    <p className="text-lg">
+                      {formatCurrency(item.price * item.qty, order.currency)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatCurrency(item.price, order.currency)} each
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-            {/* Shipping Address */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-light tracking-tight">
-                  Shipping Address
-                </h2>
-              </div>
-
-              <div className="p-6 border border-border space-y-3">
-                <p className="text-sm font-medium">
-                  {order.shippingAddress.firstName}{" "}
-                  {order.shippingAddress.lastName}
-                </p>
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  <p>{order.shippingAddress.address1}</p>
-                  {order.shippingAddress.address2 && (
-                    <p>{order.shippingAddress.address2}</p>
-                  )}
-                  <p>
-                    {State.getStateByCodeAndCountry(
-                      order.shippingAddress.state,
-                      order.shippingAddress.country
-                    )?.name || order.shippingAddress.state}
-                    ,{" "}
-                    {Country.getCountryByCode(order.shippingAddress.country)
-                      ?.name || order.shippingAddress.country}{" "}
-                    {order.shippingAddress.postalCode}
+          {/* Payment Information */}
+          {order.paymentInfo && (
+            <section className="border border-border bg-card">
+              <div className="flex items-center gap-3 p-6 border-b border-border">
+                <div className="p-2 bg-muted rounded-sm">
+                  <CreditCard className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-light">Payment Details</h2>
+                  <p className="text-xs text-muted-foreground">
+                    Square Payment Processing
                   </p>
                 </div>
-                <div className="pt-3 border-t border-border space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    {order.shippingAddress.email}
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Payment Status Banner */}
+                <div
+                  className={`flex items-center gap-3 p-4 border ${
+                    order.paymentInfo.paymentStatus === "COMPLETED"
+                      ? "bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-700"
+                      : "bg-yellow-50 border-yellow-200 dark:bg-yellow-950 dark:border-yellow-900"
+                  }`}
+                >
+                  <Check
+                    className={`h-5 w-5 ${
+                      order.paymentInfo.paymentStatus === "COMPLETED"
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-yellow-600 dark:text-yellow-400"
+                    }`}
+                  />
+                  <div>
+                    <p className="font-semibold text-sm">
+                      Payment {order.paymentInfo.paymentStatus}
+                    </p>
+                    <p className="text-xs opacity-80">
+                      {formatCurrency(
+                        order.paymentInfo.amountPaid,
+                        order.paymentInfo.currency
+                      )}{" "}
+                      paid
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="h-4 w-4" />+{order.shippingAddress.phone}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Payment Method */}
+                  {order.paymentInfo.cardBrand && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Payment Method
+                      </p>
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="text-2xl">
+                          {getCardBrandIcon(order.paymentInfo.cardBrand)}
+                        </span>
+                        <span className="font-medium">
+                          {order.paymentInfo.cardBrand}
+                        </span>
+                        {order.paymentInfo.cardLast4 && (
+                          <span className="text-muted-foreground">
+                            •••• {order.paymentInfo.cardLast4}
+                          </span>
+                        )}
+                      </div>
+                      {order.paymentInfo.cardStatus && (
+                        <p className="text-xs text-muted-foreground">
+                          Status: {order.paymentInfo.cardStatus}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Risk Assessment */}
+                  {order.paymentInfo.riskLevel && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Risk Level
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Shield
+                          className={`h-4 w-4 ${getRiskLevelColor(
+                            order.paymentInfo.riskLevel
+                          )}`}
+                        />
+                        <span
+                          className={`font-semibold text-sm ${getRiskLevelColor(
+                            order.paymentInfo.riskLevel
+                          )}`}
+                        >
+                          {order.paymentInfo.riskLevel}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Receipt */}
+                  {order.paymentInfo.receiptUrl && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Receipt
+                      </p>
+                      <a
+                        href={order.paymentInfo.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                      >
+                        <Receipt className="h-4 w-4" />
+                        <span>View Receipt</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                      {order.paymentInfo.receiptNumber && (
+                        <p className="text-xs text-muted-foreground">
+                          #{order.paymentInfo.receiptNumber}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Payment Date */}
+                  {order.paymentInfo.paidAt && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                        Payment Date
+                      </p>
+                      <p className="text-sm">
+                        {formatDate(order.paymentInfo.paidAt)}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Transaction IDs */}
+                <div className="pt-6 border-t border-border space-y-3">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    Transaction Details
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 font-mono text-xs">
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-sm">
+                      <span className="text-muted-foreground">Payment ID:</span>
+                      <div className="flex items-center gap-2">
+                        <span className="truncate max-w-[200px]">
+                          {order.paymentInfo.squarePaymentId}
+                        </span>
+                        <button
+                          onClick={() =>
+                            copyToClipboard(
+                              order.paymentInfo!.squarePaymentId,
+                              "Payment ID"
+                            )
+                          }
+                          className="p-1 hover:bg-background rounded"
+                        >
+                          <Copy className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                    {order.paymentInfo.squareOrderId && (
+                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-sm">
+                        <span className="text-muted-foreground">
+                          Square Order ID:
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="truncate max-w-[200px]">
+                            {order.paymentInfo.squareOrderId}
+                          </span>
+                          <button
+                            onClick={() =>
+                              copyToClipboard(
+                                order.paymentInfo!.squareOrderId!,
+                                "Square Order ID"
+                              )
+                            }
+                            className="p-1 hover:bg-background rounded"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Addresses */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Shipping Address */}
+            <section className="border border-border bg-card">
+              <div className="flex items-center gap-3 p-6 border-b border-border">
+                <div className="p-2 bg-muted rounded-sm">
+                  <Truck className="h-5 w-5" />
+                </div>
+                <h2 className="text-lg light">Shipping Address</h2>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="mb-1">
+                    {order.shippingAddress.firstName}{" "}
+                    {order.shippingAddress.lastName}
+                  </p>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p>{order.shippingAddress.address1}</p>
+                    {order.shippingAddress.address2 && (
+                      <p>{order.shippingAddress.address2}</p>
+                    )}
+                    <p>
+                      {State.getStateByCodeAndCountry(
+                        order.shippingAddress.state,
+                        order.shippingAddress.country
+                      )?.name || order.shippingAddress.state}
+                      ,{" "}
+                      {Country.getCountryByCode(order.shippingAddress.country)
+                        ?.name || order.shippingAddress.country}{" "}
+                      {order.shippingAddress.postalCode}
+                    </p>
+                  </div>
+                </div>
+                <div className="pt-4 border-t border-border space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {order.shippingAddress.email}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      +{order.shippingAddress.phone}
+                    </span>
                   </div>
                 </div>
               </div>
             </section>
 
             {/* Billing Address */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-3 pb-4 border-b border-border">
-                <CreditCard className="h-5 w-5 text-muted-foreground" />
-                <h2 className="text-xl font-light tracking-tight">
-                  Billing Address
-                </h2>
+            <section className="border border-border bg-card">
+              <div className="flex items-center gap-3 p-6 border-b border-border">
+                <div className="p-2 bg-muted rounded-sm">
+                  <Building2 className="h-5 w-5" />
+                </div>
+                <h2 className="text-lg font-light">Billing Address</h2>
               </div>
 
-              <div className="p-6 border border-border space-y-3">
-                <p className="text-sm font-medium">
-                  {order.billingAddress.firstName}{" "}
-                  {order.billingAddress.lastName}
-                </p>
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  <p>{order.billingAddress.address1}</p>
-                  {order.billingAddress.address2 && (
-                    <p>{order.billingAddress.address2}</p>
-                  )}
-                  <p>
-                    {State.getStateByCodeAndCountry(
-                      order.billingAddress.state,
-                      order.billingAddress.country
-                    )?.name || order.billingAddress.state}
-                    ,{" "}
-                    {Country.getCountryByCode(order.billingAddress.country)
-                      ?.name || order.billingAddress.country}{" "}
-                    {order.billingAddress.postalCode}
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="mb-1">
+                    {order.billingAddress.firstName}{" "}
+                    {order.billingAddress.lastName}
                   </p>
-                </div>
-                <div className="pt-3 border-t border-border space-y-2">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    {order.billingAddress.email}
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p>{order.billingAddress.address1}</p>
+                    {order.billingAddress.address2 && (
+                      <p>{order.billingAddress.address2}</p>
+                    )}
+                    <p>
+                      {State.getStateByCodeAndCountry(
+                        order.billingAddress.state,
+                        order.billingAddress.country
+                      )?.name || order.billingAddress.state}
+                      ,{" "}
+                      {Country.getCountryByCode(order.billingAddress.country)
+                        ?.name || order.billingAddress.country}{" "}
+                      {order.billingAddress.postalCode}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="h-4 w-4" />+{order.billingAddress.phone}
+                </div>
+                <div className="pt-4 border-t border-border space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {order.billingAddress.email}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      +{order.billingAddress.phone}
+                    </span>
                   </div>
                 </div>
               </div>
             </section>
           </div>
+        </div>
 
-          {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Order Summary */}
-            <section className="p-6 border border-border space-y-6">
-              <h2 className="text-xl font-light tracking-tight pb-4 border-b border-border">
+        {/* Sidebar - Right Side */}
+        <div className="space-y-6">
+          {/* Order Summary */}
+          <section className="border border-border bg-card sticky top-4">
+            <div className="p-3 border-b border-border">
+              <h2 className="text-lg font-light flex items-center gap-2">
                 Order Summary
               </h2>
+            </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatCurrency(subtotal, order.currency)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span>
-                    {order.shippingPrice === 0
-                      ? "Free"
-                      : formatCurrency(order.shippingPrice, order.currency)}
+            <div className="p-3 space-y-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium">
+                  {formatCurrency(subtotal, order.currency)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="font-medium">
+                  {order.shippingPrice === 0
+                    ? "Free"
+                    : formatCurrency(order.shippingPrice, order.currency)}
+                </span>
+              </div>
+              {order.coupon && (
+                <div className="flex justify-between text-sm p-2 bg-green-50 dark:bg-green-950 rounded-sm">
+                  <span className="text-green-700 dark:text-green-400">
+                    Coupon Applied
+                  </span>
+                  <span className="font-semibold text-green-700 dark:text-green-400">
+                    {order.coupon}
                   </span>
                 </div>
-                {order.coupon && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Coupon</span>
-                    <span className="text-green-600">{order.coupon}</span>
+              )}
+              <div className="pt-4 border-t border-border flex justify-between items-center">
+                <span className="text-lg">Total</span>
+                <span className="text-2xl font-light tracking-tight">
+                  {formatCurrency(order.totalPrice, order.currency)}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* Order Timeline */}
+          <section className="border border-border bg-card">
+            <div className="p-3 border-b border-border">
+              <h2 className="text-lg font-light">Order Timeline</h2>
+            </div>
+
+            <div className="p-3 space-y-6">
+              {/* Order Placed */}
+              <div className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <div className="w-px h-full bg-border mt-2" />
+                </div>
+                <div className="pb-6 flex-1">
+                  <p className="font-medium mb-1">Order Placed</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Calendar className="h-3 w-3" />
+                    {formatDate(order.createdAt)}
                   </div>
-                )}
-                <div className="pt-3 border-t border-border flex justify-between tracking-widest">
-                  <span className="font-medium">Total</span>
-                  <span className="font-medium text-lg">
-                    {formatCurrency(order.totalPrice, order.currency)}
-                  </span>
                 </div>
               </div>
-            </section>
 
-            {/* Order Timeline */}
-            <section className="p-6 border border-border space-y-6">
-              <h2 className="text-xl font-light tracking-tight pb-4 border-b border-border">
-                Order Timeline
-              </h2>
-
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <div className="flex flex-col items-center">
-                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                      <Check className="h-4 w-4 text-green-600" />
-                    </div>
+              {/* Payment Confirmed */}
+              <div className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <CreditCard
+                    className={`h-5 w-5 ${
+                      order.paidAt
+                        ? "text-green-600 dark:text-green-400"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                  {(order.status === "Processing" ||
+                    order.status === "Shipped" ||
+                    order.status === "Delivered") && (
                     <div className="w-px h-full bg-border mt-2" />
-                  </div>
-                  <div className="pb-6">
-                    <p className="text-sm font-medium mb-1">Order Placed</p>
+                  )}
+                </div>
+                <div className="pb-6 flex-1">
+                  <p className="font-medium mb-1">Payment Confirmed</p>
+                  {order.paidAt && (
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      {formatDate(order.createdAt)}
+                      {formatDate(order.paidAt)}
                     </div>
-                  </div>
+                  )}
                 </div>
+              </div>
 
-                <div className="flex gap-3">
+              {/* Processing */}
+              {(order.status === "Processing" ||
+                order.status === "Shipped" ||
+                order.status === "Delivered") && (
+                <div className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        order.paidAt ? "bg-green-100" : "bg-muted"
-                      }`}
-                    >
-                      <CreditCard
-                        className={`h-4 w-4 ${
-                          order.paidAt
-                            ? "text-green-600"
-                            : "text-muted-foreground"
-                        }`}
-                      />
-                    </div>
-                    {(order.isDelivered === "Processing" ||
-                      order.isDelivered === "Delivered") && (
+                    <Truck className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    {(order.status === "Shipped" ||
+                      order.status === "Delivered") && (
                       <div className="w-px h-full bg-border mt-2" />
                     )}
                   </div>
-                  <div className="pb-6">
-                    <p className="text-sm font-medium mb-1">
-                      Payment Confirmed
+                  <div className="pb-6 flex-1">
+                    <p className="font-medium mb-1">Processing</p>
+                    <p className="text-xs text-muted-foreground">
+                      Order is being prepared
                     </p>
-                    {order.paidAt && (
+                  </div>
+                </div>
+              )}
+
+              {/* Shipped */}
+              {(order.status === "Shipped" || order.status === "Delivered") && (
+                <div className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    <Package className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                    {order.status === "Delivered" && (
+                      <div className="w-px h-full bg-border mt-2" />
+                    )}
+                  </div>
+                  <div className="pb-6 flex-1">
+                    <p className="font-medium mb-1">Shipped</p>
+                    {order.shippedAt && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(order.shippedAt)}
+                      </div>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Order is on its way
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Delivered */}
+              {order.status === "Delivered" && (
+                <div className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium mb-1">Delivered</p>
+                    {order.deliveredAt && (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        {formatDate(order.paidAt)}
+                        {formatDate(order.deliveredAt)}
                       </div>
                     )}
                   </div>
                 </div>
+              )}
 
-                {(order.isDelivered === "Processing" ||
-                  order.isDelivered === "Delivered") && (
-                  <div className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <Truck className="h-4 w-4 text-blue-600" />
-                      </div>
-                      {order.isDelivered === "Delivered" && (
-                        <div className="w-px h-full bg-border mt-2" />
-                      )}
-                    </div>
-                    <div className="pb-6">
-                      <p className="text-sm font-medium mb-1">
-                        Order Processing
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Your order is being prepared
-                      </p>
-                    </div>
+              {/* Cancelled */}
+              {order.status === "Cancelled" && (
+                <div className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
                   </div>
-                )}
-
-                {order.isDelivered === "Delivered" && (
-                  <div className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                        <Check className="h-4 w-4 text-green-600" />
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium mb-1">Delivered</p>
-                      {order.deliveredAt && (
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          {formatDate(order.deliveredAt)}
-                        </div>
-                      )}
-                    </div>
+                  <div className="flex-1">
+                    <p className="font-medium mb-1">Order Cancelled</p>
+                    <p className="text-xs text-muted-foreground">
+                      This order has been cancelled
+                    </p>
                   </div>
-                )}
-
-                {order.isDelivered === "Cancelled" && (
-                  <div className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                        <span className="text-red-600 text-lg">×</span>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium mb-1">
-                        Order Cancelled
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        This order has been cancelled
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {/* Customer Info */}
-            <section className="p-6 border border-border space-y-4">
-              <h2 className="text-xl font-light tracking-tight pb-4 border-b border-border">
-                Customer Information
-              </h2>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Customer Email
-                  </p>
-                  <p className="text-sm">{order.email}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Customer ID
-                  </p>
+              )}
+            </div>
+          </section>
+
+          {/* Customer Info */}
+          <section className="border border-border bg-card">
+            <div className="flex items-center gap-3 p-3 border-b border-border">
+              <div className="p-2 bg-muted rounded-sm">
+                <User className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-light">Customer Info</h2>
+            </div>
+
+            <div className="p-3 space-y-4">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                  Email
+                </p>
+                <p className="text-sm">{order.email}</p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                  Customer ID
+                </p>
+                <div className="flex items-center gap-2">
                   <p className="text-sm font-mono">
                     {order.user.slice(-12).toUpperCase()}
                   </p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Order Date
-                  </p>
-                  <p className="text-sm">{formatDate(order.createdAt)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Last Updated
-                  </p>
-                  <p className="text-sm">{formatDate(order.updatedAt)}</p>
+                  <button
+                    onClick={() => copyToClipboard(order.user, "Customer ID")}
+                    className="p-1 hover:bg-muted rounded"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </button>
                 </div>
               </div>
-            </section>
-          </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                  Order Date
+                </p>
+                <p className="text-sm">{formatDate(order.createdAt)}</p>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                  Last Updated
+                </p>
+                <p className="text-sm">{formatDate(order.updatedAt)}</p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>

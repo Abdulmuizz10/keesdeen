@@ -67,10 +67,10 @@ const Profile: React.FC = () => {
           <div className="w-full flex justify-center">
             {tabStatus.map((item: any, index) => (
               <div
-                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs sm:text-sm uppercase tracking-wider px-2 sm:px-0 ${
+                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs uppercase tracking-wider px-2 sm:px-0 ${
                   item?.status === tab
-                    ? "border-b-2 border-border-primary"
-                    : "border-b text-text-secondary"
+                    ? "border-b-2 border-gray-700"
+                    : "border-b border-gray-300 text-text-secondary"
                 }`}
                 key={index}
                 onClick={() => setTab(item.status)}
@@ -133,6 +133,8 @@ const OrderHistory: React.FC = () => {
     switch (status) {
       case "Delivered":
         return "text-green-600";
+      case "Shipped":
+        return "text-blue-600";
       case "Pending":
         return "text-amber-600";
       case "Cancelled":
@@ -145,11 +147,6 @@ const OrderHistory: React.FC = () => {
   if (loading) {
     return (
       <section className="mx-auto max-w-6xl px-4 py-12 md:px-6 lg:px-8">
-        <div className="mb-16">
-          <h1 className="text-2xl font-light tracking-tight md:text-3xl">
-            Order History
-          </h1>
-        </div>
         <div className="space-y-8">
           {Array.from({ length: 5 }).map((_, index: number) => (
             <div
@@ -197,10 +194,10 @@ const OrderHistory: React.FC = () => {
                   <div className="flex flex-col items-start gap-2 sm:items-end">
                     <span
                       className={`text-xs font-medium uppercase tracking-wider ${getStatusColor(
-                        order.isDelivered
+                        order.status
                       )}`}
                     >
-                      {order.isDelivered}
+                      {order.status}
                     </span>
                     <p className="text-sm font-light">{order.total}</p>
                   </div>
