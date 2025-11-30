@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Hooks
-import { useLenisScroll } from "./lib/useLenisScroll";
+import { lenis, useLenisScroll } from "./lib/useLenisScroll";
 import ScrollToTop from "./components/ScrollToTop";
 
 // Layouts
@@ -70,121 +70,121 @@ const App: React.FC = () => {
   useLenisScroll();
 
   useEffect(() => {
-    setTimeout(() => {
+    document.body.style.overflow = "hidden";
+    document.body.style.cursor = "wait";
+    const timer = setTimeout(() => {
       setAnimation(false);
-    }, 3000);
+      document.body.style.cursor = "default";
+      document.body.style.overflow = "auto";
+
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      }
+    }, 3500);
+
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = "auto";
+      document.body.style.cursor = "default";
+    };
   }, []);
 
   return (
     <div>
-      <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
-      {animation ? (
+      {animation && (
         <AnimatePresence mode="wait">
           <Animation />
         </AnimatePresence>
-      ) : (
-        <Router>
-          <ScrollToTop />
-          <Routes>
-            {/* Root Layout with common pages */}
-            <Route element={<RootLayouts />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/collections/shop_all" element={<ShopAll />} />
-              <Route
-                path="/collections/new_arrivals"
-                element={<NewArrivals />}
-              />
-              <Route
-                path="/collections/Active_wears"
-                element={<ActiveWears />}
-              />
-              <Route
-                path="/collections/Fitness_accessories"
-                element={<FitnessAccessories />}
-              />
-              <Route
-                path="/collections/search/:name"
-                element={<SearchResults />}
-              />
-              <Route path="/product_details/:id" element={<ProductDetails />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/wishlists" element={<WishLists />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/check_out" element={<Checkout />} />
-              <Route
-                path="/order_confirmation"
-                element={<OrderConfirmation />}
-              />
-              <Route path="/order_details/:id" element={<OrderDetails />} />
-            </Route>
-
-            {/* Auth Routes */}
-            <Route element={<AuthLayout animation={animation} />}>
-              <Route path="/auth/Sign_in" element={<SignIn />} />
-              <Route path="/auth/sign_up" element={<SignUp />} />
-              <Route
-                path="/auth/forget_password"
-                element={<ForgetPassword />}
-              />
-              <Route
-                path="/auth/reset_password/:token"
-                element={<ResetPassword />}
-              />
-            </Route>
-
-            {/* Admin Routes (Only accessible to admins) */}
-            {user?.isAdmin ? (
-              <Route element={<AdminLayout animation={animation} />}>
-                <Route path="/admin" element={<AdminAnalytics />} />
-                <Route path="/admin/orders" element={<AdminOrders />} />
-                <Route
-                  path="/admin/orders/pending"
-                  element={<AdminPendingOrders />}
-                />
-                <Route
-                  path="/admin/orders/delivered"
-                  element={<AdminDeliveredOrders />}
-                />
-                <Route
-                  path="/admin/orders/order_details/:id"
-                  element={<AdminOrderDetails />}
-                />
-                <Route path="/admin/products" element={<AdminProducts />} />
-                <Route
-                  path="/admin/products/product_details/:id"
-                  element={<AdminProductDetails />}
-                />
-                <Route
-                  path="/admin/products/create_product"
-                  element={<AdminCreateProduct />}
-                />
-                <Route
-                  path="/admin/products/update_product/:id"
-                  element={<AdminUpdateProduct />}
-                />
-                <Route path="/admin/customers" element={<AdminUsers />} />
-                <Route
-                  path="/admin/customers/customer_details/:id"
-                  element={<AdminUserDetails />}
-                />
-                <Route path="/admin/coupons" element={<AdminCoupons />} />
-                <Route
-                  path="/admin/subscribers"
-                  element={<AdminSubscribers />}
-                />
-                <Route
-                  path="/admin/email-to-subscribers"
-                  element={<AdminSendEmailToSubscribers />}
-                />
-                <Route path="/admin/settings" element={<AdminSettings />} />
-              </Route>
-            ) : null}
-
-            {/* 404 Route */}
-            <Route path="*" element={<ErrorPage />} />
-          </Routes>
-        </Router>
       )}
+      <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          {/* Root Layout with common pages */}
+          <Route element={<RootLayouts />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/collections/shop_all" element={<ShopAll />} />
+            <Route path="/collections/new_arrivals" element={<NewArrivals />} />
+            <Route path="/collections/Active_wears" element={<ActiveWears />} />
+            <Route
+              path="/collections/Fitness_accessories"
+              element={<FitnessAccessories />}
+            />
+            <Route
+              path="/collections/search/:name"
+              element={<SearchResults />}
+            />
+            <Route path="/product_details/:id" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlists" element={<WishLists />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/check_out" element={<Checkout />} />
+            <Route path="/order_confirmation" element={<OrderConfirmation />} />
+            <Route path="/order_details/:id" element={<OrderDetails />} />
+          </Route>
+
+          {/* Auth Routes */}
+          <Route element={<AuthLayout animation={animation} />}>
+            <Route path="/auth/Sign_in" element={<SignIn />} />
+            <Route path="/auth/sign_up" element={<SignUp />} />
+            <Route path="/auth/forget_password" element={<ForgetPassword />} />
+            <Route
+              path="/auth/reset_password/:token"
+              element={<ResetPassword />}
+            />
+          </Route>
+
+          {/* Admin Routes (Only accessible to admins) */}
+          {user?.isAdmin ? (
+            <Route element={<AdminLayout animation={animation} />}>
+              <Route path="/admin" element={<AdminAnalytics />} />
+              <Route path="/admin/orders" element={<AdminOrders />} />
+              <Route
+                path="/admin/orders/pending"
+                element={<AdminPendingOrders />}
+              />
+              <Route
+                path="/admin/orders/delivered"
+                element={<AdminDeliveredOrders />}
+              />
+              <Route
+                path="/admin/orders/order_details/:id"
+                element={<AdminOrderDetails />}
+              />
+              <Route path="/admin/products" element={<AdminProducts />} />
+              <Route
+                path="/admin/products/product_details/:id"
+                element={<AdminProductDetails />}
+              />
+              <Route
+                path="/admin/products/create_product"
+                element={<AdminCreateProduct />}
+              />
+              <Route
+                path="/admin/products/update_product/:id"
+                element={<AdminUpdateProduct />}
+              />
+              <Route path="/admin/customers" element={<AdminUsers />} />
+              <Route
+                path="/admin/customers/customer_details/:id"
+                element={<AdminUserDetails />}
+              />
+              <Route path="/admin/coupons" element={<AdminCoupons />} />
+              <Route path="/admin/subscribers" element={<AdminSubscribers />} />
+              <Route
+                path="/admin/email-to-subscribers"
+                element={<AdminSendEmailToSubscribers />}
+              />
+              <Route path="/admin/settings" element={<AdminSettings />} />
+            </Route>
+          ) : null}
+
+          {/* 404 Route */}
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Router>
     </div>
   );
 };
