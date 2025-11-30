@@ -1,4 +1,3 @@
-// Hero.tsx - Production-Ready with Instant Loading
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Axios from "axios";
@@ -17,20 +16,7 @@ interface HeroSettings {
 
 // Default fallback images - shown immediately while API loads
 const DEFAULT_HERO_SETTINGS: HeroSettings = {
-  images: [
-    {
-      url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&h=900&fit=crop&q=80",
-      tagline: "Boundless",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=1600&h=900&fit=crop&q=80",
-      tagline: "Dynamic",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop&q=80",
-      tagline: "Fearless",
-    },
-  ],
+  images: [],
   transitionDuration: 1000,
   autoPlayInterval: 5000,
 };
