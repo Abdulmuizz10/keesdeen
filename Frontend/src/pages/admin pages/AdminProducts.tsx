@@ -57,35 +57,15 @@ interface Product {
   updatedAt: string;
 }
 
-const StatCard = ({ title, value, icon: Icon, status }: any) => (
+const StatCard = ({ title, value, icon: Icon }: any) => (
   <div className="bg-card border border-border p-6">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className="text-3xl font-light tracking-tight mt-2">{value}</p>
       </div>
-      <div
-        className={`p-3 rounded-full ${
-          status === "best_seller"
-            ? "bg-yellow-100"
-            : status === "new_arrival"
-            ? "bg-blue-100"
-            : status === "in_stock"
-            ? "bg-green-100"
-            : "bg-muted"
-        }`}
-      >
-        <Icon
-          className={`h-5 w-5 ${
-            status === "best_seller"
-              ? "text-yellow-600"
-              : status === "new_arrival"
-              ? "text-blue-600"
-              : status === "in_stock"
-              ? "text-green-600"
-              : "text-muted-foreground"
-          }`}
-        />
+      <div className={`p-3 rounded-full bg-muted`}>
+        <Icon className={`h-5 w-5 text-muted-foreground`} />
       </div>
     </div>
   </div>

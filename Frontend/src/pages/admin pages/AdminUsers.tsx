@@ -48,35 +48,15 @@ interface User {
   updatedAt: string;
 }
 
-const StatCard = ({ title, value, icon: Icon, status }: any) => (
+const StatCard = ({ title, value, icon: Icon}: any) => (
   <div className="bg-card border border-border p-6">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className="text-3xl font-light tracking-tight mt-2">{value}</p>
       </div>
-      <div
-        className={`p-3 rounded-full ${
-          status === "admin"
-            ? "bg-purple-100"
-            : status === "google"
-            ? "bg-blue-100"
-            : status === "password"
-            ? "bg-green-100"
-            : "bg-muted"
-        }`}
-      >
-        <Icon
-          className={`h-5 w-5 ${
-            status === "admin"
-              ? "text-purple-600"
-              : status === "google"
-              ? "text-blue-600"
-              : status === "password"
-              ? "text-green-600"
-              : "text-muted-foreground"
-          }`}
-        />
+      <div className={`p-3 rounded-full bg-muted`}>
+        <Icon className={`h-5 w-5 text-muted-foreground`} />
       </div>
     </div>
   </div>

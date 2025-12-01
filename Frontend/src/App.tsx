@@ -82,7 +82,7 @@ const App: React.FC = () => {
       } else {
         window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       }
-    }, 3500);
+    }, 4000);
 
     return () => {
       clearTimeout(timer);
