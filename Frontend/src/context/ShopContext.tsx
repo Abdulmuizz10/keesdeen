@@ -1,3 +1,5 @@
+import { URL } from "@/lib/constants";
+import Axios from "axios";
 import React, {
   createContext,
   useContext,
@@ -6,6 +8,23 @@ import React, {
   useEffect,
 } from "react";
 import { toast } from "sonner";
+
+interface HeroImage {
+  url: string;
+  tagline: string;
+}
+
+interface HeroSettings {
+  images: HeroImage[];
+  transitionDuration: number;
+  autoPlayInterval: number;
+}
+
+const defaultHero: HeroSettings = {
+  images: [],
+  transitionDuration: 1000,
+  autoPlayInterval: 5000,
+};
 
 // Define the context type
 interface ShopContextType {
@@ -21,11 +40,6 @@ interface ShopContextType {
   manageWishLists: any;
   savedAddress: any;
   setSavedAddress: any;
-  // currentCurrency: any;
-  // fetchExchangeRates: any;
-  // setCurrency: any;
-  // formatAmount: any;
-  // getRawAmount: any;
   isActive: any;
   setIsActive: any;
   adminLoader: any;
@@ -36,6 +50,12 @@ interface ShopContextType {
   setDiscountPercent: any;
   change: any;
   setChange: any;
+  heroSettings: HeroSettings;
+  setHeroSettings: any;
+  loadedImages: any;
+  setLoadedImages: any;
+  isFetched: boolean;
+  setIsFetched: (value: boolean) => void;
 }
 
 // Create the ShopContext with an empty default value
@@ -59,6 +79,9 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   const [shippingFee, setShippingFee] = useState<any>(0);
   const [discountPercent, setDiscountPercent] = useState<any>(0);
   const [change, setChange] = useState<boolean>(true);
+  const [heroSettings, setHeroSettings] = useState<HeroSettings>(defaultHero);
+  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
+  const [isFetched, setIsFetched] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
@@ -204,47 +227,29 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     });
   };
 
-  // const [currentCurrency, setCurrentCurrency] = useState("GBP"); // Default currency
-  // const [exchangeRates, setExchangeRates] = useState<Record<string, number>>(
-  //   {}
-  // ); // State for exchange rates
+  const preloadImages = (images: HeroImage[]) => {
+    images.forEach((img) => {
+      const image = new Image();
+      image.src = img.url;
+    });
+  };
 
-  // useEffect(() => {
-  //   fetchExchangeRates(); // Fetch exchange rates when the component mounts
-  // }, []);
-
-  // const setCurrency = (currency: string) => {
-  //   setCurrentCurrency(currency);
-  // };
-
-  // const fetchExchangeRates = async (baseCurrency: string = "GBP") => {
-  //   try {
-  //     const response = await fetch(
-  //       `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`
-  //     );
-  //     const data = await response.json();
-  //     setExchangeRates(data.rates); // Update state with fetched rates
-  //   } catch (error) {
-  //     // toast.error("Error fetching exchange rates");
-  //   }
-  // };
-
-  // const formatAmount = (amount: number) => {
-  //   const rate = exchangeRates[currentCurrency] || 1; // Fallback to 1 if rate is unavailable
-  //   const convertedAmount = amount * rate;
-
-  //   const formatter = new Intl.NumberFormat("en-US", {
-  //     style: "currency",
-  //     currency: currentCurrency,
-  //     minimumFractionDigits: 2,
-  //   });
-  //   return formatter.format(convertedAmount);
-  // };
-
-  // const getRawAmount = (amount: number): number => {
-  //   const rate = exchangeRates[currentCurrency] || 1;
-  //   return amount * rate;
-  // };
+  useEffect(() => {
+    const fetchHeroSettings = async () => {
+      try {
+        const res = await Axios.get(`${URL}/settings/get-hero`);
+        if (res.data?.success && res.data?.data?.images?.length > 0) {
+          preloadImages(res.data.data.images);
+          setHeroSettings(res.data.data);
+        }
+      } catch (error) {
+        console.error("Hero failed to load");
+      } finally {
+        setIsFetched(true);
+      }
+    };
+    fetchHeroSettings();
+  }, []);
 
   return (
     <ShopContext.Provider
@@ -261,11 +266,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         manageWishLists,
         savedAddress,
         setSavedAddress,
-        // currentCurrency,
-        // fetchExchangeRates,
-        // setCurrency,
-        // formatAmount,
-        // getRawAmount,
         isActive,
         setIsActive,
         adminLoader,
@@ -276,6 +276,12 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         setDiscountPercent,
         change,
         setChange,
+        heroSettings,
+        setHeroSettings,
+        loadedImages,
+        setLoadedImages,
+        isFetched,
+        setIsFetched,
       }}
     >
       {children}
@@ -290,7 +296,3 @@ export const useShop = () => {
   }
   return context;
 };
-
-{
-  /* old cart codes */
-}

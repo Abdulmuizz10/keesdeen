@@ -1,56 +1,11 @@
+import { useShop } from "@/context/ShopContext";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
-
-interface HeroImage {
-  url: string;
-  tagline: string;
-}
-
-interface HeroSettings {
-  images: HeroImage[];
-  transitionDuration: number;
-  autoPlayInterval: number;
-}
-
-const defaultHero: HeroSettings = {
-  images: [],
-  transitionDuration: 1000,
-  autoPlayInterval: 5000,
-};
 
 const Hero: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [heroSettings, setHeroSettings] = useState<HeroSettings>(defaultHero);
-  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
-  const [isFetched, setIsFetched] = useState(false);
-
-  const preloadImages = (images: HeroImage[]) => {
-    images.forEach((img) => {
-      const image = new Image();
-      image.src = img.url;
-    });
-  };
-
-  const fetchHeroSettings = async () => {
-    try {
-      const res = await Axios.get(`${URL}/settings/get-hero`);
-      if (res.data?.success && res.data?.data?.images?.length > 0) {
-        preloadImages(res.data.data.images);
-        setHeroSettings(res.data.data);
-      }
-    } catch (error) {
-      console.error("Hero failed to load");
-    } finally {
-      setIsFetched(true);
-    }
-  };
-
-  useEffect(() => {
-    fetchHeroSettings();
-  }, []);
+  const { heroSettings, loadedImages, setLoadedImages, isFetched } = useShop();
 
   useEffect(() => {
     if (!heroSettings.images.length) return;
@@ -87,7 +42,7 @@ const Hero: React.FC = () => {
               fetchPriority={index === 0 ? "high" : "auto"}
               loading="eager"
               onLoad={() =>
-                setLoadedImages((prev) => ({ ...prev, [index]: true }))
+                setLoadedImages((prev: any) => ({ ...prev, [index]: true }))
               }
               className={`w-full h-full object-cover transition-opacity duration-700 ${
                 loadedImages[index] ? "opacity-100" : "opacity-0"
