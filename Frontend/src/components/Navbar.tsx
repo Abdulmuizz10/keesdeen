@@ -73,8 +73,9 @@ const Navbar = () => {
                   <img
                     src={isScrolled ? mainLogo : mainLogoWhite}
                     alt="Logo"
-                    // className="h-8 w-auto sm:h-10 lg:h-8 xl:h-10"
-                    className="h-8 md:h-10 w-full"
+                    loading="eager"
+                    // className="h-8 w-8 md:h-12 md:w-60"
+                    className="h-8 md:h-11"
                   />
                 </Link>
               </div>
@@ -298,7 +299,9 @@ const Navbar = () => {
                   <img
                     src={mainLogo}
                     alt="Logo"
-                    className="h-8 md:h-10 w-full"
+                    loading="eager"
+                    // className="h-8 w-8 md:h-12 md:w-60"
+                    className="h-8 md:h-11"
                   />
                 </Link>
               </div>

@@ -65,12 +65,12 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
         {wishLists.find((wish: any) => wish._id === product._id) ? (
           <RiHeartFill
             onClick={() => manageWishLists(product)}
-            className="text-[22px] text-text-primary"
+            className="text-[21px] text-gray-500"
           />
         ) : (
           <RiHeartLine
             onClick={() => manageWishLists(product)}
-            className="text-[22px] text-text-primary"
+            className="text-[21px] text-gray-500"
           />
         )}
       </div>

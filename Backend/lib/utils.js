@@ -544,6 +544,180 @@ export const sendSubscribersEmail = async (
   });
 };
 
+// 7. CONTACT FORM SUBMISSION (to admin)
+export const sendContactEmail = async ({
+  firstName,
+  lastName,
+  email,
+  phone,
+  subject,
+  message,
+  imageUrl,
+}) => {
+  const transporter = createTransporter();
+
+  const subjectLabels = {
+    order: "Order Inquiry",
+    product: "Product Question",
+    shipping: "Shipping & Delivery",
+    return: "Returns & Exchanges",
+    feedback: "Feedback",
+    other: "Other",
+  };
+
+  const imageSection = imageUrl
+    ? `
+      <div style="margin: 24px 0;">
+        <p style="margin: 0 0 12px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Attached Image
+        </p>
+        <img 
+          src="${imageUrl}" 
+          alt="Customer attachment" 
+          style="max-width: 100%; height: auto; border: 1px solid #e5e7eb; border-radius: 8px;"
+        />
+      </div>
+    `
+    : "";
+
+  const html = generateEmailTemplate(
+    `New Contact Form: ${subjectLabels[subject] || subject}`,
+    `
+      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Customer Information
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 100px;">Name:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${firstName} ${lastName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Email:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">
+              <a href="mailto:${email}" style="color: #111827; text-decoration: underline;">${email}</a>
+            </td>
+          </tr>
+          ${
+            phone
+              ? `
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Phone:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">
+              <a href="tel:${phone}" style="color: #111827; text-decoration: underline;">${phone}</a>
+            </td>
+          </tr>
+          `
+              : ""
+          }
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Subject:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${
+              subjectLabels[subject] || subject
+            }</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="margin: 24px 0;">
+        <p style="margin: 0 0 12px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Message
+        </p>
+        <div style="padding: 16px; background-color: #f9fafb; border-radius: 8px; color: #111827; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">
+${message}
+        </div>
+      </div>
+
+      ${imageSection}
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="mailto:${email}?subject=Re: ${encodeURIComponent(
+      subjectLabels[subject] || subject
+    )}" 
+              style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+              Reply to Customer
+            </a>
+          </td>
+        </tr>
+      </table>
+    `
+  );
+
+  await transporter.sendMail({
+    from: `"Keesdeen Contact Form" <${process.env.EMAIL}>`,
+    to: process.env.EMAIL,
+    replyTo: email,
+    subject: `New Contact Form: ${
+      subjectLabels[subject] || subject
+    } - ${firstName} ${lastName}`,
+    html,
+  });
+};
+
+// 8. CONTACT FORM CONFIRMATION (to customer)
+export const sendContactConfirmationEmail = async ({
+  email,
+  firstName,
+  subject,
+}) => {
+  const transporter = createTransporter();
+
+  const subjectLabels = {
+    order: "Order Inquiry",
+    product: "Product Question",
+    shipping: "Shipping & Delivery",
+    return: "Returns & Exchanges",
+    feedback: "Feedback",
+    other: "Other",
+  };
+
+  const html = generateEmailTemplate(
+    "We've Received Your Message",
+    `
+      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+      <p style="margin: 0 0 24px 0;">
+        Thank you for reaching out to us. We've received your message regarding 
+        <strong>${subjectLabels[subject] || subject}</strong> and our team will 
+        get back to you within 3 days.
+      </p>
+
+      <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+          In the meantime, you may find answers to common questions in our 
+          <a href="${
+            process.env.FRONTEND_URL
+          }/faq" style="color: #111827; text-decoration: underline;">FAQ section</a>.
+        </p>
+      </div>
+
+      <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px;">
+        Best regards,<br/>
+        The Keesdeen Team
+      </p>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.FRONTEND_URL}" 
+              style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+              Visit Keesdeen
+            </a>
+          </td>
+        </tr>
+      </table>
+    `
+  );
+
+  await transporter.sendMail({
+    from: `"Keesdeen" <${process.env.EMAIL}>`,
+    to: email,
+    subject: "We've Received Your Message – Keesdeen",
+    html,
+  });
+};
+
 // Format currency
 export const formatAmount = (amount, currency) => {
   const formatter = new Intl.NumberFormat("en-US", {

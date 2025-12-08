@@ -37,6 +37,14 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
     getAddress();
   }, []);
 
+  useEffect(() => {
+    if (savedAddress.length === 1 && !selectedAddress) {
+      const onlyAddress = savedAddress[0];
+      setSelectedAddress(onlyAddress._id);
+      setAddress(onlyAddress);
+    }
+  }, [savedAddress, selectedAddress, setAddress]);
+
   const displayedItems = showAll ? savedAddress : savedAddress.slice(0, 2);
 
   const handleSelectAddress = (id: any, address: any) => {
@@ -121,28 +129,6 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
               );
             })}
 
-            {/* Show More / Less Button */}
-            {/* {savedAddress.length > 2 && (
-              <div className="text-center mt-5">
-                <button
-                  onClick={() => setShowAll(!showAll)}
-                  className="text-sm md:text-base font-medium text-gray-800 underline hover:text-black transition poppins"
-                >
-                  {showAll
-                    ? "Show less"
-                    : `Show ${savedAddress.length - 2} more item${
-                        savedAddress.length - 2 > 1 ? "s" : ""
-                      }`}
-                </button>
-              </div>
-            )}
-          </>
-        ) : (
-          <p className="text-center text-base sm:text-lg">
-            No address available. Please create a new address.
-          </p>
-        )} */}
-
             {savedAddress.length > 2 && (
               <button
                 onClick={() => setShowAll(!showAll)}
@@ -169,7 +155,11 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
             className="text-gray-600 group-hover:text-gray-900"
           />
           <span className="text-sm uppercase tracking-widest text-gray-600 group-hover:text-gray-900">
-            Add New Address
+            <p className="text-xs sm:text-sm text-gray-500">
+              {savedAddress.length === 1
+                ? "Your address was selected automatically."
+                : "Select or create a new address."}
+            </p>
           </span>
         </button>
       </div>

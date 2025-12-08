@@ -34,26 +34,23 @@ const SearchResults: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await Axios.get(
-        `${URL}/products/search/search-results`,
-        {
-          validateStatus: (status) => status < 600,
-          params: {
-            name,
-            page,
-            limit: 12,
-            category: category.join(","),
-            size: sizeCategory.join(","),
-            color: colorCategory.join(","),
-            sort:
-              sortType === "Low - High"
-                ? "low-high"
-                : sortType === "High - Low"
-                ? "high-low"
-                : "relevant",
-          },
-        }
-      );
+      const response = await Axios.get(`${URL}/products/results`, {
+        validateStatus: (status) => status < 600,
+        params: {
+          name,
+          page,
+          limit: 12,
+          category: category.join(","),
+          size: sizeCategory.join(","),
+          color: colorCategory.join(","),
+          sort:
+            sortType === "Low - High"
+              ? "low-high"
+              : sortType === "High - Low"
+              ? "high-low"
+              : "relevant",
+        },
+      });
       if (response.status === 200) {
         setProducts(response.data.products);
         setPages(response.data.pages);
@@ -294,19 +291,19 @@ const SearchResults: React.FC = () => {
                 <SelectContent className="border border-gray-300 bg-white sm:w-48 !z-40">
                   <SelectItem
                     value="relevant"
-                    className="cursor-pointer text-sm hover:bg-gray-50"
+                    className="text-sm cursor-pointer hover:text-gray-400"
                   >
                     Relevance
                   </SelectItem>
                   <SelectItem
                     value="Low - High"
-                    className="cursor-pointer text-sm hover:bg-gray-50"
+                    className="text-sm cursor-pointer hover:text-gray-400"
                   >
                     Price: Low to High
                   </SelectItem>
                   <SelectItem
                     value="High - Low"
-                    className="cursor-pointer text-sm hover:bg-gray-50"
+                    className="text-sm cursor-pointer hover:text-gray-400"
                   >
                     Price: High to Low
                   </SelectItem>

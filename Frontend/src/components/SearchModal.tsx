@@ -110,7 +110,7 @@ const SearchModal: React.FC<searchModalProps> = ({ isActive, setIsActive }) => {
                           to={`/collections/search/${suggestion}`}
                           key={index}
                         >
-                          <li className="poppins text-sm text-gray-500">
+                          <li className="poppins text-sm sm:text-base text-gray-500">
                             {suggestion}
                           </li>
                         </Link>

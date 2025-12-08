@@ -14,7 +14,7 @@ import Spinner from "../../components/Spinner";
 import { currency, URL } from "../../lib/constants";
 import Axios from "axios";
 import { formatAmountDefault } from "../../lib/utils";
-import { Share, ShoppingBag } from "lucide-react";
+import { Ruler, Share, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetails = () => {
@@ -265,6 +265,16 @@ const ProductDetails = () => {
                   ) : (
                     <RiHeartLine className="text-2xl text-gray-900" />
                   )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    navigate("/size_guide");
+                  }}
+                  className="flex h-[52px] w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50"
+                  aria-label="size guide"
+                >
+                  <Ruler />
                 </button>
 
                 <button

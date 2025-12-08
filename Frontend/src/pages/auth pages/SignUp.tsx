@@ -141,6 +141,8 @@ const SignUp: React.FC = () => {
                 <input
                   type="text"
                   id="firstName"
+                  name="given-name"
+                  autoComplete="given-name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="First name"
@@ -160,6 +162,8 @@ const SignUp: React.FC = () => {
                 <input
                   type="text"
                   id="lastName"
+                  name="family-name"
+                  autoComplete="family-name"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Last name"
@@ -179,6 +183,8 @@ const SignUp: React.FC = () => {
                 <input
                   type="email"
                   id="email"
+                  name="email"
+                  autoComplete="email username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@gmail.com"
@@ -199,10 +205,13 @@ const SignUp: React.FC = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
+                    name="new-password"
+                    autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter password"
                     required
+                    minLength={8}
                     className="w-full border border-gray-300 bg-white px-4 py-3 text-sm focus:border-gray-900 focus:outline-none"
                   />
                   <button

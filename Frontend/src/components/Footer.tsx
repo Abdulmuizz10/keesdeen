@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { mainLogoWhite } from "../assets";
+import { mainLogo } from "../assets";
 import { FaXTwitter, FaTiktok } from "react-icons/fa6";
 import { BiLogoFacebookCircle, BiLogoInstagram } from "react-icons/bi";
 import { toast } from "sonner";
@@ -74,11 +74,7 @@ export const Footer = (props: FooterProps) => {
           {/* Left Section - Logo & Newsletter */}
           <div className="flex flex-col">
             <Link to="/" className="mb-8">
-              <img
-                src={mainLogoWhite}
-                alt="Logo"
-                className="h-8 md:h-10 w-auto brightness-0"
-              />
+              <img src={mainLogo} alt="Logo" className="h-8 md:h-10 w-auto" />
             </Link>
 
             <p className="mb-6 text-sm text-gray-600">
@@ -109,7 +105,7 @@ export const Footer = (props: FooterProps) => {
 
             <p className="text-xs text-gray-500">
               By subscribing you agree to our{" "}
-              <Link to="/privacy-policy" className="underline">
+              <Link to="/privacy_policy" className="underline">
                 Privacy Policy
               </Link>
             </p>
@@ -181,6 +177,14 @@ export const FooterDefaults: FooterProps = {
       ],
     },
     {
+      title: "Customer Service",
+      links: [
+        { title: "Contact Us", url: "/contact" },
+        { title: "Faqs", url: "/faqs" },
+        // { title: "Shipping Info", url: "/shipping_info" },
+      ],
+    },
+    {
       title: "Follow Us",
       links: [
         {
@@ -207,7 +211,7 @@ export const FooterDefaults: FooterProps = {
     },
   ],
   footerLinks: [
-    { title: "Privacy Policy", url: "/privacy-policy" },
-    { title: "Terms of Service", url: "/terms-of-service" },
+    { title: "Privacy Policy", url: "/privacy_policy" },
+    { title: "Terms of Service", url: "/terms_of_service" },
   ],
 };

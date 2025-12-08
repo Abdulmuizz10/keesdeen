@@ -30,6 +30,13 @@ import Checkout from "./pages/root pages/CheckOut";
 import OrderConfirmation from "./pages/root pages/OrderConfirmation";
 import Profile from "./pages/root pages/Profile";
 import OrderDetails from "./pages/root pages/OrderDetails";
+import Contact from "./pages/root pages/Contact";
+import PrivacyPolicy from "./pages/root pages/PrivacyPolicy";
+import TermsOfService from "./pages/root pages/TermsOfService";
+import Faq from "./pages/root pages/Faq";
+import ShippingInfo from "./pages/root pages/ShippingInfo";
+import SizeGuide from "./pages/root pages/SizeGuide";
+import Unsubscribe from "./pages/root pages/Unsubscribe";
 
 // Auth Pages
 import SignIn from "./pages/auth pages/SignIn";
@@ -61,8 +68,6 @@ import ErrorPage from "./pages/root pages/ErrorPage";
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
-
-// import { Navbar2 } from "./pages/admin pages/AdminNavbar";
 
 const App: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -121,6 +126,13 @@ const App: React.FC = () => {
             <Route path="/wishlists" element={<WishLists />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/check_out" element={<Checkout />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy_policy" element={<PrivacyPolicy />} />
+            <Route path="/terms_of_service" element={<TermsOfService />} />
+            <Route path="/faqs" element={<Faq />} />
+            <Route path="/shipping_info" element={<ShippingInfo />} />
+            <Route path="/size_guide" element={<SizeGuide />} />
+            <Route path="/unsubscribe/:token" element={<Unsubscribe />} />
             <Route path="/order_confirmation" element={<OrderConfirmation />} />
             <Route path="/order_details/:id" element={<OrderDetails />} />
           </Route>

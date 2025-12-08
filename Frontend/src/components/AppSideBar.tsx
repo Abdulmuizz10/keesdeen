@@ -71,11 +71,13 @@ const AppSidebar = () => {
                 <img
                   src={show ? mainLogoWhite : mainLogo}
                   alt="logo"
+                  loading="eager"
                   className="h-10 w-auto group-data-[collapsible=icon]:hidden"
                 />
                 <img
                   src={show ? fvIconWhite : fvIcon}
                   alt="logo icon"
+                  loading="eager"
                   className="h-auto w-auto hidden group-data-[collapsible=icon]:flex"
                 />
               </Link>

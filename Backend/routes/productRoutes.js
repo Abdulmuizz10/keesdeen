@@ -58,7 +58,7 @@ router.get(
   searchSuggestionsWithProductsController
 );
 
-router.get("/search/search-results", searchProductsResultsController);
+router.get("/results", searchProductsResultsController);
 
 // Admin Routes
 router.post(

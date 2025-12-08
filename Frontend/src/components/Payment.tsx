@@ -152,12 +152,24 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
   // Create payment request for digital wallets
   const createPaymentRequest = () => {
+    if (!address?.shippingAddress) {
+      return {
+        countryCode: "US",
+        currencyCode: currency,
+        total: {
+          amount: (finalTotal / 100).toFixed(2),
+          label: "Total",
+        },
+        requestBillingContact: false,
+        requestShippingContact: false,
+      };
+    }
+
     return {
-      countryCode: address?.shippingAddress?.country || "US",
+      countryCode: address.shippingAddress.country || "US",
       currencyCode: currency,
       total: {
-        amount: (finalTotal / 100).toFixed(2), // Convert cents to dollars
-        // amount: finalTotal,
+        amount: (finalTotal / 100).toFixed(2),
         label: "Total",
       },
       requestBillingContact: true,
@@ -171,7 +183,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
     return {
       amount: (finalTotal / 100).toFixed(2),
-      // amount: finalTotal,
       currencyCode: currency,
       intent: "CHARGE" as const,
       billingContact: {
@@ -212,7 +223,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       } catch (err) {
         // Any errors => disable Apple Pay UI
         setApplePaySupported(false);
-        console.error("Apple Pay check failed:", err);
       }
     };
     checkApplePay();
@@ -381,8 +391,14 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               Express Checkout:
             </p>
 
+            {!address && (
+              <div className="p-3 text-xs text-red-500 text-center border border-red-400 bg-red-50">
+                Please select or create an address to enable express checkout
+              </div>
+            )}
+
             {/* Apple Pay */}
-            {applePaySupported ? (
+            {applePaySupported && address && (
               <ApplePay
                 buttonColor="black"
                 buttonType="buy"
@@ -392,23 +408,70 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
                   opacity: isPaying ? 0.6 : 1,
                 }}
               />
-            ) : (
+            )}
+
+            {!applePaySupported && (
               <div className="text-center text-xs text-gray-500">
                 Apple Pay not available in your browser
               </div>
             )}
 
             {/* Google Pay */}
-            <GooglePay
-              buttonColor="black"
-              buttonType="buy"
-              buttonSizeMode="fill"
-              buttonStyles={{
-                height: "48px",
-                borderRadius: "0px",
-                opacity: isPaying ? 0.6 : 1,
-              }}
-            />
+            {address && (
+              <GooglePay
+                buttonColor="black"
+                buttonType="buy"
+                buttonSizeMode="fill"
+                buttonStyles={{
+                  height: "48px",
+                  borderRadius: "0px",
+                  opacity: isPaying ? 0.6 : 1,
+                }}
+              />
+            )}
+          </div>
+
+          {/* Accepted Cards */}
+          <div className="mt-4 flex flex-col items-center">
+            <p className="mb-2 text-center text-xs text-gray-500">We accept:</p>
+
+            <div className="flex items-center gap-4">
+              {[
+                "visa",
+                "mastercard",
+                "amex",
+                "discover",
+                "jcb",
+                "unionpay",
+              ].map((card) => (
+                <button
+                  key={card}
+                  onClick={() => {
+                    const el = document.getElementById("card-section");
+                    if (!el) return;
+
+                    const yOffset = -70;
+                    const y =
+                      el.getBoundingClientRect().top +
+                      window.pageYOffset +
+                      yOffset;
+
+                    window.scrollTo({
+                      top: y,
+                      behavior: "smooth",
+                    });
+                  }}
+                  className="hover:scale-105 transition transform"
+                  title={`Pay with ${card.toUpperCase()}`}
+                >
+                  <img
+                    src={`https://img.icons8.com/color/48/${card}.png`}
+                    alt={card}
+                    className="h-10"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Divider */}
@@ -419,22 +482,23 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
 
           {/* Credit Card Form */}
-          <div className="mt-6">
+          <div className="mt-6" id="card-section">
             <p className="text-sm sm:text-base text-gray-500 mb-2">
               Pay with Card:
             </p>
             <CreditCard
               includeInputLabels
               buttonProps={{
-                disabled: !address || isPaying,
+                disabled: isPaying,
                 onClick: () => {
                   if (!address) {
-                    toast.error("Please select address before checkout.");
+                    toast.error("Please select an address before checkout");
+                    return;
                   }
                 },
                 css: {
-                  backgroundColor: isPaying ? "#9ca3af" : "#111827",
-                  cursor: isPaying ? "not-allowed" : "pointer",
+                  backgroundColor: !address || isPaying ? "#9ca3af" : "#111827",
+                  cursor: !address || isPaying ? "not-allowed" : "pointer",
                   fontSize: "14px",
                   color: "#fff",
                   borderRadius: "0px",

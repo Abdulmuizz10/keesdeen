@@ -300,19 +300,19 @@ const ActiveWears: React.FC = () => {
                 <SelectContent className="border border-gray-300 bg-white sm:w-48 !z-40">
                   <SelectItem
                     value="relevant"
-                    className="cursor-pointer text-sm hover:bg-gray-50"
+                    className="text-sm cursor-pointer hover:text-gray-400"
                   >
                     Relevance
                   </SelectItem>
                   <SelectItem
                     value="Low - High"
-                    className="cursor-pointer text-sm hover:bg-gray-50"
+                    className="text-sm cursor-pointer hover:text-gray-400"
                   >
                     Price: Low to High
                   </SelectItem>
                   <SelectItem
                     value="High - Low"
-                    className="cursor-pointer text-sm hover:bg-gray-50"
+                    className="text-sm cursor-pointer hover:text-gray-400"
                   >
                     Price: High to Low
                   </SelectItem>
