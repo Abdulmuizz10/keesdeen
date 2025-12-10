@@ -180,7 +180,7 @@ export const FooterDefaults: FooterProps = {
       title: "Customer Service",
       links: [
         { title: "Contact Us", url: "/contact" },
-        { title: "Faqs", url: "/faqs" },
+        { title: "FAQS", url: "/faqs" },
         // { title: "Shipping Info", url: "/shipping_info" },
       ],
     },

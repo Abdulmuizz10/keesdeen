@@ -237,7 +237,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="mb-8 flex gap-3 border-t border-gray-100 pt-8">
+              <div className="mb-8 flex flex-wrap items-stretch gap-2 border-t border-gray-100 pt-6 sm:flex-nowrap">
                 <button
                   onClick={() =>
                     addToCart(
@@ -249,13 +249,13 @@ const ProductDetails = () => {
                       result.product.imageUrls[0]
                     )
                   }
-                  className="flex-1 flex items-center justify-center gap-2 border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+                  className="flex h-[48px] sm:h-[52px] flex-1 items-center justify-center gap-2 border border-gray-900 bg-gray-900 text-xs sm:text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
                 >
                   Add to Cart <ShoppingBag width={20} height={20} />
                 </button>
                 <button
                   onClick={() => manageWishLists(result.product)}
-                  className="flex h-[52px] w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50"
+                  className="flex h-[48px] w-[48px] sm:h-[52px] sm:w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50 shrink-0"
                   aria-label="Add to wishlist"
                 >
                   {wishLists.find(
@@ -271,7 +271,7 @@ const ProductDetails = () => {
                   onClick={() => {
                     navigate("/size_guide");
                   }}
-                  className="flex h-[52px] w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50"
+                  className="flex h-[48px] w-[48px] sm:h-[52px] sm:w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50 shrink-0"
                   aria-label="size guide"
                 >
                   <Ruler />
@@ -284,7 +284,7 @@ const ProductDetails = () => {
                     );
                     toast.success("Product link copied!");
                   }}
-                  className="flex h-[52px] w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50"
+                  className="flex h-[48px] w-[48px] sm:h-[52px] sm:w-[52px] items-center justify-center border border-gray-900 transition-colors hover:bg-gray-50 shrink-0"
                   aria-label="Add to wishlist"
                 >
                   <Share width={20} height={20} />

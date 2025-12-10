@@ -140,9 +140,9 @@ const Faq: React.FC = () => {
         </p>
         <Link
           to="/contact"
-          className="border border-gray-900 bg-gray-900 py-4 px-6 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+          className="border border-gray-900 bg-gray-900 px-6 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
         >
-          Contact Usf
+          Contact Us
         </Link>
       </div>
     </section>

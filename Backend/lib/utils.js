@@ -688,7 +688,7 @@ export const sendContactConfirmationEmail = async ({
           In the meantime, you may find answers to common questions in our 
           <a href="${
             process.env.FRONTEND_URL
-          }/faq" style="color: #111827; text-decoration: underline;">FAQ section</a>.
+          }/faqs" style="color: #111827; text-decoration: underline;">FAQ section</a>.
         </p>
       </div>
 
