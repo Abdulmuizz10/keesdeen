@@ -8,11 +8,13 @@ import { toast } from "sonner";
 import Axios from "axios";
 import { URL } from "../../lib/constants";
 
-export interface UserProfile {
+interface SavedCard {
   id: string;
-  name: string;
-  email: string;
-  isAdmin: Boolean;
+  cardBrand: string;
+  cardLast4: string;
+  cardNumber: string;
+  lastUsed: string;
+  paymentStatus: string;
 }
 
 const Profile: React.FC = () => {
@@ -43,7 +45,7 @@ const Profile: React.FC = () => {
         {/* Profile Section */}
         <div className="pt-5 pb-10">
           <div className="flex flex-col md:flex-row items-center sm:gap-3 lg:gap-5">
-            <div className="w-24 h-24 rounded-full border bg-brand-neutral flex items-center justify-center text-text-light text-3xl lg:text-4xl">
+            <div className="w-24 h-24 rounded-full border border-gray-500 flex items-center justify-center text-3xl lg:text-4xl">
               {user?.firstName.split("")[0]}
             </div>
 
@@ -427,123 +429,161 @@ const Addresses: React.FC = () => {
 };
 
 const SavedCards = () => {
-  const [cards, setCards] = useState<
-    {
-      id: string;
-      bank: string;
-      cardType: string;
-      cardNumber: string;
-      expiry: string;
-      holderName: string;
-      bg: string;
-    }[]
-  >([]);
+  const { user } = useContext(AuthContext);
+  const [cards, setCards] = useState<SavedCard[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fakeCards = [
-      {
-        id: "card-001",
-        bank: "Zenith Bank",
-        cardType: "Visa",
-        cardNumber: "**** **** **** 4821",
-        expiry: "09/27",
-        holderName: "Abdul Muizz",
-        bg: "from-[#0D324D] to-[#7F5A83]",
-      },
-      {
-        id: "card-002",
-        bank: "GTBank",
-        cardType: "Mastercard",
-        cardNumber: "**** **** **** 9374",
-        expiry: "02/28",
-        holderName: "Harris Muizz",
-        bg: "from-[#1E3C72] to-[#2A5298]",
-      },
-      {
-        id: "card-003",
-        bank: "Access Bank",
-        cardType: "Verve",
-        cardNumber: "**** **** **** 6219",
-        expiry: "11/26",
-        holderName: "Abdulrahman H.",
-        bg: "from-[#1F1C2C] to-[#928DAB]",
-      },
-      {
-        id: "card-004",
-        bank: "First Bank",
-        cardType: "Visa",
-        cardNumber: "**** **** **** 5503",
-        expiry: "05/29",
-        holderName: "Muizz NG",
-        bg: "from-[#2b5876] to-[#4e4376]",
-      },
-    ];
+    const fetchSavedCards = async () => {
+      try {
+        const response = await Axios.get(`${URL}/users/saved-cards`, {
+          withCredentials: true,
+        });
+        if (response.data.success) setCards(response.data.cards);
+      } catch {
+        toast.error("Failed to load saved cards");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setCards(fakeCards);
-  }, []);
+    if (user) fetchSavedCards();
+  }, [user]);
 
-  const handleDeleteCard = (id: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this card?"
-    );
-    if (!confirmDelete) return;
-    const updated = cards.filter((card) => card.id !== id);
-    setCards(updated);
-    toast.success("Card deleted successfully!");
+  const getCardGradient = (brand: string): string => {
+    const gradients: Record<string, string> = {
+      VISA: "from-[#1A1F71]/90 via-[#1434CB]/80 to-[#0F4C81]",
+      MASTERCARD: "from-[#EB001B]/90 via-[#F79E1B]/80 to-[#D97706]",
+      AMERICAN_EXPRESS: "from-[#006FCF]/90 via-[#00A3E0]/80 to-[#0284C7]",
+      AMEX: "from-[#006FCF]/90 via-[#00A3E0]/80 to-[#0284C7]",
+      DISCOVER: "from-[#FF6000]/90 via-[#FFA500]/80 to-[#F97316]",
+      UNKNOWN: "from-[#111827] via-[#1F2937] to-[#020617]",
+    };
+    return gradients[brand] || gradients.UNKNOWN;
   };
+
+  const getCardLogo = (brand: string): string => {
+    const logos: Record<string, string> = {
+      VISA: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/visa.svg",
+      MASTERCARD:
+        "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/mastercard.svg",
+      AMERICAN_EXPRESS:
+        "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/americanexpress.svg",
+      AMEX: "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/americanexpress.svg",
+      DISCOVER:
+        "https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/discover.svg",
+    };
+    return logos[brand] || "";
+  };
+
+  const formatBrandName = (brand: string) =>
+    ((
+      {
+        VISA: "Visa",
+        MASTERCARD: "Mastercard",
+        AMEX: "Amex",
+        AMERICAN_EXPRESS: "American Express",
+        DISCOVER: "Discover",
+      } as any
+    )[brand] || "Card");
+
+  const formatLastUsed = (date: string) =>
+    new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="h-12 w-12 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+      </div>
+    );
+  }
 
   return (
     <section className="w-full">
-      {cards.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {cards.length ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {cards.map((card) => (
             <div
               key={card.id}
-              className={`relative rounded-2xl p-6 text-white bg-gradient-to-br ${card.bg} shadow-lg hover:scale-[1.02] transition-transform duration-300`}
+              className="group relative min-h-[200px] rounded-2xl p-5 text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
             >
-              {/* Card Top */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm opacity-80">{card.bank}</p>
-                  <p className="font-semibold tracking-wide">{card.cardType}</p>
-                </div>
-                <CreditCard size={28} className="opacity-80" />
-              </div>
+              {/* Background */}
+              <div
+                className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${getCardGradient(
+                  card.cardBrand
+                )}`}
+              />
 
-              {/* Card Number */}
-              <div className="mt-10 mb-6">
-                <p className="tracking-widest text-lg font-mono">
-                  {card.cardNumber}
-                </p>
-              </div>
+              {/* Glass overlay */}
+              <div className="absolute inset-0 rounded-2xl bg-white/10 backdrop-blur-sm" />
 
-              {/* Card Bottom */}
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-xs uppercase opacity-70">Card Holder</p>
-                  <p className="font-semibold text-sm">{card.holderName}</p>
-                </div>
-                <div>
-                  <p className="text-xs uppercase opacity-70">Expires</p>
-                  <p className="font-semibold text-sm">{card.expiry}</p>
-                </div>
-              </div>
+              {/* Content */}
+              <div className="relative z-10 flex h-full flex-col justify-between">
+                {/* Top */}
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-wider text-white/70">
+                      Payment Card
+                    </p>
+                    <p className="text-sm font-semibold">
+                      {formatBrandName(card.cardBrand)}
+                    </p>
+                  </div>
 
-              {/* Actions */}
-              <div className="absolute top-4 right-4 flex gap-3">
-                <button
-                  onClick={() => handleDeleteCard(card.id)}
-                  className="bg-white/20 hover:bg-white/30 rounded-full p-1 transition"
-                  title="Delete Card"
-                >
-                  <Trash2 size={18} />
-                </button>
+                  {getCardLogo(card.cardBrand) ? (
+                    <img
+                      src={getCardLogo(card.cardBrand)}
+                      alt={card.cardBrand}
+                      className="h-7 w-auto opacity-90 brightness-0 invert"
+                    />
+                  ) : (
+                    <CreditCard className="h-6 w-6 opacity-80" />
+                  )}
+                </div>
+
+                {/* Card Number */}
+                <div className="mt-4 mb-3">
+                  <p className="tracking-widest text-base">{card.cardNumber}</p>
+                </div>
+
+                {/* Bottom */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-white/60">
+                      Last Used
+                    </p>
+                    <p className="text-xs font-medium">
+                      {formatLastUsed(card.lastUsed)}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs font-medium">
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        card.paymentStatus === "COMPLETED"
+                          ? "bg-emerald-400"
+                          : "bg-white/50"
+                      }`}
+                    />
+                    {card.paymentStatus === "COMPLETED" ? "Active" : "Used"}
+                  </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 mt-10">No saved cards found.</p>
+        <div className="py-24 text-center">
+          <CreditCard className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+          <p className="text-gray-500">No saved cards found</p>
+          <p className="mt-2 text-sm text-gray-400">
+            Cards from previous payments will appear here
+          </p>
+        </div>
       )}
     </section>
   );

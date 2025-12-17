@@ -737,7 +737,7 @@ const AdminProducts: React.FC = () => {
             <button
               type="button"
               onClick={() => setEditDialogOpen(false)}
-              className="px-4 py-2 text-sm border border-border text-foreground hover:bg-muted transition-colors"
+              className="rounded-none px-4 py-2 text-sm border border-border text-foreground hover:bg-muted transition-colors"
             >
               Cancel
             </button>
@@ -745,7 +745,7 @@ const AdminProducts: React.FC = () => {
             <button
               type="button"
               onClick={handleUpdateProduct}
-              className="px-4 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              className="rounded-none px-4 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               Update Product
             </button>

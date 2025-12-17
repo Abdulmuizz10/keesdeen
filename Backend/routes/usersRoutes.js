@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getCurrentUserProfile,
+  getUserSavedCards,
   adminGetUsersByPagination,
   adminGetUserById,
   adminUpdateUser,
@@ -12,7 +13,7 @@ import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 const router = express.Router();
 
 router.get("/profile", verifyUser, getCurrentUserProfile);
-
+router.get("/saved-cards", verifyUser, getUserSavedCards);
 // Admin
 router.get(
   "/admin/pagination-users",
@@ -20,6 +21,7 @@ router.get(
   authorizeAdmin,
   adminGetUsersByPagination
 );
+
 router.get(
   "/admin/find-user/:id",
   verifyUser,

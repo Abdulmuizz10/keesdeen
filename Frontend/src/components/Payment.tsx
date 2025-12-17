@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 import {
   CreditCard,
   GooglePay,
@@ -13,6 +13,8 @@ import { useShop } from "../context/ShopContext";
 import Axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import CriticalErrorModal from "./CriticalErrorModal";
+// Import the modal
 
 interface PaymentProps {
   setLoading: any;
@@ -40,6 +42,14 @@ interface AppliedCoupon {
   discountValue: number;
 }
 
+interface CriticalError {
+  title: string;
+  message: string;
+  paymentId?: string;
+  instructions?: string[];
+  contactSupport?: boolean;
+}
+
 const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
   const { user } = useContext(AuthContext);
   const {
@@ -54,6 +64,12 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(
     null
   );
+
+  // Modal state
+  const [criticalError, setCriticalError] = useState<CriticalError | null>(
+    null
+  );
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const subtotal = getCartAmount();
   const shippingFee = fee;
@@ -112,52 +128,134 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     toast.info("Coupon removed");
   };
 
+  const handleCriticalError = (error: CriticalError) => {
+    setCriticalError(error);
+    setShowErrorModal(true);
+  };
+
+  const closeErrorModal = () => {
+    setShowErrorModal(false);
+    setCriticalError(null);
+  };
+
   const onPaymentSuccess = async (token: string) => {
     const today = new Date().toISOString();
-    if (token) {
-      const order: OrderData = {
-        user: user.id,
-        email: user.email,
-        sourceId: token,
-        currency: currency,
-        coupon: appliedCoupon?.code || "",
-        orderedItems,
-        shippingAddress: address.shippingAddress,
-        billingAddress: address.billingAddress,
-        shippingPrice: shippingFee,
-        totalPrice: finalTotal,
-        paidAt: today,
-      };
-      try {
-        const response = await Axios.post(`${URL}/orders/create-order`, order, {
-          withCredentials: true,
-          validateStatus: (status: any) => status < 600,
-        });
-        if (response.status === 200) {
-          navigate("/order_confirmation", {
-            state: { orderData: response.data },
-          });
 
-          toast.success("Order placed successfully!");
-          setCartItems({});
-        }
-      } catch (error) {
-        toast.error("Order submission failed. Please try again.");
-      } finally {
-        setIsPaying(false);
-        setLoading(false);
+    if (!token) {
+      toast.error("Payment token is missing");
+      setIsPaying(false);
+      setLoading(false);
+      return;
+    }
+
+    const order: OrderData = {
+      user: user.id,
+      email: user.email,
+      sourceId: token,
+      currency: currency,
+      coupon: appliedCoupon?.code || "",
+      orderedItems,
+      shippingAddress: address.shippingAddress,
+      billingAddress: address.billingAddress,
+      shippingPrice: shippingFee,
+      totalPrice: finalTotal,
+      paidAt: today,
+    };
+
+    try {
+      const response = await Axios.post(`${URL}/orders/create-order`, order, {
+        withCredentials: true,
+      });
+
+      // Handle success
+      if (response.data.success !== false) {
+        navigate("/order_confirmation", {
+          state: { orderData: response.data },
+        });
+        toast.success("Order placed successfully!");
+        setCartItems({});
+      } else {
+        throw new Error(response.data.message || "Order failed");
       }
+    } catch (error: any) {
+      console.error("Order submission error:", error);
+
+      const errorData = error.response?.data;
+      const errorCode = errorData?.code;
+      const paymentId = errorData?.paymentId;
+
+      // CRITICAL ERRORS - Show modal
+      if (errorCode === "ORDER_CREATION_FAILED" || paymentId) {
+        handleCriticalError({
+          title: "Payment Processed - Order Issue",
+          message:
+            errorData?.message ||
+            "Your payment was successfully processed, but we encountered an issue creating your order. Don't worry - your money is safe and we'll resolve this.",
+          paymentId: paymentId,
+          instructions: [
+            "Take a screenshot or note down your payment reference ID above",
+            "Check your email for a payment confirmation from Square",
+            "Contact our support team with your payment reference ID",
+            "Do not attempt to place the order again to avoid duplicate charges",
+          ],
+          contactSupport: true,
+        });
+      }
+      // VALIDATION ERRORS - Show modal
+      else if (
+        errorCode === "VALIDATION_ERROR" ||
+        error.response?.status === 400
+      ) {
+        handleCriticalError({
+          title: "Order Validation Failed",
+          message:
+            errorData?.message ||
+            "There was an issue with your order information. Please review and try again.",
+          instructions: [
+            "Check that all required fields are filled correctly",
+            "Verify your shipping and billing addresses",
+            "Ensure your payment information is valid",
+            "Try refreshing the page and submitting again",
+          ],
+          contactSupport: false,
+        });
+      }
+      // SERVER ERRORS - Show modal
+      else if (error.response?.status >= 500) {
+        handleCriticalError({
+          title: "Server Error",
+          message:
+            "We're experiencing technical difficulties. Your payment was not processed.",
+          instructions: [
+            "Please wait a few minutes before trying again",
+            "Clear your browser cache and cookies",
+            "Try using a different browser or device",
+            "If the problem persists, contact our support team",
+          ],
+          contactSupport: true,
+        });
+      }
+      // REGULAR ERRORS - Use toast
+      else {
+        const errorMessage =
+          errorData?.message ||
+          error.message ||
+          "Order submission failed. Please try again.";
+        toast.error(errorMessage);
+      }
+    } finally {
+      setIsPaying(false);
+      setLoading(false);
     }
   };
 
-  // Create payment request for digital wallets
-  const createPaymentRequest = () => {
+  const createPaymentRequest = useCallback(() => {
     if (!address?.shippingAddress) {
       return {
-        countryCode: "US",
+        countryCode: "GB",
         currencyCode: currency,
         total: {
-          amount: (finalTotal / 100).toFixed(2),
+          amount: finalTotal.toFixed(2),
           label: "Total",
         },
         requestBillingContact: false,
@@ -166,23 +264,22 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     }
 
     return {
-      countryCode: address.shippingAddress.country || "US",
+      countryCode: address.shippingAddress.country || "GB",
       currencyCode: currency,
       total: {
-        amount: (finalTotal / 100).toFixed(2),
+        amount: finalTotal.toFixed(2),
         label: "Total",
       },
       requestBillingContact: true,
       requestShippingContact: false,
     };
-  };
+  }, [finalTotal, address]);
 
-  // Create verification details for SCA (Strong Customer Authentication)
-  const createVerificationDetails = () => {
+  const createVerificationDetails = useCallback(() => {
     if (!address?.billingAddress) return undefined;
 
     return {
-      amount: (finalTotal / 100).toFixed(2),
+      amount: finalTotal.toFixed(2),
       currencyCode: currency,
       intent: "CHARGE" as const,
       billingContact: {
@@ -200,7 +297,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         countryCode: address.billingAddress.country || "",
       },
     };
-  };
+  }, [finalTotal, address, user.email]);
 
   const [applePaySupported, setApplePaySupported] = useState(false);
 
@@ -208,20 +305,17 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     if (typeof window === "undefined") return;
     const checkApplePay = async () => {
       try {
-        // window.ApplePaySession may be undefined in non-Safari browsers
         const ApplePaySessionAny = (window as any).ApplePaySession;
         if (!ApplePaySessionAny) {
           setApplePaySupported(false);
           return;
         }
 
-        // canMakePayments may return a Promise or boolean depending on environment
         const canMake = ApplePaySessionAny.canMakePayments
           ? await Promise.resolve(ApplePaySessionAny.canMakePayments())
           : false;
         setApplePaySupported(Boolean(canMake));
       } catch (err) {
-        // Any errors => disable Apple Pay UI
         setApplePaySupported(false);
       }
     };
@@ -241,6 +335,15 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
   return (
     <div className="w-full">
+      {/* Critical Error Modal */}
+      {criticalError && (
+        <CriticalErrorModal
+          isOpen={showErrorModal}
+          onClose={closeErrorModal}
+          error={criticalError}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-5">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
@@ -262,7 +365,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             </span>
           </div>
 
-          {/* Discount - Only show if coupon is applied */}
+          {/* Discount */}
           {appliedCoupon && appliedCoupon.discountAmount > 0 && (
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -290,7 +393,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
         </div>
 
-        {/* Coupon Form - Only show if no coupon is applied */}
+        {/* Coupon Form */}
         {!appliedCoupon && (
           <div className="poppins">
             <label htmlFor="coupon" className="text-base tracking-wide">
@@ -320,7 +423,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
         )}
 
-        {/* Show applied coupon badge if exists */}
+        {/* Applied coupon badge */}
         {appliedCoupon && (
           <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200">
             <div className="flex items-center gap-2">
@@ -355,12 +458,13 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         </h3>
 
         <PaymentForm
+          key={`payment-form-${finalTotal}`}
           applicationId={import.meta.env.VITE_SQUARE_APP_ID}
           locationId={import.meta.env.VITE_SQUARE_LOCATION_ID}
           createPaymentRequest={createPaymentRequest}
           createVerificationDetails={createVerificationDetails}
           cardTokenizeResponseReceived={(tokenResult: any) => {
-            if (isPaying) return; // HARD BLOCK multiple clicks
+            if (isPaying) return;
 
             setIsPaying(true);
             setLoading(true);

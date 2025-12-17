@@ -44,6 +44,7 @@ const paymentsApi = squareClient.paymentsApi;
  * Create Order Controller
  * Handles payment processing for credit cards and digital wallets (Apple Pay, Google Pay)
  */
+
 const createOrderController = async (req, res) => {
   try {
     const {
@@ -54,15 +55,15 @@ const createOrderController = async (req, res) => {
       shippingAddress,
       billingAddress,
       email,
-      verificationToken, // Optional: for SCA verification
+      verificationToken,
     } = req.body;
 
     // ===== VALIDATION =====
 
-    // Validate required fields
     if (!sourceId || !totalPrice || !currency || !orderedItems || !email) {
       return res.status(400).json({
         success: false,
+        code: "VALIDATION_ERROR",
         message: "Required fields are missing.",
         missingFields: {
           sourceId: !sourceId,
@@ -74,25 +75,27 @@ const createOrderController = async (req, res) => {
       });
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         success: false,
+        code: "VALIDATION_ERROR",
         message: "Invalid email format.",
       });
     }
 
-    // Validate amount (must be positive)
-    const amountInCents = parseInt(Math.floor(Number(totalPrice) * 100), 10);
-    if (isNaN(amountInCents) || amountInCents <= 0) {
+    const amountInSmallestUnit = parseInt(
+      Math.floor(Number(totalPrice) * 100),
+      10
+    );
+    if (isNaN(amountInSmallestUnit) || amountInSmallestUnit <= 0) {
       return res.status(400).json({
         success: false,
+        code: "VALIDATION_ERROR",
         message: "Invalid amount. Amount must be a positive number.",
       });
     }
 
-    // Validate address fields
     const address = {
       shippingAddress,
       billingAddress,
@@ -106,6 +109,7 @@ const createOrderController = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
+        code: "VALIDATION_ERROR",
         message: "Shipping address fields are incomplete.",
         required: ["address1", "postalCode", "country", "state"],
       });
@@ -119,6 +123,7 @@ const createOrderController = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
+        code: "VALIDATION_ERROR",
         message: "Billing address fields are incomplete.",
         required: ["address1", "postalCode", "country", "state"],
       });
@@ -128,16 +133,14 @@ const createOrderController = async (req, res) => {
 
     let paymentResult;
     try {
-      // Create idempotency key for payment (prevents duplicate charges)
       const idempotencyKey = crypto.randomUUID();
 
-      // Prepare payment request
       const paymentRequest = {
         sourceId,
         idempotencyKey,
         amountMoney: {
           currency,
-          amount: amountInCents,
+          amount: amountInSmallestUnit,
         },
         locationId: process.env.SQUARE_LOCATION_ID,
         billingAddress: {
@@ -152,52 +155,76 @@ const createOrderController = async (req, res) => {
         },
         buyerEmailAddress: email,
         note: `Order for ${orderedItems.length} item(s)`,
-        // Include verification token if provided (for SCA)
         ...(verificationToken && { verificationToken }),
       };
 
-      // Optional: Add customer details if available
       if (req.body.user) {
         paymentRequest.customerId = req.body.user;
       }
 
-      // Process payment with Square
       const { result } = await paymentsApi.createPayment(paymentRequest);
 
       if (!result || !result.payment) {
         return res.status(400).json({
           success: false,
+          code: "PAYMENT_ERROR",
           message: "Payment result is invalid.",
         });
       }
 
-      // Convert BigInt values to strings for JSON serialization
       paymentResult = convertBigIntToString(result);
     } catch (paymentError) {
-      // Handle Square payment errors
       console.error("Payment processing failed:", paymentError);
 
-      // Parse Square error response
       let errorMessage = "Payment processing failed.";
+      let errorCode = "PAYMENT_ERROR";
       let errorDetails = null;
 
       if (paymentError.errors && Array.isArray(paymentError.errors)) {
         const firstError = paymentError.errors[0];
-        errorMessage = firstError.detail || firstError.code || errorMessage;
+        errorCode = firstError.code || errorCode;
+
+        // User-friendly error messages
+        switch (firstError.code) {
+          case "CARD_NOT_SUPPORTED":
+            errorMessage =
+              "This card type is not supported. Please use a different card.";
+            break;
+          case "CARD_DECLINED":
+            errorMessage =
+              "Your card was declined. Please check your card details or try a different card.";
+            break;
+          case "INSUFFICIENT_FUNDS":
+            errorMessage =
+              "Insufficient funds. Please use a different payment method.";
+            break;
+          case "CVV_FAILURE":
+            errorMessage =
+              "Invalid CVV code. Please check your card security code.";
+            break;
+          case "INVALID_EXPIRATION":
+            errorMessage =
+              "Invalid card expiration date. Please check your card details.";
+            break;
+          default:
+            errorMessage = firstError.detail || errorMessage;
+        }
+
         errorDetails = paymentError.errors;
       }
 
-      return res.status(500).json({
+      // IMPORTANT: Return proper error response, don't throw
+      return res.status(400).json({
         success: false,
         message: errorMessage,
+        code: errorCode,
         errors: errorDetails,
-        code: paymentError.code || "PAYMENT_ERROR",
       });
     }
 
+    // ===== ORDER CREATION =====
     try {
       const payment = paymentResult.payment;
-
       const order = new OrderModel({
         ...req.body,
         paymentInfo: {
@@ -210,7 +237,7 @@ const createOrderController = async (req, res) => {
           receiptUrl: payment.receiptUrl,
           receiptNumber: payment.receiptNumber,
           paymentSourceType: payment.sourceType,
-          cardBrand: payment.cardDetails?.card?.brand,
+          cardBrand: payment.cardDetails?.card?.cardBrand,
           cardLast4: payment.cardDetails?.card?.last4,
           cardStatus: payment.cardDetails?.status,
           riskLevel: payment.riskEvaluation?.riskLevel,
@@ -234,7 +261,6 @@ const createOrderController = async (req, res) => {
         );
       } catch (emailError) {
         console.error("Failed to send order confirmation email:", emailError);
-        // Don't fail the order if email fails
       }
 
       if (shippingAddress.email && shippingAddress.email !== email) {
@@ -247,36 +273,41 @@ const createOrderController = async (req, res) => {
           );
         } catch (emailError) {
           console.error("Failed to send gift notification email:", emailError);
-          // Don't fail the order if email fails
         }
       }
 
-      return res.status(200).json({ ...savedOrder.toObject(), paymentResult });
+      return res.status(200).json({
+        success: true,
+        ...savedOrder.toObject(),
+        paymentResult,
+      });
     } catch (orderError) {
       console.error("Failed to create order:", orderError);
 
-      // Order creation failed but payment succeeded
-      // Log this for manual review
+      // CRITICAL ERROR LOG
       console.error("CRITICAL: Payment succeeded but order creation failed", {
         paymentId: paymentResult.payment.id,
         email,
         error: orderError.message,
+        timestamp: new Date().toISOString(),
       });
 
+      // IMPORTANT: Return special error code with payment ID
       return res.status(500).json({
         success: false,
+        code: "ORDER_CREATION_FAILED",
         message:
-          "Payment processed but order creation failed. Please contact support.",
+          "Your payment was processed successfully, but we encountered an issue creating your order. Please contact support immediately.",
         paymentId: paymentResult.payment.id,
         error: orderError.message,
       });
     }
   } catch (error) {
-    // Handle unexpected errors
     console.error("Unexpected error in createOrderController:", error);
 
     return res.status(500).json({
       success: false,
+      code: "SERVER_ERROR",
       message: "An unexpected error occurred. Please try again.",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });

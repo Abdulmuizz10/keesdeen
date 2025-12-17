@@ -165,14 +165,11 @@ const adminCreateEmailCampaign = async (req, res) => {
 
 const adminSendEmailCampaign = async (req, res) => {
   const { campaignId } = req.params;
-
   try {
     const campaign = await EmailCampaignModel.findById(campaignId);
-
     if (!campaign) {
       return res.status(404).json({ message: "Campaign not found" });
     }
-
     if (campaign.status === "sent") {
       return res.status(400).json({ message: "Campaign already sent" });
     }
@@ -181,47 +178,71 @@ const adminSendEmailCampaign = async (req, res) => {
     await campaign.save();
 
     const activeSubscribers = await SubscriberModel.getActive();
-
     if (activeSubscribers.length === 0) {
       campaign.status = "failed";
       await campaign.save();
       return res.status(400).json({ message: "No active subscribers" });
     }
 
-    const emailList = activeSubscribers.map((sub) => sub.email);
-    campaign.recipientCount = emailList.length;
+    campaign.recipientCount = activeSubscribers.length;
 
-    // Send emails
+    // Send emails individually with unique tokens
     try {
-      await sendSubscribersEmail(
-        emailList,
-        campaign.subject,
-        campaign.message,
-        campaign.image
+      let successCount = 0;
+      let failedCount = 0;
+
+      // Send email to each subscriber with their unique token
+      const emailPromises = activeSubscribers.map((subscriber) =>
+        sendSubscribersEmail(
+          subscriber.email,
+          campaign.subject,
+          campaign.message,
+          campaign.image,
+          subscriber.unsubscribeToken // Pass unique token for each subscriber
+        )
+          .then(() => {
+            successCount++;
+            return { success: true, email: subscriber.email };
+          })
+          .catch((error) => {
+            failedCount++;
+            console.error(
+              `Failed to send email to ${subscriber.email}:`,
+              error
+            );
+            return { success: false, email: subscriber.email, error };
+          })
       );
+
+      await Promise.all(emailPromises);
 
       // Update campaign status
-      campaign.status = "sent";
+      campaign.status = successCount > 0 ? "sent" : "failed";
       campaign.sentAt = new Date();
-      campaign.deliveredCount = emailList.length;
+      campaign.deliveredCount = successCount;
+      campaign.failedCount = failedCount;
       await campaign.save();
 
-      // Update subscriber stats
-      await SubscriberModel.updateMany(
-        { status: "active" },
-        {
-          $inc: { emailsSent: 1 },
-          $set: { lastEmailSentAt: new Date() },
-        }
-      );
+      // Update subscriber stats (only for successful sends)
+      if (successCount > 0) {
+        await SubscriberModel.updateMany(
+          { status: "active" },
+          {
+            $inc: { emailsSent: 1 },
+            $set: { lastEmailSentAt: new Date() },
+          }
+        );
+      }
 
       res.status(200).json({
-        message: "Campaign sent successfully!",
-        recipientCount: emailList.length,
+        message: `Campaign sent! ${successCount} delivered, ${failedCount} failed`,
+        recipientCount: activeSubscribers.length,
+        deliveredCount: successCount,
+        failedCount: failedCount,
       });
     } catch (emailError) {
       campaign.status = "failed";
-      campaign.failedCount = emailList.length;
+      campaign.failedCount = activeSubscribers.length;
       await campaign.save();
       throw emailError;
     }

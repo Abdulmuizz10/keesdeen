@@ -510,13 +510,13 @@ export const sendSubscribersEmail = async (
   email,
   subject,
   message,
-  imageUrl
+  imageUrl,
+  unsubscribeToken // Add this parameter
 ) => {
   const transporter = createTransporter();
 
   // Build email content with optional image
   let emailContent = "";
-
   if (imageUrl) {
     emailContent += `
       <div style="margin: 0 0 24px 0; text-align: center;">
@@ -527,10 +527,10 @@ export const sendSubscribersEmail = async (
 
   emailContent += `<p style="margin: 0 0 24px 0; white-space: pre-wrap;">${message}</p>`;
 
-  // Add unsubscribe link
+  // Add unsubscribe link with actual token
   emailContent += `
     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #999;">
-      <p>If you no longer wish to receive these emails, you can <a href="${process.env.FRONTEND_URL}/unsubscribe/{{unsubscribeToken}}" style="color: #666;">unsubscribe here</a>.</p>
+      <p>If you no longer wish to receive these emails, you can <a href="${process.env.FRONTEND_URL}/unsubscribe/${unsubscribeToken}" style="color: #666;">unsubscribe here</a>.</p>
     </div>
   `;
 
@@ -538,7 +538,7 @@ export const sendSubscribersEmail = async (
 
   await transporter.sendMail({
     from: `"Keesdeen" <${process.env.EMAIL}>`,
-    to: Array.isArray(email) ? email.join(", ") : email,
+    to: email, // Send to single email, not array
     subject: `${subject} – Keesdeen`,
     html,
   });

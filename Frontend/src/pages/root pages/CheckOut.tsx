@@ -16,7 +16,7 @@ const CheckOut: React.FC = () => {
   return (
     <section className="placing">
       {loading && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 h-screen w-screen flex items-center justify-center bg-black/50 z-50">
+        <div className="fixed inset-0 h-screen w-screen flex items-center justify-center bg-black/55 backdrop-blur-sm z-50">
           <Spinner />
         </div>
       )}

@@ -226,7 +226,7 @@ const ShopAll: React.FC = () => {
       {/* Header */}
       <div className="mb-5 lg:mb-10 border-b border-gray-200 pb-8">
         <h2 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">
-          <span>All Products</span>
+          <span>Shop All</span>
         </h2>
         <p className="text-sm text-text-secondary">
           {products.length} {products.length > 1 ? "products" : "product"}

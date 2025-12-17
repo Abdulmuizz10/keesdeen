@@ -989,17 +989,22 @@ const AdminSubscribers: React.FC = () => {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Send Campaign</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground text-xl font-light tracking-tight">
+              Send Campaign
+            </AlertDialogTitle>
             <AlertDialogDescription>
               Send <strong>{sendDialog.subject}</strong> to all active
               subscribers?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-none px-4 py-2 text-sm border border-border text-foreground hover:bg-muted transition-colors">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleSendCampaign}
               disabled={sendingCampaign}
+              className="rounded-none"
             >
               {sendingCampaign ? "Sending..." : "Send Campaign"}
             </AlertDialogAction>
