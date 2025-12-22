@@ -2,30 +2,30 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Create reusable transporter
 const createTransporter = () => {
-  if (process.env.NODE_ENV === "production") {
-    return nodemailer.createTransport({
-      host: "mail.keesdeen.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
-      },
-    });
-  }
+  const isProd = process.env.NODE_ENV === "production";
 
-  return nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
+  return nodemailer.createTransport(
+    isProd
+      ? {
+          host: "smtp.privateemail.com",
+          port: 587,
+          secure: false,
+          requireTLS: true,
+          auth: {
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD,
+          },
+        }
+      : {
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+          tls: { rejectUnauthorized: false },
+        }
+  );
 };
 
 const FROM_EMAIL =
