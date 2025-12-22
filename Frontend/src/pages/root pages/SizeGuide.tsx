@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Ruler, Info } from "lucide-react";
-import { Link } from "react-router-dom";
 
 type MeasurementUnit = "cm" | "in";
 type Gender = "mens" | "womens";
@@ -22,28 +21,27 @@ const SizeGuide: React.FC = () => {
   const [gender, setGender] = useState<Gender>("womens");
   const [category, setCategory] = useState<Category>("tops");
 
-  const convert = (cm: number): number => {
-    return unit === "cm" ? cm : Math.round((cm / 2.54) * 10) / 10;
-  };
+  // No conversion needed - store actual values for both units
+  // const getValue = (cmValue: number, inValue: number): number => {
+  //   return unit === "cm" ? cmValue : inValue;
+  // };
 
-  // Size data
+  // Size data with actual measurements from the images
   const sizeData: Record<Gender, Record<Category, SizeData[]>> = {
     womens: {
       tops: [
-        { size: "XS", chest: 81, waist: 63, hips: 86 },
-        { size: "S", chest: 86, waist: 68, hips: 91 },
-        { size: "M", chest: 91, waist: 73, hips: 96 },
-        { size: "L", chest: 96, waist: 78, hips: 101 },
-        { size: "XL", chest: 101, waist: 83, hips: 106 },
-        { size: "XXL", chest: 106, waist: 88, hips: 111 },
+        { size: "S", chest: 84, waist: 65, hips: 83 }, // cm values
+        { size: "M", chest: 94, waist: 75, hips: 91 },
+        { size: "L", chest: 104, waist: 85, hips: 101 },
+        { size: "XL", chest: 114, waist: 93, hips: 111 },
+        { size: "XXL", chest: 122, waist: 104, hips: 121 },
       ],
       bottoms: [
-        { size: "XS", waist: 63, hips: 86, inseam: 76 },
-        { size: "S", waist: 68, hips: 91, inseam: 76 },
-        { size: "M", waist: 73, hips: 96, inseam: 78 },
-        { size: "L", waist: 78, hips: 101, inseam: 78 },
-        { size: "XL", waist: 83, hips: 106, inseam: 79 },
-        { size: "XXL", waist: 88, hips: 111, inseam: 79 },
+        { size: "S", waist: 65, hips: 83, inseam: 76 },
+        { size: "M", waist: 75, hips: 91, inseam: 76 },
+        { size: "L", waist: 85, hips: 101, inseam: 78 },
+        { size: "XL", waist: 93, hips: 111, inseam: 78 },
+        { size: "XXL", waist: 104, hips: 121, inseam: 79 },
       ],
       shoes: [
         { size: "35", ukSize: 2.5, usSize: 5, euSize: 35 },
@@ -86,7 +84,68 @@ const SizeGuide: React.FC = () => {
     },
   };
 
+  // Corresponding inch values for women's measurements
+  const womensInchData: Record<
+    Category,
+    Array<{ chest?: string; waist?: string; hips?: string; inseam?: number }>
+  > = {
+    tops: [
+      { chest: "33.1 - 35", waist: "25.6 - 27.6", hips: "32.7 - 35" },
+      { chest: "37 - 39", waist: "29.5 - 31.5", hips: "35.8 - 37.8" },
+      { chest: "40.9 - 43.7", waist: "33.5 - 36.2", hips: "39.8 - 42.5" },
+      { chest: "44.9 - 47.6", waist: "36.6 - 39.8", hips: "43.7 - 46.9" },
+      { chest: "48 - 51.2", waist: "40.9 - 43.7", hips: "47.6 - 50.8" },
+    ],
+    bottoms: [
+      { waist: "25.6 - 27.6", hips: "32.7 - 35", inseam: 30 },
+      { waist: "29.5 - 31.5", hips: "35.8 - 37.8", inseam: 30 },
+      { waist: "33.5 - 36.2", hips: "39.8 - 42.5", inseam: 31 },
+      { waist: "36.6 - 39.8", hips: "43.7 - 46.9", inseam: 31 },
+      { waist: "40.9 - 43.7", hips: "47.6 - 50.8", inseam: 31 },
+    ],
+    shoes: [],
+  };
+
+  // Corresponding cm range values for women's measurements
+  const womensCmData: Record<
+    Category,
+    Array<{ chest?: string; waist?: string; hips?: string; inseam?: number }>
+  > = {
+    tops: [
+      { chest: "84 - 89", waist: "65 - 70", hips: "83 - 89" },
+      { chest: "94 - 99", waist: "75 - 80", hips: "91 - 96" },
+      { chest: "104 - 111", waist: "85 - 92", hips: "101 - 108" },
+      { chest: "114 - 121", waist: "93 - 101", hips: "111 - 119" },
+      { chest: "122 - 130", waist: "104 - 111", hips: "121 - 129" },
+    ],
+    bottoms: [
+      { waist: "65 - 70", hips: "83 - 89", inseam: 76 },
+      { waist: "75 - 80", hips: "91 - 96", inseam: 76 },
+      { waist: "85 - 92", hips: "101 - 108", inseam: 78 },
+      { waist: "93 - 101", hips: "111 - 119", inseam: 78 },
+      { waist: "104 - 111", hips: "121 - 129", inseam: 79 },
+    ],
+    shoes: [],
+  };
+
   const currentData = sizeData[gender][category];
+
+  const formatValue = (
+    idx: number,
+    field: "chest" | "waist" | "hips" | "inseam"
+  ) => {
+    if (gender === "womens" && category !== "shoes") {
+      const dataSource = unit === "cm" ? womensCmData : womensInchData;
+      const rowData = dataSource[category][idx];
+      return rowData?.[field] || "";
+    }
+
+    // For men's, use the convert function
+    const row = currentData[idx];
+    const value = row[field];
+    if (value === undefined) return "";
+    return unit === "cm" ? value : Math.round((value / 2.54) * 10) / 10;
+  };
 
   return (
     <section className="placing">
@@ -189,14 +248,14 @@ const SizeGuide: React.FC = () => {
                 <>
                   {category === "tops" && (
                     <th className="px-6 py-4 text-left text-xs uppercase tracking-wider text-gray-700 font-normal">
-                      Chest ({unit})
+                      {gender === "womens" ? "Bust" : "Chest"} ({unit})
                     </th>
                   )}
                   <th className="px-6 py-4 text-left text-xs uppercase tracking-wider text-gray-700 font-normal">
                     Waist ({unit})
                   </th>
                   <th className="px-6 py-4 text-left text-xs uppercase tracking-wider text-gray-700 font-normal">
-                    Hips ({unit})
+                    {gender === "womens" ? "Hip" : "Hips"} ({unit})
                   </th>
                   {category === "bottoms" && (
                     <th className="px-6 py-4 text-left text-xs uppercase tracking-wider text-gray-700 font-normal">
@@ -225,24 +284,24 @@ const SizeGuide: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    {row.chest && (
+                    {row.chest !== undefined && (
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {convert(row.chest)}
+                        {formatValue(idx, "chest")}
                       </td>
                     )}
-                    {row.waist && (
+                    {row.waist !== undefined && (
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {convert(row.waist)}
+                        {formatValue(idx, "waist")}
                       </td>
                     )}
-                    {row.hips && (
+                    {row.hips !== undefined && (
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {convert(row.hips)}
+                        {formatValue(idx, "hips")}
                       </td>
                     )}
-                    {row.inseam && (
+                    {row.inseam !== undefined && (
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {convert(row.inseam)}
+                        {formatValue(idx, "inseam")}
                       </td>
                     )}
                   </>
@@ -262,9 +321,12 @@ const SizeGuide: React.FC = () => {
           </div>
           <div className="space-y-4 text-sm text-gray-700">
             <div>
-              <h3 className="font-medium mb-2">Chest</h3>
+              <h3 className="font-medium mb-2">
+                {gender === "womens" ? "Bust" : "Chest"}
+              </h3>
               <p>
-                Measure around the fullest part of your chest, keeping the tape
+                Measure around the fullest part of your{" "}
+                {gender === "womens" ? "bust" : "chest"}, keeping the tape
                 measure horizontal.
               </p>
             </div>
@@ -276,10 +338,13 @@ const SizeGuide: React.FC = () => {
               </p>
             </div>
             <div>
-              <h3 className="font-medium mb-2">Hips</h3>
+              <h3 className="font-medium mb-2">
+                {gender === "womens" ? "Hip" : "Hips"}
+              </h3>
               <p>
-                Measure around the fullest part of your hips, approximately 20cm
-                below your waist.
+                Measure around the fullest part of your{" "}
+                {gender === "womens" ? "hip" : "hips"}, approximately 20cm below
+                your waist.
               </p>
             </div>
             <div>
@@ -333,12 +398,9 @@ const SizeGuide: React.FC = () => {
       {/* CTA */}
       <div className="text-center pt-8 border-t border-gray-200">
         <p className="text-gray-600 mb-8">Need help finding your size?</p>
-        <Link
-          to="/contact"
-          className="border border-gray-900 bg-gray-900 px-6 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
-        >
+        <button className="border border-gray-900 bg-gray-900 px-6 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800 disabled:opacity-50">
           Contact Us
-        </Link>
+        </button>
       </div>
     </section>
   );

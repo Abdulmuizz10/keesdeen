@@ -1,8 +1,5 @@
-"use client";
-
-import { LogOut, Settings, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-
+import { Avatar, AvatarFallback } from "./ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +15,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext/AuthContext";
 import { useShop } from "@/context/ShopContext";
 import { LogOutAccount } from "@/context/AuthContext/AuthApiCalls";
+import { LogOut, Settings, User } from "lucide-react";
 // import CommandMenu from "./CommandMenu";
 
 const Nav = () => {
@@ -47,7 +45,6 @@ const Nav = () => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
-              <AvatarImage src="https://avatars.githubusercontent.com/u/1486366" />
               <AvatarFallback>{user?.firstName.split("")[0]}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>

@@ -7,6 +7,7 @@ import {
   sendGiftNotificationEmail,
   sendOrderConfirmationEmail,
   sendOrderStatusEmail,
+  sendRefundConfirmationEmail,
 } from "../lib/utils.js";
 
 dotenv.config();
@@ -347,43 +348,358 @@ const createOrderController = async (req, res) => {
 // };
 
 /**
- * Refund Payment Controller
- * Process refund for a payment
+ * Create a full or partial refund
+ * POST /api/orders/:orderId/refund
  */
-// const refundPaymentController = async (req, res) => {
-//   try {
-//     const { paymentId, amountMoney, reason } = req.body;
+const adminCreateRefund = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { amount, reason, refundType } = req.body;
 
-//     if (!paymentId) {
-//       return res.status(400).json({
+    // ===== VALIDATION =====
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        code: "VALIDATION_ERROR",
+        message: "Order ID is required.",
+      });
+    }
+
+    if (!reason) {
+      return res.status(400).json({
+        success: false,
+        code: "VALIDATION_ERROR",
+        message: "Refund reason is required.",
+      });
+    }
+
+    // Find the order
+    const order = await OrderModel.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        code: "ORDER_NOT_FOUND",
+        message: "Order not found.",
+      });
+    }
+
+    // Check if order is eligible for refund
+    if (!order.paymentInfo?.squarePaymentId) {
+      return res.status(400).json({
+        success: false,
+        code: "NO_PAYMENT_INFO",
+        message: "No payment information found for this order.",
+      });
+    }
+
+    // Check if already refunded
+    if (order.refundInfo?.status === "COMPLETED") {
+      return res.status(400).json({
+        success: false,
+        code: "ALREADY_REFUNDED",
+        message: "This order has already been fully refunded.",
+      });
+    }
+
+    // Calculate refund amount
+    const totalPaid = order.paymentInfo.amountPaid;
+    const alreadyRefunded = order.refundInfo?.amountRefunded || 0;
+    const availableForRefund = totalPaid - alreadyRefunded;
+
+    let refundAmount;
+    if (refundType === "full") {
+      refundAmount = availableForRefund;
+    } else if (refundType === "partial") {
+      if (!amount || amount <= 0) {
+        return res.status(400).json({
+          success: false,
+          code: "VALIDATION_ERROR",
+          message: "Valid refund amount is required for partial refunds.",
+        });
+      }
+      if (amount > availableForRefund) {
+        return res.status(400).json({
+          success: false,
+          code: "INVALID_AMOUNT",
+          message: `Refund amount cannot exceed available refund amount of ${availableForRefund}.`,
+        });
+      }
+      refundAmount = amount;
+    }
+
+    // Convert to smallest unit (cents)
+    const amountInSmallestUnit = Math.floor(refundAmount * 100);
+
+    // ===== PROCESS REFUND WITH SQUARE =====
+    let refundResult;
+    try {
+      const idempotencyKey = crypto.randomUUID();
+
+      const refundRequest = {
+        idempotencyKey,
+        amountMoney: {
+          amount: amountInSmallestUnit,
+          currency: order.paymentInfo.currency,
+        },
+        paymentId: order.paymentInfo.squarePaymentId,
+        reason,
+      };
+
+      const { result } = await refundsApi.refundPayment(refundRequest);
+
+      if (!result || !result.refund) {
+        return res.status(400).json({
+          success: false,
+          code: "REFUND_ERROR",
+          message: "Refund processing failed.",
+        });
+      }
+
+      refundResult = convertBigIntToString(result);
+    } catch (refundError) {
+      console.error("Square refund failed:", refundError);
+
+      let errorMessage = "Refund processing failed.";
+      let errorCode = "REFUND_ERROR";
+
+      if (refundError.errors && Array.isArray(refundError.errors)) {
+        const firstError = refundError.errors[0];
+        errorCode = firstError.code || errorCode;
+
+        switch (firstError.code) {
+          case "PAYMENT_NOT_REFUNDABLE":
+            errorMessage = "This payment cannot be refunded.";
+            break;
+          case "REFUND_AMOUNT_INVALID":
+            errorMessage = "Invalid refund amount.";
+            break;
+          case "REFUND_ALREADY_PENDING":
+            errorMessage =
+              "A refund is already being processed for this payment.";
+            break;
+          default:
+            errorMessage = firstError.detail || errorMessage;
+        }
+      }
+
+      return res.status(400).json({
+        success: false,
+        message: errorMessage,
+        code: errorCode,
+        errors: refundError.errors,
+      });
+    }
+
+    // ===== UPDATE ORDER WITH REFUND INFO =====
+    const refund = refundResult.refund;
+    const newRefundAmount = alreadyRefunded + refundAmount;
+    const isFullyRefunded = newRefundAmount >= totalPaid;
+
+    order.refundInfo = {
+      squareRefundId: refund.id,
+      status: refund.status,
+      amountRefunded: newRefundAmount,
+      currency: refund.amountMoney.currency,
+      refundedAt: refund.createdAt,
+      reason,
+      refundType,
+      processingFee: refund.processingFee
+        ? Number(refund.processingFee[0]?.amountMoney?.amount || 0) / 100
+        : 0,
+    };
+
+    // Update order status
+    if (isFullyRefunded) {
+      order.status = "Refunded";
+    } else {
+      order.status = "Partially Refunded";
+    }
+
+    await order.save();
+
+    // ===== SEND REFUND CONFIRMATION EMAIL =====
+    try {
+      await sendRefundConfirmationEmail(
+        order.email,
+        order.shippingAddress.firstName,
+        refundAmount,
+        order.paymentInfo.currency,
+        reason,
+        order._id
+      );
+    } catch (emailError) {
+      console.error("Failed to send refund confirmation email:", emailError);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Refund processed successfully.",
+      refund: {
+        orderId: order._id,
+        refundId: refund.id,
+        amount: refundAmount,
+        status: refund.status,
+        totalRefunded: newRefundAmount,
+        remainingAmount: totalPaid - newRefundAmount,
+      },
+      order: order.toObject(),
+    });
+  } catch (error) {
+    console.error("Unexpected error in createRefund:", error);
+    return res.status(500).json({
+      success: false,
+      code: "SERVER_ERROR",
+      message: "An unexpected error occurred.",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
+const getRefundStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await OrderModel.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        code: "ORDER_NOT_FOUND",
+        message: "Order not found.",
+      });
+    }
+
+    if (!order.refundInfo) {
+      return res.status(200).json({
+        success: true,
+        hasRefund: false,
+        message: "No refund found for this order.",
+      });
+    }
+
+    // Optionally fetch latest status from Square
+    if (order.refundInfo.squareRefundId) {
+      try {
+        const { result } = await refundsApi.getPaymentRefund(
+          order.refundInfo.squareRefundId
+        );
+
+        const refund = convertBigIntToString(result.refund);
+
+        // Update if status changed
+        if (refund.status !== order.refundInfo.status) {
+          order.refundInfo.status = refund.status;
+          await order.save();
+        }
+      } catch (error) {
+        console.error("Failed to fetch refund status from Square:", error);
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      hasRefund: true,
+      refund: order.refundInfo,
+      orderStatus: order.status,
+    });
+  } catch (error) {
+    console.error("Error fetching refund status:", error);
+    return res.status(500).json({
+      success: false,
+      code: "SERVER_ERROR",
+      message: "Failed to fetch refund status.",
+    });
+  }
+};
+
+// const listOrderRefunds = async (req, res) => {
+//   try {
+//     const { orderId } = req.params;
+
+//     const order = await OrderModel.findById(orderId);
+//     if (!order) {
+//       return res.status(404).json({
 //         success: false,
-//         message: "Payment ID is required",
+//         code: "ORDER_NOT_FOUND",
+//         message: "Order not found.",
 //       });
 //     }
 
-//     const refundsApi = squareClient.refundsApi;
+//     if (!order.paymentInfo?.squarePaymentId) {
+//       return res.status(200).json({
+//         success: true,
+//         refunds: [],
+//         message: "No payment information available.",
+//       });
+//     }
 
-//     const { result } = await refundsApi.refundPayment({
-//       idempotencyKey: crypto.randomUUID(),
-//       paymentId,
-//       amountMoney: amountMoney || undefined, // Optional: partial refund
-//       reason: reason || "Customer request",
-//     });
+//     // Fetch all refunds from Square for this payment
+//     try {
+//       const { result } = await refundsApi.listPaymentRefunds({
+//         locationId: order.paymentInfo.locationId,
+//         sourceType: "PAYMENT",
+//         limit: 100,
+//       });
 
-//     return res.status(200).json({
-//       success: true,
-//       refund: convertBigIntToString(result.refund),
-//     });
+//       // Filter refunds for this specific payment
+//       const orderRefunds = result.refunds
+//         ? result.refunds.filter(
+//             (r) => r.paymentId === order.paymentInfo.squarePaymentId
+//           )
+//         : [];
+
+//       return res.status(200).json({
+//         success: true,
+//         refunds: orderRefunds.map(convertBigIntToString),
+//         count: orderRefunds.length,
+//       });
+//     } catch (error) {
+//       console.error("Failed to list refunds from Square:", error);
+//       return res.status(500).json({
+//         success: false,
+//         code: "SQUARE_ERROR",
+//         message: "Failed to retrieve refunds.",
+//       });
+//     }
 //   } catch (error) {
-//     console.error("Failed to process refund:", error);
-
+//     console.error("Error listing refunds:", error);
 //     return res.status(500).json({
 //       success: false,
-//       message: "Failed to process refund",
-//       error: error.message,
+//       code: "SERVER_ERROR",
+//       message: "Failed to list refunds.",
 //     });
 //   }
 // };
+
+// Backend: controllers/refundController.js or orderController.js
+
+const adminListOrderRefunds = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const orders = await OrderModel.find({
+      refundInfo: { $exists: true, $ne: null },
+    })
+      .sort({ "refundInfo.refundedAt": -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalRefunds = await OrderModel.countDocuments({
+      refundInfo: { $exists: true, $ne: null },
+    });
+
+    const totalPages = Math.ceil(totalRefunds / limit);
+
+    res.status(200).json({
+      orders,
+      totalPages,
+      totalRefunds,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const getProfileOrdersByPageController = async (req, res) => {
   const userId = new mongoose.Types.ObjectId(req.user.id);
@@ -654,6 +970,9 @@ const adminUpdateOrderStatusController = async (req, res) => {
 
 export {
   createOrderController,
+  adminCreateRefund,
+  adminListOrderRefunds,
+  getRefundStatus,
   // getPaymentStatusController,
   // refundPaymentController,
   getProfileOrdersByPageController,

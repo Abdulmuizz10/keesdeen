@@ -62,6 +62,23 @@ const orderSchema = new mongoose.Schema(
       customerSquareId: { type: String },
       locationId: { type: String },
     },
+    refundInfo: {
+      squareRefundId: { type: String },
+      status: {
+        type: String,
+        enum: ["PENDING", "COMPLETED", "REJECTED", "FAILED"],
+      },
+      amountRefunded: { type: Number },
+      currency: { type: String },
+      refundedAt: { type: Date },
+      reason: { type: String },
+      refundType: {
+        type: String,
+        enum: ["full", "partial"],
+      },
+      processingFee: { type: Number },
+      updatedAt: { type: Date, default: Date.now },
+    },
   },
   { timestamps: true }
 );

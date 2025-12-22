@@ -14,12 +14,12 @@ export const faqData = [
     answer:
       "Orders can be modified or cancelled within 1 hour of placement. After this window, orders enter processing and cannot be changed. Please contact us immediately at hello@keesdeen.com if you need to make changes.",
   },
-  {
-    category: "Orders & Payment",
-    question: "Do you offer gift cards?",
-    answer:
-      "Yes! Digital gift cards are available in various denominations. They're delivered instantly via email and can be used for any purchase on our website.",
-  },
+  // {
+  //   category: "Orders & Payment",
+  //   question: "Do you offer gift cards?",
+  //   answer:
+  //     "Yes! Digital gift cards are available in various denominations. They're delivered instantly via email and can be used for any purchase on our website.",
+  // },
   {
     category: "Orders & Payment",
     question: "Is my payment information secure?",

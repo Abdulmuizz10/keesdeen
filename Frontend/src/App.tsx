@@ -60,6 +60,7 @@ import AdminSubscribers from "./pages/admin pages/AdminSubscribers";
 import AdminSendEmailToSubscribers from "./pages/admin pages/AdminSendEmailToSubscribers";
 import AdminProductDetails from "./pages/admin pages/AdminProductDetails";
 import AdminSettings from "./pages/admin pages/AdminSettings";
+import AdminRefunds from "./pages/admin pages/AdminRefunds";
 
 // 404 page
 import ErrorPage from "./pages/root pages/ErrorPage";
@@ -185,6 +186,7 @@ const App: React.FC = () => {
               />
               <Route path="/admin/coupons" element={<AdminCoupons />} />
               <Route path="/admin/subscribers" element={<AdminSubscribers />} />
+              <Route path="/admin/refunds" element={<AdminRefunds />} />
               <Route
                 path="/admin/email-to-subscribers"
                 element={<AdminSendEmailToSubscribers />}
