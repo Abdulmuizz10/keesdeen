@@ -16,6 +16,7 @@ const createTransporter = () => {
             user: process.env.SMTP_EMAIL,
             pass: process.env.SMTP_PASSWORD,
           },
+          tls: { rejectUnauthorized: false },
         }
       : {
           service: "gmail",
@@ -737,78 +738,78 @@ export const sendContactConfirmationEmail = async ({
 };
 
 // 9. REFUND CONFIRMATION EMAIL
-export const sendRefundConfirmationEmail = async (
-  email,
-  firstName,
-  refundAmount,
-  currency,
-  reason,
-  orderId
-) => {
-  const transporter = createTransporter();
+// export const sendRefundConfirmationEmail = async (
+//   email,
+//   firstName,
+//   refundAmount,
+//   currency,
+//   reason,
+//   orderId
+// ) => {
+//   const transporter = createTransporter();
 
-  const html = generateEmailTemplate(
-    "Refund Processed",
-    `
-      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
-      <p style="margin: 0 0 24px 0;">
-        Your refund has been processed successfully.
-      </p>
-      
-      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
-        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
-          Refund Details
-        </p>
-        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
-            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${orderId}</td>
-          </tr>
-          <tr>
-            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
-            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-weight: 300;">${formatAmount(
-              refundAmount,
-              currency
-            )}</td>
-          </tr>
-          <tr>
-            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Reason:</td>
-            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
-          </tr>
-        </table>
-      </div>
+//   const html = generateEmailTemplate(
+//     "Refund Processed",
+//     `
+//       <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+//       <p style="margin: 0 0 24px 0;">
+//         Your refund has been processed successfully.
+//       </p>
 
-      <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
-        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-          The refund will appear on your original payment method within 5-10 business days, 
-          depending on your bank or card issuer.
-        </p>
-      </div>
+//       <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+//         <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+//           Refund Details
+//         </p>
+//         <table width="100%" cellpadding="0" cellspacing="0" border="0">
+//           <tr>
+//             <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
+//             <td style="padding: 4px 0; color: #111827; font-size: 14px;">${orderId}</td>
+//           </tr>
+//           <tr>
+//             <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
+//             <td style="padding: 4px 0; color: #111827; font-size: 14px; font-weight: 300;">${formatAmount(
+//               refundAmount,
+//               currency
+//             )}</td>
+//           </tr>
+//           <tr>
+//             <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Reason:</td>
+//             <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
+//           </tr>
+//         </table>
+//       </div>
 
-      <p style="margin: 24px 0 0 0;">
-        If you have any questions about this refund, please don't hesitate to contact our support team.
-      </p>
+//       <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
+//         <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+//           The refund will appear on your original payment method within 5-10 business days,
+//           depending on your bank or card issuer.
+//         </p>
+//       </div>
 
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
-        <tr>
-          <td align="center">
-            <a href="${process.env.FRONTEND_URL}/contact"
-               style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
-              Contact Support
-            </a>
-          </td>
-        </tr>
-      </table>
-    `
-  );
+//       <p style="margin: 24px 0 0 0;">
+//         If you have any questions about this refund, please don't hesitate to contact our support team.
+//       </p>
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
-    to: email,
-    subject: `Refund Processed – Order #${orderId} – Keesdeen`,
-    html,
-  });
-};
+//       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+//         <tr>
+//           <td align="center">
+//             <a href="${process.env.FRONTEND_URL}/contact"
+//                style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+//               Contact Support
+//             </a>
+//           </td>
+//         </tr>
+//       </table>
+//     `
+//   );
+
+//   await transporter.sendMail({
+//     from: `"Keesdeen" <${FROM_EMAIL}>`,
+//     to: email,
+//     subject: `Refund Processed – Order #${orderId} – Keesdeen`,
+//     html,
+//   });
+// };
 
 // Format currency
 export const formatAmount = (amount, currency) => {

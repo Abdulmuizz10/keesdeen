@@ -5,18 +5,18 @@ import CreateAddressModal from "./CreateAddressModal";
 import Axios from "axios";
 import { URL } from "../lib/constants";
 import { toast } from "sonner";
-import { useShop } from "../context/ShopContext";
 
 interface AddressProps {
   setAddress: (address: any) => void;
 }
 
 const Address: React.FC<AddressProps> = ({ setAddress }) => {
-  const { savedAddress, setSavedAddress } = useShop();
+  const [savedAddress, setSavedAddress] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [showAll, setShowAll] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
     const getAddress = async () => {
@@ -45,11 +45,21 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
     }
   }, [savedAddress, selectedAddress, setAddress]);
 
+  useEffect(() => {
+    if (savedAddress.length === 1) {
+      const interval = setInterval(() => {
+        setToggle((prev) => !prev);
+      }, 2000);
+
+      return () => clearInterval(interval);
+    }
+  }, [savedAddress.length]);
+
   const displayedItems = showAll ? savedAddress : savedAddress.slice(0, 2);
 
   const handleSelectAddress = (id: any, address: any) => {
     setSelectedAddress(id);
-    setAddress(address); // Pass selected address up
+    setAddress(address);
   };
 
   return (
@@ -156,9 +166,11 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
           />
           <span className="text-sm uppercase tracking-widest text-gray-600 group-hover:text-gray-900">
             <p className="text-xs sm:text-sm text-gray-500">
-              {savedAddress.length === 1
-                ? "Your address was selected automatically."
-                : "Select or create a new address."}
+              {savedAddress.length === 1 &&
+                (toggle
+                  ? "Click to create a new address."
+                  : "Your address was selected automatically.")}
+              {savedAddress.length > 1 && "Select or create a new address."}
             </p>
           </span>
         </button>

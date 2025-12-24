@@ -337,7 +337,6 @@ const Addresses: React.FC = () => {
           fetchData();
           toast.success(response.data.message);
           window.scrollTo({ top: 0, behavior: "smooth" });
-          window.location.reload();
         } else {
           toast.error(response.data.message || "Something went wrong");
         }

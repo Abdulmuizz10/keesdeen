@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import {
   Package,
   Clock,
@@ -14,17 +15,14 @@ import {
   Filter,
   Check,
   ChevronDown,
-  RefreshCw,
-  X,
-  AlertCircle,
 } from "lucide-react";
 import Axios from "axios";
 import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router-dom";
-import { formatAmountDefault } from "@/lib/utils";
 
+// Types
 interface OrderItem {
   name: string;
   qty: number;
@@ -57,15 +55,6 @@ interface Order {
   paidAt: string;
   status: string;
   createdAt: string;
-  paymentInfo?: {
-    amountPaid: number;
-    squarePaymentId: string;
-  };
-  refundInfo?: {
-    amountRefunded: number;
-    status: string;
-    refundType: string;
-  };
 }
 
 const StatCard = ({ title, value, icon: Icon, status }: any) => (
@@ -102,7 +91,7 @@ const StatCard = ({ title, value, icon: Icon, status }: any) => (
   </div>
 );
 
-const AdminOrders = () => {
+const AdminOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,14 +100,7 @@ const AdminOrders = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
-  // Refund Modal State
-  const [refundModalOpen, setRefundModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [refundType, setRefundType] = useState<"full" | "partial">("full");
-  const [refundAmount, setRefundAmount] = useState("");
-  const [refundReason, setRefundReason] = useState("");
-  const [refundLoading, setRefundLoading] = useState(false);
-
+  // Stats calculation
   const stats = {
     total: orders?.length || 0,
     pending: orders?.filter((o) => o.status === "Pending").length || 0,
@@ -131,14 +113,16 @@ const AdminOrders = () => {
     try {
       const response = await Axios.get(
         `${URL}/orders/admin/pagination-orders?page=${page}`,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+        }
       );
       if (response.status === 200) {
         setOrders(response.data.orders);
         setTotalPages(response.data.totalPages);
       }
     } catch (error) {
-      toast.error("Failed to fetch orders");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -148,7 +132,7 @@ const AdminOrders = () => {
     fetchData(currentPage);
   }, [currentPage]);
 
-  const handleStatusChange = async (orderId: string, status: string) => {
+  const handleStatusChange = async (orderId: any, status: string) => {
     setLoading(true);
     try {
       const response = await Axios.patch(
@@ -156,97 +140,23 @@ const AdminOrders = () => {
         { status },
         {
           withCredentials: true,
-          validateStatus: (status) => status < 600,
+          validateStatus: (status: any) => status < 600,
         }
       );
       if (response.status === 200) {
         fetchData(currentPage);
         toast.success(response.data.message);
       } else {
-        toast.error(response.data.message || "Failed to update status");
+        toast.error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error("Failed to update order status");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOpenRefundModal = (order: Order) => {
-    setSelectedOrder(order);
-    setRefundModalOpen(true);
-    setRefundType("full");
-    setRefundAmount("");
-    setRefundReason("");
-  };
-
-  const handleCloseRefundModal = () => {
-    setRefundModalOpen(false);
-    setSelectedOrder(null);
-    setRefundType("full");
-    setRefundAmount("");
-    setRefundReason("");
-  };
-
-  const handleRefundSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!selectedOrder) return;
-
-    if (!refundReason) {
-      toast.error("Please select a refund reason");
-      return;
-    }
-
-    const totalPaid =
-      selectedOrder.paymentInfo?.amountPaid || selectedOrder.totalPrice;
-    const alreadyRefunded = selectedOrder.refundInfo?.amountRefunded || 0;
-    const maxRefund = totalPaid - alreadyRefunded;
-
-    if (
-      refundType === "partial" &&
-      (!refundAmount || parseFloat(refundAmount) <= 0)
-    ) {
-      toast.error("Please enter a valid refund amount");
-      return;
-    }
-
-    if (refundType === "partial" && parseFloat(refundAmount) > maxRefund) {
-      toast.error(`Refund amount cannot exceed ${maxRefund.toFixed(2)}`);
-      return;
-    }
-
-    setRefundLoading(true);
-
-    try {
-      const response = await Axios.post(
-        `${URL}/orders/admin/refund/${selectedOrder._id}/create-refund`,
-        {
-          refundType,
-          amount:
-            refundType === "partial" ? parseFloat(refundAmount) : undefined,
-          reason: refundReason,
-        },
-        {
-          withCredentials: true,
-          validateStatus: (status) => status < 600,
-        }
-      );
-
-      if (response.data.success) {
-        toast.success("Refund processed successfully");
-        fetchData(currentPage);
-        handleCloseRefundModal();
-      } else {
-        toast.error(response.data.message || "Refund failed");
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to process refund");
-    } finally {
-      setRefundLoading(false);
-    }
-  };
-
+  // Filter orders
   useEffect(() => {
     let filtered = [...orders];
 
@@ -293,13 +203,11 @@ const AdminOrders = () => {
       Shipped: "bg-indigo-300 text-indigo-800 border-indigo-200",
       Delivered: "bg-green-100 text-green-800 border-green-200",
       Cancelled: "bg-red-100 text-red-800 border-red-200",
-      Refunded: "bg-purple-100 text-purple-800 border-purple-200",
-      "Partially Refunded": "bg-orange-100 text-orange-800 border-orange-200",
     };
 
     return (
       <span
-        className={`inline-flex items-center justify-center gap-2 px-3 h-10 text-xs font-medium border ${
+        className={`inline-flex items-center justify-center gap-3 w-24 lg:w-30 h-10 text-xs font-medium border ${
           styles[status as keyof typeof styles] ||
           "bg-muted text-muted-foreground"
         }`}
@@ -309,20 +217,6 @@ const AdminOrders = () => {
       </span>
     );
   };
-
-  const canRefund = (order: Order) => {
-    const isFullyRefunded = order.status === "Refunded";
-    const isCancelled = order.status === "Cancelled";
-    return (
-      !isFullyRefunded && !isCancelled && order.paymentInfo?.squarePaymentId
-    );
-  };
-
-  // Calculate refund modal values
-  const totalPaid =
-    selectedOrder?.paymentInfo?.amountPaid || selectedOrder?.totalPrice || 0;
-  const alreadyRefunded = selectedOrder?.refundInfo?.amountRefunded || 0;
-  const maxRefund = totalPaid - alreadyRefunded;
 
   return (
     <div className="flex-1 space-y-4 p-4 bg-background">
@@ -362,6 +256,7 @@ const AdminOrders = () => {
       {/* Filters */}
       <div className="bg-card border border-border p-6">
         <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
@@ -373,6 +268,7 @@ const AdminOrders = () => {
             />
           </div>
 
+          {/* Status Filter */}
           <div className="relative">
             <DropdownMenu>
               <DropdownMenuTrigger className="w-full">
@@ -390,8 +286,6 @@ const AdminOrders = () => {
                   "Shipped",
                   "Delivered",
                   "Cancelled",
-                  "Refunded",
-                  "Partially Refunded",
                 ].map((status) => (
                   <DropdownMenuItem
                     key={status}
@@ -446,16 +340,13 @@ const AdminOrders = () => {
                     <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="text-center p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Refund
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredOrders.map((order, index) => (
                     <tr
                       key={order._id}
-                      className={`border-b border-border hover:bg-muted/50 transition-colors ${
+                      className={`border-b border-border hover:bg-muted/50 transition-colors cursor-pointer ${
                         index === filteredOrders.length - 1 ? "border-b-0" : ""
                       }`}
                     >
@@ -467,7 +358,7 @@ const AdminOrders = () => {
                       <td className="p-6">
                         <Link to={`/admin/orders/order_details/${order._id}`}>
                           <div>
-                            <div className="text-sm font-medium hover:underline">
+                            <div className="text-sm font-medium">
                               {order.shippingAddress.firstName}{" "}
                               {order.shippingAddress.lastName}
                             </div>
@@ -478,29 +369,19 @@ const AdminOrders = () => {
                         </Link>
                       </td>
                       <td className="p-6">
-                        <div className="text-sm">
-                          {order.orderedItems.reduce(
-                            (sum, item) => sum + item.qty,
-                            0
-                          )}{" "}
-                          items
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm">
+                            {order.orderedItems.reduce(
+                              (sum, item) => sum + item.qty,
+                              0
+                            )}{" "}
+                            items
+                          </div>
                         </div>
                       </td>
                       <td className="p-6">
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium">
-                            {formatCurrency(order.totalPrice, order.currency)}
-                          </div>
-                          {order.refundInfo &&
-                            order.refundInfo.amountRefunded > 0 && (
-                              <div className="text-xs text-red-600">
-                                Refunded: -
-                                {formatCurrency(
-                                  order.refundInfo.amountRefunded,
-                                  order.currency
-                                )}
-                              </div>
-                            )}
+                        <div className="text-sm font-medium">
+                          {formatCurrency(order.totalPrice, order.currency)}
                         </div>
                       </td>
                       <td className="p-6">
@@ -510,6 +391,7 @@ const AdminOrders = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] rounded-none">
                             {[
+                              "All",
                               "Pending",
                               "Processing",
                               "Shipped",
@@ -524,7 +406,8 @@ const AdminOrders = () => {
                                 className="flex items-center justify-between"
                               >
                                 {status}
-                                {order.status === status && (
+
+                                {statusFilter === status && (
                                   <Check className="h-4 w-4 text-primary" />
                                 )}
                               </DropdownMenuItem>
@@ -535,27 +418,6 @@ const AdminOrders = () => {
                       <td className="p-6">
                         <div className="text-sm text-muted-foreground">
                           {formatDate(order.createdAt)}
-                        </div>
-                      </td>
-                      <td className="p-6">
-                        <div className="flex items-center justify-center gap-2">
-                          {canRefund(order) ? (
-                            <button
-                              onClick={() => handleOpenRefundModal(order)}
-                              className="p-2 border border-border hover:bg-muted transition-colors group"
-                              title="Process Refund"
-                            >
-                              <RefreshCw className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-                            </button>
-                          ) : (
-                            <button
-                              disabled
-                              className="p-2 border border-border opacity-50 cursor-not-allowed"
-                              title="Refund not available"
-                            >
-                              <RefreshCw className="h-4 w-4 text-muted-foreground" />
-                            </button>
-                          )}
                         </div>
                       </td>
                     </tr>
@@ -584,8 +446,10 @@ const AdminOrders = () => {
                       <DropdownMenuTrigger className="w-fit">
                         {getStatusBadge(order.status)}
                       </DropdownMenuTrigger>
+
                       <DropdownMenuContent className="w-48 mr-10 rounded-none">
                         {[
+                          "All",
                           "Pending",
                           "Processing",
                           "Shipped",
@@ -600,7 +464,8 @@ const AdminOrders = () => {
                             className="flex items-center justify-between"
                           >
                             {status}
-                            {order.status === status && (
+
+                            {statusFilter === status && (
                               <Check className="h-4 w-4 text-primary" />
                             )}
                           </DropdownMenuItem>
@@ -610,17 +475,19 @@ const AdminOrders = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Link to={`/admin/orders/order_details/${order._id}`}>
-                      <div>
-                        <div className="text-sm font-medium">
-                          {order.shippingAddress.firstName}{" "}
-                          {order.shippingAddress.lastName}
+                    <div>
+                      <Link to={`/admin/orders/order_details/${order._id}`}>
+                        <div>
+                          <div className="text-sm font-medium">
+                            {order.shippingAddress.firstName}{" "}
+                            {order.shippingAddress.lastName}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {order.email}
+                          </div>
                         </div>
-                        <div className="text-sm text-muted-foreground">
-                          {order.email}
-                        </div>
-                      </div>
-                    </Link>
+                      </Link>
+                    </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-border">
                       <span className="text-sm text-muted-foreground">
@@ -630,32 +497,10 @@ const AdminOrders = () => {
                         )}{" "}
                         items
                       </span>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">
-                          {formatCurrency(order.totalPrice, order.currency)}
-                        </div>
-                        {order.refundInfo &&
-                          order.refundInfo.amountRefunded > 0 && (
-                            <div className="text-xs text-red-600">
-                              Refunded: -
-                              {formatCurrency(
-                                order.refundInfo.amountRefunded,
-                                order.currency
-                              )}
-                            </div>
-                          )}
-                      </div>
+                      <span className="text-sm font-medium">
+                        {formatCurrency(order.totalPrice, order.currency)}
+                      </span>
                     </div>
-
-                    {canRefund(order) && (
-                      <button
-                        onClick={() => handleOpenRefundModal(order)}
-                        className="w-full mt-3 p-2 border border-border hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm"
-                      >
-                        <RefreshCw className="h-4 w-4" />
-                        Process Refund
-                      </button>
-                    )}
                   </div>
                 </div>
               ))}
@@ -700,203 +545,6 @@ const AdminOrders = () => {
           </div>
         )}
       </div>
-
-      {/* REFUND MODAL */}
-      {refundModalOpen && selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative w-full bg-background max-w-lg border border-border">
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-border p-6">
-              <h2 className="text-xl font-light">Process Refund</h2>
-              <button
-                onClick={handleCloseRefundModal}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                disabled={refundLoading}
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              {/* Order Info */}
-              <div className="mb-6 space-y-2 bg-muted/70 p-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Order ID:</span>
-                  <span className="font-mono">
-                    #{selectedOrder._id.slice(-8).toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    Original Amount:
-                  </span>
-                  <span className="font-medium">
-                    {formatAmountDefault(selectedOrder.currency, totalPaid)}
-                  </span>
-                </div>
-                {alreadyRefunded > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Already Refunded:
-                    </span>
-                    <span className="text-red-600">
-                      -
-                      {formatAmountDefault(
-                        selectedOrder.currency,
-                        alreadyRefunded
-                      )}
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between text-sm font-medium border-t border-border pt-2 mt-2">
-                  <span>Available for Refund:</span>
-                  <span className="text-green-400 text-base">
-                    {formatAmountDefault(selectedOrder.currency, maxRefund)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Alert */}
-              {alreadyRefunded > 0 && (
-                <div className="mb-6 flex gap-3 bg-yellow-50 border border-yellow-200 p-4">
-                  <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm text-yellow-800">
-                    This order has been partially refunded. You can only refund
-                    the remaining amount.
-                  </div>
-                </div>
-              )}
-
-              <form onSubmit={handleRefundSubmit} className="space-y-6">
-                {/* Refund Type */}
-                <div>
-                  <label className="block text-sm font-medium mb-3">
-                    Refund Type
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setRefundType("full")}
-                      className={`p-4 text-sm transition-colors ${
-                        refundType === "full"
-                          ? "border-b-2 border-primary"
-                          : "border-b"
-                      }`}
-                    >
-                      <div className="font-medium mb-1">Full Refund</div>
-                      <div className={"text-muted-foreground"}>
-                        {selectedOrder.currency} {maxRefund.toFixed(2)}
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setRefundType("partial")}
-                      className={`p-4 text-sm transition-colors ${
-                        refundType === "partial"
-                          ? "border-b-2 border-primary"
-                          : "border-b"
-                      }`}
-                    >
-                      <div className="font-medium mb-1">Partial Refund</div>
-                      <div className={"text-muted-foreground"}>
-                        Custom amount
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Amount Input (for partial) */}
-                {refundType === "partial" && (
-                  <div>
-                    <label
-                      htmlFor="amount"
-                      className="block text-sm font-medium mb-2"
-                    >
-                      Refund Amount
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="amount"
-                        type="number"
-                        step="0.01"
-                        max={maxRefund}
-                        value={refundAmount}
-                        onChange={(e) => setRefundAmount(e.target.value)}
-                        placeholder="0.00"
-                        className="w-full px-2 py-2.5 bg-background border border-input text-sm focus:outline-none focus:ring-1 focus:ring-black"
-                        required
-                      />
-                    </div>
-                    <p className="mt-1.5 text-xs text-muted-foreground">
-                      Maximum:{" "}
-                      {formatAmountDefault(selectedOrder.currency, maxRefund)}{" "}
-                      already Refunded
-                    </p>
-                  </div>
-                )}
-
-                {/* Reason */}
-                <div>
-                  <label
-                    htmlFor="reason"
-                    className="block text-sm font-medium mb-2"
-                  >
-                    Refund Reason
-                  </label>
-                  <select
-                    id="reason"
-                    value={refundReason}
-                    onChange={(e) => setRefundReason(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-background border border-input text-sm focus:outline-none focus:ring-1 focus:ring-black"
-                    required
-                  >
-                    <option value="">Select a reason...</option>
-                    <option value="Customer requested refund">
-                      Customer requested refund
-                    </option>
-                    <option value="Item out of stock">Item out of stock</option>
-                    <option value="Defective product">Defective product</option>
-                    <option value="Wrong item shipped">
-                      Wrong item shipped
-                    </option>
-                    <option value="Duplicate order">Duplicate order</option>
-                    <option value="Shipping delay">Shipping delay</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={handleCloseRefundModal}
-                    disabled={refundLoading}
-                    className="flex-1 px-4 py-3 text-sm border border-border text-foreground hover:bg-muted transition-colors disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={refundLoading}
-                    className="flex-1 px-4 py-3 text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    {refundLoading ? (
-                      <>
-                        <Spinner className="h-4 w-4" />
-                        Processing...
-                      </>
-                    ) : (
-                      "Process Refund"
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

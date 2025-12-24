@@ -93,7 +93,7 @@ const OrderSummary: React.FC = () => {
 
                 {/* Price */}
                 <div className="text-right">
-                  <p className="text-sm font-light">
+                  <p className="text-sm font-light tracking-wider">
                     {formatAmountDefault(currency, item.price * item.quantity)}
                   </p>
                 </div>

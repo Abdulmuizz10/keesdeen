@@ -38,8 +38,6 @@ interface ShopContextType {
   wishLists: any;
   setWishLists: any;
   manageWishLists: any;
-  savedAddress: any;
-  setSavedAddress: any;
   isActive: any;
   setIsActive: any;
   adminLoader: any;
@@ -75,7 +73,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     const storedWishLists = localStorage.getItem("wishLists");
     return storedWishLists ? JSON.parse(storedWishLists) : [];
   });
-  const [savedAddress, setSavedAddress] = useState<any>([]);
   const [shippingFee, setShippingFee] = useState<any>(0);
   const [discountPercent, setDiscountPercent] = useState<any>(0);
   const [change, setChange] = useState<boolean>(true);
@@ -243,7 +240,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
           setHeroSettings(res.data.data);
         }
       } catch (error) {
-        console.error("Hero failed to load");
+        toast.error("Hero failed to load");
       } finally {
         setIsFetched(true);
       }
@@ -264,8 +261,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         wishLists,
         setWishLists,
         manageWishLists,
-        savedAddress,
-        setSavedAddress,
         isActive,
         setIsActive,
         adminLoader,

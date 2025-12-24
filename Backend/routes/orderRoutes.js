@@ -1,9 +1,6 @@
 import express from "express";
 import {
   createOrderController,
-  adminCreateRefund,
-  adminListOrderRefunds,
-  getRefundStatus,
   getProfileOrdersByPageController,
   getProfileOrderByIdController,
   adminGetOrdersByPaginationController,
@@ -20,22 +17,6 @@ const router = express.Router();
 
 // client Routes
 router.post("/create-order", createOrderController);
-
-router.post(
-  "/admin/refund/:orderId/create-refund",
-  verifyUser,
-  authorizeAdmin,
-  adminCreateRefund
-);
-
-router.get(
-  "/admin/refund/pagination-order-refunds",
-  verifyUser,
-  authorizeAdmin,
-  adminListOrderRefunds
-);
-
-router.get("/refund/:orderId/refund/status", verifyUser, getRefundStatus);
 
 router.get(
   "/profile/pagination-orders",
