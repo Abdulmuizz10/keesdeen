@@ -14,7 +14,6 @@ import Axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import CriticalErrorModal from "./CriticalErrorModal";
-// Import the modal
 
 interface PaymentProps {
   setLoading: any;
@@ -46,6 +45,7 @@ interface CriticalError {
   title: string;
   message: string;
   paymentId?: string;
+  idempotencyKey?: string;
   instructions?: string[];
   contactSupport?: boolean;
 }
@@ -65,7 +65,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     null
   );
 
-  // Modal state
   const [criticalError, setCriticalError] = useState<CriticalError | null>(
     null
   );
@@ -167,6 +166,17 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         withCredentials: true,
       });
 
+      // NEW: Handle duplicate order response
+      if (response.data.duplicate) {
+        console.log("Duplicate order detected, using existing order");
+        navigate("/order_confirmation", {
+          state: { orderData: response.data },
+        });
+        toast.info("Order already processed");
+        setCartItems({});
+        return;
+      }
+
       // Handle success
       if (response.data.success !== false) {
         navigate("/order_confirmation", {
@@ -183,6 +193,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       const errorData = error.response?.data;
       const errorCode = errorData?.code;
       const paymentId = errorData?.paymentId;
+      const idempotencyKey = errorData?.idempotencyKey;
 
       // CRITICAL ERRORS - Show modal
       if (errorCode === "ORDER_CREATION_FAILED" || paymentId) {
@@ -192,10 +203,11 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             errorData?.message ||
             "Your payment was successfully processed, but we encountered an issue creating your order. Don't worry - your money is safe and we'll resolve this.",
           paymentId: paymentId,
+          idempotencyKey: idempotencyKey,
           instructions: [
-            "Take a screenshot or note down your payment reference ID above",
+            "Take a screenshot or note down your payment reference ID and idempotency key above",
             "Check your email for a payment confirmation from Square",
-            "Contact our support team with your payment reference ID",
+            "Contact our support team with both reference IDs",
             "Do not attempt to place the order again to avoid duplicate charges",
           ],
           contactSupport: true,
@@ -335,7 +347,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
   return (
     <div className="w-full">
-      {/* Critical Error Modal */}
       {criticalError && (
         <CriticalErrorModal
           isOpen={showErrorModal}
@@ -344,7 +355,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         />
       )}
 
-      {/* Header */}
       <div className="mb-5">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
           <span>Order Details</span>
@@ -354,10 +364,8 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         </p>
       </div>
 
-      {/* Order Details List */}
       <div className="mt-5 border border-gray-200 px-3 py-5 md:p-5 bg-white space-y-5">
         <div className="space-y-2 text-gray-500 text-sm">
-          {/* Subtotal */}
           <div className="flex justify-between">
             <span>Subtotal:</span>
             <span className="text-gray-700">
@@ -365,7 +373,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             </span>
           </div>
 
-          {/* Discount */}
           {appliedCoupon && appliedCoupon.discountAmount > 0 && (
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -384,7 +391,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             </div>
           )}
 
-          {/* Shipping Fee */}
           <div className="flex justify-between">
             <span>Shipping Fee:</span>
             <span className="text-gray-700">
@@ -393,7 +399,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
         </div>
 
-        {/* Coupon Form */}
         {!appliedCoupon && (
           <div className="poppins">
             <label htmlFor="coupon" className="text-base tracking-wide">
@@ -423,7 +428,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
         )}
 
-        {/* Applied coupon badge */}
         {appliedCoupon && (
           <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200">
             <div className="flex items-center gap-2">
@@ -442,7 +446,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
 
         <div className="border-t border-gray-200 my-4" />
 
-        {/* Total */}
         <div className="flex justify-between items-center text-sm md:text-base tracking-wider font-semibold text-gray-500">
           <span>Total:</span>
           <span className="text-gray-700 font-medium">
@@ -451,7 +454,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         </div>
       </div>
 
-      {/* Payment Methods Section */}
       <div className="mt-10">
         <h3 className="text-lg md:text-2xl font-semibold text-gray-900 bricolage-grotesque mb-3">
           <span> Choose Payment Method</span>
@@ -489,7 +491,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             onPaymentSuccess(tokenResult.token);
           }}
         >
-          {/* Digital Wallets Section */}
           <div className="space-y-3 mb-6">
             <p className="text-sm sm:text-base text-gray-500">
               Express Checkout:
@@ -501,7 +502,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               </div>
             )}
 
-            {/* Apple Pay */}
             {applePaySupported && address && (
               <ApplePay
                 buttonColor="black"
@@ -520,7 +520,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
               </div>
             )}
 
-            {/* Google Pay */}
             {address && (
               <GooglePay
                 buttonColor="black"
@@ -535,7 +534,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             )}
           </div>
 
-          {/* Accepted Cards */}
           <div className="mt-4 flex flex-col items-center">
             <p className="mb-2 text-center text-xs text-gray-500">We accept:</p>
 
@@ -578,14 +576,12 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="flex items-center my-6">
             <div className="flex-1 border-t border-gray-300"></div>
             <span className="px-4 text-sm text-gray-500">OR</span>
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
-          {/* Credit Card Form */}
           <div className="mt-6" id="card-section">
             <p className="text-sm sm:text-base text-gray-500 mb-2">
               Pay with Card:
@@ -619,7 +615,6 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
           </div>
         </PaymentForm>
 
-        {/* Security Badge */}
         <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
           <svg
             className="w-4 h-4"

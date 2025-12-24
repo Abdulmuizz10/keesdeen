@@ -8,6 +8,7 @@ interface CriticalErrorModalProps {
     title: string;
     message: string;
     paymentId?: string;
+    idempotencyKey?: string; // NEW
     instructions?: string[];
     contactSupport?: boolean;
   };
@@ -18,29 +19,48 @@ const CriticalErrorModal: React.FC<CriticalErrorModalProps> = ({
   onClose,
   error,
 }) => {
-  const [copied, setCopied] = React.useState(false);
+  const [copiedPaymentId, setCopiedPaymentId] = React.useState(false);
+  const [copiedIdempotencyKey, setCopiedIdempotencyKey] = React.useState(false);
 
   if (!isOpen) return null;
 
   const copyPaymentId = () => {
     if (error.paymentId) {
       navigator.clipboard.writeText(error.paymentId);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedPaymentId(true);
+      setTimeout(() => setCopiedPaymentId(false), 2000);
     }
+  };
+
+  const copyIdempotencyKey = () => {
+    if (error.idempotencyKey) {
+      navigator.clipboard.writeText(error.idempotencyKey);
+      setCopiedIdempotencyKey(true);
+      setTimeout(() => setCopiedIdempotencyKey(false), 2000);
+    }
+  };
+
+  const copyBothIds = () => {
+    const text = `Payment ID: ${error.paymentId || "N/A"}\nIdempotency Key: ${
+      error.idempotencyKey || "N/A"
+    }`;
+    navigator.clipboard.writeText(text);
+    setCopiedPaymentId(true);
+    setCopiedIdempotencyKey(true);
+    setTimeout(() => {
+      setCopiedPaymentId(false);
+      setCopiedIdempotencyKey(false);
+    }, 2000);
   };
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="relative z-10 w-full max-w-md mx-4 bg-white shadow-2xl animate-in fade-in zoom-in duration-200">
-        {/* Header */}
+      <div className="relative z-10 w-full max-w-md mx-4 bg-white shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
         <div className="flex items-start gap-4 p-6 border-b border-gray-200">
           <div className="flex-shrink-0 w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
             <AlertCircle className="w-6 h-6 text-red-600" />
@@ -59,34 +79,74 @@ const CriticalErrorModal: React.FC<CriticalErrorModalProps> = ({
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-6 space-y-4">
           <p className="text-sm text-gray-600 leading-relaxed">
             {error.message}
           </p>
 
-          {/* Payment ID */}
-          {error.paymentId && (
-            <div className="p-4 bg-gray-50 border border-gray-200">
-              <p className="text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
-                Payment Reference ID:
-              </p>
-              <div className="flex items-center gap-2">
-                <code className="flex-1 text-sm text-gray-900 font-mono bg-white px-3 py-2 border border-gray-300 break-all">
-                  {error.paymentId}
-                </code>
+          {/* Payment Reference IDs Section */}
+          {(error.paymentId || error.idempotencyKey) && (
+            <div className="space-y-3">
+              {/* Payment ID */}
+              {error.paymentId && (
+                <div className="p-4 bg-gray-50 border border-gray-200">
+                  <p className="text-xs font-medium text-gray-700 mb-2 uppercase tracking-wide">
+                    Payment Reference ID:
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-sm text-gray-900 font-mono bg-white px-3 py-2 border border-gray-300 break-all">
+                      {error.paymentId}
+                    </code>
+                    <button
+                      onClick={copyPaymentId}
+                      className="flex-shrink-0 p-2 hover:bg-gray-200 transition-colors rounded"
+                      title="Copy to clipboard"
+                    >
+                      {copiedPaymentId ? (
+                        <Check className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <Copy className="w-5 h-5 text-gray-600" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Idempotency Key */}
+              {error.idempotencyKey && (
+                <div className="p-4 bg-blue-50 border border-blue-200">
+                  <p className="text-xs font-medium text-blue-700 mb-2 uppercase tracking-wide">
+                    Idempotency Key:
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 text-sm text-blue-900 font-mono bg-white px-3 py-2 border border-blue-300 break-all">
+                      {error.idempotencyKey}
+                    </code>
+                    <button
+                      onClick={copyIdempotencyKey}
+                      className="flex-shrink-0 p-2 hover:bg-blue-100 transition-colors rounded"
+                      title="Copy to clipboard"
+                    >
+                      {copiedIdempotencyKey ? (
+                        <Check className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <Copy className="w-5 h-5 text-blue-600" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Copy Both Button */}
+              {error.paymentId && error.idempotencyKey && (
                 <button
-                  onClick={copyPaymentId}
-                  className="flex-shrink-0 p-2 hover:bg-gray-200 transition-colors rounded"
-                  title="Copy to clipboard"
+                  onClick={copyBothIds}
+                  className="w-full py-2 px-4 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-sm text-gray-700 font-medium transition-colors flex items-center justify-center gap-2"
                 >
-                  {copied ? (
-                    <Check className="w-5 h-5 text-green-600" />
-                  ) : (
-                    <Copy className="w-5 h-5 text-gray-600" />
-                  )}
+                  <Copy className="w-4 h-4" />
+                  Copy Both Reference IDs
                 </button>
-              </div>
+              )}
             </div>
           )}
 
@@ -123,9 +183,10 @@ const CriticalErrorModal: React.FC<CriticalErrorModalProps> = ({
                 >
                   support@keesdeen.com
                 </a>
-                {error.paymentId && (
-                  <span className="block mt-1 text-xs">
-                    Include your payment reference ID when contacting us.
+                {(error.paymentId || error.idempotencyKey) && (
+                  <span className="block mt-2 text-xs">
+                    Include your reference IDs when contacting us for faster
+                    resolution.
                   </span>
                 )}
               </p>
@@ -133,7 +194,6 @@ const CriticalErrorModal: React.FC<CriticalErrorModalProps> = ({
           )}
         </div>
 
-        {/* Footer */}
         <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
           <button
             onClick={onClose}

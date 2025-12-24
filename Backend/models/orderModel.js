@@ -45,6 +45,15 @@ const orderSchema = new mongoose.Schema(
     },
     deliveredAt: { type: Date, default: null },
     shippedAt: { type: Date, default: null },
+
+    // NEW: Idempotency key field
+    idempotencyKey: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+
     paymentInfo: {
       squarePaymentId: { type: String, required: true },
       squareOrderId: { type: String },
@@ -65,6 +74,10 @@ const orderSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Create compound index for faster lookups
+orderSchema.index({ user: 1, idempotencyKey: 1 });
+orderSchema.index({ "paymentInfo.squarePaymentId": 1 });
 
 const OrderModel = mongoose.model("OrderModel", orderSchema);
 

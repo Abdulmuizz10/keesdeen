@@ -127,8 +127,35 @@ const createOrderController = async (req, res) => {
     // ===== PAYMENT PROCESSING =====
 
     let paymentResult;
+    let idempotencyKey;
+
     try {
-      const idempotencyKey = crypto.randomUUID();
+      // Generate idempotency key
+      idempotencyKey = crypto.randomUUID();
+
+      // NEW: Check if order with this payment sourceId already exists
+      // This prevents duplicate orders if user clicks multiple times with same payment token
+      const existingOrderBySource = await OrderModel.findOne({
+        "paymentInfo.squarePaymentId": sourceId,
+      });
+
+      if (existingOrderBySource) {
+        console.log(
+          "Duplicate order attempt with same payment source detected:",
+          {
+            sourceId,
+            existingOrderId: existingOrderBySource._id,
+            timestamp: new Date().toISOString(),
+          }
+        );
+
+        return res.status(200).json({
+          success: true,
+          duplicate: true,
+          message: "Order already exists for this payment.",
+          ...existingOrderBySource.toObject(),
+        });
+      }
 
       const paymentRequest = {
         sourceId,
@@ -168,6 +195,27 @@ const createOrderController = async (req, res) => {
       }
 
       paymentResult = convertBigIntToString(result);
+
+      // NEW: After successful payment, check if order already exists with this payment ID
+      const existingOrderByPaymentId = await OrderModel.findOne({
+        "paymentInfo.squarePaymentId": paymentResult.payment.id,
+      });
+
+      if (existingOrderByPaymentId) {
+        console.log("Order already exists for this Square payment ID:", {
+          paymentId: paymentResult.payment.id,
+          existingOrderId: existingOrderByPaymentId._id,
+          timestamp: new Date().toISOString(),
+        });
+
+        return res.status(200).json({
+          success: true,
+          duplicate: true,
+          message: "Order already exists for this payment.",
+          ...existingOrderByPaymentId.toObject(),
+          paymentResult,
+        });
+      }
     } catch (paymentError) {
       console.error("Payment processing failed:", paymentError);
 
@@ -178,6 +226,30 @@ const createOrderController = async (req, res) => {
       if (paymentError.errors && Array.isArray(paymentError.errors)) {
         const firstError = paymentError.errors[0];
         errorCode = firstError.code || errorCode;
+
+        // NEW: Handle Square's idempotency key reused error
+        if (firstError.code === "IDEMPOTENCY_KEY_REUSED") {
+          // The payment was already processed with this idempotency key
+          // Try to find the existing order
+          const existingOrder = await OrderModel.findOne({
+            idempotencyKey,
+          });
+
+          if (existingOrder) {
+            console.log("Idempotency key reused - returning existing order:", {
+              idempotencyKey,
+              existingOrderId: existingOrder._id,
+              timestamp: new Date().toISOString(),
+            });
+
+            return res.status(200).json({
+              success: true,
+              duplicate: true,
+              message: "Payment already processed.",
+              ...existingOrder.toObject(),
+            });
+          }
+        }
 
         // User-friendly error messages
         switch (firstError.code) {
@@ -208,7 +280,6 @@ const createOrderController = async (req, res) => {
         errorDetails = paymentError.errors;
       }
 
-      // IMPORTANT: Return proper error response, don't throw
       return res.status(400).json({
         success: false,
         message: errorMessage,
@@ -222,6 +293,7 @@ const createOrderController = async (req, res) => {
       const payment = paymentResult.payment;
       const order = new OrderModel({
         ...req.body,
+        idempotencyKey, // NEW: Store idempotency key
         paymentInfo: {
           squarePaymentId: payment.id,
           squareOrderId: payment.orderId,
@@ -279,21 +351,66 @@ const createOrderController = async (req, res) => {
     } catch (orderError) {
       console.error("Failed to create order:", orderError);
 
+      // NEW: Check if it's a duplicate key error
+      if (orderError.code === 11000) {
+        // MongoDB duplicate key error
+        if (orderError.keyPattern?.idempotencyKey) {
+          // Duplicate idempotency key
+          const existingOrder = await OrderModel.findOne({ idempotencyKey });
+
+          if (existingOrder) {
+            console.log("Duplicate idempotency key on order creation:", {
+              idempotencyKey,
+              existingOrderId: existingOrder._id,
+              timestamp: new Date().toISOString(),
+            });
+
+            return res.status(200).json({
+              success: true,
+              duplicate: true,
+              message: "Order already exists.",
+              ...existingOrder.toObject(),
+            });
+          }
+        } else if (orderError.keyPattern?.["paymentInfo.squarePaymentId"]) {
+          // Duplicate Square payment ID
+          const existingOrder = await OrderModel.findOne({
+            "paymentInfo.squarePaymentId": paymentResult.payment.id,
+          });
+
+          if (existingOrder) {
+            console.log("Duplicate Square payment ID on order creation:", {
+              paymentId: paymentResult.payment.id,
+              existingOrderId: existingOrder._id,
+              timestamp: new Date().toISOString(),
+            });
+
+            return res.status(200).json({
+              success: true,
+              duplicate: true,
+              message: "Order already exists for this payment.",
+              ...existingOrder.toObject(),
+            });
+          }
+        }
+      }
+
       // CRITICAL ERROR LOG
       console.error("CRITICAL: Payment succeeded but order creation failed", {
         paymentId: paymentResult.payment.id,
+        idempotencyKey,
         email,
         error: orderError.message,
         timestamp: new Date().toISOString(),
       });
 
-      // IMPORTANT: Return special error code with payment ID
       return res.status(500).json({
         success: false,
         code: "ORDER_CREATION_FAILED",
         message:
           "Your payment was processed successfully, but we encountered an issue creating your order. Please contact support immediately.",
         paymentId: paymentResult.payment.id,
+        idempotencyKey,
         error: orderError.message,
       });
     }
