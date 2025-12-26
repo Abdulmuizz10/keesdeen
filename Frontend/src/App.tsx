@@ -162,6 +162,7 @@ const App: React.FC = () => {
                 path="/admin/orders/delivered"
                 element={<AdminDeliveredOrders />}
               />
+              <Route path="/admin/orders/refunds" element={<AdminRefunds />} />
               <Route
                 path="/admin/orders/order_details/:id"
                 element={<AdminOrderDetails />}
@@ -186,7 +187,7 @@ const App: React.FC = () => {
               />
               <Route path="/admin/coupons" element={<AdminCoupons />} />
               <Route path="/admin/subscribers" element={<AdminSubscribers />} />
-              <Route path="/admin/refunds" element={<AdminRefunds />} />
+
               <Route
                 path="/admin/email-to-subscribers"
                 element={<AdminSendEmailToSubscribers />}

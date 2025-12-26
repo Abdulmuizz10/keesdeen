@@ -12,6 +12,7 @@ import {
   ClipboardList,
   PackageCheck,
   Mail,
+  RefreshCw,
   // Send,
 } from "lucide-react";
 import {
@@ -150,6 +151,15 @@ const AppSidebar = () => {
                       <Link to="/admin/orders/delivered">
                         <PackageCheck />
                         Delivered
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/admin/orders/refunds">
+                        <RefreshCw />
+                        Refunds
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

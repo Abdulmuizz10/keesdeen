@@ -737,81 +737,365 @@ export const sendContactConfirmationEmail = async ({
   });
 };
 
-// 9. REFUND CONFIRMATION EMAIL
-// export const sendRefundConfirmationEmail = async (
-//   email,
-//   firstName,
-//   refundAmount,
-//   currency,
-//   reason,
-//   orderId
-// ) => {
-//   const transporter = createTransporter();
+// 9. REFUND INITIATED EMAIL (to customer)
+export const sendRefundInitiatedEmail = async (
+  email,
+  firstName,
+  refundAmount,
+  currency,
+  reason,
+  orderId,
+  estimatedDays = "5-10"
+) => {
+  const transporter = createTransporter();
 
-//   const html = generateEmailTemplate(
-//     "Refund Processed",
-//     `
-//       <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
-//       <p style="margin: 0 0 24px 0;">
-//         Your refund has been processed successfully.
-//       </p>
+  const html = generateEmailTemplate(
+    "Refund Request Received",
+    `
+      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+      <p style="margin: 0 0 24px 0;">
+        We've received your refund request and it's currently being processed.
+      </p>
 
-//       <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
-//         <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
-//           Refund Details
-//         </p>
-//         <table width="100%" cellpadding="0" cellspacing="0" border="0">
-//           <tr>
-//             <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
-//             <td style="padding: 4px 0; color: #111827; font-size: 14px;">${orderId}</td>
-//           </tr>
-//           <tr>
-//             <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
-//             <td style="padding: 4px 0; color: #111827; font-size: 14px; font-weight: 300;">${formatAmount(
-//               refundAmount,
-//               currency
-//             )}</td>
-//           </tr>
-//           <tr>
-//             <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Reason:</td>
-//             <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
-//           </tr>
-//         </table>
-//       </div>
+      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Refund Details
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-family: monospace;">#${orderId
+              .slice(-8)
+              .toUpperCase()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-weight: 300;">${formatAmount(
+              refundAmount,
+              currency
+            )}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Reason:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Status:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">
+              <span style="display: inline-block; padding: 4px 12px; background-color: #dbeafe; color: #1e40af; font-size: 12px; border-radius: 4px;">Processing</span>
+            </td>
+          </tr>
+        </table>
+      </div>
 
-//       <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
-//         <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-//           The refund will appear on your original payment method within 5-10 business days,
-//           depending on your bank or card issuer.
-//         </p>
-//       </div>
+      <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+          We'll notify you once your refund has been approved and processed. The refund will appear on your original payment method within ${estimatedDays} business days after processing.
+        </p>
+      </div>
 
-//       <p style="margin: 24px 0 0 0;">
-//         If you have any questions about this refund, please don't hesitate to contact our support team.
-//       </p>
+      <p style="margin: 24px 0 0 0;">
+        If you have any questions about this refund, please don't hesitate to contact our support team.
+      </p>
 
-//       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
-//         <tr>
-//           <td align="center">
-//             <a href="${process.env.FRONTEND_URL}/contact"
-//                style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
-//               Contact Support
-//             </a>
-//           </td>
-//         </tr>
-//       </table>
-//     `
-//   );
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.FRONTEND_URL}/order_details/${orderId}"
+               style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+              View Order
+            </a>
+          </td>
+        </tr>
+      </table>
+    `
+  );
 
-//   await transporter.sendMail({
-//     from: `"Keesdeen" <${FROM_EMAIL}>`,
-//     to: email,
-//     subject: `Refund Processed – Order #${orderId} – Keesdeen`,
-//     html,
-//   });
-// };
+  await transporter.sendMail({
+    from: `"Keesdeen" <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Refund Request Received – Order #${orderId
+      .slice(-8)
+      .toUpperCase()} – Keesdeen`,
+    html,
+  });
+};
 
-// Format currency
+// 10. REFUND COMPLETED EMAIL (to customer)
+export const sendRefundCompletedEmail = async (
+  email,
+  firstName,
+  refundAmount,
+  currency,
+  reason,
+  orderId,
+  estimatedDays = "5-10"
+) => {
+  const transporter = createTransporter();
+
+  const html = generateEmailTemplate(
+    "Refund Processed Successfully",
+    `
+      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+      <p style="margin: 0 0 24px 0;">
+        Great news! Your refund has been processed successfully.
+      </p>
+
+      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Refund Details
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-family: monospace;">#${orderId
+              .slice(-8)
+              .toUpperCase()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
+            <td style="padding: 4px 0; color: #16a34a; font-size: 14px; font-weight: 500;">${formatAmount(
+              refundAmount,
+              currency
+            )}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Reason:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Status:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">
+              <span style="display: inline-block; padding: 4px 12px; background-color: #dcfce7; color: #166534; font-size: 12px; border-radius: 4px;">✓ Completed</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
+        <p style="margin: 0 0 8px 0; color: #166534; font-size: 14px; font-weight: 500;">
+          What happens next?
+        </p>
+        <p style="margin: 0; color: #15803d; font-size: 14px; line-height: 1.6;">
+          The refund will appear on your original payment method within ${estimatedDays} business days, depending on your bank or card issuer. If you don't see it after this time, please check with your bank or contact us.
+        </p>
+      </div>
+
+      <p style="margin: 24px 0 0 0;">
+        Thank you for your patience. If you have any questions, our support team is here to help.
+      </p>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.FRONTEND_URL}/contact"
+               style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+              Contact Support
+            </a>
+          </td>
+        </tr>
+      </table>
+    `
+  );
+
+  await transporter.sendMail({
+    from: `"Keesdeen" <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Refund Processed – Order #${orderId
+      .slice(-8)
+      .toUpperCase()} – Keesdeen`,
+    html,
+  });
+};
+
+// 11. REFUND FAILED EMAIL (to customer)
+export const sendRefundFailedEmail = async (
+  email,
+  firstName,
+  refundAmount,
+  currency,
+  reason,
+  orderId,
+  failureReason
+) => {
+  const transporter = createTransporter();
+
+  const html = generateEmailTemplate(
+    "Refund Processing Issue",
+    `
+      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+      <p style="margin: 0 0 24px 0;">
+        We encountered an issue while processing your refund request.
+      </p>
+
+      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Refund Details
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-family: monospace;">#${orderId
+              .slice(-8)
+              .toUpperCase()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-weight: 300;">${formatAmount(
+              refundAmount,
+              currency
+            )}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Reason:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Status:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">
+              <span style="display: inline-block; padding: 4px 12px; background-color: #fee2e2; color: #991b1b; font-size: 12px; border-radius: 4px;">Failed</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      ${
+        failureReason
+          ? `
+      <div style="margin: 24px 0; padding: 16px; background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;">
+        <p style="margin: 0 0 8px 0; color: #991b1b; font-size: 14px; font-weight: 500;">
+          Issue Details:
+        </p>
+        <p style="margin: 0; color: #dc2626; font-size: 14px; line-height: 1.6;">
+          ${failureReason}
+        </p>
+      </div>
+      `
+          : ""
+      }
+
+      <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+          Don't worry – our team has been notified and will review your refund request manually. We'll reach out to you within 24-48 hours to resolve this issue.
+        </p>
+      </div>
+
+      <p style="margin: 24px 0 0 0;">
+        If you need immediate assistance, please contact our support team.
+      </p>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.FRONTEND_URL}/contact"
+               style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+              Contact Support
+            </a>
+          </td>
+        </tr>
+      </table>
+    `
+  );
+
+  await transporter.sendMail({
+    from: `"Keesdeen" <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Refund Processing Issue – Order #${orderId
+      .slice(-8)
+      .toUpperCase()} – Keesdeen`,
+    html,
+  });
+};
+
+// 12. REFUND REJECTED EMAIL (to customer)
+export const sendRefundRejectedEmail = async (
+  email,
+  firstName,
+  refundAmount,
+  currency,
+  reason,
+  orderId,
+  rejectionReason
+) => {
+  const transporter = createTransporter();
+
+  const html = generateEmailTemplate(
+    "Refund Request Update",
+    `
+      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+      <p style="margin: 0 0 24px 0;">
+        After reviewing your refund request, we're unable to process it at this time.
+      </p>
+
+      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Refund Details
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-family: monospace;">#${orderId
+              .slice(-8)
+              .toUpperCase()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Requested Amount:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-weight: 300;">${formatAmount(
+              refundAmount,
+              currency
+            )}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Original Reason:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px;">${reason}</td>
+          </tr>
+        </table>
+      </div>
+
+      ${
+        rejectionReason
+          ? `
+      <div style="margin: 24px 0; padding: 16px; background-color: #fef9c3; border: 1px solid #fde047; border-radius: 8px;">
+        <p style="margin: 0 0 8px 0; color: #854d0e; font-size: 14px; font-weight: 500;">
+          Reason for rejection:
+        </p>
+        <p style="margin: 0; color: #a16207; font-size: 14px; line-height: 1.6;">
+          ${rejectionReason}
+        </p>
+      </div>
+      `
+          : ""
+      }
+
+      <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
+          If you believe this decision was made in error or have additional information to share, please contact our support team. We're here to help find a solution.
+        </p>
+      </div>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.FRONTEND_URL}/contact"
+               style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
+              Contact Support
+            </a>
+          </td>
+        </tr>
+      </table>
+    `
+  );
+
+  await transporter.sendMail({
+    from: `"Keesdeen" <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Refund Request Update – Order #${orderId
+      .slice(-8)
+      .toUpperCase()} – Keesdeen`,
+    html,
+  });
+};
+
 export const formatAmount = (amount, currency) => {
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",

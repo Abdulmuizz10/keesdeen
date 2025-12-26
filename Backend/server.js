@@ -19,6 +19,7 @@ import couponRoutes from "./routes/couponRoutes.js";
 import dashboardAnalyticsRoutes from "./routes/dashboardAnalyticsRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import refundRoutes from "./routes/refundRoutes.js";
 
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
@@ -50,6 +51,7 @@ app.use("/coupons", couponRoutes);
 app.use("/analytics", dashboardAnalyticsRoutes);
 app.use("/settings", settingsRoutes);
 app.use("/contact", contactRoutes);
+app.use("/refunds", refundRoutes);
 
 //database initialization
 const PORT = process.env.PORT || 5000;

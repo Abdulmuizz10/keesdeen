@@ -40,22 +40,32 @@ const orderSchema = new mongoose.Schema(
     paidAt: { type: Date, default: null },
     status: {
       type: String,
-      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+      enum: [
+        "Pending",
+        "Processing",
+        "Shipped",
+        "Delivered",
+        "Cancelled",
+        "Refunded",
+        "PartiallyRefunded",
+      ],
       default: "Pending",
     },
     deliveredAt: { type: Date, default: null },
     shippedAt: { type: Date, default: null },
-
-    // NEW: Idempotency key field
     idempotencyKey: {
       type: String,
       required: true,
       unique: true,
       index: true,
     },
-
     paymentInfo: {
-      squarePaymentId: { type: String, required: true },
+      squarePaymentId: {
+        type: String,
+        required: true,
+        unique: true,
+        index: true,
+      },
       squareOrderId: { type: String },
       paymentStatus: { type: String, required: true },
       amountPaid: { type: Number, required: true },
@@ -71,6 +81,11 @@ const orderSchema = new mongoose.Schema(
       customerSquareId: { type: String },
       locationId: { type: String },
     },
+    refundInfo: {
+      totalRefunded: { type: Number, default: 0 },
+      refundCount: { type: Number, default: 0 },
+      lastRefundedAt: { type: Date },
+    },
   },
   { timestamps: true }
 );
@@ -78,7 +93,7 @@ const orderSchema = new mongoose.Schema(
 // Create compound index for faster lookups
 orderSchema.index({ user: 1, idempotencyKey: 1 });
 orderSchema.index({ "paymentInfo.squarePaymentId": 1 });
+orderSchema.index({ status: 1, createdAt: -1 });
 
 const OrderModel = mongoose.model("OrderModel", orderSchema);
-
 export default OrderModel;

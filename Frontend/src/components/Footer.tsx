@@ -74,7 +74,7 @@ export const Footer = (props: FooterProps) => {
           {/* Left Section - Logo & Newsletter */}
           <div className="flex flex-col">
             <Link to="/" className="mb-8">
-              <img src={mainLogo} alt="Logo" className="h-8 md:h-10 w-auto" />
+              <img src={mainLogo} alt="Logo" className="h-7 lg:h-[38px]" />
             </Link>
 
             <p className="mb-6 text-sm text-gray-600">

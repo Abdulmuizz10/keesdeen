@@ -75,7 +75,7 @@ const Navbar = () => {
                     alt="Logo"
                     loading="eager"
                     // className="h-8 w-8 md:h-12 md:w-60"
-                    className="h-8 md:h-11"
+                    className="h-7 lg:h-[38px]"
                   />
                 </Link>
               </div>
@@ -301,7 +301,7 @@ const Navbar = () => {
                     alt="Logo"
                     loading="eager"
                     // className="h-8 w-8 md:h-12 md:w-60"
-                    className="h-8 md:h-11"
+                    className="h-7 lg:h-[38px]"
                   />
                 </Link>
               </div>

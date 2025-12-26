@@ -165,11 +165,11 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
             className="text-gray-600 group-hover:text-gray-900"
           />
           <span className="text-sm uppercase tracking-widest text-gray-600 group-hover:text-gray-900">
-            <p className="text-xs sm:text-sm text-gray-500">
+            <p className="text-xs text-gray-500">
               {savedAddress.length === 1 &&
                 (toggle
                   ? "Click to create a new address."
-                  : "Your address was selected automatically.")}
+                  : "address selected automatically.")}
               {savedAddress.length > 1 && "Select or create a new address."}
             </p>
           </span>

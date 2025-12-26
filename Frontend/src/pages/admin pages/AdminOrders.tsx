@@ -5,7 +5,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import {
   Package,
   Clock,
@@ -15,6 +14,9 @@ import {
   Filter,
   Check,
   ChevronDown,
+  RefreshCw,
+  X,
+  AlertCircle,
 } from "lucide-react";
 import Axios from "axios";
 import { URL } from "@/lib/constants";
@@ -45,6 +47,30 @@ interface Address {
   postalCode: string;
 }
 
+interface PaymentInfo {
+  squarePaymentId: string;
+  squareOrderId?: string;
+  paymentStatus: string;
+  amountPaid: number;
+  currency: string;
+  paidAt?: string;
+  receiptUrl?: string;
+  receiptNumber?: string;
+  paymentSourceType?: string;
+  cardBrand?: string;
+  cardLast4?: string;
+  cardStatus?: string;
+  riskLevel?: string;
+  customerSquareId?: string;
+  locationId?: string;
+}
+
+interface RefundInfo {
+  totalRefunded: number;
+  refundCount: number;
+  lastRefundedAt?: string;
+}
+
 interface Order {
   _id: string;
   email: string;
@@ -55,6 +81,8 @@ interface Order {
   paidAt: string;
   status: string;
   createdAt: string;
+  paymentInfo: PaymentInfo;
+  refundInfo?: RefundInfo;
 }
 
 const StatCard = ({ title, value, icon: Icon, status }: any) => (
@@ -91,6 +119,294 @@ const StatCard = ({ title, value, icon: Icon, status }: any) => (
   </div>
 );
 
+const RefundModal = ({
+  order,
+  isOpen,
+  onClose,
+}: {
+  order: Order;
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const [refundLoading, setRefundLoading] = useState(false);
+  const [refundType, setRefundType] = useState<"full" | "partial">("full");
+  const [refundAmount, setRefundAmount] = useState("");
+  const [refundReason, setRefundReason] = useState("");
+
+  const totalPaid = order.totalPrice;
+  const alreadyRefunded = order.refundInfo?.totalRefunded || 0;
+  const maxRefund = totalPaid - alreadyRefunded;
+
+  const formatAmountDefault = (currency: string, amount: number) => {
+    return new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: currency,
+    }).format(amount);
+  };
+
+  const handleRefundSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!order.paymentInfo?.squarePaymentId) {
+      toast.error("Payment ID not found for this order");
+      return;
+    }
+
+    const amountToRefund =
+      refundType === "full" ? maxRefund : parseFloat(refundAmount);
+
+    if (
+      isNaN(amountToRefund) ||
+      amountToRefund <= 0 ||
+      amountToRefund > maxRefund
+    ) {
+      toast.error(
+        `Invalid refund amount. Maximum: ${formatAmountDefault(
+          order.currency,
+          maxRefund
+        )}`
+      );
+      return;
+    }
+
+    if (!refundReason) {
+      toast.error("Please select a refund reason");
+      return;
+    }
+
+    setRefundLoading(true);
+    try {
+      const response = await Axios.post(
+        `${URL}/refunds/admin/create-refund`,
+        {
+          orderId: order._id,
+          amount: amountToRefund,
+          reason: refundReason,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.status === 201 && response.data.success) {
+        toast.success("Refund processed successfully");
+        onClose();
+        // Reset form
+        setRefundType("full");
+        setRefundAmount("");
+        setRefundReason("");
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to process refund");
+    } finally {
+      setRefundLoading(false);
+    }
+  };
+
+  const handleCloseRefundModal = () => {
+    if (!refundLoading) {
+      setRefundType("full");
+      setRefundAmount("");
+      setRefundReason("");
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="relative w-full bg-background max-w-lg border border-border">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-border p-6">
+          <h2 className="text-xl font-light">Process Refund</h2>
+          <button
+            onClick={handleCloseRefundModal}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            disabled={refundLoading}
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Order Info */}
+          <div className="mb-6 space-y-2 bg-muted/70 p-4">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Order ID:</span>
+              <span className="font-mono">
+                #{order._id.slice(-8).toUpperCase()}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Original Amount:</span>
+              <span className="font-medium">
+                {formatAmountDefault(order.currency, totalPaid)}
+              </span>
+            </div>
+            {alreadyRefunded > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Already Refunded:</span>
+                <span className="text-red-600">
+                  -{formatAmountDefault(order.currency, alreadyRefunded)}
+                </span>
+              </div>
+            )}
+            <div className="flex justify-between text-sm font-medium border-t border-border pt-2 mt-2">
+              <span>Available for Refund:</span>
+              <span className="text-green-600 text-base">
+                {formatAmountDefault(order.currency, maxRefund)}
+              </span>
+            </div>
+          </div>
+
+          {/* Alert */}
+          {alreadyRefunded > 0 && (
+            <div className="mb-6 flex gap-3 bg-yellow-50 border border-yellow-200 p-4">
+              <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-yellow-800">
+                This order has been partially refunded. You can only refund the
+                remaining amount.
+              </div>
+            </div>
+          )}
+
+          {maxRefund <= 0 && (
+            <div className="mb-6 flex gap-3 bg-red-50 border border-red-200 p-4">
+              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-red-800">
+                This order has been fully refunded. No additional refunds can be
+                processed.
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleRefundSubmit} className="space-y-6">
+            {/* Refund Type */}
+            <div>
+              <label className="block text-sm font-medium mb-3">
+                Refund Type
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRefundType("full")}
+                  disabled={maxRefund <= 0}
+                  className={`p-4 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    refundType === "full"
+                      ? "border-b-2 border-primary"
+                      : "border-b"
+                  }`}
+                >
+                  <div className="font-medium mb-1">Full Refund</div>
+                  <div className="text-muted-foreground">
+                    {order.currency} {maxRefund.toFixed(2)}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRefundType("partial")}
+                  disabled={maxRefund <= 0}
+                  className={`p-4 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                    refundType === "partial"
+                      ? "border-b-2 border-primary"
+                      : "border-b"
+                  }`}
+                >
+                  <div className="font-medium mb-1">Partial Refund</div>
+                  <div className="text-muted-foreground">Custom amount</div>
+                </button>
+              </div>
+            </div>
+
+            {/* Amount Input (for partial) */}
+            {refundType === "partial" && (
+              <div>
+                <label
+                  htmlFor="amount"
+                  className="block text-sm font-medium mb-2"
+                >
+                  Refund Amount
+                </label>
+                <div className="relative">
+                  <input
+                    id="amount"
+                    type="number"
+                    step="0.01"
+                    max={maxRefund}
+                    value={refundAmount}
+                    onChange={(e) => setRefundAmount(e.target.value)}
+                    placeholder="0.00"
+                    className="w-full px-2 py-2.5 bg-background border border-input text-sm focus:outline-none focus:ring-1 focus:ring-black"
+                    required
+                  />
+                </div>
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  Maximum: {formatAmountDefault(order.currency, maxRefund)}
+                </p>
+              </div>
+            )}
+
+            {/* Reason */}
+            <div>
+              <label
+                htmlFor="reason"
+                className="block text-sm font-medium mb-2"
+              >
+                Refund Reason
+              </label>
+              <select
+                id="reason"
+                value={refundReason}
+                onChange={(e) => setRefundReason(e.target.value)}
+                className="w-full px-4 py-2.5 bg-background border border-input text-sm focus:outline-none focus:ring-1 focus:ring-black"
+                required
+              >
+                <option value="">Select a reason...</option>
+                <option value="Customer requested refund">
+                  Customer requested refund
+                </option>
+                <option value="Item out of stock">Item out of stock</option>
+                <option value="Defective product">Defective product</option>
+                <option value="Wrong item shipped">Wrong item shipped</option>
+                <option value="Duplicate order">Duplicate order</option>
+                <option value="Shipping delay">Shipping delay</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={handleCloseRefundModal}
+                disabled={refundLoading}
+                className="flex-1 px-4 py-3 text-sm border border-border text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={refundLoading || maxRefund <= 0}
+                className="flex-1 px-4 py-3 text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {refundLoading ? (
+                  <>
+                    <Spinner className="h-4 w-4" />
+                    Processing...
+                  </>
+                ) : (
+                  "Process Refund"
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AdminOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
@@ -99,6 +415,8 @@ const AdminOrders: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
 
   // Stats calculation
   const stats = {
@@ -156,6 +474,18 @@ const AdminOrders: React.FC = () => {
     }
   };
 
+  const handleOpenRefundModal = (order: Order) => {
+    setSelectedOrder(order);
+    setIsRefundModalOpen(true);
+  };
+
+  const handleCloseRefundModal = () => {
+    setIsRefundModalOpen(false);
+    setSelectedOrder(null);
+    // Refresh orders to show updated status
+    fetchData(currentPage);
+  };
+
   // Filter orders
   useEffect(() => {
     let filtered = [...orders];
@@ -203,11 +533,13 @@ const AdminOrders: React.FC = () => {
       Shipped: "bg-indigo-300 text-indigo-800 border-indigo-200",
       Delivered: "bg-green-100 text-green-800 border-green-200",
       Cancelled: "bg-red-100 text-red-800 border-red-200",
+      Refunded: "bg-purple-100 text-purple-800 border-purple-200",
+      PartiallyRefunded: "bg-orange-100 text-orange-800 border-orange-200",
     };
 
     return (
       <span
-        className={`inline-flex items-center justify-center gap-3 w-24 lg:w-30 h-10 text-xs font-medium border ${
+        className={`inline-flex items-center justify-center gap-3 w-24 lg:w-32 h-10 text-xs font-medium border ${
           styles[status as keyof typeof styles] ||
           "bg-muted text-muted-foreground"
         }`}
@@ -286,6 +618,8 @@ const AdminOrders: React.FC = () => {
                   "Shipped",
                   "Delivered",
                   "Cancelled",
+                  "Refunded",
+                  "PartiallyRefunded",
                 ].map((status) => (
                   <DropdownMenuItem
                     key={status}
@@ -340,13 +674,16 @@ const AdminOrders: React.FC = () => {
                     <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       Date
                     </th>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Refund
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredOrders.map((order, index) => (
                     <tr
                       key={order._id}
-                      className={`border-b border-border hover:bg-muted/50 transition-colors cursor-pointer ${
+                      className={`border-b border-border hover:bg-muted/50 transition-colors ${
                         index === filteredOrders.length - 1 ? "border-b-0" : ""
                       }`}
                     >
@@ -383,6 +720,16 @@ const AdminOrders: React.FC = () => {
                         <div className="text-sm font-medium">
                           {formatCurrency(order.totalPrice, order.currency)}
                         </div>
+                        {order.refundInfo &&
+                          order.refundInfo.totalRefunded > 0 && (
+                            <div className="text-xs text-red-600">
+                              Refunded:{" "}
+                              {formatCurrency(
+                                order.refundInfo.totalRefunded,
+                                order.currency
+                              )}
+                            </div>
+                          )}
                       </td>
                       <td className="p-6">
                         <DropdownMenu>
@@ -391,7 +738,6 @@ const AdminOrders: React.FC = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] rounded-none">
                             {[
-                              "All",
                               "Pending",
                               "Processing",
                               "Shipped",
@@ -406,8 +752,7 @@ const AdminOrders: React.FC = () => {
                                 className="flex items-center justify-between"
                               >
                                 {status}
-
-                                {statusFilter === status && (
+                                {order.status === status && (
                                   <Check className="h-4 w-4 text-primary" />
                                 )}
                               </DropdownMenuItem>
@@ -419,6 +764,15 @@ const AdminOrders: React.FC = () => {
                         <div className="text-sm text-muted-foreground">
                           {formatDate(order.createdAt)}
                         </div>
+                      </td>
+                      <td className="p-6">
+                        <button
+                          onClick={() => handleOpenRefundModal(order)}
+                          className="p-2 border border-border hover:bg-muted transition-colors group"
+                          title="Process Refund"
+                        >
+                          <RefreshCw className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -442,36 +796,43 @@ const AdminOrders: React.FC = () => {
                         {formatDate(order.createdAt)}
                       </div>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="w-fit">
-                        {getStatusBadge(order.status)}
-                      </DropdownMenuTrigger>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleOpenRefundModal(order)}
+                        className="p-2 border border-border hover:bg-muted transition-colors group"
+                        title="Process Refund"
+                      >
+                        <RefreshCw className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                      </button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger className="w-fit">
+                          {getStatusBadge(order.status)}
+                        </DropdownMenuTrigger>
 
-                      <DropdownMenuContent className="w-48 mr-10 rounded-none">
-                        {[
-                          "All",
-                          "Pending",
-                          "Processing",
-                          "Shipped",
-                          "Delivered",
-                          "Cancelled",
-                        ].map((status) => (
-                          <DropdownMenuItem
-                            key={status}
-                            onClick={() =>
-                              handleStatusChange(order._id, status)
-                            }
-                            className="flex items-center justify-between"
-                          >
-                            {status}
-
-                            {statusFilter === status && (
-                              <Check className="h-4 w-4 text-primary" />
-                            )}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        <DropdownMenuContent className="w-48 mr-10 rounded-none">
+                          {[
+                            "Pending",
+                            "Processing",
+                            "Shipped",
+                            "Delivered",
+                            "Cancelled",
+                          ].map((status) => (
+                            <DropdownMenuItem
+                              key={status}
+                              onClick={() =>
+                                handleStatusChange(order._id, status)
+                              }
+                              className="flex items-center justify-between"
+                            >
+                              {status}
+                              {order.status === status && (
+                                <Check className="h-4 w-4 text-primary" />
+                              )}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -497,9 +858,21 @@ const AdminOrders: React.FC = () => {
                         )}{" "}
                         items
                       </span>
-                      <span className="text-sm font-medium">
-                        {formatCurrency(order.totalPrice, order.currency)}
-                      </span>
+                      <div className="text-right">
+                        <span className="text-sm font-medium">
+                          {formatCurrency(order.totalPrice, order.currency)}
+                        </span>
+                        {order.refundInfo &&
+                          order.refundInfo.totalRefunded > 0 && (
+                            <div className="text-xs text-red-600">
+                              Refunded:{" "}
+                              {formatCurrency(
+                                order.refundInfo.totalRefunded,
+                                order.currency
+                              )}
+                            </div>
+                          )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -545,6 +918,15 @@ const AdminOrders: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Refund Modal */}
+      {selectedOrder && (
+        <RefundModal
+          order={selectedOrder}
+          isOpen={isRefundModalOpen}
+          onClose={handleCloseRefundModal}
+        />
+      )}
     </div>
   );
 };

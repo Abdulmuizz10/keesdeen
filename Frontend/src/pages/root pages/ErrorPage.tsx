@@ -61,7 +61,7 @@ const ErrorPage: React.FC = () => {
 
             <button
               onClick={() => navigate(-1)}
-              className="group inline-flex items-center gap-2 px-8 py-3 border border-border bg-background hover:bg-muted transition-all duration-300 w-full sm:w-auto justify-center"
+              className="group inline-flex items-center gap-2 px-8 py-3 border border-border bg-background dark:text-white hover:bg-muted transition-all duration-300 w-full sm:w-auto justify-center"
             >
               <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
               <span className="font-medium tracking-wide">Go Back</span>

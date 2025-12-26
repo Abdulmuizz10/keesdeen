@@ -1,214 +1,182 @@
 import { useState, useEffect } from "react";
 import {
-  Search,
-  Filter,
-  Check,
-  RefreshCw,
-  Eye,
-  Calendar,
-  Clock,
-  AlertCircle,
-  TrendingDown,
-} from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
-import { toast } from "sonner";
-import { Link } from "react-router-dom";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  RefreshCw,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Search,
+  Filter,
+  Check,
+  Eye,
+  AlertCircle,
+  ChevronDown,
+} from "lucide-react";
+import Axios from "axios";
+import { URL } from "@/lib/constants";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { Link } from "react-router-dom";
 
 // Types
-interface RefundData {
-  orderId: string;
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  refundAmount: number;
-  originalAmount: number;
+interface Order {
+  _id: string;
+  shippingAddress: {
+    firstName: string;
+    lastName: string;
+  };
+  totalPrice: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+}
+
+interface Refund {
+  _id: string;
+  orderId: Order;
+  paymentId: string;
+  squareRefundId?: string;
+  amount: number;
   currency: string;
   reason: string;
-  refundType: string;
   status: string;
-  requestedDate: string;
-  completedDate?: string;
-  squareRefundId?: string;
+  failureReason?: string;
+  initiatedBy: string;
+  customerEmail: string;
+  refundedAt?: string;
+  createdAt: string;
 }
 
-interface RefundStats {
-  total: number;
-  pending: number;
-  completed: number;
-  rejected: number;
-  failed: number;
-  totalAmount: number;
-  averageAmount: number;
-}
-
-// Stat Card Component
-const RefundStatCard = ({
-  title,
-  value,
-  icon: Icon,
-  color,
-  subtitle,
-}: {
-  title: string;
-  value: string | number;
-  icon: any;
-  color: string;
-  subtitle?: string;
-}) => (
+const StatCard = ({ title, value, icon: Icon, status }: any) => (
   <div className="bg-card border border-border p-6">
     <div className="flex items-center justify-between">
-      <div className="flex-1">
+      <div>
         <p className="text-sm text-muted-foreground">{title}</p>
         <p className="text-3xl font-light tracking-tight mt-2">{value}</p>
-        {subtitle && (
-          <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
-        )}
       </div>
-      <div className={`p-3 rounded-full ${color}`}>
-        <Icon className="h-5 w-5" />
+      <div
+        className={`p-3 rounded-full ${
+          status === "pending"
+            ? "bg-yellow-100"
+            : status === "completed"
+            ? "bg-green-100"
+            : status === "failed"
+            ? "bg-red-100"
+            : status === "processing"
+            ? "bg-blue-100"
+            : "bg-muted"
+        }`}
+      >
+        <Icon
+          className={`h-5 w-5 ${
+            status === "pending"
+              ? "text-yellow-600"
+              : status === "completed"
+              ? "text-green-600"
+              : status === "failed"
+              ? "text-red-600"
+              : status === "processing"
+              ? "text-blue-600"
+              : "text-muted-foreground"
+          }`}
+        />
       </div>
     </div>
   </div>
 );
 
 const AdminRefunds: React.FC = () => {
-  const [refunds, setRefunds] = useState<RefundData[]>([]);
-  const [filteredRefunds, setFilteredRefunds] = useState<RefundData[]>([]);
+  const [refunds, setRefunds] = useState<Refund[]>([]);
+  const [filteredRefunds, setFilteredRefunds] = useState<Refund[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [stats, setStats] = useState<RefundStats>({
-    total: 0,
-    pending: 0,
-    completed: 0,
-    rejected: 0,
-    failed: 0,
-    totalAmount: 0,
-    averageAmount: 0,
-  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
-  const fetchRefunds = async (page: number) => {
+  // Stats calculation
+  const stats = {
+    total: refunds?.length || 0,
+    pending: refunds?.filter((r) => r.status === "pending").length || 0,
+    completed: refunds?.filter((r) => r.status === "completed").length || 0,
+    failed: refunds?.filter((r) => r.status === "failed").length || 0,
+  };
+
+  const fetchData = async (page: number) => {
     setLoading(true);
     try {
       const response = await Axios.get(
-        `${URL}/orders/admin/refund/pagination-order-refunds?page=${page}`,
+        `${URL}/refunds/admin/pagination-refunds?page=${page}`,
         {
           withCredentials: true,
         }
       );
-
       if (response.status === 200) {
-        // Filter orders that have refund info and map to refund data
-        const ordersWithRefunds = response.data.orders
-          .filter((order: any) => order.refundInfo)
-          .map((order: any) => ({
-            orderId: order._id,
-            orderNumber: order._id.slice(-8).toUpperCase(),
-            customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
-            customerEmail: order.email,
-            refundAmount: order.refundInfo.amountRefunded || 0,
-            originalAmount: order.paymentInfo?.amountPaid || order.totalPrice,
-            currency: order.currency || "GBP",
-            reason: order.refundInfo.reason || "No reason provided",
-            refundType: order.refundInfo.refundType || "full",
-            status: order.refundInfo.status || "PENDING",
-            requestedDate: order.refundInfo.refundedAt || order.createdAt,
-            completedDate: order.refundInfo.refundedAt,
-            squareRefundId: order.refundInfo.squareRefundId,
-          }))
-          .sort(
-            (a: RefundData, b: RefundData) =>
-              new Date(b.requestedDate).getTime() -
-              new Date(a.requestedDate).getTime()
-          );
-
-        setRefunds(ordersWithRefunds);
+        setRefunds(response.data.refunds);
         setTotalPages(response.data.totalPages);
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to fetch refunds");
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch stats separately (all refunds for accurate stats)
-  const fetchStats = async () => {
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage]);
+
+  const handleStatusChange = async (refundId: string, status: string) => {
+    setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/orders/admin/all-orders`, {
-        withCredentials: true,
-      });
-
+      const response = await Axios.patch(
+        `${URL}/refunds/admin/refund/${refundId}/status`,
+        { status },
+        {
+          withCredentials: true,
+          validateStatus: (status: any) => status < 600,
+        }
+      );
       if (response.status === 200) {
-        const ordersWithRefunds = response.data.orders.filter(
-          (order: any) => order.refundInfo
+        fetchData(currentPage);
+        toast.success(
+          response.data.message || "Refund status updated successfully"
         );
-
-        const calculatedStats = {
-          total: ordersWithRefunds.length,
-          pending: ordersWithRefunds.filter(
-            (order: any) => order.refundInfo.status === "PENDING"
-          ).length,
-          completed: ordersWithRefunds.filter(
-            (order: any) => order.refundInfo.status === "COMPLETED"
-          ).length,
-          rejected: ordersWithRefunds.filter(
-            (order: any) => order.refundInfo.status === "REJECTED"
-          ).length,
-          failed: ordersWithRefunds.filter(
-            (order: any) => order.refundInfo.status === "FAILED"
-          ).length,
-          totalAmount: ordersWithRefunds
-            .filter((order: any) => order.refundInfo.status === "COMPLETED")
-            .reduce(
-              (sum: number, order: any) =>
-                sum + (order.refundInfo.amountRefunded || 0),
-              0
-            ),
-          averageAmount:
-            ordersWithRefunds.length > 0
-              ? ordersWithRefunds.reduce(
-                  (sum: number, order: any) =>
-                    sum + (order.refundInfo.amountRefunded || 0),
-                  0
-                ) / ordersWithRefunds.length
-              : 0,
-        };
-
-        setStats(calculatedStats);
+      } else {
+        toast.error(response.data.message || "Something went wrong");
       }
     } catch (error) {
-      toast.error("Failed to fetch stats");
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchRefunds(currentPage);
-    fetchStats(); // Fetch stats once on mount
-  }, [currentPage]);
-
-  // Filter refunds based on search and status (client-side filtering)
+  // Filter refunds
   useEffect(() => {
     let filtered = [...refunds];
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+    if (searchQuery) {
       filtered = filtered.filter(
         (refund) =>
-          refund.customerEmail.toLowerCase().includes(query) ||
-          refund.customerName.toLowerCase().includes(query) ||
-          refund.orderNumber.toLowerCase().includes(query) ||
-          refund.orderId.toLowerCase().includes(query)
+          refund.customerEmail
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          refund._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          refund.orderId?._id
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          refund.orderId?.shippingAddress.firstName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          refund.orderId?.shippingAddress.lastName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
       );
     }
 
@@ -219,18 +187,14 @@ const AdminRefunds: React.FC = () => {
     setFilteredRefunds(filtered);
   }, [searchQuery, statusFilter, refunds]);
 
-  // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
       year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     });
   };
 
-  // Format currency
   const formatCurrency = (amount: number, currency: string = "GBP") => {
     return new Intl.NumberFormat("en-GB", {
       style: "currency",
@@ -238,48 +202,24 @@ const AdminRefunds: React.FC = () => {
     }).format(amount);
   };
 
-  // Get status badge
   const getStatusBadge = (status: string) => {
     const styles = {
-      PENDING: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      COMPLETED: "bg-green-100 text-green-800 border-green-200",
-      REJECTED: "bg-red-100 text-red-800 border-red-200",
-      FAILED: "bg-gray-100 text-gray-800 border-gray-200",
+      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      processing: "bg-blue-100 text-blue-800 border-blue-200",
+      completed: "bg-green-100 text-green-800 border-green-200",
+      failed: "bg-red-100 text-red-800 border-red-200",
+      rejected: "bg-gray-100 text-gray-800 border-gray-200",
     };
-
-    const icons = {
-      PENDING: Clock,
-      COMPLETED: Check,
-      REJECTED: AlertCircle,
-      FAILED: AlertCircle,
-    };
-
-    const Icon = icons[status as keyof typeof icons] || AlertCircle;
 
     return (
       <span
-        className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium border ${
+        className={`inline-flex items-center justify-center gap-3 w-32 h-10 text-xs font-medium border ${
           styles[status as keyof typeof styles] ||
-          "bg-muted text-muted-foreground border-border"
+          "bg-muted text-muted-foreground"
         }`}
       >
-        <Icon className="h-3 w-3" />
-        {status}
-      </span>
-    );
-  };
-
-  // Get refund type badge
-  const getRefundTypeBadge = (type: string) => {
-    return (
-      <span
-        className={`inline-flex items-center px-2 py-1 text-xs font-medium ${
-          type === "full"
-            ? "bg-blue-50 text-blue-700 border border-blue-200"
-            : "bg-purple-50 text-purple-700 border border-purple-200"
-        }`}
-      >
-        {type === "full" ? "Full Refund" : "Partial Refund"}
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+        <ChevronDown className="h-4 w-4" />
       </span>
     );
   };
@@ -288,51 +228,34 @@ const AdminRefunds: React.FC = () => {
     <div className="flex-1 space-y-4 p-4 bg-background">
       {/* HEADER */}
       <div className="mb-5 border-b border-border pb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl lg:text-5xl font-light tracking-tight mb-3">
-              Refunds Management
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              View and track all refund requests and transactions
-            </p>
-          </div>
-        </div>
+        <h1 className="text-2xl lg:text-5xl font-light tracking-tight mb-3">
+          Refunds Management
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          View and manage all refund requests
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <RefundStatCard
-          title="Total Refunds"
-          value={stats.total}
-          icon={RefreshCw}
-          color="bg-blue-100 text-blue-600"
-          subtitle={`${stats.completed} completed`}
-        />
-        <RefundStatCard
-          title="Pending Review"
+        <StatCard title="Total Refunds" value={stats.total} icon={RefreshCw} />
+        <StatCard
+          title="Pending"
           value={stats.pending}
-          icon={Calendar}
-          color="bg-yellow-100 text-yellow-600"
-          subtitle="Awaiting processing"
+          icon={Clock}
+          status="pending"
         />
-        <RefundStatCard
-          title="Total Refunded"
-          value={formatCurrency(stats.totalAmount)}
-          icon={TrendingDown}
-          color="bg-purple-100 text-purple-600"
-          subtitle={`Avg: ${formatCurrency(stats.averageAmount)}`}
+        <StatCard
+          title="Completed"
+          value={stats.completed}
+          icon={CheckCircle}
+          status="completed"
         />
-        <RefundStatCard
-          title="Success Rate"
-          value={
-            stats.total > 0
-              ? `${Math.round((stats.completed / stats.total) * 100)}%`
-              : "0%"
-          }
-          icon={Check}
-          color="bg-green-100 text-green-600"
-          subtitle={`${stats.rejected + stats.failed} failed/rejected`}
+        <StatCard
+          title="Failed"
+          value={stats.failed}
+          icon={XCircle}
+          status="failed"
         />
       </div>
 
@@ -344,112 +267,70 @@ const AdminRefunds: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by order ID, email, or customer name..."
-              className="w-full pl-10 pr-4 py-2.5 bg-background border border-input text-sm focus:outline-none focus:ring-1 focus:ring-black"
+              placeholder="Search by refund ID, order ID, email, or customer name..."
+              className="w-full pl-10 pr-4 py-2.5 bg-background border border-input text-sm focus:outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
           {/* Status Filter */}
-          <div className="relative lg:w-48">
+          <div className="relative">
             <DropdownMenu>
               <DropdownMenuTrigger className="w-full">
-                <div className="relative flex items-center gap-2 pl-10 pr-8 py-2.5 bg-background border border-input text-sm cursor-pointer transition-colors">
+                <div className="relative flex items-center gap-2 pl-10 pr-8 py-2.5 bg-background border border-input text-sm cursor-pointer">
                   <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <span className="flex-1 text-left">{statusFilter}</span>
+                  <span>{statusFilter}</span>
                 </div>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="min-w-[--radix-dropdown-menu-trigger-width] mr-3 rounded-none">
-                {["All", "PENDING", "COMPLETED", "REJECTED", "FAILED"].map(
-                  (status) => (
-                    <DropdownMenuItem
-                      key={status}
-                      onClick={() => setStatusFilter(status)}
-                      className="flex items-center justify-between"
-                    >
-                      {status}
-                      {statusFilter === status && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
-                    </DropdownMenuItem>
-                  )
-                )}
+                {[
+                  "All",
+                  "pending",
+                  "processing",
+                  "completed",
+                  "failed",
+                  "rejected",
+                ].map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    onClick={() => setStatusFilter(status)}
+                    className="flex items-center justify-between"
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                    {statusFilter === status && (
+                      <Check className="h-4 w-4 text-primary" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-
-          {/* Refresh Button */}
-          <button
-            onClick={() => {
-              fetchRefunds(currentPage);
-              fetchStats();
-            }}
-            disabled={loading}
-            className="px-6 py-2.5 border border-border hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm uppercase tracking-widest disabled:opacity-50"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            <span className="hidden lg:inline">Refresh</span>
-          </button>
         </div>
-
-        {/* Active Filters Info */}
-        {(searchQuery || statusFilter !== "All") && (
-          <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <Filter className="h-4 w-4" />
-            <span>
-              Showing {filteredRefunds.length} of {refunds.length} refunds on
-              this page
-            </span>
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="ml-2 text-xs underline hover:no-underline"
-              >
-                Clear search
-              </button>
-            )}
-            {statusFilter !== "All" && (
-              <button
-                onClick={() => setStatusFilter("All")}
-                className="ml-2 text-xs underline hover:no-underline"
-              >
-                Clear filter
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       {/* Refunds Table */}
       <div className="bg-card border border-border">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24">
-            <Spinner className="size-8 mb-4" />
-            <p className="text-sm text-muted-foreground">Loading refunds...</p>
+          <div className="flex items-center justify-center py-24">
+            <Spinner className="size-6" />
           </div>
         ) : !filteredRefunds || filteredRefunds.length === 0 ? (
           <div className="text-center py-24">
             <RefreshCw className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg text-muted-foreground mb-2">
-              {refunds.length === 0
-                ? "No refunds on this page"
-                : "No refunds match your search"}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {refunds.length === 0
-                ? "Try navigating to other pages or check back later"
-                : "Try adjusting your search or filter criteria"}
-            </p>
+            <p className="text-lg text-muted-foreground">No refunds found</p>
           </div>
         ) : (
           <>
             {/* Desktop Table */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b border-border bg-muted/30">
+                <thead className="border-b border-border">
                   <tr>
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Refund ID
+                    </th>
                     <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       Order ID
                     </th>
@@ -460,44 +341,39 @@ const AdminRefunds: React.FC = () => {
                       Amount
                     </th>
                     <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Reason
-                    </th>
-                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       Status
                     </th>
                     <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="text-center p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
-                      Actions
+                    <th className="text-left p-6 text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                      Action
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredRefunds.map((refund, index) => (
                     <tr
-                      key={refund.orderId}
+                      key={refund._id}
                       className={`border-b border-border hover:bg-muted/50 transition-colors ${
                         index === filteredRefunds.length - 1 ? "border-b-0" : ""
                       }`}
                     >
                       <td className="p-6">
-                        <div className="font-mono text-sm font-medium">
-                          #{refund.orderNumber}
+                        <div className="font-mono text-sm">
+                          #{refund._id.slice(-8).toUpperCase()}
                         </div>
-                        {refund.squareRefundId && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {refund.squareRefundId.slice(0, 16)}...
-                          </div>
-                        )}
+                      </td>
+                      <td className="p-6">
+                        <div className="font-mono text-sm text-primary hover:underline">
+                          #{refund.orderId?._id.slice(-8).toUpperCase()}
+                        </div>
                       </td>
                       <td className="p-6">
                         <div>
                           <div className="text-sm font-medium">
-                            {refund.customerName}
+                            {refund.orderId?.shippingAddress.firstName}{" "}
+                            {refund.orderId?.shippingAddress.lastName}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             {refund.customerEmail}
@@ -505,49 +381,57 @@ const AdminRefunds: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-6">
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium text-red-600">
-                            -
-                            {formatCurrency(
-                              refund.refundAmount,
-                              refund.currency
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            of{" "}
-                            {formatCurrency(
-                              refund.originalAmount,
-                              refund.currency
-                            )}
-                          </div>
+                        <div className="text-sm font-medium">
+                          {formatCurrency(refund.amount, refund.currency)}
                         </div>
                       </td>
                       <td className="p-6">
-                        {getRefundTypeBadge(refund.refundType)}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="w-fit">
+                            {getStatusBadge(refund.status)}
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] rounded-none">
+                            {[
+                              "pending",
+                              "processing",
+                              "completed",
+                              "failed",
+                              "rejected",
+                            ].map((status) => (
+                              <DropdownMenuItem
+                                key={status}
+                                onClick={() =>
+                                  handleStatusChange(refund._id, status)
+                                }
+                                className="flex items-center justify-between"
+                              >
+                                {status.charAt(0).toUpperCase() +
+                                  status.slice(1)}
+                                {refund.status === status && (
+                                  <Check className="h-4 w-4 text-primary" />
+                                )}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
-                      <td className="p-6">
-                        <div className="text-sm text-muted-foreground max-w-[200px]">
-                          <div className="truncate" title={refund.reason}>
-                            {refund.reason}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-6">{getStatusBadge(refund.status)}</td>
                       <td className="p-6">
                         <div className="text-sm text-muted-foreground">
-                          {formatDate(refund.requestedDate)}
+                          {formatDate(refund.createdAt)}
                         </div>
                       </td>
                       <td className="p-6">
-                        <div className="flex items-center justify-center">
-                          <Link
-                            to={`/admin/orders/order_details/${refund.orderId}`}
+                        <Link
+                          to={`/admin/orders/order_details/${refund.orderId?._id}`}
+                          className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          <button
                             className="p-2 border border-border hover:bg-muted transition-colors group"
-                            title="View Order Details"
+                            title="Process Refund"
                           >
                             <Eye className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
-                          </Link>
-                        </div>
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -559,70 +443,95 @@ const AdminRefunds: React.FC = () => {
             <div className="lg:hidden divide-y divide-border">
               {filteredRefunds.map((refund) => (
                 <div
-                  key={refund.orderId}
+                  key={refund._id}
                   className="p-6 hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
+                    <div>
                       <div className="font-mono text-sm font-medium mb-1">
-                        #{refund.orderNumber}
+                        #{refund._id.slice(-8).toUpperCase()}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {formatDate(refund.requestedDate)}
+                        {formatDate(refund.createdAt)}
                       </div>
                     </div>
-                    {getStatusBadge(refund.status)}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="w-fit">
+                        {getStatusBadge(refund.status)}
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-48 mr-10 rounded-none">
+                        {[
+                          "pending",
+                          "processing",
+                          "completed",
+                          "failed",
+                          "rejected",
+                        ].map((status) => (
+                          <DropdownMenuItem
+                            key={status}
+                            onClick={() =>
+                              handleStatusChange(refund._id, status)
+                            }
+                            className="flex items-center justify-between"
+                          >
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                            {refund.status === status && (
+                              <Check className="h-4 w-4 text-primary" />
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   <div className="space-y-3">
                     <div>
+                      <div className="text-xs text-muted-foreground mb-1">
+                        Order ID
+                      </div>
+                      <div className="font-mono text-sm text-primary">
+                        #{refund.orderId?._id.slice(-8).toUpperCase()}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs text-muted-foreground mb-1">
+                        Customer
+                      </div>
                       <div className="text-sm font-medium">
-                        {refund.customerName}
+                        {refund.orderId?.shippingAddress.firstName}{" "}
+                        {refund.orderId?.shippingAddress.lastName}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {refund.customerEmail}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border">
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1">
-                          Refund Amount
-                        </div>
-                        <div className="text-sm font-medium text-red-600">
-                          -
-                          {formatCurrency(refund.refundAmount, refund.currency)}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          of{" "}
-                          {formatCurrency(
-                            refund.originalAmount,
-                            refund.currency
-                          )}
+                    {refund.failureReason && (
+                      <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded">
+                        <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                        <div className="text-xs text-red-800">
+                          {refund.failureReason}
                         </div>
                       </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1">
-                          Type
-                        </div>
-                        {getRefundTypeBadge(refund.refundType)}
-                      </div>
-                    </div>
+                    )}
 
-                    <div>
-                      <div className="text-xs text-muted-foreground mb-1">
-                        Reason
-                      </div>
-                      <div className="text-sm">{refund.reason}</div>
+                    <div className="flex items-center justify-between pt-3 border-t border-border">
+                      <span className="text-sm font-medium">
+                        {formatCurrency(refund.amount, refund.currency)}
+                      </span>
+                      <Link
+                        to={`/admin/orders/order_details/${refund.orderId?._id}`}
+                        className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                      >
+                        <button
+                          className="p-2 border border-border hover:bg-muted transition-colors group"
+                          title="Process Refund"
+                        >
+                          <Eye className="h-4 w-4 text-muted-foreground group-hover:text-foreground" />
+                        </button>
+                      </Link>
                     </div>
-
-                    <Link
-                      to={`/admin/orders/order_details/${refund.orderId}`}
-                      className="w-full mt-3 p-2.5 border border-border hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm uppercase tracking-widest"
-                    >
-                      <Eye className="h-4 w-4" />
-                      View Order
-                    </Link>
                   </div>
                 </div>
               ))}
@@ -667,30 +576,6 @@ const AdminRefunds: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Summary Footer */}
-      {!loading && filteredRefunds.length > 0 && (
-        <div className="bg-card border border-border p-6">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-muted-foreground">
-              Showing{" "}
-              <span className="font-medium text-foreground">
-                {filteredRefunds.length}
-              </span>{" "}
-              refunds on this page • Total across all pages:{" "}
-              <span className="font-medium text-foreground">{stats.total}</span>
-            </div>
-            <div className="flex items-center gap-4 text-sm">
-              <div className="text-muted-foreground">
-                Total Refunded (All):{" "}
-                <span className="font-medium text-foreground">
-                  {formatCurrency(stats.totalAmount)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
