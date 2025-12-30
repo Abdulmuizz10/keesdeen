@@ -32,22 +32,25 @@ const userSchema = new mongoose.Schema(
       enum: ["password", "google"],
       default: "password",
     },
-    refreshTokens: [
-      {
-        token: {
-          type: String,
-          required: true,
+    refreshTokens: {
+      type: [
+        {
+          token: {
+            type: String,
+            required: true,
+          },
+          expiresAt: {
+            type: Date,
+            required: true,
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
         },
-        expiresAt: {
-          type: Date,
-          required: true,
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
+      ],
+      default: [],
+    },
     squareCustomerId: {
       type: String,
     },
