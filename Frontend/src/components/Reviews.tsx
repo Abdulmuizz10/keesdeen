@@ -9,9 +9,8 @@ import {
 } from "@relume_io/relume-ui";
 import { Review } from "../lib/types";
 import { AuthContext } from "../context/AuthContext/AuthContext";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import { toast } from "sonner";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface ReviewsProps {
   id: string;
@@ -25,8 +24,8 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await Axios.get(
-        `${URL}/products/collections/product/${id}`
+      const response = await axiosInstance.get(
+        `/products/collections/product/${id}`
       );
       setReviews(response.data.product.reviews);
     };
@@ -53,8 +52,8 @@ const Reviews: React.FC<ReviewsProps> = ({ id }) => {
     setReviews([...reviews, { ...newReview, date: today }]);
 
     try {
-      const response = await Axios.post<any>(
-        `${URL}/products/collections/product/${id}/reviews`,
+      const response = await axiosInstance.post<any>(
+        `/products/collections/product/${id}/reviews`,
         { ...newReview, date: today, user: user ? user.id : null }
       );
 

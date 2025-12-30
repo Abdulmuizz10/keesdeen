@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
 import Spinner from "../../components/Spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 const ForgetPassword: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -15,8 +14,8 @@ const ForgetPassword: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await Axios.post(
-        `${URL}/auth/forget-password`,
+      const response = await axiosInstance.post(
+        `/auth/forget-password`,
         { email },
         {
           validateStatus: (status: any) => status < 600,

@@ -4,8 +4,7 @@ import { mainLogo } from "../assets";
 import { FaXTwitter, FaTiktok } from "react-icons/fa6";
 import { BiLogoFacebookCircle, BiLogoInstagram } from "react-icons/bi";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "../lib/constants";
+import axiosInstance from "@/lib/axiosConfig";
 
 type Links = {
   title: string;
@@ -44,8 +43,8 @@ export const Footer = (props: FooterProps) => {
     event.preventDefault();
     setLoading(true);
     try {
-      const res = await Axios.post(
-        `${URL}/subscribers/subscribe`,
+      const res = await axiosInstance.post(
+        `/subscribers/subscribe`,
         { email },
         {
           validateStatus: (status) => status < 600,

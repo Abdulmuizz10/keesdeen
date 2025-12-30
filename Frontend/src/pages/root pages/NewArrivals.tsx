@@ -9,9 +9,8 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import { lenis } from "../../lib/useLenisScroll";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
 import ProductCard from "../../components/ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 const NewArrivals: React.FC = () => {
   const { isActive } = useShop();
@@ -33,8 +32,8 @@ const NewArrivals: React.FC = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/products/collections/new-arrivals`,
+      const response = await axiosInstance.get(
+        `/products/collections/new-arrivals`,
         {
           params: {
             page,

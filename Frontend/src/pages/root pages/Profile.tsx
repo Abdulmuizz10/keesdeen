@@ -5,8 +5,7 @@ import { Trash2, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Country, State } from "country-state-city";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface SavedCard {
   id: string;
@@ -69,7 +68,7 @@ const Profile: React.FC = () => {
           <div className="w-full flex justify-center">
             {tabStatus.map((item: any, index) => (
               <div
-                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs uppercase tracking-wider px-2 sm:px-0 ${
+                className={`cursor-pointer py-4 w-full transition-all flex items-center justify-center poppins text-xs uppercase tracking-widest px-2 sm:px-0 ${
                   item?.status === tab
                     ? "border-b-2 border-gray-700"
                     : "border-b border-gray-300 text-text-secondary"
@@ -101,11 +100,8 @@ const OrderHistory: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/orders/profile/pagination-orders?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/orders/profile/pagination-orders?page=${page}`
       );
       if (response.status === 200) {
         setOrders(response.data.orders);
@@ -302,9 +298,7 @@ const Addresses: React.FC = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/address/get-address`, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(`/address/get-address`);
       if (response.status === 200) {
         setAddress(response.data);
       }
@@ -326,10 +320,9 @@ const Addresses: React.FC = () => {
     if (confirmDelete) {
       setLoading(true);
       try {
-        const response = await Axios.delete(
-          `${URL}/address/${id}/delete-address`,
+        const response = await axiosInstance.delete(
+          `/address/${id}/delete-address`,
           {
-            withCredentials: true,
             validateStatus: (status: any) => status < 600,
           }
         );
@@ -435,9 +428,7 @@ const SavedCards = () => {
   useEffect(() => {
     const fetchSavedCards = async () => {
       try {
-        const response = await Axios.get(`${URL}/users/saved-cards`, {
-          withCredentials: true,
-        });
+        const response = await axiosInstance.get(`/users/saved-cards`);
         if (response.data.success) setCards(response.data.cards);
       } catch {
         toast.error("Failed to load saved cards");

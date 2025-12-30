@@ -10,9 +10,8 @@ import {
 } from "@relume_io/relume-ui";
 import { useParams } from "react-router-dom";
 import { lenis } from "../../lib/useLenisScroll";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
 import ProductCard from "../../components/ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 const SearchResults: React.FC = () => {
   const { name } = useParams();
@@ -34,7 +33,7 @@ const SearchResults: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await Axios.get(`${URL}/products/results`, {
+      const response = await axiosInstance.get(`/products/results`, {
         validateStatus: (status) => status < 600,
         params: {
           name,

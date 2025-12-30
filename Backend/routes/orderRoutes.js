@@ -12,11 +12,17 @@ import {
   adminGetUserOrderByIdController,
 } from "../controllers/orderControllers.js";
 import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
+import { paymentRateLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
 // client Routes
-router.post("/create-order", createOrderController);
+router.post(
+  "/create-order",
+  paymentRateLimiter,
+  verifyUser,
+  createOrderController
+);
 
 router.get(
   "/profile/pagination-orders",

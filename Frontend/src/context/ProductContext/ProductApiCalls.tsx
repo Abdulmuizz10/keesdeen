@@ -1,6 +1,5 @@
-import axios from "axios";
-import { URL } from "../../lib/constants";
 import { toast } from "sonner";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Create a new product
 export const createProduct = async (
@@ -24,8 +23,7 @@ export const createProduct = async (
 ) => {
   setAdminLoader(true);
   try {
-    const res = await axios.post(`${URL}/products`, product, {
-      withCredentials: true,
+    const res = await axiosInstance.post(`/products`, product, {
       validateStatus: (status: any) => status < 600,
     });
     if (res.status === 200) {
@@ -80,8 +78,7 @@ export const updateProduct = async (
 ) => {
   setAdminLoader(true);
   try {
-    const res = await axios.put(`${URL}/products/${product._id}`, product, {
-      withCredentials: true,
+    const res = await axiosInstance.put(`/products/${product._id}`, product, {
       validateStatus: (status: any) => status < 600,
     });
     if (res.status === 200) {
@@ -119,8 +116,7 @@ export const updateProduct = async (
 export const deleteProduct = async (id: any, setAdminLoader: any) => {
   setAdminLoader(true);
   try {
-    const res = await axios.delete(`${URL}/products/${id}`, {
-      withCredentials: true,
+    const res = await axiosInstance.delete(`/products/${id}`, {
       validateStatus: (status: any) => status < 600,
     });
     if (res.status === 200) {

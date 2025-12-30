@@ -7,11 +7,10 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Upload } from "lucide-react";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface ContactForm {
   firstName: string;
@@ -117,7 +116,7 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await Axios.post(`${URL}/contact`, {
+      const res = await axiosInstance.post(`/contact`, {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,

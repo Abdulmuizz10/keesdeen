@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface ProductListProps {
   id: string;
@@ -16,8 +15,8 @@ const RelatedProducts: React.FC<ProductListProps> = ({ id }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await Axios.get(
-          `${URL}/products/collections/products/${id}/related-products`,
+        const response = await axiosInstance.get(
+          `/products/collections/products/${id}/related-products`,
           {
             validateStatus: (status) => status < 600,
           }

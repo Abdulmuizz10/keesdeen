@@ -1,5 +1,3 @@
-import { URL } from "@/lib/constants";
-import Axios from "axios";
 import React, {
   createContext,
   useContext,
@@ -8,6 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { toast } from "sonner";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface HeroImage {
   url: string;
@@ -234,7 +233,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const fetchHeroSettings = async () => {
       try {
-        const res = await Axios.get(`${URL}/settings/get-hero`);
+        const res = await axiosInstance.get(`/settings/get-hero`);
         if (res.data?.success && res.data?.data?.images?.length > 0) {
           preloadImages(res.data.data.images);
           setHeroSettings(res.data.data);

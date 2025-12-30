@@ -10,9 +10,8 @@ import {
 } from "@relume_io/relume-ui";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
 import { formatAmountDefault } from "../../lib/utils";
+import axiosInstance from "@/lib/axiosConfig";
 
 const OrderHistory: React.FC = () => {
   const [orders, setOrders] = useState<any[]>();
@@ -24,9 +23,7 @@ const OrderHistory: React.FC = () => {
     window.scrollTo(0, 0);
     const fetchOrderHistory = async () => {
       try {
-        const response = await Axios.get(`${URL}/orders/profile/orders`, {
-          withCredentials: true,
-        });
+        const response = await axiosInstance.get(`/orders/profile/orders`);
         setOrders(response.data);
         setLoading(false);
       } catch (error) {

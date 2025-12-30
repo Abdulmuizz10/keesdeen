@@ -10,8 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
+import axiosInstance from "@/lib/axiosConfig";
 
 const popularColors = [
   { name: "Black", code: "#000000" },
@@ -200,11 +199,10 @@ const AdminCreateProduct: React.FC = () => {
     };
 
     try {
-      const res = await Axios.post(
-        `${URL}/products/admin/create-product`,
+      const res = await axiosInstance.post(
+        `/products/admin/create-product`,
         formData,
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

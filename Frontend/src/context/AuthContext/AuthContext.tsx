@@ -6,44 +6,63 @@ import {
   Dispatch,
 } from "react";
 import AuthReducer from "./AuthReducer";
+import { Logout } from "./AuthActions";
+import { toast } from "sonner";
 
-// Define the structure of the state
 interface AuthState {
   user: any | null;
   isFetching: boolean;
   error: boolean;
 }
 
-// Define the initial state
 const INITIAL_STATE: AuthState = {
   user: JSON.parse(localStorage.getItem("user") || "null"),
   isFetching: false,
   error: false,
 };
 
-// Define the context structure
 interface AuthContextProps extends AuthState {
   dispatch: Dispatch<any>;
 }
 
-// Create the context with initial values
 export const AuthContext = createContext<AuthContextProps>({
   ...INITIAL_STATE,
   dispatch: () => null,
 });
 
-// Define the provider component's props
 interface AuthContextProviderProps {
   children: ReactNode;
 }
 
-// AuthContextProvider in TypeScript
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
 
+  // Sync user state with localStorage
   useEffect(() => {
     localStorage.setItem("user", JSON.stringify(state.user));
   }, [state.user]);
+
+  // Listen for token refresh failures
+  useEffect(() => {
+    const handleTokenRefreshFailed = () => {
+      // Clear user state and redirect to login
+      dispatch(Logout());
+      localStorage.removeItem("user");
+      toast.error("Your session has expired. Please log in again.");
+
+      // Use window.location for navigation (works outside router context)
+      window.location.href = "/auth/Sign_in";
+    };
+
+    window.addEventListener("token-refresh-failed", handleTokenRefreshFailed);
+
+    return () => {
+      window.removeEventListener(
+        "token-refresh-failed",
+        handleTokenRefreshFailed
+      );
+    };
+  }, []);
 
   return (
     <AuthContext.Provider

@@ -18,11 +18,10 @@ import {
   X,
   AlertCircle,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router-dom";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface OrderItem {
@@ -176,14 +175,13 @@ const RefundModal = ({
 
     setRefundLoading(true);
     try {
-      const response = await Axios.post(
-        `${URL}/refunds/admin/create-refund`,
+      const response = await axiosInstance.post(
+        `/refunds/admin/create-refund`,
         {
           orderId: order._id,
           amount: amountToRefund,
           reason: refundReason,
-        },
-        { withCredentials: true }
+        }
       );
 
       if (response.status === 201 && response.data.success) {
@@ -429,11 +427,8 @@ const AdminOrders: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/orders/admin/pagination-orders?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/orders/admin/pagination-orders?page=${page}`
       );
       if (response.status === 200) {
         setOrders(response.data.orders);
@@ -453,11 +448,10 @@ const AdminOrders: React.FC = () => {
   const handleStatusChange = async (orderId: any, status: string) => {
     setLoading(true);
     try {
-      const response = await Axios.patch(
-        `${URL}/orders/admin/order/${orderId}/status`,
+      const response = await axiosInstance.patch(
+        `/orders/admin/order/${orderId}/status`,
         { status },
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

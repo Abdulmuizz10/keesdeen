@@ -3,9 +3,8 @@ import { motion } from "framer-motion";
 import { background } from "../lib/anim";
 import { Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface searchModalProps {
   isActive: boolean;
@@ -29,8 +28,8 @@ const SearchModal: React.FC<searchModalProps> = ({ isActive, setIsActive }) => {
     }
 
     try {
-      const { data } = await Axios.get(
-        `${URL}/products/search/suggestions-products`,
+      const { data } = await axiosInstance.get(
+        `/products/search/suggestions-products`,
         {
           params: { query: searchQuery },
         }

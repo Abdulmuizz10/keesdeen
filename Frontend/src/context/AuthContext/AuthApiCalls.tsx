@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   AccessFailure,
   AccessStart,
@@ -6,10 +5,9 @@ import {
   Logout,
 } from "./AuthActions";
 import { Dispatch } from "react";
-import { URL } from "../../lib/constants";
 import { toast } from "sonner";
+import axiosInstance from "../../lib/axiosConfig";
 
-// Type definition for the login function
 export const SignInAccount = async (
   user: any,
   dispatch: Dispatch<any>,
@@ -18,9 +16,8 @@ export const SignInAccount = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res = await axios.post(`${URL}/auth/sign-in`, user, {
-      withCredentials: true,
-      validateStatus: (status) => status < 600,
+    const res = await axiosInstance.post(`/auth/sign-in`, user, {
+      validateStatus: (status: any) => status < 600,
     });
 
     if (res.status === 200) {
@@ -34,6 +31,7 @@ export const SignInAccount = async (
     }
   } catch (error) {
     dispatch(AccessFailure());
+    setLoading(false);
     toast.error("An unexpected error occurred. Please try again.");
   }
 };
@@ -47,10 +45,10 @@ export const SignUpAccount = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res = await axios.post(`${URL}/auth/sign-up`, user, {
-      withCredentials: true,
-      validateStatus: (status) => status < 600,
+    const res = await axiosInstance.post(`/auth/sign-up`, user, {
+      validateStatus: (status: any) => status < 600,
     });
+
     if (res.status === 200) {
       dispatch(AccessSuccess(res.data));
       if (cartData.length > 0) {
@@ -66,6 +64,7 @@ export const SignUpAccount = async (
     }
   } catch (err) {
     dispatch(AccessFailure());
+    setLoading(false);
     toast.error("An unexpected error occurred. Please try again.");
   }
 };
@@ -79,11 +78,13 @@ export const LogOutAccount = async (
 ): Promise<void> => {
   setLoading(true);
   try {
-    // Notify the backend (optional)
-    const res = await axios.post(`${URL}/auth/logout`, {
-      withCredentials: true,
-      validateStatus: (status: any) => status < 600,
-    });
+    const res = await axiosInstance.post(
+      `/auth/logout`,
+      {},
+      {
+        validateStatus: (status: any) => status < 600,
+      }
+    );
 
     if (res.status === 200) {
       dispatch(Logout());

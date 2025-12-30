@@ -5,9 +5,8 @@ import { Country, State } from "country-state-city";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import { AuthContext } from "../context/AuthContext/AuthContext";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface SetShowModalProps {
   setShowModal: (value: boolean) => void;
@@ -124,8 +123,7 @@ const CreateAddressModal: React.FC<SetShowModalProps> = ({
 
     setLoading(true);
     try {
-      const response = await Axios.post(`${URL}/address`, addressData, {
-        withCredentials: true,
+      const response = await axiosInstance.post(`/address`, addressData, {
         validateStatus: (status: any) => status < 600,
       });
       if (response.status === 200) {

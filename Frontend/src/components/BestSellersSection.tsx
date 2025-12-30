@@ -7,9 +7,8 @@ import {
   CarouselPrevious,
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 const BestSellersSection: React.FC = () => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
@@ -21,7 +20,7 @@ const BestSellersSection: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await Axios.get(`${URL}/products/home/best-sellers`, {
+        const res = await axiosInstance.get(`/products/home/best-sellers`, {
           validateStatus: (status) => status < 600,
         });
         if (res.status === 200) {
@@ -57,7 +56,7 @@ const BestSellersSection: React.FC = () => {
               <span>Best Sellers</span>
             </h2>
             <p className="md:text-md text-text-primary">
-              Our Best Sellers: Where Modesty Meets Unmatched Style.
+              Where Modesty Meets Unmatched Style.
             </p>
           </div>
 

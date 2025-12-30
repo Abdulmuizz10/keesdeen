@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { Product } from "../lib/types";
 import Spinner from "./Spinner";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 type CollectionsSectionProps = React.ComponentPropsWithoutRef<"section"> & {
   heading?: string;
@@ -26,7 +25,7 @@ const CollectionsSection = ({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await Axios.get(`${URL}/products/home/collections`, {
+        const res = await axiosInstance.get(`/products/home/collections`, {
           validateStatus: (status) => status < 600,
         });
         if (res.status === 200) {

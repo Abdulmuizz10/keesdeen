@@ -7,10 +7,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Package, Search, Filter, Check, ChevronDown } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface OrderItem {
@@ -59,11 +58,8 @@ const AdminPendingOrders: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/orders/admin/pagination-pending-orders?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/orders/admin/pagination-pending-orders?page=${page}`
       );
       if (response.status === 200) {
         setOrders(response.data.orders);
@@ -83,11 +79,10 @@ const AdminPendingOrders: React.FC = () => {
   const handleStatusChange = async (orderId: any, status: string) => {
     setLoading(true);
     try {
-      const response = await Axios.patch(
-        `${URL}/orders/admin/order/${orderId}/status`,
+      const response = await axiosInstance.patch(
+        `/orders/admin/order/${orderId}/status`,
         { status },
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

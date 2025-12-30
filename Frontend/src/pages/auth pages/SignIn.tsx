@@ -11,10 +11,9 @@ import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
-import { URL } from "../../lib/constants";
 import { toast } from "sonner";
-import Axios from "axios";
 import Spinner from "../../components/Spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -35,13 +34,12 @@ const SignIn: React.FC = () => {
     onSuccess: async (tokenResponse) => {
       try {
         setLoading(true);
-        const res = await Axios.post(
-          `${URL}/auth/google-sign-in`,
+        const res = await axiosInstance.post(
+          `/auth/google-sign-in`,
           {
             googleToken: tokenResponse.access_token,
           },
           {
-            withCredentials: true,
             validateStatus: (status) => status < 600,
           }
         );

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Package, Search } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface OrderItem {
@@ -52,11 +51,8 @@ const AdminDeliveredOrders: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/orders/admin/pagination-delivered-orders?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/orders/admin/pagination-delivered-orders?page=${page}`
       );
       if (response.status === 200) {
         setOrders(response.data.orders);

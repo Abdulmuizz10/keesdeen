@@ -12,8 +12,6 @@ import {
   Eye,
   Plus,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -30,6 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface Coupon {
   _id: string;
@@ -103,11 +102,8 @@ const AdminCoupons: React.FC = () => {
   const fetchCoupons = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/coupons/admin/pagination-coupons?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/coupons/admin/pagination-coupons?page=${page}`
       );
       if (response.status === 200) {
         setCoupons(response.data.coupons);
@@ -157,21 +153,17 @@ const AdminCoupons: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await Axios.post(
-        `${URL}/coupons/create-coupon`,
-        {
-          code: formData.code.toUpperCase(),
-          discountType: formData.discountType,
-          discountValue: parseFloat(formData.discountValue),
-          minPurchaseAmount: parseFloat(formData.minPurchaseAmount),
-          maxDiscountAmount: parseFloat(formData.maxDiscountAmount),
-          startDate: formData.startDate,
-          endDate: formData.endDate,
-          usageLimit: parseInt(formData.usageLimit),
-          isActive: formData.isActive,
-        },
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.post(`/coupons/create-coupon`, {
+        code: formData.code.toUpperCase(),
+        discountType: formData.discountType,
+        discountValue: parseFloat(formData.discountValue),
+        minPurchaseAmount: parseFloat(formData.minPurchaseAmount),
+        maxDiscountAmount: parseFloat(formData.maxDiscountAmount),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        usageLimit: parseInt(formData.usageLimit),
+        isActive: formData.isActive,
+      });
 
       if (response.status === 201) {
         toast.success("Coupon created successfully");
@@ -217,8 +209,8 @@ const AdminCoupons: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await Axios.put(
-        `${URL}/coupons/admin/${selectedCoupon._id}/update-coupon`,
+      const response = await axiosInstance.put(
+        `/coupons/admin/${selectedCoupon._id}/update-coupon`,
         {
           code: editForm.code.toUpperCase(),
           discountType: editForm.discountType,
@@ -229,8 +221,7 @@ const AdminCoupons: React.FC = () => {
           endDate: editForm.endDate,
           usageLimit: parseInt(editForm.usageLimit),
           isActive: editForm.isActive,
-        },
-        { withCredentials: true }
+        }
       );
 
       if (response.status === 200) {
@@ -256,9 +247,8 @@ const AdminCoupons: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await Axios.delete(
-        `${URL}/coupons/admin/${selectedCoupon._id}/delete-coupon`,
-        { withCredentials: true }
+      const response = await axiosInstance.delete(
+        `/coupons/admin/${selectedCoupon._id}/delete-coupon`
       );
 
       if (response.status === 200) {

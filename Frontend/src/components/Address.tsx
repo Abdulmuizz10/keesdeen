@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Country, State } from "country-state-city";
 import { Plus } from "lucide-react";
 import CreateAddressModal from "./CreateAddressModal";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import { toast } from "sonner";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface AddressProps {
   setAddress: (address: any) => void;
@@ -22,9 +21,7 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
     const getAddress = async () => {
       setLoading(true);
       try {
-        const response = await Axios.get(`${URL}/address/get-address`, {
-          withCredentials: true,
-        });
+        const response = await axiosInstance.get(`/address/get-address`);
         if (response.status === 200) {
           setSavedAddress(response.data);
         }
@@ -170,7 +167,8 @@ const Address: React.FC<AddressProps> = ({ setAddress }) => {
                 (toggle
                   ? "Click to create a new address."
                   : "address selected automatically.")}
-              {savedAddress.length > 1 && "Select or create a new address."}
+              {savedAddress.length === 0 && "create a new address."}
+              {savedAddress.length > 1 && "create a new address."}
             </p>
           </span>
         </button>

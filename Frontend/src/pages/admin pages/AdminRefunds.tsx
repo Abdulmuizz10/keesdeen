@@ -17,11 +17,10 @@ import {
   AlertCircle,
   ChevronDown,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router-dom";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface Order {
@@ -110,11 +109,8 @@ const AdminRefunds: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/refunds/admin/pagination-refunds?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/refunds/admin/pagination-refunds?page=${page}`
       );
       if (response.status === 200) {
         setRefunds(response.data.refunds);
@@ -134,11 +130,10 @@ const AdminRefunds: React.FC = () => {
   const handleStatusChange = async (refundId: string, status: string) => {
     setLoading(true);
     try {
-      const response = await Axios.patch(
-        `${URL}/refunds/admin/refund/${refundId}/status`,
+      const response = await axiosInstance.patch(
+        `/refunds/admin/refund/${refundId}/status`,
         { status },
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

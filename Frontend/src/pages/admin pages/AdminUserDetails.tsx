@@ -16,8 +16,6 @@ import {
   ChevronDown,
   Pencil,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -37,6 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface User {
@@ -90,9 +89,7 @@ const AdminUserDetails: React.FC = () => {
   const fetchUserDetails = async () => {
     setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/users/admin/find-user/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(`/users/admin/find-user/${id}`);
       if (response.status === 200) {
         setUser(response.data.user);
         setOrders(response.data.orders || []);
@@ -116,11 +113,10 @@ const AdminUserDetails: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await Axios.patch(
-        `${URL}/users/admin/${user._id}/role`,
+      const response = await axiosInstance.patch(
+        `/users/admin/${user._id}/role`,
         { isAdmin: editForm.isAdmin },
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

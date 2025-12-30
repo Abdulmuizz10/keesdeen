@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { URL } from "../../lib/constants";
 import { toast } from "sonner";
 import { useShop } from "../../context/ShopContext";
+import axiosInstance from "@/lib/axiosConfig";
 
 const AdminSendEmailToSubscribers: React.FC = () => {
   const [subject, setSubject] = useState("");
@@ -19,16 +18,10 @@ const AdminSendEmailToSubscribers: React.FC = () => {
     setAdminLoader(true);
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        `${URL}/subscribers/send-email`,
-        {
-          subject,
-          message,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axiosInstance.post(`/subscribers/send-email`, {
+        subject,
+        message,
+      });
       toast.success(response.data.message);
       setSubject("");
       setMessage("");

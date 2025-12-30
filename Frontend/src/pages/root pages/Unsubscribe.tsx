@@ -3,8 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mail, CheckCircle, XCircle } from "lucide-react";
 import Spinner from "@/components/Spinner";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
+import axiosInstance from "@/lib/axiosConfig";
 
 const Unsubscribe: React.FC = () => {
   const { token } = useParams();
@@ -23,11 +22,10 @@ const Unsubscribe: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await Axios.post(
-        `${URL}/subscribers/unsubscribe/${token}`,
+      const response = await axiosInstance.post(
+        `/subscribers/unsubscribe/${token}`,
         {},
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

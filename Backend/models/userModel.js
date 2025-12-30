@@ -12,16 +12,15 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      unique: true, // Prevent duplicate emails for registered users
+      unique: true,
       required: true,
-      // match: [/.+@.+\..+/, "Please enter a valid email address"], // Basic email validation
     },
     password: {
       type: String,
       required: function () {
-        return this.authMethod === "password"; // Required only for password-based users
+        return this.authMethod === "password";
       },
-      select: false, // Exclude password from queries by default for security
+      select: false,
     },
     isAdmin: {
       type: Boolean,
@@ -30,8 +29,31 @@ const userSchema = new mongoose.Schema(
     },
     authMethod: {
       type: String,
-      enum: ["password", "google"], // Define possible authentication methods
+      enum: ["password", "google"],
       default: "password",
+    },
+    refreshTokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+        expiresAt: {
+          type: Date,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    squareCustomerId: {
+      type: String,
+    },
+    savedCards: {
+      type: Array,
+      default: [],
     },
   },
   {
@@ -39,4 +61,5 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.index({ "refreshTokens.expiresAt": 1 });
 export default mongoose.model("UserModel", userSchema);

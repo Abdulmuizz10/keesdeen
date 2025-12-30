@@ -28,11 +28,10 @@ import {
   SquarePen,
   Pencil,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router-dom";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface Product {
@@ -104,11 +103,8 @@ const AdminProducts: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/products/admin/pagination-products?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/products/admin/pagination-products?page=${page}`
       );
       if (response.status === 200) {
         setProducts(response.data.products);
@@ -150,10 +146,9 @@ const AdminProducts: React.FC = () => {
         const bestSellerStatus = editForm.bestSeller
           ? "isBestSeller"
           : "notBestSeller";
-        await Axios.patch(
-          `${URL}/products/admin/update/${selectedProduct._id}/best-seller`,
-          { status: bestSellerStatus },
-          { withCredentials: true }
+        await axiosInstance.patch(
+          `/products/admin/update/${selectedProduct._id}/best-seller`,
+          { status: bestSellerStatus }
         );
       }
 
@@ -162,10 +157,9 @@ const AdminProducts: React.FC = () => {
         const newArrivalStatus = editForm.newArrival
           ? "isNewArrival"
           : "notNewArrival";
-        await Axios.patch(
-          `${URL}/products/admin/update/${selectedProduct._id}/new-arrival`,
-          { status: newArrivalStatus },
-          { withCredentials: true }
+        await axiosInstance.patch(
+          `/products/admin/update/${selectedProduct._id}/new-arrival`,
+          { status: newArrivalStatus }
         );
       }
 
@@ -174,10 +168,9 @@ const AdminProducts: React.FC = () => {
         const availabilityStatus = editForm.isAvailable
           ? "isAvailable"
           : "notAvailable";
-        await Axios.patch(
-          `${URL}/products/admin/update/${selectedProduct._id}/availability`,
-          { status: availabilityStatus },
-          { withCredentials: true }
+        await axiosInstance.patch(
+          `/products/admin/update/${selectedProduct._id}/availability`,
+          { status: availabilityStatus }
         );
       }
 
@@ -195,9 +188,8 @@ const AdminProducts: React.FC = () => {
     if (!selectedProduct) return;
     setLoading(true);
     try {
-      const response = await Axios.delete(
-        `${URL}/products/admin/products/${selectedProduct._id}`,
-        { withCredentials: true }
+      const response = await axiosInstance.delete(
+        `/products/admin/products/${selectedProduct._id}`
       );
 
       if (response.status === 200) {

@@ -89,10 +89,7 @@
 //       setLoading(true);
 //       try {
 //         const response = await Axios.get(
-//           `${URL}/products/admin/get-product/product/${id}`,
-//           {
-//             withCredentials: true,
-//           }
+//           `/products/admin/get-product/product/${id}`
 //         );
 
 //         if (response.status === 200) {
@@ -869,9 +866,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { Spinner } from "@/components/ui/spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 const popularColors = [
   { name: "Black", code: "#000000" },
@@ -967,11 +963,8 @@ const AdminUpdateProduct: React.FC = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await Axios.get(
-          `${URL}/products/admin/get-product/${id}`,
-          {
-            withCredentials: true,
-          }
+        const response = await axiosInstance.get(
+          `/products/admin/get-product/${id}`
         );
 
         if (response.status === 200) {
@@ -1317,11 +1310,10 @@ const AdminUpdateProduct: React.FC = () => {
     setAdminLoader(true);
 
     try {
-      const res = await Axios.put(
-        `${URL}/products/admin/${id}/update-product`,
+      const res = await axiosInstance.put(
+        `/products/admin/${id}/update-product`,
         updates,
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

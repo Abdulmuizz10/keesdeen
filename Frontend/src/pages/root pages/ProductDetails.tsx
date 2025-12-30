@@ -11,11 +11,11 @@ import "slick-carousel/slick/slick-theme.css";
 import RelatedProducts from "../../components/RelatedProducts";
 import Reviews from "../../components/Reviews";
 import Spinner from "../../components/Spinner";
-import { currency, URL } from "../../lib/constants";
-import Axios from "axios";
+import { currency } from "../../lib/constants";
 import { formatAmountDefault } from "../../lib/utils";
 import { Ruler, Share, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
+import axiosInstance from "@/lib/axiosConfig";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -36,8 +36,8 @@ const ProductDetails = () => {
     setAnimation(true);
     const fetchData = async () => {
       try {
-        const response = await Axios.get(
-          `${URL}/products/collections/product/${id}`,
+        const response = await axiosInstance.get(
+          `/products/collections/product/${id}`,
           {
             validateStatus: (status) => status < 600,
           }

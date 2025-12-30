@@ -31,10 +31,10 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
+
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface User {
@@ -48,7 +48,7 @@ interface User {
   updatedAt: string;
 }
 
-const StatCard = ({ title, value, icon: Icon}: any) => (
+const StatCard = ({ title, value, icon: Icon }: any) => (
   <div className="bg-card border border-border p-6">
     <div className="flex items-center justify-between">
       <div>
@@ -93,11 +93,8 @@ const AdminUsers: React.FC = () => {
   const fetchData = async (page: number) => {
     setLoading(true);
     try {
-      const response = await Axios.get(
-        `${URL}/users/admin/pagination-users?page=${page}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.get(
+        `/users/admin/pagination-users?page=${page}`
       );
       if (response.status === 200) {
         setUsers(response.data.users);
@@ -134,11 +131,10 @@ const AdminUsers: React.FC = () => {
     try {
       // Update role if changed
       if (editForm.isAdmin !== selectedUser.isAdmin) {
-        const response = await Axios.patch(
-          `${URL}/users/admin/${selectedUser._id}/role`,
+        const response = await axiosInstance.patch(
+          `/users/admin/${selectedUser._id}/role`,
           { isAdmin: editForm.isAdmin },
           {
-            withCredentials: true,
             validateStatus: (status: any) => status < 600,
           }
         );
@@ -162,9 +158,8 @@ const AdminUsers: React.FC = () => {
     if (!selectedUser) return;
     setLoading(true);
     try {
-      const response = await Axios.delete(
-        `${URL}/users/admin/${selectedUser._id}/delete-user`,
-        { withCredentials: true }
+      const response = await axiosInstance.delete(
+        `/users/admin/${selectedUser._id}/delete-user`
       );
 
       if (response.status === 200) {

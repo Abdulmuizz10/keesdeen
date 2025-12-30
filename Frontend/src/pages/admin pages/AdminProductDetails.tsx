@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -25,6 +23,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface Review {
   _id: string;
@@ -72,11 +71,8 @@ const AdminProductDetails: React.FC = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await Axios.get(
-          `${URL}/products/admin/get-product/${id}`,
-          {
-            withCredentials: true,
-          }
+        const response = await axiosInstance.get(
+          `/products/admin/get-product/${id}`
         );
 
         if (response.status === 200) {
@@ -100,11 +96,8 @@ const AdminProductDetails: React.FC = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await Axios.delete(
-        `${URL}/products/admin/products/${id}`,
-        {
-          withCredentials: true,
-        }
+      const response = await axiosInstance.delete(
+        `/products/admin/products/${id}`
       );
 
       if (response.status === 200) {

@@ -4,7 +4,10 @@ const verifyUser = async (req, res, next) => {
   const token = req.cookies?.authToken;
 
   if (!token) {
-    return res.status(401).json({ message: "You are not authenticated" });
+    return res.status(401).json({
+      message: "You are not authenticated",
+      tokenExpired: true,
+    });
   }
 
   try {
@@ -12,7 +15,18 @@ const verifyUser = async (req, res, next) => {
     req.user = tokenData;
     next();
   } catch (error) {
-    res.status(403).json({ message: "Not authorized, Token is not valid" });
+    // Check if error is token expiration
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Token expired",
+        tokenExpired: true,
+      });
+    }
+
+    res.status(403).json({
+      message: "Not authorized, Token is not valid",
+      tokenExpired: false,
+    });
   }
 };
 

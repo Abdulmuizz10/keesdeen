@@ -7,9 +7,8 @@ import {
   CarouselPrevious,
 } from "@relume_io/relume-ui";
 import type { CarouselApi } from "@relume_io/relume-ui";
-import Axios from "axios";
-import { URL } from "../lib/constants";
 import ProductCard from "./ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 const NewArrivalsSection: React.FC = () => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
@@ -21,7 +20,7 @@ const NewArrivalsSection: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await Axios.get(`${URL}/products/home/new-arrivals`, {
+        const res = await axiosInstance.get(`/products/home/new-arrivals`, {
           validateStatus: (status) => status < 600,
         });
         if (res.status === 200) {
@@ -54,10 +53,10 @@ const NewArrivalsSection: React.FC = () => {
         <div className="container">
           <div className="mb-12 text-center md:mb-18 lg:mb-10">
             <h2 className="mb-5 text-5xl font-semibold md:mb-6 md:text-7xl lg:text-8xl">
-              <span>Best Sellers</span>
+              <span>New Arrivals</span>
             </h2>
             <p className="md:text-md text-text-primary">
-              Our Best Sellers: Where Modesty Meets Unmatched Style.
+              New styles built for comfort, confidence, and everyday wear.
             </p>
           </div>
 

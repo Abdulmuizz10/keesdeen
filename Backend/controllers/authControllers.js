@@ -7,20 +7,62 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const createAndSendToken = (user, res) => {
-  const token = jwt.sign(
+// Maximum number of refresh tokens per user (prevents unlimited device logins)
+const MAX_REFRESH_TOKENS = 5;
+
+// Generate Access Token (short-lived)
+const generateAccessToken = (user) => {
+  return jwt.sign(
     { id: user._id, isAdmin: user.isAdmin },
     process.env.SECRET_KEY,
-    { expiresIn: "30d" }
+    { expiresIn: "15m" }
   );
+};
+
+// Generate Refresh Token (long-lived)
+const generateRefreshToken = (user) => {
+  return jwt.sign({ id: user._id }, process.env.REFRESH_SECRET_KEY, {
+    expiresIn: "30d",
+  });
+};
+
+// Set tokens in cookies and response
+const createAndSendTokens = async (user, res) => {
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  // Calculate expiration date
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 30); // 30 days from now
+
+  // Add new refresh token to user's token array
+  await UserModel.findByIdAndUpdate(user._id, {
+    $push: {
+      refreshTokens: {
+        $each: [{ token: refreshToken, expiresAt }],
+        $slice: -MAX_REFRESH_TOKENS, // Keep only the last N tokens
+      },
+    },
+  });
+
   const cookieDomain =
     process.env.NODE_ENV === "production"
       ? "keesdeen-api.vercel.app"
       : "localhost";
 
-  res.cookie("authToken", token, {
+  // Set access token cookie
+  res.cookie("authToken", accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production" ? true : false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 15 * 60 * 1000,
+    domain: cookieDomain,
+  });
+
+  // Set refresh token cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
     domain: cookieDomain,
@@ -42,9 +84,7 @@ const signUp = async (req, res) => {
   try {
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "An account with this email already exists." });
+      return res.status(400).json({ message: "account already exists." });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
     const newUser = await UserModel.create({
@@ -55,9 +95,8 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Send welcome email
     await sendWelcomeEmail(email, firstName, "signup");
-    return createAndSendToken(newUser, res);
+    return createAndSendTokens(newUser, res);
   } catch (error) {
     res
       .status(500)
@@ -80,7 +119,7 @@ const signIn = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
     await sendWelcomeEmail(email, existingUser.firstName, "signin");
-    return createAndSendToken(existingUser, res);
+    return createAndSendTokens(existingUser, res);
   } catch (error) {
     res
       .status(500)
@@ -113,27 +152,111 @@ const googleSignIn = async (req, res) => {
         email,
         authMethod: "google",
       });
-
-      // Send welcome email
       await sendWelcomeEmail(email, firstName, "signup");
     } else {
-      // Send welcome email for sign-in
       await sendWelcomeEmail(email, user.firstName, "signin");
     }
 
-    return createAndSendToken(user, res);
+    return createAndSendTokens(user, res);
   } catch (error) {
     return res.status(500).json({ message: "Google sign-in failed" });
   }
 };
 
-const logout = (req, res) => {
+// Refresh access token
+const refreshAccessToken = async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Refresh token not found" });
+  }
+
   try {
-    // Clear the authToken cookie
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY);
+
+    // Find user
+    const user = await UserModel.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if refresh token exists in database and is not expired
+    const storedToken = user.refreshTokens.find(
+      (rt) => rt.token === refreshToken && new Date(rt.expiresAt) > new Date()
+    );
+
+    if (!storedToken) {
+      return res.status(403).json({
+        message: "Invalid or expired refresh token",
+      });
+    }
+
+    // Generate new access token
+    const newAccessToken = generateAccessToken(user);
+
+    const cookieDomain =
+      process.env.NODE_ENV === "production"
+        ? "keesdeen-api.vercel.app"
+        : "localhost";
+
+    // Set new access token cookie
+    res.cookie("authToken", newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 15 * 60 * 1000,
+      domain: cookieDomain,
+    });
+
+    return res.status(200).json({
+      message: "Token refreshed successfully",
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      squareCustomerId: user.squareCustomerId,
+      savedCards: user.savedCards,
+    });
+  } catch (error) {
+    return res
+      .status(403)
+      .json({ message: "Invalid or expired refresh token" });
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    // Remove specific refresh token from database
+    if (refreshToken) {
+      try {
+        const decoded = jwt.verify(
+          refreshToken,
+          process.env.REFRESH_SECRET_KEY
+        );
+        await UserModel.findByIdAndUpdate(decoded.id, {
+          $pull: { refreshTokens: { token: refreshToken } },
+        });
+      } catch (error) {
+        // Token might be invalid, but we still clear cookies
+      }
+    }
+
+    // Clear both cookies
     res.clearCookie("authToken", {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
     res.status(200).json({ message: "Logged out successfully" });
@@ -178,7 +301,7 @@ const resetPassword = async (req, res) => {
     const user = await UserModel.findById(decoded.id);
 
     if (!user) {
-      res.status(404).json({ message: "Invalid or expired token" });
+      return res.status(404).json({ message: "Invalid or expired token" });
     }
 
     user.password = await bcrypt.hash(newPassword, 12);
@@ -189,4 +312,33 @@ const resetPassword = async (req, res) => {
   }
 };
 
-export { signUp, signIn, googleSignIn, logout, forgotPassword, resetPassword };
+// Cleanup expired tokens (called by cron job)
+export const cleanupExpiredTokens = async () => {
+  try {
+    const result = await UserModel.updateMany(
+      {},
+      {
+        $pull: {
+          refreshTokens: {
+            expiresAt: { $lt: new Date() },
+          },
+        },
+      }
+    );
+    console.log(
+      `Expired refresh tokens cleaned up: ${result.modifiedCount} users affected`
+    );
+  } catch (error) {
+    console.error("Error cleaning up expired tokens:", error);
+  }
+};
+
+export {
+  signUp,
+  signIn,
+  googleSignIn,
+  logout,
+  forgotPassword,
+  resetPassword,
+  refreshAccessToken,
+};

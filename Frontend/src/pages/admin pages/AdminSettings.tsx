@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface HeroImage {
   _id?: string;
@@ -41,9 +40,7 @@ const AdminHeroSettings: React.FC = () => {
 
   const fetchHeroSettings = async () => {
     try {
-      const res = await Axios.get(`${URL}/settings/admin/get-hero`, {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.get(`/settings/admin/get-hero`);
       if (res.data.success) {
         const sortedImages = [...res.data.data.images].sort(
           (a, b) => a.order - b.order
@@ -191,15 +188,11 @@ const AdminHeroSettings: React.FC = () => {
 
     setSaving(true);
     try {
-      const res = await Axios.put(
-        `${URL}/settings/admin/update-hero`,
-        {
-          images: heroImages.map(({ preview, ...img }) => img),
-          transitionDuration,
-          autoPlayInterval,
-        },
-        { withCredentials: true }
-      );
+      const res = await axiosInstance.put(`/settings/admin/update-hero`, {
+        images: heroImages.map(({ preview, ...img }) => img),
+        transitionDuration,
+        autoPlayInterval,
+      });
 
       if (res.data.success) {
         toast.success("Hero settings saved successfully");

@@ -50,8 +50,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { toast } from "sonner";
-// import Axios from "axios";
-// import { URL } from "@/lib/constants";
+// import axiosInstance from "@/lib/axiosConfig";
 
 const mockData = {
   summaryCards: {
@@ -240,9 +239,7 @@ const AdminAnalytics: React.FC = () => {
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
-      // const response = await Axios.get(`${URL}/analytics/dashboard`, {
-      //   withCredentials: true,
-      // });
+      // const response = await Axios.get(`/analytics/dashboard`);
       // if (response.status === 200) {
       //   setAnalytics(response.data);
       // }

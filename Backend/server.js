@@ -4,6 +4,10 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import { globalRateLimiter } from "./middleware/rateLimiter.js";
+import { startTokenCleanupJob } from "./lib/tokenCleanup.js";
 
 dotenv.config();
 
@@ -29,6 +33,8 @@ const corsOptions = {
 // express initialization
 const app = express();
 
+// Helmet - Security headers
+app.use(helmet());
 //middlewares
 
 app.use(bodyParser.json());
@@ -36,22 +42,30 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors(corsOptions));
 app.use(cookieParser());
 
+// Apply to ALL routes
+app.use(globalRateLimiter);
+// MongoDB injection protection
+app.use(mongoSanitize());
+
+// Start the cleanup job
+startTokenCleanupJob();
+
 //routes declarations
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-app.use("/auth", authRoutes);
-app.use("/users", usersRoutes);
-app.use("/products", productRoutes);
-app.use("/orders", orderRoutes);
-app.use("/subscribers", subscriberRoutes);
-app.use("/address", addressRoutes);
-app.use("/utility", utilityRoutes);
-app.use("/coupons", couponRoutes);
-app.use("/analytics", dashboardAnalyticsRoutes);
-app.use("/settings", settingsRoutes);
-app.use("/contact", contactRoutes);
-app.use("/refunds", refundRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/subscribers", subscriberRoutes);
+app.use("/api/address", addressRoutes);
+app.use("/api/utility", utilityRoutes);
+app.use("/api/coupons", couponRoutes);
+app.use("/api/analytics", dashboardAnalyticsRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/refunds", refundRoutes);
 
 //database initialization
 const PORT = process.env.PORT || 5000;

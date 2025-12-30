@@ -7,13 +7,13 @@ import {
 } from "react-square-web-payments-sdk";
 import { formatAmountDefault } from "../lib/utils";
 import { X } from "lucide-react";
-import { currency, URL } from "../lib/constants";
+import { currency } from "../lib/constants";
 import { AuthContext } from "../context/AuthContext/AuthContext";
 import { useShop } from "../context/ShopContext";
-import Axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import CriticalErrorModal from "./CriticalErrorModal";
+import axiosInstance from "@/lib/axiosConfig";
 
 interface PaymentProps {
   setLoading: any;
@@ -87,14 +87,13 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     }
     setLoading(true);
     try {
-      const response = await Axios.post(
-        `${URL}/coupons/apply-coupon`,
+      const response = await axiosInstance.post(
+        `/coupons/apply-coupon`,
         {
           code: coupon.toUpperCase(),
           cartTotal: subtotal,
         },
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );
@@ -162,9 +161,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     };
 
     try {
-      const response = await Axios.post(`${URL}/orders/create-order`, order, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.post(`/orders/create-order`, order);
 
       // NEW: Handle duplicate order response
       if (response.data.duplicate) {

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Country, State } from "country-state-city";
 import { toast } from "sonner";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
 import { formatAmountDefault } from "../../lib/utils";
+import axiosInstance from "@/lib/axiosConfig";
 
 const OrderDetails: React.FC = () => {
   const [order, setOrder] = useState<any>();
@@ -14,9 +13,7 @@ const OrderDetails: React.FC = () => {
   const fetchOrder = async () => {
     setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/orders/profile/order/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(`/orders/profile/order/${id}`);
       if (response.status === 200) {
         setOrder(response.data);
         console.log(response.data);

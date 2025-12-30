@@ -7,15 +7,14 @@ import { mainLogo } from "../../assets";
 import { AuthContext } from "../../context/AuthContext/AuthContext";
 import { SignUpAccount } from "../../context/AuthContext/AuthApiCalls";
 import { useGoogleLogin } from "@react-oauth/google";
-import Axios from "axios";
 import {
   AccessFailure,
   AccessSuccess,
 } from "../../context/AuthContext/AuthActions";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
-import { URL } from "../../lib/constants";
 import { useShop } from "@/context/ShopContext";
+import axiosInstance from "@/lib/axiosConfig";
 
 const SignUp: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -70,12 +69,12 @@ const SignUp: React.FC = () => {
     onSuccess: async (tokenResponse) => {
       try {
         setLoading(true);
-        const res = await Axios.post(
-          `${URL}/auth/google-sign-in`,
+        const res = await axiosInstance.post(
+          `/auth/google-sign-in`,
           {
             googleToken: tokenResponse.access_token,
           },
-          { withCredentials: true, validateStatus: (status) => status < 600 }
+          { validateStatus: (status) => status < 600 }
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));

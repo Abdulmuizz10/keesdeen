@@ -9,9 +9,8 @@ import {
   SelectValue,
 } from "@relume_io/relume-ui";
 import { lenis } from "../../lib/useLenisScroll";
-import Axios from "axios";
-import { URL } from "../../lib/constants";
 import ProductCard from "../../components/ProductCard";
+import axiosInstance from "@/lib/axiosConfig";
 
 const ShopAll: React.FC = () => {
   const { isActive } = useShop();
@@ -33,21 +32,24 @@ const ShopAll: React.FC = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/products/collections/shop-all`, {
-        params: {
-          page,
-          limit: 12,
-          category: category.join(","),
-          size: sizeCategory.join(","),
-          color: colorCategory.join(","),
-          sort:
-            sortType === "Low - High"
-              ? "low-high"
-              : sortType === "High - Low"
-              ? "high-low"
-              : "relevant",
-        },
-      });
+      const response = await axiosInstance.get(
+        `/products/collections/shop-all`,
+        {
+          params: {
+            page,
+            limit: 12,
+            category: category.join(","),
+            size: sizeCategory.join(","),
+            color: colorCategory.join(","),
+            sort:
+              sortType === "Low - High"
+                ? "low-high"
+                : sortType === "High - Low"
+                ? "high-low"
+                : "relevant",
+          },
+        }
+      );
 
       if (response.status === 200) {
         setProducts(response.data.products);

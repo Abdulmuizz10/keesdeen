@@ -43,10 +43,9 @@ import {
   Image,
   X,
 } from "lucide-react";
-import Axios from "axios";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import { URL } from "@/lib/constants";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface Subscriber {
@@ -168,9 +167,8 @@ const AdminSubscribers: React.FC = () => {
   const fetchSubscribers = async () => {
     setLoadingSubscribers(true);
     try {
-      const res = await Axios.get(
-        `${URL}/subscribers/admin/get-all-subscribers?page=${subscriberPage}&status=${subscriberFilter}&search=${subscriberSearch}`,
-        { withCredentials: true }
+      const res = await axiosInstance.get(
+        `/subscribers/admin/get-all-subscribers?page=${subscriberPage}&status=${subscriberFilter}&search=${subscriberSearch}`
       );
       setSubscribers(res.data.subscribers || []);
       setSubscriberStats(res.data.statistics);
@@ -185,9 +183,8 @@ const AdminSubscribers: React.FC = () => {
   const fetchCampaigns = async () => {
     setLoadingCampaigns(true);
     try {
-      const res = await Axios.get(
-        `${URL}/subscribers/admin/campaigns/get-all-campaigns?page=${campaignPage}`,
-        { withCredentials: true }
+      const res = await axiosInstance.get(
+        `/subscribers/admin/campaigns/get-all-campaigns?page=${campaignPage}`
       );
       setCampaigns(res.data.campaigns);
       setCampaignPagination(res.data.pagination);
@@ -200,9 +197,8 @@ const AdminSubscribers: React.FC = () => {
 
   const fetchAnalytics = async () => {
     try {
-      const res = await Axios.get(
-        `${URL}/subscribers/admin/campaigns/analytics`,
-        { withCredentials: true }
+      const res = await axiosInstance.get(
+        `/subscribers/admin/campaigns/analytics`
       );
       setAnalytics(res.data);
     } catch {
@@ -260,15 +256,11 @@ const AdminSubscribers: React.FC = () => {
   const handleCreateCampaign = async () => {
     setCreatingCampaign(true);
     try {
-      await Axios.post(
-        `${URL}/subscribers/admin/campaigns/create-campaign`,
-        {
-          subject: newCampaign.subject,
-          message: newCampaign.message,
-          image: newCampaign.image,
-        },
-        { withCredentials: true }
-      );
+      await axiosInstance.post(`/subscribers/admin/campaigns/create-campaign`, {
+        subject: newCampaign.subject,
+        message: newCampaign.message,
+        image: newCampaign.image,
+      });
       toast.success("Campaign created");
       fetchCampaigns();
       setNewCampaign({
@@ -289,10 +281,9 @@ const AdminSubscribers: React.FC = () => {
 
     setSendingCampaign(true);
     try {
-      await Axios.post(
-        `${URL}/subscribers/admin/campaigns/${sendDialog.id}/send`,
-        {},
-        { withCredentials: true }
+      await axiosInstance.post(
+        `/subscribers/admin/campaigns/${sendDialog.id}/send`,
+        {}
       );
       toast.success("Campaign sent");
       fetchCampaigns();
@@ -306,9 +297,8 @@ const AdminSubscribers: React.FC = () => {
 
   const handleDeleteSubscriber = async () => {
     try {
-      await Axios.delete(
-        `${URL}/subscribers/admin/${deleteDialog.id}/delete-subscriber`,
-        { withCredentials: true }
+      await axiosInstance.delete(
+        `/subscribers/admin/${deleteDialog.id}/delete-subscriber`
       );
       toast.success("Subscriber deleted");
       fetchSubscribers();

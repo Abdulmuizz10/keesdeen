@@ -25,11 +25,10 @@ import {
   User,
   Building2,
 } from "lucide-react";
-import Axios from "axios";
-import { URL } from "@/lib/constants";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { Country, State } from "country-state-city";
+import axiosInstance from "@/lib/axiosConfig";
 
 // Types
 interface OrderItem {
@@ -103,9 +102,7 @@ const AdminOrderDetails: React.FC = () => {
   const fetchOrderDetails = async () => {
     setLoading(true);
     try {
-      const response = await Axios.get(`${URL}/orders/admin/order/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get(`/orders/admin/order/${id}`);
       if (response.status === 200) {
         setOrder(response.data);
       }
@@ -128,11 +125,10 @@ const AdminOrderDetails: React.FC = () => {
 
     setUpdating(true);
     try {
-      const response = await Axios.patch(
-        `${URL}/orders/admin/order/${order._id}/status`,
+      const response = await axiosInstance.patch(
+        `/orders/admin/order/${order._id}/status`,
         { status },
         {
-          withCredentials: true,
           validateStatus: (status: any) => status < 600,
         }
       );

@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { mainLogo } from "../../assets";
 import { Eye, EyeOff } from "lucide-react";
-import Axios from "axios";
 import { toast } from "sonner";
-import { URL } from "../../lib/constants";
 import Spinner from "../../components/Spinner";
+import axiosInstance from "@/lib/axiosConfig";
 
 const ResetPassword: React.FC = () => {
   const { token } = useParams();
@@ -27,8 +26,8 @@ const ResetPassword: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await Axios.post(
-        `${URL}/auth/reset-password/${token}`,
+      const response = await axiosInstance.post(
+        `/auth/reset-password/${token}`,
         { newPassword },
         { validateStatus: (status) => status < 600 }
       );
