@@ -24,7 +24,7 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
+  // SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
@@ -181,7 +181,7 @@ const AppSidebar = () => {
                     All Products
                   </Link>
                 </SidebarMenuButton>
-                <SidebarMenuBadge>44</SidebarMenuBadge>
+                {/* <SidebarMenuBadge>44</SidebarMenuBadge> */}
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>

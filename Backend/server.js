@@ -12,6 +12,7 @@ import { startTokenCleanupJob } from "./lib/tokenCleanup.js";
 dotenv.config();
 
 //routes
+import cookieRoutes from "./routes/cookieRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -54,6 +55,8 @@ startTokenCleanupJob();
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
+app.use(cookieRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);

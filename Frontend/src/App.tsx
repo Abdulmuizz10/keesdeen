@@ -15,6 +15,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
 // Components
+import CookieConsent from "./components/CookieConsent";
 
 // Root Pages
 import Home from "./pages/root pages/Home";
@@ -106,6 +107,7 @@ const App: React.FC = () => {
       )}
       <Toaster position="top-right" style={{ fontFamily: "poppins" }} />
       <Router>
+        <CookieConsent />
         <ScrollToTop />
         <Routes>
           {/* Root Layout with common pages */}
