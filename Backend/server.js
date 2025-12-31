@@ -34,7 +34,7 @@ const corsOptions = {
 // express initialization
 const app = express();
 
-// Helmet - Security headers
+// Helmet
 app.use(helmet());
 //middlewares
 
