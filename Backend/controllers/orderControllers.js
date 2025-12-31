@@ -31,11 +31,11 @@ function convertBigIntToString(obj) {
 // Initialize Square Client
 const squareClient = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  // environment:
-  //   process.env.NODE_ENV === "production"
-  //     ? Environment.Production
-  //     : Environment.Sandbox,
-  environment: Environment.Sandbox,
+  environment:
+    process.env.NODE_ENV === "production"
+      ? Environment.Production
+      : Environment.Sandbox,
+  // environment: Environment.Sandbox,
 });
 
 const paymentsApi = squareClient.paymentsApi;

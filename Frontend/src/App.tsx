@@ -70,17 +70,74 @@ import ErrorPage from "./pages/root pages/ErrorPage";
 import { AuthContext } from "./context/AuthContext/AuthContext";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
+import { useShop } from "./context/ShopContext";
 
 const App: React.FC = () => {
   const { user } = useContext(AuthContext);
-  const [animation, setAnimation] = useState<Boolean>(true);
+  // const [animation, setAnimation] = useState<Boolean>(true);
+  // useLenisScroll();
+
+  // useEffect(() => {
+  //   document.body.style.overflow = "hidden";
+  //   document.body.style.cursor = "wait";
+  //   const timer = setTimeout(() => {
+  //     setAnimation(false);
+  //     document.body.style.cursor = "default";
+  //     document.body.style.overflow = "auto";
+
+  //     if (lenis) {
+  //       lenis.scrollTo(0, { immediate: true });
+  //     } else {
+  //       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  //     }
+  //   }, 4000);
+
+  //   return () => {
+  //     clearTimeout(timer);
+  //     document.body.style.overflow = "auto";
+  //     document.body.style.cursor = "default";
+  //   };
+  // }, []);
+
   useLenisScroll();
+  const { isHeroReady } = useShop();
+  const [showAnimation, setShowAnimation] = useState(true);
+  const startTime = Date.now();
 
   useEffect(() => {
+    // Initial setup
     document.body.style.overflow = "hidden";
     document.body.style.cursor = "wait";
-    const timer = setTimeout(() => {
-      setAnimation(false);
+
+    // Minimum display time
+    const minLoadTime = 2000;
+    const minTimer = setTimeout(() => {
+      // Check if hero is ready when min time expires
+      if (isHeroReady) {
+        completeLoading();
+      }
+    }, minLoadTime);
+
+    // Maximum timeout failsafe
+    const maxTimer = setTimeout(() => {
+      console.warn("Loading reached maximum timeout");
+      completeLoading();
+    }, 8000);
+
+    // Listen for hero ready
+    let heroReadyTimer: NodeJS.Timeout;
+    if (isHeroReady) {
+      // If hero loads before min time, wait for min time to complete
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, minLoadTime - elapsed);
+
+      heroReadyTimer = setTimeout(() => {
+        completeLoading();
+      }, remaining);
+    }
+
+    function completeLoading() {
+      setShowAnimation(false);
       document.body.style.cursor = "default";
       document.body.style.overflow = "auto";
 
@@ -89,18 +146,21 @@ const App: React.FC = () => {
       } else {
         window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       }
-    }, 4000);
+    }
 
+    // Cleanup
     return () => {
-      clearTimeout(timer);
+      clearTimeout(minTimer);
+      clearTimeout(maxTimer);
+      if (heroReadyTimer) clearTimeout(heroReadyTimer);
       document.body.style.overflow = "auto";
       document.body.style.cursor = "default";
     };
-  }, []);
+  }, [isHeroReady, lenis]);
 
   return (
     <div>
-      {animation && (
+      {showAnimation && (
         <AnimatePresence mode="wait">
           <Animation />
         </AnimatePresence>
@@ -141,7 +201,7 @@ const App: React.FC = () => {
           </Route>
 
           {/* Auth Routes */}
-          <Route element={<AuthLayout animation={animation} />}>
+          <Route element={<AuthLayout animation={showAnimation} />}>
             <Route path="/auth/Sign_in" element={<SignIn />} />
             <Route path="/auth/sign_up" element={<SignUp />} />
             <Route path="/auth/forget_password" element={<ForgetPassword />} />
@@ -153,7 +213,7 @@ const App: React.FC = () => {
 
           {/* Admin Routes (Only accessible to admins) */}
           {user?.isAdmin ? (
-            <Route element={<AdminLayout animation={animation} />}>
+            <Route element={<AdminLayout animation={showAnimation} />}>
               <Route path="/admin" element={<AdminAnalytics />} />
               <Route path="/admin/orders" element={<AdminOrders />} />
               <Route

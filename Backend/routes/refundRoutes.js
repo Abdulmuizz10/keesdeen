@@ -39,7 +39,7 @@ router.get(
 );
 
 router.patch(
-  "/:id/status",
+  "/admin/refund/:id/status",
   verifyUser,
   authorizeAdmin,
   adminUpdateRefundStatusController

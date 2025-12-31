@@ -5,7 +5,13 @@ import { Link } from "react-router-dom";
 const Hero: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const { heroSettings, loadedImages, setLoadedImages, isFetched } = useShop();
+  const {
+    heroSettings,
+    loadedImages,
+    setLoadedImages,
+    isFetched,
+    isHeroReady,
+  } = useShop();
 
   useEffect(() => {
     if (!heroSettings.images.length) return;
@@ -21,6 +27,15 @@ const Hero: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [heroSettings]);
+
+  // Show loading state if hero is not ready
+  if (!isHeroReady) {
+    return (
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black py-20 sm:py-0">

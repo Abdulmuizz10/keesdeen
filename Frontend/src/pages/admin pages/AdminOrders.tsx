@@ -528,7 +528,8 @@ const AdminOrders: React.FC = () => {
       Delivered: "bg-green-100 text-green-800 border-green-200",
       Cancelled: "bg-red-100 text-red-800 border-red-200",
       Refunded: "bg-purple-100 text-purple-800 border-purple-200",
-      PartiallyRefunded: "bg-orange-100 text-orange-800 border-orange-200",
+      PartiallyRefunded:
+        "text-[8.5px] bg-orange-100 text-orange-800 border-orange-200",
     };
 
     return (

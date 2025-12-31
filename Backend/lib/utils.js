@@ -745,16 +745,38 @@ export const sendRefundInitiatedEmail = async (
   currency,
   reason,
   orderId,
-  estimatedDays = "5-10"
+  estimatedDays = "5-10",
+  initiatedBy = "admin" // Default to admin since only admins can create refunds currently
 ) => {
   const transporter = createTransporter();
 
+  // Determine messaging based on who initiated the refund
+  // If initiatedBy contains "@", it's an admin email. If it's "customer", it's customer-initiated
+  const isAdminInitiated = initiatedBy !== "customer";
+
+  // Different messaging based on who initiated
+  const introMessage = isAdminInitiated
+    ? "We're issuing a refund for your order."
+    : "We've received your refund request and it's currently being processed.";
+
+  const detailsMessage = isAdminInitiated
+    ? `Your refund is being processed and will be completed shortly. The refund will appear on your original payment method within ${estimatedDays} business days.`
+    : `We'll notify you once your refund has been approved and processed. The refund will appear on your original payment method within ${estimatedDays} business days after processing.`;
+
+  const closingMessage = isAdminInitiated
+    ? "If you have any questions, our support team is here to help."
+    : "If you have any questions about this refund, please don't hesitate to contact our support team.";
+
+  const emailTitle = isAdminInitiated
+    ? "Refund Initiated"
+    : "Refund Request Received";
+
   const html = generateEmailTemplate(
-    "Refund Request Received",
+    emailTitle,
     `
       <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
       <p style="margin: 0 0 24px 0;">
-        We've received your refund request and it's currently being processed.
+        ${introMessage}
       </p>
 
       <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
@@ -790,12 +812,12 @@ export const sendRefundInitiatedEmail = async (
 
       <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
         <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-          We'll notify you once your refund has been approved and processed. The refund will appear on your original payment method within ${estimatedDays} business days after processing.
+          ${detailsMessage}
         </p>
       </div>
 
       <p style="margin: 24px 0 0 0;">
-        If you have any questions about this refund, please don't hesitate to contact our support team.
+        ${closingMessage}
       </p>
 
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
@@ -814,7 +836,7 @@ export const sendRefundInitiatedEmail = async (
   await transporter.sendMail({
     from: `"Keesdeen" <${FROM_EMAIL}>`,
     to: email,
-    subject: `Refund Request Received – Order #${orderId
+    subject: `${emailTitle} – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
     html,
@@ -925,7 +947,7 @@ export const sendRefundFailedEmail = async (
     `
       <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
       <p style="margin: 0 0 24px 0;">
-        We encountered an issue while processing your refund request.
+        We encountered an issue while processing your refund.
       </p>
 
       <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
@@ -976,7 +998,7 @@ export const sendRefundFailedEmail = async (
 
       <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
         <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">
-          Don't worry – our team has been notified and will review your refund request manually. We'll reach out to you within 24-48 hours to resolve this issue.
+          Don't worry – our team has been notified and will review your refund manually. We'll reach out to you within 24-48 hours to resolve this issue.
         </p>
       </div>
 

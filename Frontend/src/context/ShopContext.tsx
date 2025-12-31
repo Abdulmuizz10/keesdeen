@@ -25,7 +25,6 @@ const defaultHero: HeroSettings = {
   autoPlayInterval: 5000,
 };
 
-// Define the context type
 interface ShopContextType {
   cartItems: any;
   setCartItems: any;
@@ -53,12 +52,12 @@ interface ShopContextType {
   setLoadedImages: any;
   isFetched: boolean;
   setIsFetched: (value: boolean) => void;
+  isHeroReady: boolean; // NEW: Track if hero is fully ready to display
+  setIsHeroReady: (value: boolean) => void;
 }
 
-// Create the ShopContext with an empty default value
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
-// Create the ShopProvider component to wrap around the app
 export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
@@ -78,6 +77,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   const [heroSettings, setHeroSettings] = useState<HeroSettings>(defaultHero);
   const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
   const [isFetched, setIsFetched] = useState(false);
+  const [isHeroReady, setIsHeroReady] = useState(false); // NEW
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
@@ -100,20 +100,17 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
       return;
     }
 
-    // Clone the cartItems to avoid mutating state directly
     let cartData = structuredClone(cartItems || {});
 
-    // Check if the cart already has this itemId
     if (!cartData[itemId]) {
       cartData[itemId] = {
         name,
         price,
         image,
-        variants: {}, // Stores sizes and colors
+        variants: {},
       };
     }
 
-    // Check if the specific size-color combination exists
     const variantKey = `${size}-${color}`;
     if (cartData[itemId].variants[variantKey]) {
       cartData[itemId].variants[variantKey] += 1;
@@ -121,7 +118,6 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
       cartData[itemId].variants[variantKey] = 1;
     }
 
-    // Update the state with the new cart data
     setCartItems(cartData);
   };
 
@@ -137,9 +133,9 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     if (quantity > 0) {
       cartData[itemId].variants[variantKey] = quantity;
     } else {
-      delete cartData[itemId].variants[variantKey]; // Remove variant if quantity is 0
+      delete cartData[itemId].variants[variantKey];
       if (Object.keys(cartData[itemId].variants).length === 0) {
-        delete cartData[itemId]; // Remove item if no variants left
+        delete cartData[itemId];
       }
     }
 
@@ -200,7 +196,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
             qty: quantity,
             image: item.image,
             price: item.price,
-            product: itemId, // Reference to the product ID
+            product: itemId,
             size,
             color,
           });
@@ -214,19 +210,46 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   const manageWishLists = (product: any) => {
     setWishLists((prevWishLists: any) => {
       if (prevWishLists.find((wish: any) => wish._id === product._id)) {
-        // Remove the product if it's already in the wishlist
         return prevWishLists.filter((wish: any) => wish._id !== product._id);
       } else {
-        // Add the product if it's not in the wishlist
         return [...prevWishLists, product];
       }
     });
   };
 
-  const preloadImages = (images: HeroImage[]) => {
-    images.forEach((img) => {
-      const image = new Image();
-      image.src = img.url;
+  // UPDATED: Preload first image and wait for it to load
+  const preloadFirstImage = (images: HeroImage[]): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (!images.length) {
+        resolve();
+        return;
+      }
+
+      const firstImage = new Image();
+
+      firstImage.onload = () => {
+        console.log("First hero image loaded successfully");
+        resolve();
+      };
+
+      firstImage.onerror = () => {
+        console.error("Failed to load first hero image");
+        reject();
+      };
+
+      // Add timeout to prevent infinite loading
+      const timeout = setTimeout(() => {
+        console.warn("Hero image loading timeout");
+        resolve(); // Resolve anyway after timeout
+      }, 5000);
+
+      firstImage.onload = () => {
+        clearTimeout(timeout);
+        console.log("First hero image loaded successfully");
+        resolve();
+      };
+
+      firstImage.src = images[0].url;
     });
   };
 
@@ -235,15 +258,28 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
       try {
         const res = await axiosInstance.get(`/settings/get-hero`);
         if (res.data?.success && res.data?.data?.images?.length > 0) {
-          preloadImages(res.data.data.images);
           setHeroSettings(res.data.data);
+          setIsFetched(true);
+
+          // Wait for first image to actually load
+          await preloadFirstImage(res.data.data.images);
+
+          // Mark as ready only after image is loaded
+          setIsHeroReady(true);
+        } else {
+          // No hero images, mark as ready immediately
+          setIsFetched(true);
+          setIsHeroReady(true);
         }
       } catch (error) {
+        console.error("Hero fetch error:", error);
         toast.error("Hero failed to load");
-      } finally {
+        // Even on error, mark as ready to not block forever
         setIsFetched(true);
+        setIsHeroReady(true);
       }
     };
+
     fetchHeroSettings();
   }, []);
 
@@ -276,6 +312,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         setLoadedImages,
         isFetched,
         setIsFetched,
+        isHeroReady, // NEW
+        setIsHeroReady, // NEW
       }}
     >
       {children}

@@ -11,11 +11,11 @@ import {
 // Initialize Square client
 const client = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  // environment:
-  //   process.env.NODE_ENV === "production"
-  //     ? Environment.Production
-  //     : Environment.Sandbox,
-  environment: Environment.Sandbox,
+  environment:
+    process.env.NODE_ENV === "production"
+      ? Environment.Production
+      : Environment.Sandbox,
+  // environment: Environment.Sandbox,
 });
 
 // Create a new refund
@@ -82,6 +82,9 @@ const adminCreateRefundController = async (req, res) => {
       currency: order.currency || "GBP",
     };
 
+    // Get initiator info
+    const initiatedBy = req.user?.email || "admin";
+
     // Create refund in database first
     const refund = new RefundModel({
       orderId,
@@ -90,7 +93,7 @@ const adminCreateRefundController = async (req, res) => {
       currency: order.currency || "GBP",
       reason,
       status: "processing",
-      initiatedBy: req.user?.email || "admin",
+      initiatedBy: initiatedBy,
       customerEmail: order.email,
     });
 
@@ -104,7 +107,9 @@ const adminCreateRefundController = async (req, res) => {
         amount,
         order.currency || "GBP",
         reason,
-        orderId
+        orderId,
+        "5-10", // estimatedDays
+        initiatedBy // Pass who initiated (admin email or "admin")
       );
     } catch (emailError) {
       console.error("Error sending refund initiated email:", emailError);
