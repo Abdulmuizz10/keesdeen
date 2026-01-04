@@ -161,9 +161,18 @@ const googleSignIn = async (req, res) => {
         email,
         authMethod: "google",
       });
-      await sendWelcomeEmail(email, firstName, "signup");
+
+      try {
+        sendWelcomeEmail(email, firstName, "signup");
+      } catch (err) {
+        console.error("Email failed:", err);
+      }
     } else {
-      await sendWelcomeEmail(email, user.firstName, "signin");
+      try {
+        sendWelcomeEmail(email, user.firstName, "signin");
+      } catch (err) {
+        console.error("Email failed:", err);
+      }
     }
 
     return createAndSendTokens(user, res);
