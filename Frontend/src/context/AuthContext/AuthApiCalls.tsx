@@ -6,7 +6,8 @@ import {
 } from "./AuthActions";
 import { Dispatch } from "react";
 import { toast } from "sonner";
-import axiosInstance from "../../lib/axiosConfig";
+import axios from "axios";
+import { URL } from "@/lib/constants";
 
 export const SignInAccount = async (
   user: any,
@@ -16,8 +17,9 @@ export const SignInAccount = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res = await axiosInstance.post(`/auth/sign-in`, user, {
+    const res = await axios.post(`${URL}/auth/sign-in`, user, {
       validateStatus: (status: any) => status < 600,
+      withCredentials: true,
     });
 
     if (res.status === 200) {
@@ -45,8 +47,9 @@ export const SignUpAccount = async (
 ): Promise<void> => {
   dispatch(AccessStart());
   try {
-    const res = await axiosInstance.post(`/auth/sign-up`, user, {
+    const res = await axios.post(`${URL}/auth/sign-up`, user, {
       validateStatus: (status: any) => status < 600,
+      withCredentials: true,
     });
 
     if (res.status === 200) {
@@ -78,11 +81,12 @@ export const LogOutAccount = async (
 ): Promise<void> => {
   setLoading(true);
   try {
-    const res = await axiosInstance.post(
-      `/auth/logout`,
+    const res = await axios.post(
+      `${URL}/auth/logout`,
       {},
       {
         validateStatus: (status: any) => status < 600,
+        withCredentials: true,
       }
     );
 
