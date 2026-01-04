@@ -4,7 +4,8 @@ import { mainLogo } from "../../assets";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
-import axiosInstance from "@/lib/axiosConfig";
+import axios from "axios";
+import { URL } from "@/lib/constants";
 
 const ResetPassword: React.FC = () => {
   const { token } = useParams();
@@ -26,10 +27,13 @@ const ResetPassword: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await axiosInstance.post(
-        `/auth/reset-password/${token}`,
+      const response = await axios.post(
+        `${URL}/auth/reset-password/${token}`,
         { newPassword },
-        { validateStatus: (status) => status < 600 }
+        {
+          validateStatus: (status) => status < 600,
+          withCredentials: true,
+        }
       );
 
       if (response.status === 200) {
