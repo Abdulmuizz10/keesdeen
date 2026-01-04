@@ -95,7 +95,11 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    await sendWelcomeEmail(email, firstName, "signup");
+    try {
+      sendWelcomeEmail(email, firstName, "signup");
+    } catch (err) {
+      console.error("Email failed:", err);
+    }
     return createAndSendTokens(newUser, res);
   } catch (error) {
     res
@@ -118,7 +122,12 @@ const signIn = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    await sendWelcomeEmail(email, existingUser.firstName, "signin");
+
+    try {
+      sendWelcomeEmail(email, existingUser.firstName, "signin");
+    } catch (err) {
+      console.error("Email failed:", err);
+    }
     return createAndSendTokens(existingUser, res);
   } catch (error) {
     res
