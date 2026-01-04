@@ -19,7 +19,7 @@ router.post("/api/cookie-consent", async (req, res) => {
     res.cookie("cookie_consent", JSON.stringify(consentData), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // only HTTPS in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
     });
 
