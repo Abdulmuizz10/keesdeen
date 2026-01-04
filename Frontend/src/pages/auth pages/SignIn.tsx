@@ -13,7 +13,8 @@ import {
 } from "../../context/AuthContext/AuthActions";
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
-import axiosInstance from "@/lib/axiosConfig";
+import axios from "axios";
+import { URL } from "@/lib/constants";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -34,8 +35,8 @@ const SignIn: React.FC = () => {
     onSuccess: async (tokenResponse) => {
       try {
         setLoading(true);
-        const res = await axiosInstance.post(
-          `/auth/google-sign-in`,
+        const res = await axios.post(
+          `${URL}/auth/google-sign-in`,
           {
             googleToken: tokenResponse.access_token,
           },

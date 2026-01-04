@@ -45,27 +45,27 @@ const createAndSendTokens = async (user, res) => {
     },
   });
 
-  const cookieDomain =
-    process.env.NODE_ENV === "production"
-      ? "keesdeen-api.vercel.app"
-      : "localhost";
+  // const cookieDomain =
+  //   process.env.NODE_ENV === "production"
+  //     ? "keesdeen-api.vercel.app"
+  //     : "localhost";
 
   // Set access token cookie
   res.cookie("authToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 15 * 60 * 1000,
-    domain: cookieDomain,
+    // domain: cookieDomain,
   });
 
   // Set refresh token cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    domain: cookieDomain,
+    // domain: cookieDomain,
   });
 
   return res.status(200).json({
@@ -205,9 +205,9 @@ const refreshAccessToken = async (req, res) => {
     res.cookie("authToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 15 * 60 * 1000,
-      domain: cookieDomain,
+      // domain: cookieDomain,
     });
 
     return res.status(200).json({
@@ -250,13 +250,13 @@ const logout = async (req, res) => {
     res.clearCookie("authToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
 
     res.status(200).json({ message: "Logged out successfully" });
