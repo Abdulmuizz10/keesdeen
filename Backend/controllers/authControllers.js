@@ -45,10 +45,10 @@ const createAndSendTokens = async (user, res) => {
     },
   });
 
-  // const cookieDomain =
-  //   process.env.NODE_ENV === "production"
-  //     ? "keesdeen-api.vercel.app"
-  //     : "localhost";
+  const cookieDomain =
+    process.env.NODE_ENV === "production"
+      ? "keesdeen-api.vercel.app"
+      : "localhost";
 
   // Set access token cookie
   res.cookie("authToken", accessToken, {
@@ -56,7 +56,7 @@ const createAndSendTokens = async (user, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 15 * 60 * 1000,
-    // domain: cookieDomain,
+    domain: cookieDomain,
   });
 
   // Set refresh token cookie
@@ -65,7 +65,7 @@ const createAndSendTokens = async (user, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    // domain: cookieDomain,
+    domain: cookieDomain,
   });
 
   return res.status(200).json({
@@ -95,11 +95,7 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    try {
-      sendWelcomeEmail(email, firstName, "signup");
-    } catch (err) {
-      console.error("Email failed:", err);
-    }
+    await sendWelcomeEmail(email, firstName, "signup");
     return createAndSendTokens(newUser, res);
   } catch (error) {
     res
@@ -122,12 +118,7 @@ const signIn = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-
-    try {
-      sendWelcomeEmail(email, existingUser.firstName, "signin");
-    } catch (err) {
-      console.error("Email failed:", err);
-    }
+    await sendWelcomeEmail(email, existingUser.firstName, "signin");
     return createAndSendTokens(existingUser, res);
   } catch (error) {
     res
@@ -161,18 +152,9 @@ const googleSignIn = async (req, res) => {
         email,
         authMethod: "google",
       });
-
-      try {
-        sendWelcomeEmail(email, firstName, "signup");
-      } catch (err) {
-        console.error("Email failed:", err);
-      }
+      await sendWelcomeEmail(email, firstName, "signup");
     } else {
-      try {
-        sendWelcomeEmail(email, user.firstName, "signin");
-      } catch (err) {
-        console.error("Email failed:", err);
-      }
+      await sendWelcomeEmail(email, user.firstName, "signin");
     }
 
     return createAndSendTokens(user, res);
@@ -225,7 +207,7 @@ const refreshAccessToken = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 15 * 60 * 1000,
-      // domain: cookieDomain,
+      domain: cookieDomain,
     });
 
     return res.status(200).json({
