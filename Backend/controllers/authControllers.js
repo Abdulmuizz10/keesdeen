@@ -95,11 +95,12 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    try {
-      await sendWelcomeEmail(email, firstName, "signup");
-    } catch (err) {
-      console.error("Email failed:", err);
-    }
+    // try {
+    //   await sendWelcomeEmail(email, firstName, "signup");
+    // } catch (err) {
+    //   console.error("Email failed:", err);
+    // }
+    await sendWelcomeEmail(email, firstName, "signup");
     return createAndSendTokens(newUser, res);
   } catch (error) {
     res
@@ -123,11 +124,12 @@ const signIn = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    try {
-      await sendWelcomeEmail(email, existingUser.firstName, "signin");
-    } catch (err) {
-      console.error("Email failed:", err);
-    }
+    // try {
+    //   await sendWelcomeEmail(email, existingUser.firstName, "signin");
+    // } catch (err) {
+    //   console.error("Email failed:", err);
+    // }
+    await sendWelcomeEmail(email, existingUser.firstName, "signin");
     return createAndSendTokens(existingUser, res);
   } catch (error) {
     res
@@ -162,17 +164,19 @@ const googleSignIn = async (req, res) => {
         authMethod: "google",
       });
 
-      try {
-        await sendWelcomeEmail(email, firstName, "signup");
-      } catch (err) {
-        console.error("Email failed:", err);
-      }
+      // try {
+      //   await sendWelcomeEmail(email, firstName, "signup");
+      // } catch (err) {
+      //   console.error("Email failed:", err);
+      // }
+      await sendWelcomeEmail(email, firstName, "signup");
     } else {
-      try {
-        await sendWelcomeEmail(email, user.firstName, "signin");
-      } catch (err) {
-        console.error("Email failed:", err);
-      }
+      // try {
+      //   await sendWelcomeEmail(email, user.firstName, "signin");
+      // } catch (err) {
+      //   console.error("Email failed:", err);
+      // }
+      await sendWelcomeEmail(email, user.firstName, "signin");
     }
     return createAndSendTokens(user, res);
   } catch (error) {
