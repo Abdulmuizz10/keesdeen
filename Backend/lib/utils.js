@@ -3,34 +3,17 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const createTransporter = () => {
-  const isProd = process.env.NODE_ENV === "production";
-
-  return nodemailer.createTransport(
-    isProd
-      ? {
-          host: "smtp.privateemail.com",
-          port: 465,
-          secure: true,
-          auth: {
-            user: process.env.SMTP_EMAIL,
-            pass: process.env.SMTP_PASSWORD,
-          },
-        }
-      : {
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.EMAIL_PASSWORD,
-          },
-          tls: { rejectUnauthorized: false },
-        }
-  );
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+    tls: { rejectUnauthorized: false },
+  });
 };
 
-const FROM_EMAIL =
-  process.env.NODE_ENV === "production"
-    ? process.env.SMTP_EMAIL
-    : process.env.EMAIL;
+const FROM_EMAIL = process.env.EMAIL;
 
 // Luxury minimalist email template
 const generateEmailTemplate = (title, bodyContent) => `

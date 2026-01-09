@@ -7,10 +7,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// Maximum number of refresh tokens per user (prevents unlimited device logins)
 const MAX_REFRESH_TOKENS = 5;
 
-// Generate Access Token (short-lived)
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, isAdmin: user.isAdmin },
@@ -19,53 +17,40 @@ const generateAccessToken = (user) => {
   );
 };
 
-// Generate Refresh Token (long-lived)
 const generateRefreshToken = (user) => {
   return jwt.sign({ id: user._id }, process.env.REFRESH_SECRET_KEY, {
     expiresIn: "30d",
   });
 };
 
-// Set tokens in cookies and response
 const createAndSendTokens = async (user, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  // Calculate expiration date
   const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 30); // 30 days from now
+  expiresAt.setDate(expiresAt.getDate() + 30);
 
-  // Add new refresh token to user's token array
   await UserModel.findByIdAndUpdate(user._id, {
     $push: {
       refreshTokens: {
         $each: [{ token: refreshToken, expiresAt }],
-        $slice: -MAX_REFRESH_TOKENS, // Keep only the last N tokens
+        $slice: -MAX_REFRESH_TOKENS,
       },
     },
   });
 
-  // const cookieDomain =
-  //   process.env.NODE_ENV === "production"
-  //     ? "keesdeen-api.vercel.app"
-  //     : "localhost";
-
-  // Set access token cookie
   res.cookie("authToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 15 * 60 * 1000,
-    // domain: cookieDomain,
   });
 
-  // Set refresh token cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    // domain: cookieDomain,
   });
 
   return res.status(200).json({
@@ -77,6 +62,20 @@ const createAndSendTokens = async (user, res) => {
     squareCustomerId: user.squareCustomerId,
     savedCards: user.savedCards,
   });
+};
+
+// Fire-and-forget email sending (won't block auth flow)
+const sendEmailAsync = (emailPromise, emailType, recipient) => {
+  emailPromise
+    .then(() => {
+      console.log(`✅ ${emailType} email sent to: ${recipient}`);
+    })
+    .catch((error) => {
+      console.error(`❌ ${emailType} email FAILED for: ${recipient}`);
+      console.error("Error:", error.message);
+      if (error.code) console.error("Error Code:", error.code);
+      if (error.response) console.error("SMTP Response:", error.response);
+    });
 };
 
 const signUp = async (req, res) => {
@@ -95,14 +94,16 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    // try {
-    //   await sendWelcomeEmail(email, firstName, "signup");
-    // } catch (err) {
-    //   console.error("Email failed:", err);
-    // }
-    await sendWelcomeEmail(email, firstName, "signup");
+    // Send email asynchronously
+    sendEmailAsync(
+      sendWelcomeEmail(email, firstName, "signup"),
+      "Welcome",
+      email
+    );
+
     return createAndSendTokens(newUser, res);
   } catch (error) {
+    console.error("SignUp error:", error);
     res
       .status(500)
       .json({ message: "Something went wrong, please try again." });
@@ -124,14 +125,16 @@ const signIn = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    // try {
-    //   await sendWelcomeEmail(email, existingUser.firstName, "signin");
-    // } catch (err) {
-    //   console.error("Email failed:", err);
-    // }
-    await sendWelcomeEmail(email, existingUser.firstName, "signin");
+    // Send email asynchronously
+    sendEmailAsync(
+      sendWelcomeEmail(email, existingUser.firstName, "signin"),
+      "Welcome Back",
+      email
+    );
+
     return createAndSendTokens(existingUser, res);
   } catch (error) {
+    console.error("SignIn error:", error);
     res
       .status(500)
       .json({ message: "Something went wrong, please try again." });
@@ -156,6 +159,8 @@ const googleSignIn = async (req, res) => {
     } = response.data;
 
     let user = await UserModel.findOne({ email });
+    const isNewUser = !user;
+
     if (!user) {
       user = await UserModel.create({
         firstName,
@@ -163,28 +168,22 @@ const googleSignIn = async (req, res) => {
         email,
         authMethod: "google",
       });
-
-      // try {
-      //   await sendWelcomeEmail(email, firstName, "signup");
-      // } catch (err) {
-      //   console.error("Email failed:", err);
-      // }
-      await sendWelcomeEmail(email, firstName, "signup");
-    } else {
-      // try {
-      //   await sendWelcomeEmail(email, user.firstName, "signin");
-      // } catch (err) {
-      //   console.error("Email failed:", err);
-      // }
-      await sendWelcomeEmail(email, user.firstName, "signin");
     }
+
+    // Send email asynchronously
+    sendEmailAsync(
+      sendWelcomeEmail(email, firstName, isNewUser ? "signup" : "signin"),
+      isNewUser ? "Welcome" : "Welcome Back",
+      email
+    );
+
     return createAndSendTokens(user, res);
   } catch (error) {
+    console.error("Google SignIn error:", error);
     return res.status(500).json({ message: "Google sign-in failed" });
   }
 };
 
-// Refresh access token
 const refreshAccessToken = async (req, res) => {
   const { refreshToken } = req.cookies;
 
@@ -193,17 +192,13 @@ const refreshAccessToken = async (req, res) => {
   }
 
   try {
-    // Verify refresh token
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY);
-
-    // Find user
     const user = await UserModel.findById(decoded.id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if refresh token exists in database and is not expired
     const storedToken = user.refreshTokens.find(
       (rt) => rt.token === refreshToken && new Date(rt.expiresAt) > new Date()
     );
@@ -214,21 +209,13 @@ const refreshAccessToken = async (req, res) => {
       });
     }
 
-    // Generate new access token
     const newAccessToken = generateAccessToken(user);
 
-    const cookieDomain =
-      process.env.NODE_ENV === "production"
-        ? "keesdeen-api.vercel.app"
-        : "localhost";
-
-    // Set new access token cookie
     res.cookie("authToken", newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
       maxAge: 15 * 60 * 1000,
-      // domain: cookieDomain,
     });
 
     return res.status(200).json({
@@ -242,6 +229,7 @@ const refreshAccessToken = async (req, res) => {
       savedCards: user.savedCards,
     });
   } catch (error) {
+    console.error("Refresh token error:", error);
     return res
       .status(403)
       .json({ message: "Invalid or expired refresh token" });
@@ -252,7 +240,6 @@ const logout = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
 
-    // Remove specific refresh token from database
     if (refreshToken) {
       try {
         const decoded = jwt.verify(
@@ -267,7 +254,6 @@ const logout = async (req, res) => {
       }
     }
 
-    // Clear both cookies
     res.clearCookie("authToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -282,6 +268,7 @@ const logout = async (req, res) => {
 
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
+    console.error("Logout error:", error);
     res
       .status(500)
       .json({ message: "Something went wrong, please try again." });
@@ -301,14 +288,21 @@ const forgotPassword = async (req, res) => {
     const resetUrl = `${process.env.FRONTEND_URL}/auth/reset_password/${resetToken}`;
     const message = `Click here to reset your password: ${resetUrl}`;
 
-    await sendResetEmailLink({
-      email: user.email,
-      subject: "Password Reset",
-      message,
-    });
+    // Send email asynchronously (won't block response)
+    sendEmailAsync(
+      sendResetEmailLink({
+        email: user.email,
+        subject: "Password Reset",
+        message,
+      }),
+      "Password Reset",
+      email
+    );
 
+    // Always return success (security best practice)
     res.json({ message: "Reset link sent to your email" });
   } catch (error) {
+    console.error("Forgot password error:", error);
     res.status(500).json({ message: "An error occurred" });
   }
 };
@@ -329,11 +323,11 @@ const resetPassword = async (req, res) => {
     await user.save();
     res.json({ message: "Password reset successful" });
   } catch (error) {
+    console.error("Reset password error:", error);
     res.status(500).json({ message: "Invalid or expired token" });
   }
 };
 
-// Cleanup expired tokens (called by cron job)
 export const cleanupExpiredTokens = async () => {
   try {
     const result = await UserModel.updateMany(
