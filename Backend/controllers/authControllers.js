@@ -288,7 +288,7 @@ const forgotPassword = async (req, res) => {
     const resetUrl = `${process.env.FRONTEND_URL}/auth/reset_password/${resetToken}`;
     const message = `Click here to reset your password: ${resetUrl}`;
 
-    // Send email asynchronously (won't block response)
+    // Send email asynchronously
     sendEmailAsync(
       sendResetEmailLink({
         email: user.email,
