@@ -39,18 +39,27 @@ const createAndSendTokens = async (user, res) => {
     },
   });
 
+  const cookieDomain =
+    process.env.NODE_ENV === "production"
+      ? "keesdeen-api.vercel.app"
+      : "localhost";
+
+  // Set access token cookie
   res.cookie("authToken", accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 15 * 60 * 1000,
+    domain: cookieDomain,
   });
 
+  // Set refresh token cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     maxAge: 30 * 24 * 60 * 60 * 1000,
+    domain: cookieDomain,
   });
 
   return res.status(200).json({
