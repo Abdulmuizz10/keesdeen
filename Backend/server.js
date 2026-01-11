@@ -57,18 +57,18 @@ app.get("/", (req, res) => {
 });
 
 app.use(cookieRoutes);
-app.use("/api/users", usersRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/subscribers", subscriberRoutes);
-app.use("/api/address", addressRoutes);
-app.use("/api/utility", utilityRoutes);
-app.use("/api/coupons", couponRoutes);
-app.use("/api/analytics", dashboardAnalyticsRoutes);
-app.use("/api/settings", settingsRoutes);
-app.use("/api/contact", contactRoutes);
-app.use("/api/refunds", refundRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
+app.use("/products", productRoutes);
+app.use("/orders", orderRoutes);
+app.use("/subscribers", subscriberRoutes);
+app.use("/address", addressRoutes);
+app.use("/utility", utilityRoutes);
+app.use("/coupons", couponRoutes);
+app.use("/analytics", dashboardAnalyticsRoutes);
+app.use("/settings", settingsRoutes);
+app.use("/contact", contactRoutes);
+app.use("/refunds", refundRoutes);
 
 //database initialization
 const PORT = process.env.PORT || 5000;
