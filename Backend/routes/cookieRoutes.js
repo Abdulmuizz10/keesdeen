@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 // Store user's cookie preferences
-router.post("/api/cookie-consent", async (req, res) => {
+router.post("/cookie-consent", async (req, res) => {
   try {
     const { analytics, marketing, preferences } = req.body;
 
@@ -45,7 +45,7 @@ router.post("/api/cookie-consent", async (req, res) => {
 });
 
 // Get current cookie consent status
-router.get("/api/cookie-consent", (req, res) => {
+router.get("/cookie-consent", (req, res) => {
   try {
     const consentCookie = req.cookies.cookie_consent;
 
