@@ -88,10 +88,12 @@ const ProductCard: React.FC<ProductProps> = ({ product, loading }) => {
           <span>{product.name}</span>
         </h3>
         <div className="flex gap-2 items-center justify-center">
-          {product.previousPrice && (
+          {product.previousPrice ? (
             <s className="text-sm text-gray-500">
               {formatAmountDefault(currency, product.previousPrice)}
             </s>
+          ) : (
+            <></>
           )}
           <p className="text-sm text-gray-500">
             {formatAmountDefault(currency, product.price)}
