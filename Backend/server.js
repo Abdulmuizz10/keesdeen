@@ -80,8 +80,8 @@ const DATABASE_URL =
 mongoose
   .connect(DATABASE_URL)
   .then(() =>
-    app.listen(PORT, () => console.log(`Server connected to port: ${PORT}`))
+    app.listen(PORT, () => console.log(`Server connected to port: ${PORT}`)),
   )
   .catch((error) =>
-    console.log(`${error}Server is not connected to port: ${PORT}`)
+    console.log(`${error}Server is not connected to port: ${PORT}`),
   );

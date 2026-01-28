@@ -93,7 +93,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     color: string,
     name: string,
     price: number,
-    image: string
+    image: string,
   ) => {
     if (!size || !color) {
       toast.error("Select Product Size and Color");
@@ -125,7 +125,7 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
     itemId: string,
     size: string,
     color: string,
-    quantity: number
+    quantity: number,
   ) => {
     let cartData = structuredClone(cartItems || {});
     const variantKey = `${size}-${color}`;
@@ -272,8 +272,8 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
           setIsHeroReady(true);
         }
       } catch (error) {
-        console.error("Hero fetch error:", error);
-        toast.error("Hero failed to load");
+        // console.error("Hero fetch error:", error);
+        // toast.error("Hero failed to load");
         // Even on error, mark as ready to not block forever
         setIsFetched(true);
         setIsHeroReady(true);

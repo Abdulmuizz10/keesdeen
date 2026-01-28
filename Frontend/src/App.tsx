@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Hooks
 import { lenis, useLenisScroll } from "./lib/useLenisScroll";
 import ScrollToTop from "./components/ScrollToTop";
+import useTokenVerification from "./lib/verifyToken";
 
 // Layouts
 import RootLayouts from "./layouts/RootLayout";
@@ -73,33 +74,10 @@ import { appear } from "./lib/anim";
 import { useShop } from "./context/ShopContext";
 
 const App: React.FC = () => {
-  const { user } = useContext(AuthContext);
-  // const [animation, setAnimation] = useState<Boolean>(true);
-  // useLenisScroll();
-
-  // useEffect(() => {
-  //   document.body.style.overflow = "hidden";
-  //   document.body.style.cursor = "wait";
-  //   const timer = setTimeout(() => {
-  //     setAnimation(false);
-  //     document.body.style.cursor = "default";
-  //     document.body.style.overflow = "auto";
-
-  //     if (lenis) {
-  //       lenis.scrollTo(0, { immediate: true });
-  //     } else {
-  //       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-  //     }
-  //   }, 4000);
-
-  //   return () => {
-  //     clearTimeout(timer);
-  //     document.body.style.overflow = "auto";
-  //     document.body.style.cursor = "default";
-  //   };
-  // }, []);
-
+  useTokenVerification();
   useLenisScroll();
+
+  const { user } = useContext(AuthContext);
   const { isHeroReady } = useShop();
   const [showAnimation, setShowAnimation] = useState(true);
   const startTime = Date.now();

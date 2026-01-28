@@ -1,46 +1,9 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import dotenv from "dotenv";
 dotenv.config();
 
-const createTransporter = () => {
-  const isProd = process.env.NODE_ENV === "production";
-
-  return nodemailer.createTransport(
-    isProd
-      ? {
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.EMAIL_PASSWORD,
-          },
-          tls: { rejectUnauthorized: false },
-        }
-      : // {
-        //     host: "smtp.privateemail.com",
-        //     port: 465,
-        //     secure: true,
-        //     auth: {
-        //       user: process.env.SMTP_EMAIL,
-        //       pass: process.env.SMTP_PASSWORD,
-        //     },
-        //   }
-        {
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL,
-            pass: process.env.EMAIL_PASSWORD,
-          },
-          tls: { rejectUnauthorized: false },
-        },
-  );
-};
-
-// const FROM_EMAIL =
-//   process.env.NODE_ENV === "production"
-//     ? process.env.SMTP_EMAIL
-//     : process.env.EMAIL;
-
-const FROM_EMAIL = process.env.EMAIL;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev"; // Update with your verified domain
 
 const generateEmailTemplate = (title, bodyContent) => `
   <!DOCTYPE html>
@@ -127,8 +90,6 @@ export const sendOrderConfirmationEmail = async (
   orderedItems,
   orderId,
 ) => {
-  const transporter = createTransporter();
-
   const itemsHtml = orderedItems
     .map(
       (item) => `
@@ -189,16 +150,23 @@ export const sendOrderConfirmationEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: "Order Confirmed – Keesdeen",
     html,
   });
+
+  if (error) {
+    throw new Error(
+      `Failed to send order confirmation email: ${error.message}`,
+    );
+  }
+
+  return data;
 };
 
 // 1 (II). ADMIN ORDER NOTIFICATION EMAIL
-// This email is sent to the store owner/admin when a customer places an order
 export const sendPersonalOrderConfirmationEmail = async (
   customerEmail,
   firstName,
@@ -209,8 +177,6 @@ export const sendPersonalOrderConfirmationEmail = async (
   orderId,
   shippingAddress,
 ) => {
-  const transporter = createTransporter();
-
   const itemsHtml = orderedItems
     .map(
       (item) => `
@@ -310,142 +276,24 @@ export const sendPersonalOrderConfirmationEmail = async (
     `,
   );
 
-  const adminEmail = process.env.FROM_EMAIL;
+  const adminEmail = process.env.ADMIN_EMAIL || FROM_EMAIL;
 
-  await transporter.sendMail({
-    from: `"Keesdeen Orders" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen Orders <${FROM_EMAIL}>`,
     to: adminEmail,
     subject: `New Order #${orderId.slice(-8)} - ${firstName} ${lastName}`,
     html,
-    replyTo: customerEmail,
+    reply_to: customerEmail,
   });
+
+  if (error) {
+    throw new Error(
+      `Failed to send admin order notification: ${error.message}`,
+    );
+  }
+
+  return data;
 };
-
-// 2. ORDER STATUS EMAIL
-
-// export const sendOrderStatusEmail = async (
-//   email,
-//   firstName,
-//   orderId,
-//   status,
-//   orderedItems,
-//   totalPrice,
-//   currency,
-//   trackingNumber = null
-// ) => {
-//   const transporter = createTransporter();
-
-//   const statusConfig = {
-//     Shipped: {
-//       title: "Your Order Has Shipped",
-//       message: "Great news! Your order is on its way.",
-//       icon: "📦",
-//     },
-//     Delivered: {
-//       title: "Your Order Has Been Delivered",
-//       message:
-//         "Your order has been successfully delivered. We hope you love it!",
-//       icon: "✓",
-//     },
-//   };
-
-//   const config = statusConfig[status];
-//   if (!config) {
-//     throw new Error(`Unsupported status: ${status}`);
-//   }
-
-//   const itemsHtml = orderedItems
-//     .map(
-//       (item) => `
-//         <tr>
-//           <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 14px;">
-//             ${item.qty} × ${item.name}
-//           </td>
-//           <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; text-align: right; color: #111827; font-size: 14px; font-weight: 300;">
-//             ${formatAmount(item.price, currency)}
-//           </td>
-//         </tr>`
-//     )
-//     .join("");
-
-//   let trackingHtml = "";
-//   if (status === "Shipped" && trackingNumber) {
-//     trackingHtml = `
-//       <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
-//         <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
-//           Tracking Information
-//         </p>
-//         <p style="margin: 0; color: #111827; font-size: 14px; font-family: monospace;">
-//           ${trackingNumber}
-//         </p>
-//       </div>
-//     `;
-//   }
-
-//   const html = generateEmailTemplate(
-//     config.title,
-//     `
-//       <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
-//       <p style="margin: 0 0 24px 0;">
-//         ${config.message}
-//       </p>
-
-//       <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
-//         <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
-//           Order Details
-//         </p>
-//         <p style="margin: 0; color: #111827; font-size: 14px;">
-//           <span style="color: #6b7280;">Order ID:</span> ${orderId}
-//         </p>
-//         <p style="margin: 8px 0 0 0; color: #111827; font-size: 14px;">
-//           <span style="color: #6b7280;">Status:</span> ${status}
-//         </p>
-//       </div>
-
-//       ${trackingHtml}
-
-//       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
-//         ${itemsHtml}
-//         <tr>
-//           <td style="padding: 16px 0 0 0; color: #111827; font-size: 14px; font-weight: 300;">
-//             Total
-//           </td>
-//           <td style="padding: 16px 0 0 0; text-align: right; color: #111827; font-size: 14px; font-weight: 300;">
-//             ${formatAmount(totalPrice, currency)}
-//           </td>
-//         </tr>
-//       </table>
-
-//       ${
-//         status === "Delivered"
-//           ? `
-//       <p style="margin: 24px 0;">
-//         Thank you for choosing Keesdeen. We'd love to hear about your experience!
-//       </p>
-//       `
-//           : ""
-//       }
-
-//       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
-//         <tr>
-//           <td align="center">
-//             <a href="${process.env.FRONTEND_URL}/order_details/${orderId}"
-//                style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">
-//               View Order
-//             </a>
-//           </td>
-//         </tr>
-//       </table>
-//     `
-//   );
-
-//   await transporter.sendMail({
-//     from: `"Keesdeen" <${FROM_EMAIL}>`,
-//     to: email,
-//     subject: `${config.title} – Keesdeen`,
-//     html,
-//   });
-// };
 
 // 2. ORDER STATUS EMAIL
 export const sendOrderStatusEmail = async (
@@ -457,8 +305,6 @@ export const sendOrderStatusEmail = async (
   totalPrice,
   currency,
 ) => {
-  const transporter = createTransporter();
-
   const statusConfig = {
     Shipped: {
       title: "Your Order Has Shipped",
@@ -547,12 +393,18 @@ export const sendOrderStatusEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: `${config.title} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send order status email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 3. GIFT NOTIFICATION EMAIL
@@ -562,8 +414,6 @@ export const sendGiftNotificationEmail = async (
   lastName,
   senderName,
 ) => {
-  const transporter = createTransporter();
-
   const html = generateEmailTemplate(
     "A Gift for You",
     `
@@ -588,18 +438,22 @@ export const sendGiftNotificationEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: recipientEmail,
     subject: "A Gift is on Its Way – Keesdeen",
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send gift notification email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 4. RESET PASSWORD EMAIL
 export const sendResetEmailLink = async ({ email, subject, message }) => {
-  const transporter = createTransporter();
-
   const html = generateEmailTemplate(
     subject,
     `
@@ -607,18 +461,22 @@ export const sendResetEmailLink = async ({ email, subject, message }) => {
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: `${subject} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send reset password email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 5. WELCOME EMAIL
 export const sendWelcomeEmail = async (email, firstName, action) => {
-  const transporter = createTransporter();
-
   const isSignup = action === "signup";
   const subject = isSignup ? "Welcome to Keesdeen" : "Welcome Back to Keesdeen";
 
@@ -646,12 +504,18 @@ export const sendWelcomeEmail = async (email, firstName, action) => {
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send welcome email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 6. NEWSLETTER / SUBSCRIBER EMAIL
@@ -660,11 +524,8 @@ export const sendSubscribersEmail = async (
   subject,
   message,
   imageUrl,
-  unsubscribeToken, // Add this parameter
+  unsubscribeToken,
 ) => {
-  const transporter = createTransporter();
-
-  // Build email content with optional image
   let emailContent = "";
   if (imageUrl) {
     emailContent += `
@@ -676,7 +537,6 @@ export const sendSubscribersEmail = async (
 
   emailContent += `<p style="margin: 0 0 24px 0; white-space: pre-wrap;">${message}</p>`;
 
-  // Add unsubscribe link with actual token
   emailContent += `
     <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #999;">
       <p>If you no longer wish to receive these emails, you can <a href="${process.env.FRONTEND_URL}/unsubscribe/${unsubscribeToken}" style="color: #666;">unsubscribe here</a>.</p>
@@ -685,12 +545,18 @@ export const sendSubscribersEmail = async (
 
   const html = generateEmailTemplate(subject, emailContent);
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
-    to: email, // Send to single email, not array
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
+    to: email,
     subject: `${subject} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send newsletter email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 7. CONTACT FORM SUBMISSION (to admin)
@@ -703,8 +569,6 @@ export const sendContactEmail = async ({
   message,
   imageUrl,
 }) => {
-  const transporter = createTransporter();
-
   const subjectLabels = {
     order: "Order Inquiry",
     product: "Product Question",
@@ -794,15 +658,21 @@ ${message}
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen Contact Form" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen Contact Form <${FROM_EMAIL}>`,
     to: FROM_EMAIL,
-    replyTo: email,
+    reply_to: email,
     subject: `New Contact Form: ${
       subjectLabels[subject] || subject
     } - ${firstName} ${lastName}`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send contact email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 8. CONTACT FORM CONFIRMATION (to customer)
@@ -811,8 +681,6 @@ export const sendContactConfirmationEmail = async ({
   firstName,
   subject,
 }) => {
-  const transporter = createTransporter();
-
   const subjectLabels = {
     order: "Order Inquiry",
     product: "Product Question",
@@ -859,12 +727,20 @@ export const sendContactConfirmationEmail = async ({
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: "We've Received Your Message – Keesdeen",
     html,
   });
+
+  if (error) {
+    throw new Error(
+      `Failed to send contact confirmation email: ${error.message}`,
+    );
+  }
+
+  return data;
 };
 
 // 9. REFUND INITIATED EMAIL (to customer)
@@ -876,15 +752,10 @@ export const sendRefundInitiatedEmail = async (
   reason,
   orderId,
   estimatedDays = "5-10",
-  initiatedBy = "admin", // Default to admin since only admins can create refunds currently
+  initiatedBy = "admin",
 ) => {
-  const transporter = createTransporter();
-
-  // Determine messaging based on who initiated the refund
-  // If initiatedBy contains "@", it's an admin email. If it's "customer", it's customer-initiated
   const isAdminInitiated = initiatedBy !== "customer";
 
-  // Different messaging based on who initiated
   const introMessage = isAdminInitiated
     ? "We're issuing a refund for your order."
     : "We've received your refund request and it's currently being processed.";
@@ -963,14 +834,20 @@ export const sendRefundInitiatedEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: `${emailTitle} – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send refund initiated email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 10. REFUND COMPLETED EMAIL (to customer)
@@ -983,8 +860,6 @@ export const sendRefundCompletedEmail = async (
   orderId,
   estimatedDays = "5-10",
 ) => {
-  const transporter = createTransporter();
-
   const html = generateEmailTemplate(
     "Refund Processed Successfully",
     `
@@ -1050,14 +925,20 @@ export const sendRefundCompletedEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: `Refund Processed – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send refund completed email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 11. REFUND FAILED EMAIL (to customer)
@@ -1070,8 +951,6 @@ export const sendRefundFailedEmail = async (
   orderId,
   failureReason,
 ) => {
-  const transporter = createTransporter();
-
   const html = generateEmailTemplate(
     "Refund Processing Issue",
     `
@@ -1149,14 +1028,20 @@ export const sendRefundFailedEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: `Refund Processing Issue – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send refund failed email: ${error.message}`);
+  }
+
+  return data;
 };
 
 // 12. REFUND REJECTED EMAIL (to customer)
@@ -1169,8 +1054,6 @@ export const sendRefundRejectedEmail = async (
   orderId,
   rejectionReason,
 ) => {
-  const transporter = createTransporter();
-
   const html = generateEmailTemplate(
     "Refund Request Update",
     `
@@ -1238,14 +1121,20 @@ export const sendRefundRejectedEmail = async (
     `,
   );
 
-  await transporter.sendMail({
-    from: `"Keesdeen" <${FROM_EMAIL}>`,
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
     subject: `Refund Request Update – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
     html,
   });
+
+  if (error) {
+    throw new Error(`Failed to send refund rejected email: ${error.message}`);
+  }
+
+  return data;
 };
 
 export const formatAmount = (amount, currency) => {

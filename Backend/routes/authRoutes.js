@@ -7,6 +7,7 @@ import {
   forgotPassword,
   resetPassword,
   refreshAccessToken,
+  verifyTokenStatus,
 } from "../controllers/authControllers.js";
 import {
   authRateLimiter,
@@ -23,9 +24,10 @@ router.post(
   "/google-sign-in",
   skipRateLimitOnSuccess,
   authRateLimiter,
-  googleSignIn
+  googleSignIn,
 );
 router.post("/refresh-token", refreshTokenRateLimiter, refreshAccessToken);
+router.get("/verify-token", verifyTokenStatus);
 router.post("/forget-password", passwordResetRateLimiter, forgotPassword);
 router.post("/reset-password/:token", passwordResetRateLimiter, resetPassword);
 router.post("/logout", logout);

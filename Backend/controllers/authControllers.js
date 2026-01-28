@@ -13,7 +13,7 @@ const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, isAdmin: user.isAdmin },
     process.env.SECRET_KEY,
-    { expiresIn: "15m" }
+    { expiresIn: "15m" },
   );
 };
 
@@ -105,7 +105,7 @@ const signUp = async (req, res) => {
     sendEmailAsync(
       sendWelcomeEmail(email, firstName, "signup"),
       "Welcome",
-      email
+      email,
     );
 
     return createAndSendTokens(newUser, res);
@@ -126,7 +126,7 @@ const signIn = async (req, res) => {
     }
     const isPasswordCorrect = await bcrypt.compare(
       password,
-      existingUser.password
+      existingUser.password,
     );
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -136,7 +136,7 @@ const signIn = async (req, res) => {
     sendEmailAsync(
       sendWelcomeEmail(email, existingUser.firstName, "signin"),
       "Welcome Back",
-      email
+      email,
     );
 
     return createAndSendTokens(existingUser, res);
@@ -157,7 +157,7 @@ const googleSignIn = async (req, res) => {
         headers: {
           Authorization: `Bearer ${googleToken}`,
         },
-      }
+      },
     );
     const {
       email,
@@ -181,7 +181,7 @@ const googleSignIn = async (req, res) => {
     sendEmailAsync(
       sendWelcomeEmail(email, firstName, isNewUser ? "signup" : "signin"),
       isNewUser ? "Welcome" : "Welcome Back",
-      email
+      email,
     );
 
     return createAndSendTokens(user, res);
@@ -207,7 +207,7 @@ const refreshAccessToken = async (req, res) => {
     }
 
     const storedToken = user.refreshTokens.find(
-      (rt) => rt.token === refreshToken && new Date(rt.expiresAt) > new Date()
+      (rt) => rt.token === refreshToken && new Date(rt.expiresAt) > new Date(),
     );
 
     if (!storedToken) {
@@ -251,7 +251,7 @@ const logout = async (req, res) => {
       try {
         const decoded = jwt.verify(
           refreshToken,
-          process.env.REFRESH_SECRET_KEY
+          process.env.REFRESH_SECRET_KEY,
         );
         await UserModel.findByIdAndUpdate(decoded.id, {
           $pull: { refreshTokens: { token: refreshToken } },
@@ -303,7 +303,7 @@ const forgotPassword = async (req, res) => {
         message,
       }),
       "Password Reset",
-      email
+      email,
     );
 
     // Always return success (security best practice)
@@ -345,13 +345,71 @@ export const cleanupExpiredTokens = async () => {
             expiresAt: { $lt: new Date() },
           },
         },
-      }
+      },
     );
     console.log(
-      `Expired refresh tokens cleaned up: ${result.modifiedCount} users affected`
+      `Expired refresh tokens cleaned up: ${result.modifiedCount} users affected`,
     );
   } catch (error) {
     console.error("Error cleaning up expired tokens:", error);
+  }
+};
+
+const verifyTokenStatus = async (req, res) => {
+  const { refreshToken } = req.cookies;
+  // No refresh token = not authenticated
+  if (!refreshToken) {
+    return res.status(200).json({
+      isValid: false,
+      reason: "no_token",
+    });
+  }
+
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY);
+
+    // Check if user still exists
+    const user = await UserModel.findById(decoded.id);
+    if (!user) {
+      return res.status(200).json({
+        isValid: false,
+        reason: "user_not_found",
+      });
+    }
+
+    // Check if the refresh token exists in the user's stored tokens
+    const storedToken = user.refreshTokens.find(
+      (rt) => rt.token === refreshToken && new Date(rt.expiresAt) > new Date(),
+    );
+
+    if (!storedToken) {
+      return res.status(200).json({
+        isValid: false,
+        reason: "token_expired",
+      });
+    }
+
+    // Token is valid
+    return res.status(200).json({
+      isValid: true,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        squareCustomerId: user.squareCustomerId,
+        savedCards: user.savedCards,
+      },
+    });
+  } catch (error) {
+    // Token verification failed (expired, invalid signature, etc.)
+    return res.status(200).json({
+      isValid: false,
+      reason:
+        error.name === "TokenExpiredError" ? "token_expired" : "invalid_token",
+    });
   }
 };
 
@@ -363,4 +421,5 @@ export {
   forgotPassword,
   resetPassword,
   refreshAccessToken,
+  verifyTokenStatus,
 };
