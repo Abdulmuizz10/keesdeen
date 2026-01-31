@@ -16,46 +16,41 @@ const router = express.Router();
 router.get("/get-hero", getHeroController);
 
 // Admin routes
-router.get(
-  "/admin/get-hero",
-  verifyUser,
-  authorizeAdmin,
-  adminGetHeroSettingsController
-);
+router.get("/admin/get-hero", authorizeAdmin, adminGetHeroSettingsController);
 
 router.put(
   "/admin/update-hero",
   verifyUser,
   authorizeAdmin,
-  adminUpdateHeroSettingsController
+  adminUpdateHeroSettingsController,
 );
 
 router.post(
   "/admin/create-hero-image",
   verifyUser,
   authorizeAdmin,
-  adminCreateHeroImageController
+  adminCreateHeroImageController,
 );
 
 router.put(
   "/admin/:imageId/update-hero-image",
   verifyUser,
   authorizeAdmin,
-  adminUpdateHeroImageController
+  adminUpdateHeroImageController,
 );
 
 router.delete(
   "/admin/:imageId/delete-hero-image",
   verifyUser,
   authorizeAdmin,
-  adminDeleteHeroImage
+  adminDeleteHeroImage,
 );
 
 router.post(
   "/admin/reorder-hero-images",
   verifyUser,
   authorizeAdmin,
-  adminReorderHeroImages
+  adminReorderHeroImages,
 );
 
 export default router;

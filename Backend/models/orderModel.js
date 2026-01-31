@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UserModel",
-      required: true,
+      required: false,
     },
     email: { type: String, required: true },
     currency: { type: String, required: true },
@@ -87,7 +87,7 @@ const orderSchema = new mongoose.Schema(
       lastRefundedAt: { type: Date },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Create compound index for faster lookups

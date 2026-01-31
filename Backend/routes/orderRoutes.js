@@ -1,6 +1,8 @@
 import express from "express";
 import {
   createOrderController,
+  createGuestOrderController,
+  mergeGuestOrders,
   getProfileOrdersByPageController,
   getProfileOrderByIdController,
   adminGetOrdersByPaginationController,
@@ -21,13 +23,21 @@ router.post(
   "/create-order",
   paymentRateLimiter,
   verifyUser,
-  createOrderController
+  createOrderController,
 );
+
+router.post(
+  "/create-guest-order",
+  paymentRateLimiter,
+  createGuestOrderController,
+);
+
+router.post("/merge-guest-orders", verifyUser, mergeGuestOrders);
 
 router.get(
   "/profile/pagination-orders",
   verifyUser,
-  getProfileOrdersByPageController
+  getProfileOrdersByPageController,
 );
 
 router.get("/profile/order/:id", verifyUser, getProfileOrderByIdController);
@@ -37,49 +47,49 @@ router.get(
   "/admin/pagination-orders",
   verifyUser,
   authorizeAdmin,
-  adminGetOrdersByPaginationController
+  adminGetOrdersByPaginationController,
 );
 
 router.get(
   "/admin/order/:id",
   verifyUser,
   authorizeAdmin,
-  adminGetOrderByIdController
+  adminGetOrderByIdController,
 );
 
 router.get(
   "/admin/pagination-pending-orders",
   verifyUser,
   authorizeAdmin,
-  adminGetPendingOrdersByPaginationController
+  adminGetPendingOrdersByPaginationController,
 );
 
 router.get(
   "/admin/pagination-delivered-orders",
   verifyUser,
   authorizeAdmin,
-  adminGetDeliveredOrdersByPaginationController
+  adminGetDeliveredOrdersByPaginationController,
 );
 
 router.get(
   "/admin/user-orders/pagination-user-orders",
   verifyUser,
   authorizeAdmin,
-  adminGetUserOrdersController
+  adminGetUserOrdersController,
 );
 
 router.get(
   "/admin/user-orders/order/:id",
   verifyUser,
   authorizeAdmin,
-  adminGetUserOrderByIdController
+  adminGetUserOrderByIdController,
 );
 
 router.patch(
   "/admin/order/:id/status",
   verifyUser,
   authorizeAdmin,
-  adminUpdateOrderStatusController
+  adminUpdateOrderStatusController,
 );
 
 export default router;

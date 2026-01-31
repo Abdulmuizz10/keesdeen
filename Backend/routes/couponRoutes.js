@@ -11,7 +11,7 @@ import { verifyUser, authorizeAdmin } from "../middleware/verify.js";
 
 const router = express.Router();
 
-router.post("/apply-coupon", verifyUser, applyCoupon);
+router.post("/apply-coupon", applyCoupon);
 
 // Admin
 router.post("/create-coupon", verifyUser, authorizeAdmin, adminCreateCoupon);
@@ -19,25 +19,25 @@ router.get(
   "/admin/pagination-coupons",
   verifyUser,
   authorizeAdmin,
-  adminGetAllCouponsByPagination
+  adminGetAllCouponsByPagination,
 );
 router.get(
   "/admin/get-coupon/:id",
   verifyUser,
   authorizeAdmin,
-  adminGetCouponById
+  adminGetCouponById,
 );
 router.put(
   "/admin/:id/update-coupon",
   verifyUser,
   authorizeAdmin,
-  adminUpdateCoupon
+  adminUpdateCoupon,
 );
 router.delete(
   "/admin/:id/delete-coupon",
   verifyUser,
   authorizeAdmin,
-  adminDeleteCoupon
+  adminDeleteCoupon,
 );
 
 export default router;

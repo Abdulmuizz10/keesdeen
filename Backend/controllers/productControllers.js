@@ -287,7 +287,7 @@ const getCollectionsProductByIdController = async (req, res) => {
     // Calculate total stars, average rating, and total reviews
     const totalStars = product.reviews.reduce(
       (sum, review) => sum + (review.rating || 0),
-      0
+      0,
     );
     const totalReviews = product.reviews.length;
     const averageRating = totalReviews > 0 ? totalStars / totalReviews : 0;
@@ -389,12 +389,12 @@ const searchProductsResultsController = async (req, res) => {
 
     if (req.query.size) {
       const sizes = req.query.size.split(",");
-      filters.size = { $in: sizes };
+      filters.sizes = { $in: sizes };
     }
 
     if (req.query.color) {
       const colors = req.query.color.split(",");
-      filters.color = { $in: colors };
+      filters.colors = { $in: colors };
     }
 
     let sort = {};
@@ -493,7 +493,7 @@ const adminGetProductByIdController = async (req, res) => {
     // Calculate total stars, average rating, and total reviews
     const totalStars = product.reviews.reduce(
       (sum, review) => sum + (review.rating || 0),
-      0
+      0,
     );
     const totalReviews = product.reviews.length;
     const averageRating = totalReviews > 0 ? totalStars / totalReviews : 0;

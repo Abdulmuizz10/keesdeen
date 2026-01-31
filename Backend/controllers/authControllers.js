@@ -75,7 +75,7 @@ const createAndSendTokens = async (user, res) => {
 const sendEmailAsync = (emailPromise, emailType, recipient) => {
   emailPromise
     .then(() => {
-      // console.log(`✅ ${emailType} email sent to: ${recipient}`);
+      console.log(`✅ ${emailType} email sent to: ${recipient}`);
     })
     .catch((error) => {
       console.error(`❌ ${emailType} email FAILED for: ${recipient}`);

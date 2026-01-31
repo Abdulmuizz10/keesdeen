@@ -22,7 +22,7 @@ const addressSchema = new mongoose.Schema(
     shippingAddress: { type: addressItemsSchema, required: true },
     billingAddress: { type: addressItemsSchema, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const AddressModel = mongoose.model("AddressModel", addressSchema);
