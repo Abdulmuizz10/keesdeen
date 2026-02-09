@@ -447,6 +447,8 @@ const createGuestOrderController = async (req, res) => {
       billingAddress,
       email,
       verificationToken,
+      coupon,
+      shippingPrice,
     } = req.body;
 
     // ===== VALIDATION =====
@@ -529,8 +531,7 @@ const createGuestOrderController = async (req, res) => {
       // Generate idempotency key
       idempotencyKey = crypto.randomUUID();
 
-      // NEW: Check if order with this payment sourceId already exists
-      // This prevents duplicate orders if user clicks multiple times with same payment token
+      // Check if order with this payment sourceId already exists
       const existingOrderBySource = await OrderModel.findOne({
         "paymentInfo.squarePaymentId": sourceId,
       });
@@ -572,11 +573,13 @@ const createGuestOrderController = async (req, res) => {
           lastName: address.billingAddress.lastName || undefined,
         },
         buyerEmailAddress: email,
-        note: `Order for ${orderedItems.length} item(s)`,
+        note: `Guest order for ${orderedItems.length} item(s)`,
         ...(verificationToken && { verificationToken }),
       };
 
-      if (req.body.user) {
+      // Only add customerId if user exists (for logged-in users)
+      // For guests, we don't include this field at all
+      if (req.body.user && req.body.user !== "") {
         paymentRequest.customerId = req.body.user;
       }
 
@@ -592,7 +595,7 @@ const createGuestOrderController = async (req, res) => {
 
       paymentResult = convertBigIntToString(result);
 
-      // NEW: After successful payment, check if order already exists with this payment ID
+      // After successful payment, check if order already exists
       const existingOrderByPaymentId = await OrderModel.findOne({
         "paymentInfo.squarePaymentId": paymentResult.payment.id,
       });
@@ -623,10 +626,8 @@ const createGuestOrderController = async (req, res) => {
         const firstError = paymentError.errors[0];
         errorCode = firstError.code || errorCode;
 
-        // NEW: Handle Square's idempotency key reused error
+        // Handle Square's idempotency key reused error
         if (firstError.code === "IDEMPOTENCY_KEY_REUSED") {
-          // The payment was already processed with this idempotency key
-          // Try to find the existing order
           const existingOrder = await OrderModel.findOne({
             idempotencyKey,
           });
@@ -687,9 +688,16 @@ const createGuestOrderController = async (req, res) => {
     // ===== ORDER CREATION =====
     try {
       const payment = paymentResult.payment;
-      const order = new OrderModel({
-        ...req.body,
-        idempotencyKey, // NEW: Store idempotency key
+      const orderData = {
+        email,
+        orderedItems,
+        shippingAddress,
+        billingAddress,
+        coupon: coupon || "",
+        shippingPrice: shippingPrice || 0,
+        totalPrice,
+        currency,
+        idempotencyKey,
         paymentInfo: {
           squarePaymentId: payment.id,
           squareOrderId: payment.orderId,
@@ -707,9 +715,11 @@ const createGuestOrderController = async (req, res) => {
           customerSquareId: payment.customerId,
           locationId: payment.locationId,
         },
-        status: "Processing",
-      });
+        orderStatus: "Processing",
+        isGuestOrder: true, // Mark as guest order
+      };
 
+      const order = new OrderModel(orderData);
       const savedOrder = await order.save();
 
       try {
@@ -735,17 +745,16 @@ const createGuestOrderController = async (req, res) => {
         console.error("Failed to send order confirmation email:", emailError);
       }
 
+      // Send gift notification if shipping to different email
       if (shippingAddress.email && shippingAddress.email !== email) {
-        try {
-          await sendGiftNotificationEmail(
-            shippingAddress.email,
-            shippingAddress.firstName,
-            shippingAddress.lastName,
-            `${shippingAddress.firstName} ${shippingAddress.lastName}`,
-          );
-        } catch (emailError) {
-          console.error("Failed to send gift notification email:", emailError);
-        }
+        sendGiftNotification({
+          recipientEmail: shippingAddress.email,
+          firstName: shippingAddress.firstName,
+          lastName: shippingAddress.lastName,
+          senderName: `${billingAddress.firstName} ${billingAddress.lastName}`,
+        }).catch((err) => {
+          console.error("Failed to queue gift email:", err);
+        });
       }
 
       return res.status(200).json({
@@ -756,11 +765,9 @@ const createGuestOrderController = async (req, res) => {
     } catch (orderError) {
       console.error("Failed to create order:", orderError);
 
-      // NEW: Check if it's a duplicate key error
+      // Check if it's a duplicate key error
       if (orderError.code === 11000) {
-        // MongoDB duplicate key error
         if (orderError.keyPattern?.idempotencyKey) {
-          // Duplicate idempotency key
           const existingOrder = await OrderModel.findOne({ idempotencyKey });
 
           if (existingOrder) {
@@ -778,7 +785,6 @@ const createGuestOrderController = async (req, res) => {
             });
           }
         } else if (orderError.keyPattern?.["paymentInfo.squarePaymentId"]) {
-          // Duplicate Square payment ID
           const existingOrder = await OrderModel.findOne({
             "paymentInfo.squarePaymentId": paymentResult.payment.id,
           });
@@ -806,6 +812,7 @@ const createGuestOrderController = async (req, res) => {
         idempotencyKey,
         email,
         error: orderError.message,
+        stack: orderError.stack,
         timestamp: new Date().toISOString(),
       });
 
@@ -820,7 +827,7 @@ const createGuestOrderController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Unexpected error in createOrderController:", error);
+    console.error("Unexpected error in createGuestOrderController:", error);
 
     return res.status(500).json({
       success: false,
