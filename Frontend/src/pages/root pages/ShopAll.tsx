@@ -45,10 +45,10 @@ const ShopAll: React.FC = () => {
               sortType === "Low - High"
                 ? "low-high"
                 : sortType === "High - Low"
-                ? "high-low"
-                : "relevant",
+                  ? "high-low"
+                  : "relevant",
           },
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -86,7 +86,7 @@ const ShopAll: React.FC = () => {
     setCategory((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
-        : [...prev, value]
+        : [...prev, value],
     );
   };
 
@@ -95,7 +95,7 @@ const ShopAll: React.FC = () => {
     setSizeCategory((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
-        : [...prev, value]
+        : [...prev, value],
     );
   };
 
@@ -104,7 +104,7 @@ const ShopAll: React.FC = () => {
     setColorCategory((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
-        : [...prev, value]
+        : [...prev, value],
     );
   };
 
@@ -162,7 +162,7 @@ const ShopAll: React.FC = () => {
                 />
                 {size}
               </label>
-            )
+            ),
           )}
         </div>
       </div>

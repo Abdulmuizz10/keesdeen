@@ -1137,6 +1137,348 @@ export const sendRefundRejectedEmail = async (
   return data;
 };
 
+// ADD THESE FUNCTIONS TO YOUR EXISTING utils.js FILE
+
+// 13. ORDER CANCELLATION EMAIL (to customer)
+export const sendOrderCancellationEmail = async (
+  email,
+  firstName,
+  totalPrice,
+  currency,
+  orderedItems,
+  orderId,
+  cancellationReason,
+  refundId,
+  cancelledBy = "customer",
+) => {
+  const itemsHtml = orderedItems
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 14px;">
+            ${item.qty} × ${item.name}
+            ${item.size ? `<br><span style="font-size: 12px; color: #9ca3af;">Size: ${item.size}</span>` : ""}
+            ${item.color ? `<br><span style="font-size: 12px; color: #9ca3af;">Color: ${item.color}</span>` : ""}
+          </td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; text-align: right; color: #111827; font-size: 14px; font-weight: 300;">
+            ${formatAmount(item.price * item.qty, currency)}
+          </td>
+        </tr>`,
+    )
+    .join("");
+
+  const isAdminCancelled = cancelledBy === "admin";
+  const title = isAdminCancelled
+    ? "Order Cancelled"
+    : "Order Cancellation Confirmed";
+
+  const introMessage = isAdminCancelled
+    ? "We regret to inform you that your order has been cancelled."
+    : "Your order has been cancelled as requested.";
+
+  const html = generateEmailTemplate(
+    title,
+    `
+      <p style="margin: 0 0 8px 0; color: #111827;">Hi ${firstName},</p>
+      <p style="margin: 0 0 24px 0;">
+        ${introMessage}
+      </p>
+
+      ${
+        isAdminCancelled
+          ? `
+      <div style="margin: 24px 0; padding: 16px; background-color: #fef9c3; border-left: 4px solid #f59e0b; border-radius: 4px;">
+        <p style="margin: 0 0 8px 0; color: #92400e; font-size: 14px; font-weight: 500;">
+          Reason for Cancellation:
+        </p>
+        <p style="margin: 0; color: #a16207; font-size: 14px; line-height: 1.6;">
+          ${cancellationReason}
+        </p>
+      </div>
+      `
+          : ""
+      }
+      
+      <div style="margin: 24px 0; padding: 16px 0; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280;">
+          Cancelled Order Details
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px; width: 140px;">Order ID:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-family: monospace;">#${orderId
+              .slice(-8)
+              .toUpperCase()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund Amount:</td>
+            <td style="padding: 4px 0; color: #16a34a; font-size: 14px; font-weight: 500;">${formatAmount(
+              totalPrice,
+              currency,
+            )}</td>
+          </tr>
+          ${
+            refundId
+              ? `
+          <tr>
+            <td style="padding: 4px 0; color: #6b7280; font-size: 14px;">Refund ID:</td>
+            <td style="padding: 4px 0; color: #111827; font-size: 14px; font-family: monospace;">${refundId.slice(
+              -12,
+            )}</td>
+          </tr>
+          `
+              : ""
+          }
+        </table>
+      </div>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+        <thead>
+          <tr>
+            <th style="padding: 12px 0; border-bottom: 2px solid #e5e7eb; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; font-weight: 500;">
+              Item
+            </th>
+            <th style="padding: 12px 0; border-bottom: 2px solid #e5e7eb; text-align: right; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; font-weight: 500;">
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHtml}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td style="padding: 16px 0 0 0; color: #111827; font-size: 14px; font-weight: 500;">
+              Total Refunded
+            </td>
+            <td style="padding: 16px 0 0 0; text-align: right; color: #16a34a; font-size: 14px; font-weight: 500;">
+              ${formatAmount(totalPrice, currency)}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div style="margin: 24px 0; padding: 16px; background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
+        <p style="margin: 0 0 8px 0; color: #166534; font-size: 14px; font-weight: 500;">
+          What happens next?
+        </p>
+        <p style="margin: 0; color: #15803d; font-size: 14px; line-height: 1.6;">
+          Your full refund of ${formatAmount(
+            totalPrice,
+            currency,
+          )} has been processed and will appear on your original payment method within 5-10 business days, depending on your bank or card issuer.
+        </p>
+      </div>
+
+      ${
+        !isAdminCancelled
+          ? `
+      <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px;">
+        We're sorry to see you cancel this order. If there was an issue or if you have any feedback, we'd love to hear from you.
+      </p>
+      `
+          : `
+      <p style="margin: 24px 0 0 0; color: #6b7280; font-size: 14px;">
+        We sincerely apologize for any inconvenience this may have caused. If you have any questions or concerns, please don't hesitate to contact us.
+      </p>
+      `
+      }
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <table cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="padding-right: 8px;">
+                  <a href="${process.env.FRONTEND_URL}/collections/shop_all"
+                     style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px;">
+                    Continue Shopping
+                  </a>
+                </td>
+                <td style="padding-left: 8px;">
+                  <a href="${process.env.FRONTEND_URL}/contact"
+                     style="display: inline-block; border: 1px solid #111827; background-color: transparent; color: #111827; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px;">
+                    Contact Support
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    `,
+  );
+
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen <${FROM_EMAIL}>`,
+    to: email,
+    subject: `Order Cancelled – #${orderId.slice(-8).toUpperCase()} – Keesdeen`,
+    html,
+  });
+
+  if (error) {
+    throw new Error(
+      `Failed to send order cancellation email: ${error.message}`,
+    );
+  }
+
+  return data;
+};
+
+// 14. ADMIN ORDER CANCELLATION NOTIFICATION
+export const sendAdminOrderCancellationNotification = async (
+  customerEmail,
+  firstName,
+  lastName,
+  totalPrice,
+  currency,
+  orderedItems,
+  orderId,
+  cancellationReason,
+  cancelledBy = "customer",
+) => {
+  const itemsHtml = orderedItems
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; color: #6b7280; font-size: 14px;">
+            ${item.qty} × ${item.name}
+            ${item.size ? `<br><span style="font-size: 12px; color: #9ca3af;">Size: ${item.size}</span>` : ""}
+            ${item.color ? `<br><span style="font-size: 12px; color: #9ca3af;">Color: ${item.color}</span>` : ""}
+          </td>
+          <td style="padding: 12px 0; border-bottom: 1px solid #f3f4f6; text-align: right; color: #111827; font-size: 14px; font-weight: 300;">
+            ${formatAmount(item.price * item.qty, currency)}
+          </td>
+        </tr>`,
+    )
+    .join("");
+
+  const isCustomerCancelled = cancelledBy === "customer";
+
+  const html = generateEmailTemplate(
+    "Order Cancelled",
+    `
+      <p style="margin: 0 0 8px 0; color: #111827; font-weight: 500; font-size: 16px;">
+        🚫 Order Cancelled
+      </p>
+      <p style="margin: 0 0 24px 0; color: #6b7280;">
+        ${
+          isCustomerCancelled
+            ? `${firstName} ${lastName} has cancelled their order.`
+            : `Order has been cancelled by admin.`
+        }
+      </p>
+      
+      <div style="margin: 24px 0; padding: 16px; background-color: #fef2f2; border-left: 4px solid #ef4444; border-radius: 4px;">
+        <p style="margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #991b1b; font-weight: 500;">
+          Cancellation Details
+        </p>
+        <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px;">
+          <span style="color: #6b7280;">Order ID:</span> <strong>#${orderId
+            .slice(-8)
+            .toUpperCase()}</strong>
+        </p>
+        <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px;">
+          <span style="color: #6b7280;">Customer:</span> ${firstName} ${lastName}
+        </p>
+        <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px;">
+          <span style="color: #6b7280;">Email:</span> ${customerEmail}
+        </p>
+        <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px;">
+          <span style="color: #6b7280;">Cancelled By:</span> ${
+            isCustomerCancelled ? "Customer" : "Admin"
+          }
+        </p>
+        <p style="margin: 0; color: #111827; font-size: 14px;">
+          <span style="color: #6b7280;">Reason:</span> ${cancellationReason}
+        </p>
+      </div>
+
+      <div style="margin: 24px 0; padding: 16px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0 0 12px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; font-weight: 500;">
+          Refund Information
+        </p>
+        <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px;">
+          <span style="color: #6b7280;">Refund Amount:</span> <strong style="color: #16a34a;">${formatAmount(
+            totalPrice,
+            currency,
+          )}</strong>
+        </p>
+        <p style="margin: 0; color: #6b7280; font-size: 14px;">
+          Full refund has been processed automatically through Square.
+        </p>
+      </div>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+        <thead>
+          <tr>
+            <th style="padding: 12px 0; border-bottom: 2px solid #e5e7eb; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; font-weight: 500;">
+              Cancelled Items
+            </th>
+            <th style="padding: 12px 0; border-bottom: 2px solid #e5e7eb; text-align: right; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #6b7280; font-weight: 500;">
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHtml}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td style="padding: 16px 0 0 0; color: #111827; font-size: 16px; font-weight: 500;">
+              Total Refunded
+            </td>
+            <td style="padding: 16px 0 0 0; text-align: right; color: #16a34a; font-size: 16px; font-weight: 500;">
+              ${formatAmount(totalPrice, currency)}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      ${
+        isCustomerCancelled
+          ? `
+      <div style="margin: 24px 0; padding: 16px; background-color: #f0f9ff; border-left: 4px solid #3b82f6; border-radius: 4px;">
+        <p style="margin: 0; color: #1e40af; font-size: 14px;">
+          <strong>Note:</strong> Customer cancelled within the 1-hour cancellation window. No action required.
+        </p>
+      </div>
+      `
+          : ""
+      }
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 0 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.FRONTEND_URL}/admin/orders/${orderId}"
+               style="display: inline-block; border: 1px solid #111827; background-color: #111827; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; border-radius: 4px;">
+              View Order Details
+            </a>
+          </td>
+        </tr>
+      </table>
+    `,
+  );
+
+  const adminEmail = process.env.ADMIN_EMAIL || FROM_EMAIL;
+
+  const { data, error } = await resend.emails.send({
+    from: `Keesdeen Orders <${FROM_EMAIL}>`,
+    to: adminEmail,
+    subject: `Order Cancelled #${orderId.slice(-8).toUpperCase()} - ${firstName} ${lastName}`,
+    html,
+    reply_to: customerEmail,
+  });
+
+  if (error) {
+    throw new Error(
+      `Failed to send admin cancellation notification: ${error.message}`,
+    );
+  }
+
+  return data;
+};
+
 export const formatAmount = (amount, currency) => {
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",

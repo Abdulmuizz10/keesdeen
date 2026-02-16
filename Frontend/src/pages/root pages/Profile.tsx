@@ -101,7 +101,7 @@ const OrderHistory: React.FC = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
-        `/orders/profile/pagination-orders?page=${page}`
+        `/orders/profile/pagination-orders?page=${page}`,
       );
       if (response.status === 200) {
         setOrders(response.data.orders);
@@ -133,10 +133,12 @@ const OrderHistory: React.FC = () => {
         return "text-green-600";
       case "Shipped":
         return "text-blue-600";
-      case "Pending":
-        return "text-amber-600";
+      case "Processing":
+        return "text-teal-400";
       case "Cancelled":
         return "text-red-600";
+      case "PartiallyRefunded":
+        return "text-orange-600";
       default:
         return "text-gray-600";
     }
@@ -192,10 +194,12 @@ const OrderHistory: React.FC = () => {
                   <div className="flex flex-col items-start gap-2 sm:items-end">
                     <span
                       className={`text-xs font-medium uppercase tracking-wider ${getStatusColor(
-                        order.status
+                        order.status,
                       )}`}
                     >
-                      {order.status}
+                      {order.status === "PartiallyRefunded"
+                        ? "Partially Refunded"
+                        : order.status}
                     </span>
                     <p className="text-sm font-light">{order.total}</p>
                   </div>
@@ -315,7 +319,7 @@ const Addresses: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this address?"
+      "Are you sure you want to delete this address?",
     );
     if (confirmDelete) {
       setLoading(true);
@@ -324,7 +328,7 @@ const Addresses: React.FC = () => {
           `/address/${id}/delete-address`,
           {
             validateStatus: (status: any) => status < 600,
-          }
+          },
         );
         if (response.status === 200) {
           fetchData();
@@ -371,7 +375,7 @@ const Addresses: React.FC = () => {
             const stateName =
               State.getStateByCodeAndCountry(
                 shippingAddress.state,
-                shippingAddress.country
+                shippingAddress.country,
               )?.name || shippingAddress.state;
 
             return (
@@ -467,15 +471,15 @@ const SavedCards = () => {
   };
 
   const formatBrandName = (brand: string) =>
-    ((
-      {
+    (
+      ({
         VISA: "Visa",
         MASTERCARD: "Mastercard",
         AMEX: "Amex",
         AMERICAN_EXPRESS: "American Express",
         DISCOVER: "Discover",
-      } as any
-    )[brand] || "Card");
+      }) as any
+    )[brand] || "Card";
 
   const formatLastUsed = (date: string) =>
     new Date(date).toLocaleDateString("en-GB", {
@@ -504,7 +508,7 @@ const SavedCards = () => {
               {/* Background */}
               <div
                 className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${getCardGradient(
-                  card.cardBrand
+                  card.cardBrand,
                 )}`}
               />
 

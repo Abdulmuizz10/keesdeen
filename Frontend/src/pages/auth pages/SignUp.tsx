@@ -24,7 +24,7 @@ const SignUp: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { cartItems } = useShop();
+  const { cartItems, guestEmail, setGuestEmail } = useShop();
   const [cartData, setCartData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -61,8 +61,40 @@ const SignUp: React.FC = () => {
       dispatch,
       navigate,
       cartData,
-      setLoading
+      guestEmail,
+      setGuestEmail,
+      setLoading,
     );
+  };
+
+  const mergeGuestOrdersIfNeeded = async (
+    guestEmail: string,
+    setGuestEmail: (email: string) => void,
+  ): Promise<void> => {
+    if (!guestEmail || guestEmail.trim() === "") {
+      return;
+    }
+
+    try {
+      const mergeRes = await axiosInstance.post(
+        `/orders/merge-guest-orders`,
+        { guestEmail },
+        {
+          validateStatus: (status: any) => status < 600,
+        },
+      );
+
+      if (mergeRes.status === 200) {
+        // console.log(`Guest orders merged: ${mergeRes.data.mergedCount} order(s)`);
+        // Clear the guest email after successful merge
+        setGuestEmail("");
+      } else {
+        console.error("Failed to merge guest orders:", mergeRes.data.message);
+      }
+    } catch (error) {
+      // Still clear the guest email to avoid retry loops
+      setGuestEmail("");
+    }
   };
 
   const googleLogin = useGoogleLogin({
@@ -74,11 +106,17 @@ const SignUp: React.FC = () => {
           {
             googleToken: tokenResponse.access_token,
           },
-          { validateStatus: (status) => status < 600 }
+          { validateStatus: (status) => status < 600 },
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          navigate("/cart");
+          // Merge guest orders after successful sign in
+          await mergeGuestOrdersIfNeeded(guestEmail, setGuestEmail);
+          if (cartData.length > 0) {
+            navigate("/check_out");
+          } else {
+            navigate("/");
+          }
           setLoading(false);
         } else {
           dispatch(AccessFailure());
@@ -244,6 +282,16 @@ const SignUp: React.FC = () => {
               </span>
               <div className="h-px flex-1 bg-gray-200" />
             </div>
+
+            {/* Checkout As Guest Button */}
+            <Link to={"/auth/guest"}>
+              <button
+                type="submit"
+                className="mb-4 w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800"
+              >
+                Checkout As Guest
+              </button>
+            </Link>
 
             {/* Google Sign Up Button */}
             <button

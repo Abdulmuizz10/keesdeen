@@ -22,7 +22,7 @@ const CookieConsent: React.FC = () => {
   useEffect(() => {
     const interval = setTimeout(() => {
       checkConsentStatus();
-    }, 6000);
+    }, 10000);
 
     return () => clearTimeout(interval);
   }, []);
@@ -51,7 +51,7 @@ const CookieConsent: React.FC = () => {
           marketing: true,
           preferences: true,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setShowBanner(false);
       initializeThirdPartyScripts(true, true, true);
@@ -72,7 +72,7 @@ const CookieConsent: React.FC = () => {
           marketing: false,
           preferences: false,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setShowBanner(false);
     } catch (error) {
@@ -93,7 +93,7 @@ const CookieConsent: React.FC = () => {
       initializeThirdPartyScripts(
         preferences.analytics,
         preferences.marketing,
-        preferences.preferences
+        preferences.preferences,
       );
     } catch (error) {
       console.error("Error saving preferences:", error);
@@ -105,7 +105,7 @@ const CookieConsent: React.FC = () => {
   const initializeThirdPartyScripts = (
     analytics: boolean,
     marketing: boolean,
-    prefs: boolean
+    prefs: boolean,
   ) => {
     if (analytics && (window as any).gtag) {
       (window as any).gtag("consent", "update", {

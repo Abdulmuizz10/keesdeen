@@ -8,6 +8,8 @@ import {
   sendPersonalOrderConfirmationEmail,
   sendGiftNotificationEmail,
   sendOrderStatusEmail,
+  sendOrderCancellationEmail,
+  sendAdminOrderCancellationNotification,
 } from "../lib/utils.js";
 
 dotenv.config();
@@ -447,8 +449,6 @@ const createGuestOrderController = async (req, res) => {
       billingAddress,
       email,
       verificationToken,
-      coupon,
-      shippingPrice,
     } = req.body;
 
     // ===== VALIDATION =====
@@ -531,7 +531,8 @@ const createGuestOrderController = async (req, res) => {
       // Generate idempotency key
       idempotencyKey = crypto.randomUUID();
 
-      // Check if order with this payment sourceId already exists
+      // NEW: Check if order with this payment sourceId already exists
+      // This prevents duplicate orders if user clicks multiple times with same payment token
       const existingOrderBySource = await OrderModel.findOne({
         "paymentInfo.squarePaymentId": sourceId,
       });
@@ -573,13 +574,11 @@ const createGuestOrderController = async (req, res) => {
           lastName: address.billingAddress.lastName || undefined,
         },
         buyerEmailAddress: email,
-        note: `Guest order for ${orderedItems.length} item(s)`,
+        note: `Order for ${orderedItems.length} item(s)`,
         ...(verificationToken && { verificationToken }),
       };
 
-      // Only add customerId if user exists (for logged-in users)
-      // For guests, we don't include this field at all
-      if (req.body.user && req.body.user !== "") {
+      if (req.body.user) {
         paymentRequest.customerId = req.body.user;
       }
 
@@ -595,7 +594,7 @@ const createGuestOrderController = async (req, res) => {
 
       paymentResult = convertBigIntToString(result);
 
-      // After successful payment, check if order already exists
+      // NEW: After successful payment, check if order already exists with this payment ID
       const existingOrderByPaymentId = await OrderModel.findOne({
         "paymentInfo.squarePaymentId": paymentResult.payment.id,
       });
@@ -626,8 +625,10 @@ const createGuestOrderController = async (req, res) => {
         const firstError = paymentError.errors[0];
         errorCode = firstError.code || errorCode;
 
-        // Handle Square's idempotency key reused error
+        // NEW: Handle Square's idempotency key reused error
         if (firstError.code === "IDEMPOTENCY_KEY_REUSED") {
+          // The payment was already processed with this idempotency key
+          // Try to find the existing order
           const existingOrder = await OrderModel.findOne({
             idempotencyKey,
           });
@@ -688,16 +689,9 @@ const createGuestOrderController = async (req, res) => {
     // ===== ORDER CREATION =====
     try {
       const payment = paymentResult.payment;
-      const orderData = {
-        email,
-        orderedItems,
-        shippingAddress,
-        billingAddress,
-        coupon: coupon || "",
-        shippingPrice: shippingPrice || 0,
-        totalPrice,
-        currency,
-        idempotencyKey,
+      const order = new OrderModel({
+        ...req.body,
+        idempotencyKey, // NEW: Store idempotency key
         paymentInfo: {
           squarePaymentId: payment.id,
           squareOrderId: payment.orderId,
@@ -715,11 +709,9 @@ const createGuestOrderController = async (req, res) => {
           customerSquareId: payment.customerId,
           locationId: payment.locationId,
         },
-        orderStatus: "Processing",
-        isGuestOrder: true, // Mark as guest order
-      };
+        status: "Processing",
+      });
 
-      const order = new OrderModel(orderData);
       const savedOrder = await order.save();
 
       try {
@@ -745,16 +737,17 @@ const createGuestOrderController = async (req, res) => {
         console.error("Failed to send order confirmation email:", emailError);
       }
 
-      // Send gift notification if shipping to different email
       if (shippingAddress.email && shippingAddress.email !== email) {
-        sendGiftNotification({
-          recipientEmail: shippingAddress.email,
-          firstName: shippingAddress.firstName,
-          lastName: shippingAddress.lastName,
-          senderName: `${billingAddress.firstName} ${billingAddress.lastName}`,
-        }).catch((err) => {
-          console.error("Failed to queue gift email:", err);
-        });
+        try {
+          await sendGiftNotificationEmail(
+            shippingAddress.email,
+            shippingAddress.firstName,
+            shippingAddress.lastName,
+            `${shippingAddress.firstName} ${shippingAddress.lastName}`,
+          );
+        } catch (emailError) {
+          console.error("Failed to send gift notification email:", emailError);
+        }
       }
 
       return res.status(200).json({
@@ -765,9 +758,11 @@ const createGuestOrderController = async (req, res) => {
     } catch (orderError) {
       console.error("Failed to create order:", orderError);
 
-      // Check if it's a duplicate key error
+      // NEW: Check if it's a duplicate key error
       if (orderError.code === 11000) {
+        // MongoDB duplicate key error
         if (orderError.keyPattern?.idempotencyKey) {
+          // Duplicate idempotency key
           const existingOrder = await OrderModel.findOne({ idempotencyKey });
 
           if (existingOrder) {
@@ -785,6 +780,7 @@ const createGuestOrderController = async (req, res) => {
             });
           }
         } else if (orderError.keyPattern?.["paymentInfo.squarePaymentId"]) {
+          // Duplicate Square payment ID
           const existingOrder = await OrderModel.findOne({
             "paymentInfo.squarePaymentId": paymentResult.payment.id,
           });
@@ -812,7 +808,6 @@ const createGuestOrderController = async (req, res) => {
         idempotencyKey,
         email,
         error: orderError.message,
-        stack: orderError.stack,
         timestamp: new Date().toISOString(),
       });
 
@@ -827,7 +822,7 @@ const createGuestOrderController = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Unexpected error in createGuestOrderController:", error);
+    console.error("Unexpected error in createOrderController:", error);
 
     return res.status(500).json({
       success: false,
@@ -892,6 +887,228 @@ const mergeGuestOrders = async (req, res) => {
       success: false,
       message: "Failed to merge guest orders",
       error: error.message,
+    });
+  }
+};
+
+const customerCancelOrderController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { cancellationReason } = req.body;
+
+    // Validate order ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order ID",
+      });
+    }
+
+    // Find the order
+    const order = await OrderModel.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Verify order belongs to the user (if authenticated)
+    if (req.user) {
+      const userId = new mongoose.Types.ObjectId(req.user.id);
+      if (order.user && !order.user.equals(userId)) {
+        return res.status(403).json({
+          success: false,
+          message: "You are not authorized to cancel this order",
+        });
+      }
+    } else {
+      // For guest orders, verify email matches
+      if (order.email !== req.body.email) {
+        return res.status(403).json({
+          success: false,
+          message: "Email does not match order email",
+        });
+      }
+    }
+
+    // Check if order is already cancelled or refunded
+    if (order.status === "Cancelled" || order.status === "Refunded") {
+      return res.status(400).json({
+        success: false,
+        message: `This order has already been ${order.status.toLowerCase()}`,
+      });
+    }
+
+    // Check if order is already delivered
+    if (order.status === "Delivered") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Delivered orders cannot be cancelled. Please contact support for returns.",
+      });
+    }
+
+    // Check if order is within the 1-hour cancellation window
+    const oneHourInMs = 60 * 60 * 1000;
+    const orderAge = Date.now() - new Date(order.createdAt).getTime();
+
+    if (orderAge > oneHourInMs) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Cancellation window has expired. Orders can only be cancelled within 1 hour of placement. Please contact support at hello@keesdeen.com for assistance.",
+        orderAge: Math.floor(orderAge / (60 * 1000)), // age in minutes
+        windowExpired: true,
+      });
+    }
+
+    // Process refund through Square
+    let refundResult;
+    try {
+      const idempotencyKey = crypto.randomUUID();
+
+      // Get payment details to verify it's refundable
+      const { result: paymentResult } = await paymentsApi.getPayment(
+        order.paymentInfo.squarePaymentId,
+      );
+
+      if (paymentResult.payment.status !== "COMPLETED") {
+        return res.status(400).json({
+          success: false,
+          message: "Payment is not in a refundable state",
+          paymentStatus: paymentResult.payment.status,
+        });
+      }
+
+      // Create refund request
+      const refundRequest = {
+        idempotencyKey,
+        amountMoney: {
+          amount: BigInt(Math.round(order.totalPrice * 100)),
+          currency: order.currency,
+        },
+        paymentId: order.paymentInfo.squarePaymentId,
+        reason: cancellationReason || "Customer requested cancellation",
+      };
+
+      const { result } = await refundsApi.refundPayment(refundRequest);
+      refundResult = result.refund;
+
+      // Update order with cancellation and refund info
+      order.status = "Cancelled";
+      order.refundInfo = {
+        totalRefunded: order.totalPrice,
+        refundCount: 1,
+        lastRefundedAt: new Date(),
+        refunds: [
+          {
+            squareRefundId: refundResult.id,
+            amount: order.totalPrice,
+            currency: order.currency,
+            status: refundResult.status,
+            reason: cancellationReason || "Customer requested cancellation",
+            processedAt: refundResult.createdAt,
+          },
+        ],
+      };
+
+      await order.save();
+
+      // Send cancellation emails
+      try {
+        await sendOrderCancellationEmail(
+          order.email,
+          order.shippingAddress.firstName,
+          order.totalPrice,
+          order.currency,
+          order.orderedItems,
+          orderId,
+          cancellationReason || "Customer requested cancellation",
+          refundResult.id,
+        );
+
+        await sendAdminOrderCancellationNotification(
+          order.email,
+          order.shippingAddress.firstName,
+          order.shippingAddress.lastName,
+          order.totalPrice,
+          order.currency,
+          order.orderedItems,
+          orderId,
+          cancellationReason || "Customer requested cancellation",
+          "customer",
+        );
+      } catch (emailError) {
+        console.error("Failed to send cancellation emails:", emailError);
+        // Don't fail the request if email fails
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Order cancelled successfully. Refund has been processed.",
+        order: order.toObject(),
+        refund: {
+          id: refundResult.id,
+          status: refundResult.status,
+          amount: order.totalPrice,
+          currency: order.currency,
+        },
+      });
+    } catch (refundError) {
+      console.error("Refund processing failed:", refundError);
+
+      // Handle specific Square refund errors
+      let errorMessage = "Failed to process refund";
+      let errorCode = "REFUND_ERROR";
+
+      if (refundError.errors && Array.isArray(refundError.errors)) {
+        const firstError = refundError.errors[0];
+        errorCode = firstError.code || errorCode;
+
+        switch (firstError.code) {
+          case "PAYMENT_ALREADY_REFUNDED":
+            errorMessage =
+              "This payment has already been refunded. Please contact support.";
+            break;
+          case "PAYMENT_NOT_REFUNDABLE":
+            errorMessage =
+              "This payment cannot be refunded at this time. Please contact support.";
+            break;
+          case "INSUFFICIENT_PERMISSIONS":
+            errorMessage =
+              "Unable to process refund due to permissions. Please contact support.";
+            break;
+          default:
+            errorMessage = firstError.detail || errorMessage;
+        }
+      }
+
+      // Update order to show cancellation attempted but refund failed
+      order.status = "Pending"; // Keep as pending since refund failed
+      order.cancellationAttempted = {
+        attemptedAt: new Date(),
+        reason: cancellationReason,
+        error: errorMessage,
+      };
+      await order.save();
+
+      return res.status(400).json({
+        success: false,
+        message: errorMessage,
+        code: errorCode,
+        note: "Your cancellation request has been logged. Our support team will process your refund manually and contact you within 24 hours.",
+      });
+    }
+  } catch (error) {
+    console.error("Error in customerCancelOrderController:", error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "An unexpected error occurred while cancelling your order. Please contact support.",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
@@ -1110,8 +1327,90 @@ const adminGetUserOrderByIdController = async (req, res) => {
 //   }
 // };
 
+// const adminUpdateOrderStatusController = async (req, res) => {
+//   const { status } = req.body; // Added trackingNumber for shipped orders
+//   const validStatuses = [
+//     "Pending",
+//     "Processing",
+//     "Shipped",
+//     "Delivered",
+//     "Cancelled",
+//   ];
+
+//   if (!validStatuses.includes(status)) {
+//     return res.status(400).json({ message: "Invalid status value" });
+//   }
+
+//   try {
+//     const order = await OrderModel.findById(req.params.id)
+//       .populate("user") // Populate user to get email and name
+//       .populate("orderedItems"); // Populate products for email details
+
+//     if (!order) {
+//       return res.status(404).json({ message: "Order not found" });
+//     }
+
+//     order.status = status;
+
+//     if (status === "Shipped") {
+//       order.shippedAt = new Date();
+//       // if (trackingNumber) {
+//       //   order.trackingNumber = trackingNumber;
+//       // }
+//     } else {
+//       order.shippedAt = null;
+//     }
+
+//     if (status === "Delivered") {
+//       order.deliveredAt = new Date();
+//     } else {
+//       order.deliveredAt = null;
+//     }
+
+//     // Save the updated order
+//     await order.save();
+
+//     // Send email notification for Shipped or Delivered status
+//     if (status === "Shipped" || status === "Delivered") {
+//       try {
+//         // Prepare items for email
+//         const orderedItems = order.orderedItems.map((item) => ({
+//           name: item.name,
+//           qty: item.qty,
+//           price: item.price,
+//         }));
+
+//         await sendOrderStatusEmail(
+//           order.user.email,
+//           order.user.firstName ||
+//             order.shippingAddress?.firstName ||
+//             "Valued Customer",
+//           order._id,
+//           status,
+//           orderedItems,
+//           order.totalPrice,
+//           order.currency,
+//           status === "Shipped",
+//         );
+//       } catch (emailError) {
+//         console.error("Failed to send status email:", emailError);
+//         // Don't fail the request if email fails
+//       }
+//     }
+
+//     res.status(200).json({
+//       message: `Order status updated to ${status}`,
+//       order,
+//     });
+//   } catch (error) {
+//     console.error("Error updating order status:", error);
+//     res.status(500).json({ message: "Failed to update order status" });
+//   }
+// };
+
 const adminUpdateOrderStatusController = async (req, res) => {
-  const { status } = req.body; // Added trackingNumber for shipped orders
+  const { status, cancellationReason, notifyCustomer = true } = req.body;
+
   const validStatuses = [
     "Pending",
     "Processing",
@@ -1126,13 +1425,187 @@ const adminUpdateOrderStatusController = async (req, res) => {
 
   try {
     const order = await OrderModel.findById(req.params.id)
-      .populate("user") // Populate user to get email and name
-      .populate("orderedItems"); // Populate products for email details
+      .populate("user")
+      .populate("orderedItems");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    // ========== CANCELLATION LOGIC ==========
+    if (status === "Cancelled") {
+      // Validation for cancellation
+      if (order.status === "Cancelled" || order.status === "Refunded") {
+        return res.status(400).json({
+          success: false,
+          message: `This order has already been ${order.status.toLowerCase()}`,
+        });
+      }
+
+      if (order.status === "Delivered") {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Delivered orders cannot be cancelled. Please process a return/refund instead.",
+        });
+      }
+
+      if (!cancellationReason) {
+        return res.status(400).json({
+          success: false,
+          message: "Cancellation reason is required when cancelling an order",
+        });
+      }
+
+      // Process refund through Square
+      try {
+        const idempotencyKey = crypto.randomUUID();
+
+        // Verify payment is refundable
+        const { result: paymentResult } = await paymentsApi.getPayment(
+          order.paymentInfo.squarePaymentId,
+        );
+
+        if (paymentResult.payment.status !== "COMPLETED") {
+          return res.status(400).json({
+            success: false,
+            message: "Payment is not in a refundable state",
+            paymentStatus: paymentResult.payment.status,
+          });
+        }
+
+        // Create refund request
+        const refundRequest = {
+          idempotencyKey,
+          amountMoney: {
+            amount: BigInt(Math.round(order.totalPrice * 100)),
+            currency: order.currency,
+          },
+          paymentId: order.paymentInfo.squarePaymentId,
+          reason: `Admin cancellation: ${cancellationReason}`,
+        };
+
+        const { result } = await refundsApi.refundPayment(refundRequest);
+        const refundResult = result.refund;
+
+        // Update order with cancellation info
+        order.status = "Cancelled";
+        order.cancelledAt = new Date();
+        order.cancelledBy = "admin";
+        order.cancellationReason = cancellationReason;
+        order.refundInfo = {
+          totalRefunded: order.totalPrice,
+          refundCount: 1,
+          lastRefundedAt: new Date(),
+          refunds: [
+            {
+              squareRefundId: refundResult.id,
+              amount: order.totalPrice,
+              currency: order.currency,
+              status: refundResult.status,
+              reason: cancellationReason,
+              processedAt: refundResult.createdAt,
+              processedBy: "admin",
+            },
+          ],
+        };
+
+        await order.save();
+
+        // Send notification email to customer
+        if (notifyCustomer) {
+          try {
+            const customerEmail = order.user?.email || order.email;
+            const customerFirstName =
+              order.user?.firstName || order.shippingAddress?.firstName;
+
+            await sendOrderCancellationEmail(
+              customerEmail,
+              customerFirstName,
+              order.totalPrice,
+              order.currency,
+              order.orderedItems,
+              order._id,
+              cancellationReason,
+              refundResult.id,
+              "admin",
+            );
+
+            // Send admin notification
+            await sendAdminOrderCancellationNotification(
+              customerEmail,
+              order.shippingAddress.firstName,
+              order.shippingAddress.lastName,
+              order.totalPrice,
+              order.currency,
+              order.orderedItems,
+              order._id,
+              cancellationReason,
+              "admin",
+            );
+          } catch (emailError) {
+            console.error("Failed to send cancellation email:", emailError);
+            // Don't fail the request if email fails
+          }
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: "Order cancelled successfully. Refund has been processed.",
+          order,
+          refund: {
+            id: refundResult.id,
+            status: refundResult.status,
+            amount: order.totalPrice,
+            currency: order.currency,
+          },
+        });
+      } catch (refundError) {
+        console.error("Refund processing failed:", refundError);
+
+        let errorMessage = "Failed to process refund";
+        let errorCode = "REFUND_ERROR";
+
+        if (refundError.errors && Array.isArray(refundError.errors)) {
+          const firstError = refundError.errors[0];
+          errorCode = firstError.code || errorCode;
+
+          switch (firstError.code) {
+            case "PAYMENT_ALREADY_REFUNDED":
+              errorMessage =
+                "This payment has already been refunded. Please check the order details.";
+              break;
+            case "PAYMENT_NOT_REFUNDABLE":
+              errorMessage = "This payment cannot be refunded at this time.";
+              break;
+            case "INSUFFICIENT_PERMISSIONS":
+              errorMessage =
+                "Unable to process refund due to permissions. Please contact technical support.";
+              break;
+            default:
+              errorMessage = firstError.detail || errorMessage;
+          }
+        }
+
+        // Log the failed cancellation attempt
+        order.cancellationAttempted = {
+          attemptedAt: new Date(),
+          attemptedBy: "admin",
+          reason: cancellationReason,
+          error: errorMessage,
+        };
+        await order.save();
+
+        return res.status(400).json({
+          success: false,
+          message: errorMessage,
+          code: errorCode,
+          note: "The order status was not changed. Please resolve the refund issue before cancelling.",
+        });
+      }
+    }
+
+    // ========== REGULAR STATUS UPDATES ==========
     order.status = status;
 
     if (status === "Shipped") {
@@ -1140,13 +1613,13 @@ const adminUpdateOrderStatusController = async (req, res) => {
       // if (trackingNumber) {
       //   order.trackingNumber = trackingNumber;
       // }
-    } else {
+    } else if (status !== "Cancelled") {
       order.shippedAt = null;
     }
 
     if (status === "Delivered") {
       order.deliveredAt = new Date();
-    } else {
+    } else if (status !== "Cancelled") {
       order.deliveredAt = null;
     }
 
@@ -1154,8 +1627,14 @@ const adminUpdateOrderStatusController = async (req, res) => {
     await order.save();
 
     // Send email notification for Shipped or Delivered status
-    if (status === "Shipped" || status === "Delivered") {
+    if ((status === "Shipped" || status === "Delivered") && notifyCustomer) {
       try {
+        const customerEmail = order.user?.email || order.email;
+        const customerFirstName =
+          order.user?.firstName ||
+          order.shippingAddress?.firstName ||
+          "Valued Customer";
+
         // Prepare items for email
         const orderedItems = order.orderedItems.map((item) => ({
           name: item.name,
@@ -1164,10 +1643,8 @@ const adminUpdateOrderStatusController = async (req, res) => {
         }));
 
         await sendOrderStatusEmail(
-          order.user.email,
-          order.user.firstName ||
-            order.shippingAddress?.firstName ||
-            "Valued Customer",
+          customerEmail,
+          customerFirstName,
           order._id,
           status,
           orderedItems,
@@ -1182,12 +1659,17 @@ const adminUpdateOrderStatusController = async (req, res) => {
     }
 
     res.status(200).json({
+      success: true,
       message: `Order status updated to ${status}`,
       order,
     });
   } catch (error) {
     console.error("Error updating order status:", error);
-    res.status(500).json({ message: "Failed to update order status" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to update order status",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 };
 
@@ -1195,6 +1677,7 @@ export {
   createOrderController,
   createGuestOrderController,
   mergeGuestOrders,
+  customerCancelOrderController,
   // getPaymentStatusController,
   getProfileOrdersByPageController,
   getProfileOrderByIdController,

@@ -21,7 +21,7 @@ interface PaymentProps {
 }
 
 interface OrderData {
-  user: any;
+  user?: any;
   email: any;
   sourceId: any;
   currency: string;
@@ -57,16 +57,17 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     shippingFee: fee,
     setCartItems,
     getCartDetailsForOrder,
+    guestEmail,
   } = useShop();
   const [isPaying, setIsPaying] = useState(false);
   const [loading, _] = useState();
   const [coupon, setCoupon] = useState<string>("");
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(
-    null
+    null,
   );
 
   const [criticalError, setCriticalError] = useState<CriticalError | null>(
-    null
+    null,
   );
   const [showErrorModal, setShowErrorModal] = useState(false);
 
@@ -95,7 +96,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         },
         {
           validateStatus: (status: any) => status < 600,
-        }
+        },
       );
 
       if (response.status === 200 && response.data.success) {
@@ -113,7 +114,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          "An unexpected error occurred. Please try again."
+          "An unexpected error occurred. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -146,115 +147,233 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       return;
     }
 
-    const order: OrderData = {
-      user: user.id,
-      email: user.email,
-      sourceId: token,
-      currency: currency,
-      coupon: appliedCoupon?.code || "",
-      orderedItems,
-      shippingAddress: address.shippingAddress,
-      billingAddress: address.billingAddress,
-      shippingPrice: shippingFee,
-      totalPrice: finalTotal,
-      paidAt: today,
-    };
+    if (user) {
+      const order: OrderData = {
+        user: user.id,
+        email: user.email,
+        sourceId: token,
+        currency: currency,
+        coupon: appliedCoupon?.code || "",
+        orderedItems,
+        shippingAddress: address.shippingAddress,
+        billingAddress: address.billingAddress,
+        shippingPrice: shippingFee,
+        totalPrice: finalTotal,
+        paidAt: today,
+      };
 
-    try {
-      const response = await axiosInstance.post(`/orders/create-order`, order);
+      try {
+        const response = await axiosInstance.post(
+          `/orders/create-order`,
+          order,
+        );
 
-      // NEW: Handle duplicate order response
-      if (response.data.duplicate) {
-        console.log("Duplicate order detected, using existing order");
-        navigate("/order_confirmation", {
-          state: { orderData: response.data },
-        });
-        toast.info("Order already processed");
-        setCartItems({});
-        return;
-      }
+        // NEW: Handle duplicate order response
+        if (response.data.duplicate) {
+          console.log("Duplicate order detected, using existing order");
+          navigate("/order_confirmation", {
+            state: { orderData: response.data },
+          });
+          toast.info("Order already processed");
+          setCartItems({});
+          return;
+        }
 
-      // Handle success
-      if (response.data.success !== false) {
-        navigate("/order_confirmation", {
-          state: { orderData: response.data },
-        });
-        toast.success("Order placed successfully!");
-        setCartItems({});
-      } else {
-        throw new Error(response.data.message || "Order failed");
-      }
-    } catch (error: any) {
-      console.error("Order submission error:", error);
+        // Handle success
+        if (response.data.success !== false) {
+          navigate("/order_confirmation", {
+            state: { orderData: response.data },
+          });
+          toast.success("Order placed successfully!");
+          setCartItems({});
+        } else {
+          throw new Error(response.data.message || "Order failed");
+        }
+      } catch (error: any) {
+        console.error("Order submission error:", error);
 
-      const errorData = error.response?.data;
-      const errorCode = errorData?.code;
-      const paymentId = errorData?.paymentId;
-      const idempotencyKey = errorData?.idempotencyKey;
+        const errorData = error.response?.data;
+        const errorCode = errorData?.code;
+        const paymentId = errorData?.paymentId;
+        const idempotencyKey = errorData?.idempotencyKey;
 
-      // CRITICAL ERRORS - Show modal
-      if (errorCode === "ORDER_CREATION_FAILED" || paymentId) {
-        handleCriticalError({
-          title: "Payment Processed - Order Issue",
-          message:
+        // CRITICAL ERRORS - Show modal
+        if (errorCode === "ORDER_CREATION_FAILED" || paymentId) {
+          handleCriticalError({
+            title: "Payment Processed - Order Issue",
+            message:
+              errorData?.message ||
+              "Your payment was successfully processed, but we encountered an issue creating your order. Don't worry - your money is safe and we'll resolve this.",
+            paymentId: paymentId,
+            idempotencyKey: idempotencyKey,
+            instructions: [
+              "Take a screenshot or note down your payment reference ID and idempotency key above",
+              "Check your email for a payment confirmation from Square",
+              "Contact our support team with both reference IDs",
+              "Do not attempt to place the order again to avoid duplicate charges",
+            ],
+            contactSupport: true,
+          });
+        }
+        // VALIDATION ERRORS - Show modal
+        else if (
+          errorCode === "VALIDATION_ERROR" ||
+          error.response?.status === 400
+        ) {
+          handleCriticalError({
+            title: "Order Validation Failed",
+            message:
+              errorData?.message ||
+              "There was an issue with your order information. Please review and try again.",
+            instructions: [
+              "Check that all required fields are filled correctly",
+              "Verify your shipping and billing addresses",
+              "Ensure your payment information is valid",
+              "Try refreshing the page and submitting again",
+            ],
+            contactSupport: false,
+          });
+        }
+        // SERVER ERRORS - Show modal
+        else if (error.response?.status >= 500) {
+          handleCriticalError({
+            title: "Server Error",
+            message:
+              "We're experiencing technical difficulties. Your payment was not processed.",
+            instructions: [
+              "Please wait a few minutes before trying again",
+              "Clear your browser cache and cookies",
+              "Try using a different browser or device",
+              "If the problem persists, contact our support team",
+            ],
+            contactSupport: true,
+          });
+        }
+        // REGULAR ERRORS - Use toast
+        else {
+          const errorMessage =
             errorData?.message ||
-            "Your payment was successfully processed, but we encountered an issue creating your order. Don't worry - your money is safe and we'll resolve this.",
-          paymentId: paymentId,
-          idempotencyKey: idempotencyKey,
-          instructions: [
-            "Take a screenshot or note down your payment reference ID and idempotency key above",
-            "Check your email for a payment confirmation from Square",
-            "Contact our support team with both reference IDs",
-            "Do not attempt to place the order again to avoid duplicate charges",
-          ],
-          contactSupport: true,
-        });
+            error.message ||
+            "Order submission failed. Please try again.";
+          toast.error(errorMessage);
+        }
+      } finally {
+        setIsPaying(false);
+        setLoading(false);
       }
-      // VALIDATION ERRORS - Show modal
-      else if (
-        errorCode === "VALIDATION_ERROR" ||
-        error.response?.status === 400
-      ) {
-        handleCriticalError({
-          title: "Order Validation Failed",
-          message:
+    } else {
+      const order: OrderData = {
+        email: guestEmail,
+        sourceId: token,
+        currency: currency,
+        coupon: appliedCoupon?.code || "",
+        orderedItems,
+        shippingAddress: address.shippingAddress,
+        billingAddress: address.billingAddress,
+        shippingPrice: shippingFee,
+        totalPrice: finalTotal,
+        paidAt: today,
+      };
+
+      try {
+        const response = await axiosInstance.post(
+          `/orders/create-guest-order`,
+          order,
+        );
+
+        // NEW: Handle duplicate order response
+        if (response.data.duplicate) {
+          console.log("Duplicate order detected, using existing order");
+          navigate("/order_confirmation", {
+            state: { orderData: response.data },
+          });
+          toast.info("Order already processed");
+          setCartItems({});
+          return;
+        }
+
+        // Handle success
+        if (response.data.success !== false) {
+          navigate("/order_confirmation", {
+            state: { orderData: response.data },
+          });
+          toast.success("Order placed successfully!");
+          setCartItems({});
+        } else {
+          throw new Error(response.data.message || "Order failed");
+        }
+      } catch (error: any) {
+        console.error("Order submission error:", error);
+
+        const errorData = error.response?.data;
+        const errorCode = errorData?.code;
+        const paymentId = errorData?.paymentId;
+        const idempotencyKey = errorData?.idempotencyKey;
+
+        // CRITICAL ERRORS - Show modal
+        if (errorCode === "ORDER_CREATION_FAILED" || paymentId) {
+          handleCriticalError({
+            title: "Payment Processed - Order Issue",
+            message:
+              errorData?.message ||
+              "Your payment was successfully processed, but we encountered an issue creating your order. Don't worry - your money is safe and we'll resolve this.",
+            paymentId: paymentId,
+            idempotencyKey: idempotencyKey,
+            instructions: [
+              "Take a screenshot or note down your payment reference ID and idempotency key above",
+              "Check your email for a payment confirmation from Square",
+              "Contact our support team with both reference IDs",
+              "Do not attempt to place the order again to avoid duplicate charges",
+            ],
+            contactSupport: true,
+          });
+        }
+        // VALIDATION ERRORS - Show modal
+        else if (
+          errorCode === "VALIDATION_ERROR" ||
+          error.response?.status === 400
+        ) {
+          handleCriticalError({
+            title: "Order Validation Failed",
+            message:
+              errorData?.message ||
+              "There was an issue with your order information. Please review and try again.",
+            instructions: [
+              "Check that all required fields are filled correctly",
+              "Verify your shipping and billing addresses",
+              "Ensure your payment information is valid",
+              "Try refreshing the page and submitting again",
+            ],
+            contactSupport: false,
+          });
+        }
+        // SERVER ERRORS - Show modal
+        else if (error.response?.status >= 500) {
+          handleCriticalError({
+            title: "Server Error",
+            message:
+              "We're experiencing technical difficulties. Your payment was not processed.",
+            instructions: [
+              "Please wait a few minutes before trying again",
+              "Clear your browser cache and cookies",
+              "Try using a different browser or device",
+              "If the problem persists, contact our support team",
+            ],
+            contactSupport: true,
+          });
+        }
+        // REGULAR ERRORS - Use toast
+        else {
+          const errorMessage =
             errorData?.message ||
-            "There was an issue with your order information. Please review and try again.",
-          instructions: [
-            "Check that all required fields are filled correctly",
-            "Verify your shipping and billing addresses",
-            "Ensure your payment information is valid",
-            "Try refreshing the page and submitting again",
-          ],
-          contactSupport: false,
-        });
+            error.message ||
+            "Order submission failed. Please try again.";
+          toast.error(errorMessage);
+        }
+      } finally {
+        setIsPaying(false);
+        setLoading(false);
       }
-      // SERVER ERRORS - Show modal
-      else if (error.response?.status >= 500) {
-        handleCriticalError({
-          title: "Server Error",
-          message:
-            "We're experiencing technical difficulties. Your payment was not processed.",
-          instructions: [
-            "Please wait a few minutes before trying again",
-            "Clear your browser cache and cookies",
-            "Try using a different browser or device",
-            "If the problem persists, contact our support team",
-          ],
-          contactSupport: true,
-        });
-      }
-      // REGULAR ERRORS - Use toast
-      else {
-        const errorMessage =
-          errorData?.message ||
-          error.message ||
-          "Order submission failed. Please try again.";
-        toast.error(errorMessage);
-      }
-    } finally {
-      setIsPaying(false);
-      setLoading(false);
     }
   };
 
@@ -294,7 +413,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
       billingContact: {
         givenName: address.billingAddress.firstName || "",
         familyName: address.billingAddress.lastName || "",
-        email: user.email || "",
+        email: user?.email || guestEmail || "",
         phone: address.billingAddress.phone || "",
         addressLines: [
           address.billingAddress.address1 || "",
@@ -306,7 +425,7 @@ const Payment: React.FC<PaymentProps> = ({ setLoading, address }) => {
         countryCode: address.billingAddress.country || "",
       },
     };
-  }, [finalTotal, address, user.email]);
+  }, [finalTotal, address, user, guestEmail]);
 
   const [applePaySupported, setApplePaySupported] = useState(false);
 

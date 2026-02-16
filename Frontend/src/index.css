@@ -209,4 +209,12 @@ td {
   .admin {
     @apply bg-background text-foreground;
   }
+
+  .brand {
+    @apply bg-[#08bc70];
+  }
+
+  .light-brand {
+    @apply bg-[#4ac793];
+  }
 }

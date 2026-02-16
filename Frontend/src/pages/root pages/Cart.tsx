@@ -8,7 +8,7 @@ import { formatAmountDefault } from "../../lib/utils";
 import { currency } from "../../lib/constants";
 
 const Cart: React.FC = () => {
-  const { cartItems, updateQuantity } = useShop();
+  const { cartItems, updateQuantity, guestEmail } = useShop();
   const [cartData, setCartData] = useState<any[]>([]);
   const { user } = useContext(AuthContext);
 
@@ -161,11 +161,25 @@ const Cart: React.FC = () => {
               </div>
 
               {/* Checkout Button */}
-              <Link to={user ? "/check_out" : "/auth/sign_up"}>
-                <button className="w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
-                  Proceed to Checkout
-                </button>
-              </Link>
+              {user ? (
+                <Link to={user ? "/check_out" : "/auth/sign_up"}>
+                  <button className="w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
+                    Proceed to Checkout
+                  </button>
+                </Link>
+              ) : guestEmail ? (
+                <Link to="/guest_check_out">
+                  <button className="w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
+                    Proceed to Checkout
+                  </button>
+                </Link>
+              ) : (
+                <Link to="/auth/sign_up">
+                  <button className="w-full border border-gray-900 bg-gray-900 py-4 text-sm uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
+                    Proceed to Checkout
+                  </button>
+                </Link>
+              )}
 
               {/* Continue Shopping Link */}
               <Link

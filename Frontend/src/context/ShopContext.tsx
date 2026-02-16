@@ -54,6 +54,10 @@ interface ShopContextType {
   setIsFetched: (value: boolean) => void;
   isHeroReady: boolean; // NEW: Track if hero is fully ready to display
   setIsHeroReady: (value: boolean) => void;
+  guestEmail: any;
+  setGuestEmail: any;
+  guestSavedAddress: any;
+  setGuestSavedAddress: any;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -79,6 +83,16 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   const [isFetched, setIsFetched] = useState(false);
   const [isHeroReady, setIsHeroReady] = useState(false); // NEW
 
+  const [guestEmail, setGuestEmail] = useState(() => {
+    const storedGuestEmail = localStorage.getItem("guestEmail");
+    return storedGuestEmail ? JSON.parse(storedGuestEmail) : "";
+  }); // NEW
+
+  const [guestSavedAddress, setGuestSavedAddress] = useState(() => {
+    const storedGuestSavedAddress = localStorage.getItem("guestSavedAddress");
+    return storedGuestSavedAddress ? JSON.parse(storedGuestSavedAddress) : "";
+  }); // NEW
+
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -86,6 +100,17 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     localStorage.setItem("wishLists", JSON.stringify(wishLists));
   }, [wishLists]);
+
+  useEffect(() => {
+    localStorage.setItem("guestEmail", JSON.stringify(guestEmail));
+  }, [guestEmail]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "guestSavedAddress",
+      JSON.stringify(guestSavedAddress),
+    );
+  }, [guestSavedAddress]);
 
   const addToCart = async (
     itemId: string,
@@ -314,6 +339,10 @@ export const ShopContextProvider: React.FC<{ children: ReactNode }> = ({
         setIsFetched,
         isHeroReady, // NEW
         setIsHeroReady, // NEW
+        guestEmail,
+        setGuestEmail,
+        guestSavedAddress,
+        setGuestSavedAddress,
       }}
     >
       {children}

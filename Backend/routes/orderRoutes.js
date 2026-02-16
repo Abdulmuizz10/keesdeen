@@ -3,6 +3,7 @@ import {
   createOrderController,
   createGuestOrderController,
   mergeGuestOrders,
+  customerCancelOrderController,
   getProfileOrdersByPageController,
   getProfileOrderByIdController,
   adminGetOrdersByPaginationController,
@@ -33,6 +34,8 @@ router.post(
 );
 
 router.post("/merge-guest-orders", verifyUser, mergeGuestOrders);
+
+router.post("/:id/cancel-order", verifyUser, customerCancelOrderController);
 
 router.get(
   "/profile/pagination-orders",

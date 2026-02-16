@@ -41,7 +41,7 @@ const useTokenVerification = () => {
         localStorage.removeItem("user");
 
         if (reason === "token_expired") {
-          toast.error("Your session has expired. Please log in again.");
+          toast.error("Your session has expired. Please sign in again.");
         }
 
         window.location.href = "/auth/Sign_in";
@@ -53,7 +53,7 @@ const useTokenVerification = () => {
         }
       }
     } catch (error) {
-      console.error("Token verification error:", error);
+      // console.error("Token verification error:", error);
       dispatch(Logout());
       localStorage.removeItem("user");
     }

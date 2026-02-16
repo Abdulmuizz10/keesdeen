@@ -72,6 +72,8 @@ import { AuthContext } from "./context/AuthContext/AuthContext";
 import { mainLogo } from "./assets";
 import { appear } from "./lib/anim";
 import { useShop } from "./context/ShopContext";
+import Guest from "./pages/auth pages/Guest";
+import GuestCheckout from "./components/guest/GuestCheckout";
 
 const App: React.FC = () => {
   useTokenVerification();
@@ -167,6 +169,7 @@ const App: React.FC = () => {
             <Route path="/wishlists" element={<WishLists />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/check_out" element={<Checkout />} />
+            <Route path="/guest_check_out" element={<GuestCheckout />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy_policy" element={<PrivacyPolicy />} />
             <Route path="/terms_of_service" element={<TermsOfService />} />
@@ -187,6 +190,7 @@ const App: React.FC = () => {
               path="/auth/reset_password/:token"
               element={<ResetPassword />}
             />
+            <Route path="/auth/guest" element={<Guest />} />
           </Route>
 
           {/* Admin Routes (Only accessible to admins) */}

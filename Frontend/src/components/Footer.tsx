@@ -17,6 +17,11 @@ type ColumnLinks = {
   links: Links[];
 };
 
+type ColumnLinksTwo = {
+  title: string;
+  links: Links[];
+};
+
 type FooterLink = {
   title: string;
   url: string;
@@ -24,6 +29,7 @@ type FooterLink = {
 
 type Props = {
   columnLinks: ColumnLinks[];
+  columnLinksTwo: ColumnLinksTwo[];
   footerLinks: FooterLink[];
 };
 
@@ -31,7 +37,7 @@ export type FooterProps = React.ComponentPropsWithoutRef<"section"> &
   Partial<Props>;
 
 export const Footer = (props: FooterProps) => {
-  const { columnLinks, footerLinks } = {
+  const { columnLinks, columnLinksTwo, footerLinks } = {
     ...FooterDefaults,
     ...props,
   } as Props;
@@ -48,14 +54,14 @@ export const Footer = (props: FooterProps) => {
         { email },
         {
           validateStatus: (status) => status < 600,
-        }
+        },
       );
       if (res.status === 200) {
         toast.success(res.data.message || "Successfully subscribed!");
         setEmail("");
       } else {
         toast.error(
-          res.data.message || "Something went wrong, please try again"
+          res.data.message || "Something went wrong, please try again",
         );
       }
     } catch (err) {
@@ -132,6 +138,28 @@ export const Footer = (props: FooterProps) => {
                 </ul>
               </div>
             ))}
+
+            {columnLinksTwo.map((column, index) => (
+              <div key={index} className="flex flex-col">
+                <h3 className="mb-4 text-sm uppercase tracking-widest">
+                  {column.title}
+                </h3>
+                <ul className="space-y-3">
+                  {column.links.map((link, linkIndex) => (
+                    <li key={linkIndex}>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        className="flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900"
+                      >
+                        {link.icon && <span>{link.icon}</span>}
+                        <span>{link.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -183,12 +211,15 @@ export const FooterDefaults: FooterProps = {
         // { title: "Shipping Info", url: "/shipping_info" },
       ],
     },
+  ],
+
+  columnLinksTwo: [
     {
       title: "Follow Us",
       links: [
         {
           title: "Facebook",
-          url: "#",
+          url: "https://www.facebook.com/keesdeen",
           icon: <BiLogoFacebookCircle className="size-5" />,
         },
         {

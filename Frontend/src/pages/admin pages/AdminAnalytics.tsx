@@ -50,7 +50,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { toast } from "sonner";
-// import axiosInstance from "@/lib/axiosConfig";
+import axiosInstance from "@/lib/axiosConfig";
 
 const mockData = {
   summaryCards: {
@@ -239,14 +239,13 @@ const AdminAnalytics: React.FC = () => {
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
-      // const response = await Axios.get(`/analytics/dashboard`);
-      // if (response.status === 200) {
-      //   setAnalytics(response.data);
-      // }
-
+      const response = await axiosInstance.get(`/analytics/dashboard`);
+      if (response.status === 200) {
+        setAnalytics(response.data);
+      }
       // Simulating API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setAnalytics(mockData);
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+      // setAnalytics(mockData);
     } catch (error) {
       toast.error("An unexpected error occurred. Please try again.");
     } finally {

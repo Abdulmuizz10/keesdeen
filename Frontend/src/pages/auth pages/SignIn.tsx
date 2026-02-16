@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BiLogoGoogle } from "react-icons/bi";
 import { Eye, EyeOff } from "lucide-react";
@@ -14,20 +14,84 @@ import {
 import { toast } from "sonner";
 import Spinner from "../../components/Spinner";
 import axiosInstance from "@/lib/axiosConfig";
+import { useShop } from "@/context/ShopContext";
 
 const SignIn: React.FC = () => {
+  const [cartData, setCartData] = useState<any[]>([]);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const { cartItems, guestEmail, setGuestEmail } = useShop();
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const tempData: any[] = [];
+    for (const itemId in cartItems) {
+      const item = cartItems[itemId];
+      for (const variantKey in item.variants) {
+        const quantity = item.variants[variantKey];
+        if (quantity > 0) {
+          const [size, color] = variantKey.split("-");
+          tempData.push({
+            id: itemId,
+            name: item.name,
+            price: item.price,
+            image: item.image,
+            size,
+            color,
+            quantity,
+          });
+        }
+      }
+    }
+    setCartData(tempData);
+  }, [cartItems]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    SignInAccount({ email, password }, dispatch, navigate, setLoading);
+    SignInAccount(
+      { email, password },
+      dispatch,
+      navigate,
+      cartData,
+      guestEmail,
+      setGuestEmail,
+      setLoading,
+    );
+  };
+
+  const mergeGuestOrdersIfNeeded = async (
+    guestEmail: string,
+    setGuestEmail: (email: string) => void,
+  ): Promise<void> => {
+    if (!guestEmail || guestEmail.trim() === "") {
+      return;
+    }
+
+    try {
+      const mergeRes = await axiosInstance.post(
+        `/orders/merge-guest-orders`,
+        { guestEmail },
+        {
+          validateStatus: (status: any) => status < 600,
+        },
+      );
+
+      if (mergeRes.status === 200) {
+        // console.log(`Guest orders merged: ${mergeRes.data.mergedCount} order(s)`);
+        // Clear the guest email after successful merge
+        setGuestEmail("");
+      } else {
+        console.error("Failed to merge guest orders:", mergeRes.data.message);
+      }
+    } catch (error) {
+      // Still clear the guest email to avoid retry loops
+      setGuestEmail("");
+    }
   };
 
   const googleLogin = useGoogleLogin({
@@ -41,11 +105,17 @@ const SignIn: React.FC = () => {
           },
           {
             validateStatus: (status) => status < 600,
-          }
+          },
         );
         if (res.status === 200) {
           dispatch(AccessSuccess(res.data));
-          navigate("/");
+          // Merge guest orders after successful sign in
+          await mergeGuestOrdersIfNeeded(guestEmail, setGuestEmail);
+          if (cartData.length > 0) {
+            navigate("/check_out");
+          } else {
+            navigate("/");
+          }
           setLoading(false);
         } else {
           dispatch(AccessFailure());

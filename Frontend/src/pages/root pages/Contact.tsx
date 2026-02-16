@@ -40,7 +40,7 @@ const Contact: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -90,7 +90,7 @@ const Contact: React.FC = () => {
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/image/upload`,
-        { method: "POST", body: form }
+        { method: "POST", body: form },
       );
       const data = await res.json();
       setFormData((prev) => ({ ...prev, image: data.secure_url }));
@@ -188,10 +188,10 @@ const Contact: React.FC = () => {
                 {import.meta.env.VITE_CONTACT_EMAIL || "hello@keesdeen.com"}
               </a>
               <a
-                href="tel:+1234567890"
+                href="tel:+447599370465"
                 className="block text-sm text-gray-700 hover:text-black transition-colors"
               >
-                +1 (234) 567-890
+                +44 7599370465
               </a>
             </div>
           </div>
