@@ -101,12 +101,7 @@ const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Send email asynchronously
-    sendEmailAsync(
-      sendWelcomeEmail(email, firstName, "signup"),
-      "Welcome",
-      email,
-    );
+    sendWelcomeEmail(email, firstName, "signup");
 
     return createAndSendTokens(newUser, res);
   } catch (error) {
@@ -133,11 +128,8 @@ const signIn = async (req, res) => {
     }
 
     // Send email asynchronously
-    sendEmailAsync(
-      sendWelcomeEmail(email, existingUser.firstName, "signin"),
-      "Welcome Back",
-      email,
-    );
+
+    sendWelcomeEmail(email, existingUser.firstName, "signin");
 
     return createAndSendTokens(existingUser, res);
   } catch (error) {
@@ -178,11 +170,8 @@ const googleSignIn = async (req, res) => {
     }
 
     // Send email asynchronously
-    sendEmailAsync(
-      sendWelcomeEmail(email, firstName, isNewUser ? "signup" : "signin"),
-      isNewUser ? "Welcome" : "Welcome Back",
-      email,
-    );
+
+    sendWelcomeEmail(email, firstName, isNewUser ? "signup" : "signin");
 
     return createAndSendTokens(user, res);
   } catch (error) {
@@ -295,16 +284,11 @@ const forgotPassword = async (req, res) => {
     const resetUrl = `${process.env.FRONTEND_URL}/auth/reset_password/${resetToken}`;
     const message = `Click here to reset your password: ${resetUrl}`;
 
-    // Send email asynchronously
-    sendEmailAsync(
-      sendResetEmailLink({
-        email: user.email,
-        subject: "Password Reset",
-        message,
-      }),
-      "Password Reset",
-      email,
-    );
+    sendResetEmailLink({
+      email: user.email,
+      subject: "Password Reset",
+      message,
+    });
 
     // Always return success (security best practice)
     res.json({ message: "Reset link sent to your email" });

@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev"; // Update with your verified domain
+const FROM_EMAIL = process.env.FROM_EMAIL;
+const ADMIN_EMAIL = FROM_EMAIL;
 
 const generateEmailTemplate = (title, bodyContent) => `
   <!DOCTYPE html>
@@ -153,6 +154,7 @@ export const sendOrderConfirmationEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: "Order Confirmed – Keesdeen",
     html,
   });
@@ -276,14 +278,12 @@ export const sendPersonalOrderConfirmationEmail = async (
     `,
   );
 
-  const adminEmail = process.env.ADMIN_EMAIL || FROM_EMAIL;
-
   const { data, error } = await resend.emails.send({
     from: `Keesdeen Orders <${FROM_EMAIL}>`,
-    to: adminEmail,
+    to: ADMIN_EMAIL, // merchant's Namecheap inbox
+    reply_to: customerEmail, // merchant hits Reply → goes straight to customer
     subject: `New Order #${orderId.slice(-8)} - ${firstName} ${lastName}`,
     html,
-    reply_to: customerEmail,
   });
 
   if (error) {
@@ -396,6 +396,7 @@ export const sendOrderStatusEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: `${config.title} – Keesdeen`,
     html,
   });
@@ -441,6 +442,7 @@ export const sendGiftNotificationEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: recipientEmail,
+    reply_to: ADMIN_EMAIL, // recipient replies land in the merchant's Namecheap inbox
     subject: "A Gift is on Its Way – Keesdeen",
     html,
   });
@@ -464,6 +466,7 @@ export const sendResetEmailLink = async ({ email, subject, message }) => {
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // in case they reply with an issue, lands in merchant inbox
     subject: `${subject} – Keesdeen`,
     html,
   });
@@ -507,6 +510,7 @@ export const sendWelcomeEmail = async (email, firstName, action) => {
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject,
     html,
   });
@@ -548,6 +552,7 @@ export const sendSubscribersEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // newsletter replies land in the merchant's Namecheap inbox
     subject: `${subject} – Keesdeen`,
     html,
   });
@@ -660,8 +665,8 @@ ${message}
 
   const { data, error } = await resend.emails.send({
     from: `Keesdeen Contact Form <${FROM_EMAIL}>`,
-    to: FROM_EMAIL,
-    reply_to: email,
+    to: ADMIN_EMAIL, // merchant's Namecheap inbox receives the contact submission
+    reply_to: email, // merchant hits Reply → goes straight to customer
     subject: `New Contact Form: ${
       subjectLabels[subject] || subject
     } - ${firstName} ${lastName}`,
@@ -730,6 +735,7 @@ export const sendContactConfirmationEmail = async ({
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: "We've Received Your Message – Keesdeen",
     html,
   });
@@ -837,6 +843,7 @@ export const sendRefundInitiatedEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: `${emailTitle} – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
@@ -928,6 +935,7 @@ export const sendRefundCompletedEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: `Refund Processed – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
@@ -1031,6 +1039,7 @@ export const sendRefundFailedEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: `Refund Processing Issue – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
@@ -1124,6 +1133,7 @@ export const sendRefundRejectedEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: `Refund Request Update – Order #${orderId
       .slice(-8)
       .toUpperCase()} – Keesdeen`,
@@ -1136,8 +1146,6 @@ export const sendRefundRejectedEmail = async (
 
   return data;
 };
-
-// ADD THESE FUNCTIONS TO YOUR EXISTING utils.js FILE
 
 // 13. ORDER CANCELLATION EMAIL (to customer)
 export const sendOrderCancellationEmail = async (
@@ -1312,6 +1320,7 @@ export const sendOrderCancellationEmail = async (
   const { data, error } = await resend.emails.send({
     from: `Keesdeen <${FROM_EMAIL}>`,
     to: email,
+    reply_to: ADMIN_EMAIL, // customer replies land in the merchant's Namecheap inbox
     subject: `Order Cancelled – #${orderId.slice(-8).toUpperCase()} – Keesdeen`,
     html,
   });
@@ -1460,14 +1469,12 @@ export const sendAdminOrderCancellationNotification = async (
     `,
   );
 
-  const adminEmail = process.env.ADMIN_EMAIL || FROM_EMAIL;
-
   const { data, error } = await resend.emails.send({
     from: `Keesdeen Orders <${FROM_EMAIL}>`,
-    to: adminEmail,
+    to: ADMIN_EMAIL, // merchant's Namecheap inbox
+    reply_to: customerEmail, // merchant hits Reply → goes straight to customer
     subject: `Order Cancelled #${orderId.slice(-8).toUpperCase()} - ${firstName} ${lastName}`,
     html,
-    reply_to: customerEmail,
   });
 
   if (error) {

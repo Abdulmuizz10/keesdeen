@@ -13,10 +13,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@bull-board/api": "^6.20.5",
+    "@bull-board/express": "^6.20.5",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "bull": "^4.16.5",
+    "bullmq": "^5.71.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.4",
@@ -26,13 +29,14 @@
     "google-auth-library": "^9.14.2",
     "googleapis": "^144.0.0",
     "helmet": "^8.1.0",
-    "ioredis": "^5.9.2",
+    "ioredis": "^5.10.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^8.6.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.12",
     "resend": "^6.7.0",
-    "square": "^38.2.0"
+    "square": "^38.2.0",
+    "svix": "^1.96.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
