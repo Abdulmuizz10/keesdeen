@@ -132,10 +132,10 @@ const CookieConsent: React.FC = () => {
   return (
     <>
       {/* Main Cookie Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-[9999] border-t border-gray-900 bg-white px-6 py-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6">
+      <div className="fixed bottom-0 left-0 right-0 z-[9999] max-h-[85vh] overflow-y-auto border-t border-gray-900 bg-white px-4 py-5 sm:px-6 sm:py-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:gap-6">
           <div className="max-w-3xl">
-            <h3 className="mb-3 text-[11px] font-medium uppercase tracking-[2px] text-gray-900">
+            <h3 className="mb-2 sm:mb-3 text-[11px] font-medium uppercase tracking-[2px] text-gray-900">
               Cookie Notice
             </h3>
             <p className="text-[13px] font-light leading-relaxed text-gray-900">
@@ -151,11 +151,11 @@ const CookieConsent: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <button
               onClick={handleAcceptAll}
               disabled={loading}
-              className="border border-gray-900 bg-gray-900 px-8 py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border border-gray-900 bg-gray-900 px-4 py-2.5 sm:px-8 sm:py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Accept All
             </button>
@@ -163,7 +163,7 @@ const CookieConsent: React.FC = () => {
             <button
               onClick={handleRejectAll}
               disabled={loading}
-              className="border border-gray-900 bg-white px-8 py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-gray-900 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border border-gray-900 bg-white px-4 py-2.5 sm:px-8 sm:py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-gray-900 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Reject All
             </button>
@@ -171,7 +171,7 @@ const CookieConsent: React.FC = () => {
             <button
               onClick={() => setShowSettings(!showSettings)}
               disabled={loading}
-              className="border border-gray-900 bg-white px-8 py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-gray-900 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="border border-gray-900 bg-white px-4 py-2.5 sm:px-8 sm:py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-gray-900 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Customize
             </button>
@@ -182,21 +182,21 @@ const CookieConsent: React.FC = () => {
       {/* Cookie Settings Modal */}
       {showSettings && (
         <div
-          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-6"
+          className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 sm:p-6"
           onClick={() => setShowSettings(false)}
         >
           <div
-            className="max-h-[85vh] w-full max-w-xl overflow-auto border bg-white p-10 custom-scrollbar"
+            className="max-h-[85vh] w-full max-w-xl overflow-auto border bg-white p-6 sm:p-10 custom-scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="mb-8 text-[11px] font-medium uppercase tracking-[2px] text-gray-900">
+            <h2 className="mb-6 sm:mb-8 text-[11px] font-medium uppercase tracking-[2px] text-gray-900">
               Cookie Preferences
             </h2>
 
-            <div className="mb-8 space-y-4">
+            <div className="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
               {/* Essential Cookies */}
-              <div className="border border-gray-200 p-6">
-                <div className="flex items-start justify-between gap-6">
+              <div className="border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start justify-between gap-3 sm:gap-6">
                   <div className="flex-1">
                     <h4 className="mb-2 text-[12px] font-medium uppercase tracking-[1.5px] text-gray-900">
                       Essential Cookies
@@ -212,8 +212,8 @@ const CookieConsent: React.FC = () => {
               </div>
 
               {/* Analytics Cookies */}
-              <div className="border border-gray-200 p-6">
-                <div className="flex items-start justify-between gap-6">
+              <div className="border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start justify-between gap-3 sm:gap-6">
                   <div className="flex-1">
                     <h4 className="mb-2 text-[12px] font-medium uppercase tracking-[1.5px] text-gray-900">
                       Analytics Cookies
@@ -234,8 +234,8 @@ const CookieConsent: React.FC = () => {
               </div>
 
               {/* Marketing Cookies */}
-              <div className="border border-gray-200 p-6">
-                <div className="flex items-start justify-between gap-6">
+              <div className="border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start justify-between gap-3 sm:gap-6">
                   <div className="flex-1">
                     <h4 className="mb-2 text-[12px] font-medium uppercase tracking-[1.5px] text-gray-900">
                       Marketing Cookies
@@ -257,8 +257,8 @@ const CookieConsent: React.FC = () => {
               </div>
 
               {/* Preference Cookies */}
-              <div className="border border-gray-200 p-6">
-                <div className="flex items-start justify-between gap-6">
+              <div className="border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start justify-between gap-3 sm:gap-6">
                   <div className="flex-1">
                     <h4 className="mb-2 text-[12px] font-medium uppercase tracking-[1.5px] text-gray-900">
                       Preference Cookies
@@ -279,7 +279,7 @@ const CookieConsent: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3">
               <button
                 onClick={() => setShowSettings(false)}
                 className="border border-gray-900 bg-white px-8 py-3.5 text-[11px] font-medium uppercase tracking-[2px] text-gray-900 transition-colors hover:bg-gray-50"

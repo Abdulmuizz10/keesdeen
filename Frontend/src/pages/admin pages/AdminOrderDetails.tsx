@@ -130,7 +130,7 @@ const AdminOrderDetails: React.FC = () => {
         { status },
         {
           validateStatus: (status: any) => status < 600,
-        }
+        },
       );
       if (response.status === 200) {
         toast.success(response.data.message);
@@ -236,7 +236,7 @@ const AdminOrderDetails: React.FC = () => {
 
   const subtotal = order.orderedItems.reduce(
     (sum, item) => sum + item.price * item.qty,
-    0
+    0,
   );
 
   return (
@@ -282,7 +282,7 @@ const AdminOrderDetails: React.FC = () => {
             <DropdownMenuTrigger disabled={updating}>
               <div
                 className={`inline-flex items-center gap-3 px-6 py-3 border-2 transition-all ${getStatusColor(
-                  order.status
+                  order.status,
                 )} ${
                   updating
                     ? "opacity-50 cursor-not-allowed"
@@ -417,7 +417,7 @@ const AdminOrderDetails: React.FC = () => {
                     <p className="text-xs opacity-80">
                       {formatCurrency(
                         order.paymentInfo.amountPaid,
-                        order.paymentInfo.currency
+                        order.paymentInfo.currency,
                       )}{" "}
                       paid
                     </p>
@@ -461,12 +461,12 @@ const AdminOrderDetails: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <Shield
                           className={`h-4 w-4 ${getRiskLevelColor(
-                            order.paymentInfo.riskLevel
+                            order.paymentInfo.riskLevel,
                           )}`}
                         />
                         <span
                           className={`font-semibold text-sm ${getRiskLevelColor(
-                            order.paymentInfo.riskLevel
+                            order.paymentInfo.riskLevel,
                           )}`}
                         >
                           {order.paymentInfo.riskLevel}
@@ -528,7 +528,7 @@ const AdminOrderDetails: React.FC = () => {
                           onClick={() =>
                             copyToClipboard(
                               order.paymentInfo!.squarePaymentId,
-                              "Payment ID"
+                              "Payment ID",
                             )
                           }
                           className="p-1 hover:bg-background rounded"
@@ -550,7 +550,7 @@ const AdminOrderDetails: React.FC = () => {
                             onClick={() =>
                               copyToClipboard(
                                 order.paymentInfo!.squareOrderId!,
-                                "Square Order ID"
+                                "Square Order ID",
                               )
                             }
                             className="p-1 hover:bg-background rounded"
@@ -591,7 +591,7 @@ const AdminOrderDetails: React.FC = () => {
                     <p>
                       {State.getStateByCodeAndCountry(
                         order.shippingAddress.state,
-                        order.shippingAddress.country
+                        order.shippingAddress.country,
                       )?.name || order.shippingAddress.state}
                       ,{" "}
                       {Country.getCountryByCode(order.shippingAddress.country)
@@ -640,7 +640,7 @@ const AdminOrderDetails: React.FC = () => {
                     <p>
                       {State.getStateByCodeAndCountry(
                         order.billingAddress.state,
-                        order.billingAddress.country
+                        order.billingAddress.country,
                       )?.name || order.billingAddress.state}
                       ,{" "}
                       {Country.getCountryByCode(order.billingAddress.country)
@@ -862,15 +862,23 @@ const AdminOrderDetails: React.FC = () => {
                   Customer ID
                 </p>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-mono">
-                    {order.user.slice(-12).toUpperCase()}
-                  </p>
-                  <button
-                    onClick={() => copyToClipboard(order.user, "Customer ID")}
-                    className="p-1 hover:bg-muted rounded"
-                  >
-                    <Copy className="h-3 w-3" />
-                  </button>
+                  {order.user ? (
+                    <>
+                      <p className="text-sm font-mono">
+                        {order.user.slice(-12).toUpperCase()}
+                      </p>
+                      <button
+                        onClick={() =>
+                          copyToClipboard(order.user, "Customer ID")
+                        }
+                        className="p-1 hover:bg-muted rounded"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </button>
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Guest Order</p>
+                  )}
                 </div>
               </div>
               <div>

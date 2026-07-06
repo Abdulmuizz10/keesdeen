@@ -69,33 +69,39 @@ const NewArrivalsSection: React.FC = () => {
           >
             <div className="relative">
               <CarouselContent className="ml-0">
-                {loading
-                  ? Array(10)
-                      .fill(null)
-                      .map((_, index) => (
-                        <CarouselItem
-                          key={index}
-                          className="basis-full md:basis-2/4 lg:basis-1/4"
-                        >
-                          <ProductCard
-                            product={""}
-                            loading={loading}
-                            key={index}
-                          />
-                        </CarouselItem>
-                      ))
-                  : products?.map((product: any, index: number) => (
+                {loading ? (
+                  Array(10)
+                    .fill(null)
+                    .map((_, index) => (
                       <CarouselItem
                         key={index}
                         className="basis-full md:basis-2/4 lg:basis-1/4"
                       >
                         <ProductCard
-                          product={product}
+                          product={""}
                           loading={loading}
                           key={index}
                         />
                       </CarouselItem>
-                    ))}
+                    ))
+                ) : products.length > 0 ? (
+                  products?.map((product: any, index: number) => (
+                    <CarouselItem
+                      key={index}
+                      className="basis-full md:basis-2/4 lg:basis-1/4"
+                    >
+                      <ProductCard
+                        product={product}
+                        loading={loading}
+                        key={index}
+                      />
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center text-gray-500 mx-auto">
+                    No products available.
+                  </div>
+                )}
               </CarouselContent>
               <CarouselPrevious className="hidden md:flex md:size-12 lg:size-14 bg-gray-200 border border-gray-600" />
               <CarouselNext className="hidden md:flex md:size-12 lg:size-14 bg-gray-200 border border-gray-600" />

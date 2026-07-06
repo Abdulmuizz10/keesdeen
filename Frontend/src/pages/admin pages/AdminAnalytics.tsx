@@ -342,7 +342,9 @@ const AdminAnalytics: React.FC = () => {
             {prefix}
             {typeof value === "number" && prefix === "£"
               ? formatCurrency(value).replace("£", "")
-              : value}
+              : typeof value === "number"
+                ? value.toFixed(1)
+                : value}
             {suffix}
           </p>
           {change !== undefined && (

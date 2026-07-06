@@ -430,8 +430,8 @@ const OrderDetails: React.FC = () => {
     switch (status) {
       case "Delivered":
         return "text-green-600";
-      case "Pending":
-        return "text-amber-600";
+      case "Processing":
+        return "text-teal-400";
       case "Cancelled":
         return "text-red-600";
       case "Refunded":

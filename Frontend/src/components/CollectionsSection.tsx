@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { Product } from "../lib/types";
 import Spinner from "./Spinner";
 import ProductCard from "./ProductCard";
 import axiosInstance from "@/lib/axiosConfig";
@@ -60,23 +59,29 @@ const CollectionsSection = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 items-start justify-center gap-6 md:gap-8 lg:grid-cols-3 xl:grid-cols-4">
-            {products?.map((product: Product, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{
-                  opacity: isInView ? 1 : 0,
-                  y: isInView ? 0 : 50,
-                }}
-                transition={{
-                  duration: 0.8,
-                  ease: "easeOut",
-                  delay: index * 0.8,
-                }}
-              >
-                <ProductCard product={product} loading={loading} />
-              </motion.div>
-            ))}
+            {products.length > 0 ? (
+              products.map((product: any, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{
+                    opacity: isInView ? 1 : 0,
+                    y: isInView ? 0 : 50,
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    ease: "easeOut",
+                    delay: index * 0.8,
+                  }}
+                >
+                  <ProductCard product={product} loading={loading} />
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full text-center text-gray-500 mx-auto">
+                No products available.
+              </div>
+            )}
           </div>
         )}
       </div>
